@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `e0752e881aa5`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `1412a4e9a9b7`.
 
 ## Repository
 
@@ -9,20 +9,20 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 5467 |
+| Commits in clone | 5475 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-11-08 — Merge pull request #324 from OmertaDev/codex/site-fixture-diff-proof-20261108 |
+| Latest commit | 2026-11-08 — test: refresh real quest verification for client compatibility fixes |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 4343 |
+| OmertaDev | 4350 |
 | crvydev | 647 |
 | Claude | 156 |
-| github-actions[bot] | 141 |
+| github-actions[bot] | 142 |
 | Codex | 138 |
 | CRVYDEV | 41 |
 | claude[bot] | 1 |
@@ -31,14 +31,14 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 909 | historical |
-| knowledge/generated/graph-summary.md | 909 | historical |
-| knowledge/generated/graph.json | 909 | historical |
-| knowledge/generated/inventory.md | 909 | historical |
+| knowledge/generated/github-history.md | 910 | historical |
+| knowledge/generated/graph-summary.md | 910 | historical |
+| knowledge/generated/graph.json | 910 | historical |
+| knowledge/generated/inventory.md | 910 | historical |
 | [SPEC.md](../../SPEC.md) | 643 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
-| [public/index.html](../../public/index.html) | 510 | yes |
-| [src/server.js](../../src/server.js) | 460 | yes |
+| [public/index.html](../../public/index.html) | 511 | yes |
+| [src/server.js](../../src/server.js) | 461 | yes |
 | knowledge/generated/documents.md | 399 | historical |
 | [schema.sql](../../schema.sql) | 384 | yes |
 | [package.json](../../package.json) | 370 | yes |
