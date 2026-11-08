@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const SITE_BASICS_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_SITE_BASICS_SOURCE_COMPARISON_ONLY",
-  "revision": "d77edd079a2ac69f304fe77551f45cf1d44de703",
-  "tree": "ec1767c7925a24356213487375c9f2bf0c27e0e1",
+  "revision": "2d65f42b3003404a89066d5f84aa6352df75a920",
+  "tree": "90633f97fa7c0b3a15f5acb59ba58d25228ad29c",
   "predecessor": "d763d0623b69aa223eab9fae01beb7aec6cdce75",
   "predecessorTree": "c5242f2cf0fe8a1100bf09caf88d2161c011fecd",
   "files": {
@@ -2410,9 +2410,9 @@ export const SITE_BASICS_SOURCE = freeze({
     "test/rc1-invoice-source-compatibility.js": {
       "current": {
         "mode": "100644",
-        "blob": "1439d353b1d2a1fb997a627f03cd237331d0b484",
-        "sha256": "092b7519eab69237c307d51b3af5f0ee88e39132515707204ee796a20132ce99",
-        "bytes": 9531
+        "blob": "1897e847237e33a6f165499d1ba48c1e71cd72a2",
+        "sha256": "0a3ef60abc0180015e82e1f63f4816cccd326140c6ee73bdcf6b2cd5f89b1228",
+        "bytes": 11081
       },
       "baseline": {
         "mode": "100644",
@@ -2427,9 +2427,9 @@ export const SITE_BASICS_SOURCE = freeze({
           "baseline": "import { continuousCityHistoricalInput } from '../tools/continuous-city-source-compatibility.js';\nimport {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from \"../tools/commerce-current-enterprise-source-compatibility.js\";\nimport {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';\n"
         },
         {
-          "at": 8007,
-          "current": "  assert.throws(() => qualifyInvoiceSource(file, text.replace(before, after)), /source changed/); negatives++;\n}\nassert.throws(() => qualifyInvoiceSource('src/worker.js', ''), /Unknown Invoice source/);\nconst workerInput = fs.readFileSync('src/worker.js', 'utf8');\nconst unreviewedWorker = workerInput + '\\n// unreviewed worker change\\n';\nassert.equal(questingHistoricalInput('src/worker.js', unreviewedWorker), unreviewedWorker); negatives++;\nconst worker = companyOperatorSourceBaseline('src/worker.js', normalize(questingHistoricalInput('src/worker.js', workerInput)));\nassert.equal(worker, gitText(INVOICE_SOURCE_PREDECESSOR_REVISION + ':src/worker.js'));\nassert.equal(worker, gitText(INVOICE_SOURCE_REVIEWED_REVISION + ':src/worker.js'));\nassert.equal(qualifyIntelSource('src/worker.js', worker).baselineText.length > 0, true);\n",
-          "baseline": "  assert.throws(() => qualifyInvoiceSource(file, text.replace(before, after)), /source changed/); negatives++;\n}\nassert.throws(() => qualifyInvoiceSource('src/worker.js', ''), /Unknown Invoice source/);\nconst worker = companyOperatorSourceBaseline('src/worker.js', normalize(fs.readFileSync('src/worker.js', 'utf8')));\nassert.equal(worker, gitText(INVOICE_SOURCE_PREDECESSOR_REVISION + ':src/worker.js'));\nassert.equal(worker, gitText(INVOICE_SOURCE_REVIEWED_REVISION + ':src/worker.js'));\nassert.equal(qualifyIntelSource('src/worker.js', worker).baselineText.length > 0, true);\n"
+          "at": 7897,
+          "current": "  assert.equal(text.split(before).length, 2, 'Targeted accounting/quote/fraction guard exists exactly once');\n  assert.throws(() => qualifyInvoiceSource(file, text.replace(before, after)), /source changed/); negatives++;\n}\n// The exact current population source must enter SITE before the existing\n// hardening/invoice chain. These are source-comparison controls, not native evidence.\nconst populationInput = fs.readFileSync('src/population.js', 'utf8');\nconst populationLf = normalize(populationInput);\nconst populationBaseline = gitText('545c16d65cc482ffbc5364ba2aaa0a56916d7b79:src/population.js');\nassert.equal(hash(populationBaseline), '7ca4cfe884b3b2f8acd44a9c34c88507c9c42e0730688cac1d4bd358a7d9cecb');\nfor (const input of [populationInput, populationLf, populationLf.replaceAll('\\n', '\\r\\n')])\n  assert.equal(invoiceSourceBaseline('src/population.js', input), populationBaseline);\nconst checkpointImport = \"import { checkpointCasinoRakeback, checkpointCasinoOwnerRemoval } from './casinorakeback.js';\\n\";\nassert.equal(populationLf.split(checkpointImport).length, 2, 'The partial-current control removes exactly one reviewed import');\nassert.equal(populationLf.split('ORDER BY id LIMIT 24').length, 2, 'The query drift changes the exact jailbird selection');\nfor (const changed of [populationLf + '\\n// unsupported population source suffix\\n',\n  populationLf.replace(checkpointImport, ''),\n  populationLf.replace('ORDER BY id LIMIT 24', 'ORDER BY id DESC LIMIT 24')]) {\n  assert.notEqual(changed, populationLf, 'Every population refusal changes the actual source');\n  assert.equal(invoiceSourceBaseline('src/population.js', changed), changed,\n    'Unknown, partial-current and query-changed population source cannot acquire historical admission');\n  negatives++;\n}\n\nassert.throws(() => qualifyInvoiceSource('src/worker.js', ''), /Unknown Invoice source/);\nconst workerInput = fs.readFileSync('src/worker.js', 'utf8');\nconst unreviewedWorker = workerInput + '\\n// unreviewed worker change\\n';\nassert.equal(questingHistoricalInput('src/worker.js', unreviewedWorker), unreviewedWorker); negatives++;\nconst worker = companyOperatorSourceBaseline('src/worker.js', normalize(questingHistoricalInput('src/worker.js', workerInput)));\nassert.equal(worker, gitText(INVOICE_SOURCE_PREDECESSOR_REVISION + ':src/worker.js'));\nassert.equal(worker, gitText(INVOICE_SOURCE_REVIEWED_REVISION + ':src/worker.js'));\nassert.equal(qualifyIntelSource('src/worker.js', worker).baselineText.length > 0, true);\n",
+          "baseline": "  assert.equal(text.split(before).length, 2, 'Targeted accounting/quote/fraction guard exists exactly once');\n  assert.throws(() => qualifyInvoiceSource(file, text.replace(before, after)), /source changed/); negatives++;\n}\nassert.throws(() => qualifyInvoiceSource('src/worker.js', ''), /Unknown Invoice source/);\nconst worker = companyOperatorSourceBaseline('src/worker.js', normalize(fs.readFileSync('src/worker.js', 'utf8')));\nassert.equal(worker, gitText(INVOICE_SOURCE_PREDECESSOR_REVISION + ':src/worker.js'));\nassert.equal(worker, gitText(INVOICE_SOURCE_REVIEWED_REVISION + ':src/worker.js'));\nassert.equal(qualifyIntelSource('src/worker.js', worker).baselineText.length > 0, true);\n"
         }
       ]
     },
@@ -2843,6 +2843,32 @@ export const SITE_BASICS_SOURCE = freeze({
         }
       ]
     },
+    "tools/rc1-invoice-source-compatibility.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "84ad2afb9318d95b3961d2c98a2108b033a99df4",
+        "sha256": "9058b28d18355a6a94b3c10ef7dcc0585ce02d893fee74bcdef5b7952b1eeb74",
+        "bytes": 31743
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "3eb02714243c10667db896c222c2b03a3c271f93",
+        "sha256": "e8993a705d736145bb0bbe8c1071a37d2b108efc150e8a4e204691b6dbf7d968",
+        "bytes": 31564
+      },
+      "inverses": [
+        {
+          "at": 546,
+          "current": "import assert from 'node:assert/strict';\nimport crypto from 'node:crypto';\nimport { economyHardeningSourceBaseline } from './economy-hardening-source-transfer.js';\nimport { siteBasicsHistoricalInput } from './site-basics-source-transfer.js';\n\nexport const INVOICE_SOURCE_REVIEWED_REVISION = \"ea654f61659e38acfc09b55cf8c95a4f971e054e\";\nexport const INVOICE_SOURCE_PREDECESSOR_REVISION = \"df4e87984066a296889fbf0173f9179187445b26\";\n",
+          "baseline": "import assert from 'node:assert/strict';\nimport crypto from 'node:crypto';\nimport { economyHardeningSourceBaseline } from './economy-hardening-source-transfer.js';\n\nexport const INVOICE_SOURCE_REVIEWED_REVISION = \"ea654f61659e38acfc09b55cf8c95a4f971e054e\";\nexport const INVOICE_SOURCE_PREDECESSOR_REVISION = \"df4e87984066a296889fbf0173f9179187445b26\";\n"
+        },
+        {
+          "at": 30964,
+          "current": "// Compose only the exact current invoice blob. Earlier revisions and unknown\n// bytes still reach the existing closed historical guard unchanged.\nexport function invoiceSourceBaseline(file, input) {\n  const admitted = file === 'src/population.js' ? siteBasicsHistoricalInput(file, input) : input;\n  const text = normalize(coverageSourceBaseline(file, strategySourceBaseline(file, companySuccessionSourceBaseline(file, marketFeedSourceBaseline(file, strategyLeagueSourceBaseline(file, gameEmploymentSourceBaseline(file, economyHardeningSourceBaseline(file, admitted))))))));\n  return Object.hasOwn(INVOICE_SOURCE_CURRENT_PINS, file) && hash(text) === INVOICE_SOURCE_CURRENT_PINS[file]\n    ? qualifyInvoiceSource(file, text).baselineText : text;\n}\n",
+          "baseline": "// Compose only the exact current invoice blob. Earlier revisions and unknown\n// bytes still reach the existing closed historical guard unchanged.\nexport function invoiceSourceBaseline(file, input) {\n  const text = normalize(coverageSourceBaseline(file, strategySourceBaseline(file, companySuccessionSourceBaseline(file, marketFeedSourceBaseline(file, strategyLeagueSourceBaseline(file, gameEmploymentSourceBaseline(file, economyHardeningSourceBaseline(file, input))))))));\n  return Object.hasOwn(INVOICE_SOURCE_CURRENT_PINS, file) && hash(text) === INVOICE_SOURCE_CURRENT_PINS[file]\n    ? qualifyInvoiceSource(file, text).baselineText : text;\n}\n"
+        }
+      ]
+    },
     "tools/rc1-world-duration-evidence.js": {
       "current": {
         "mode": "100644",
@@ -3162,9 +3188,9 @@ export const SITE_BASICS_SOURCE = freeze({
     },
     "tools/quest-quality-source-data.js": {
       "mode": "100644",
-      "blob": "cc18605462eec952f15309f89862bf6f4ca761ad",
-      "sha256": "3c298ee7796b98914bc401b758c28075b24c5c03ab476fda79cb0f6cbe3439e7",
-      "bytes": 499403
+      "blob": "4025e80a4ef8bd1b9722baf784ec957b5821a2e9",
+      "sha256": "898235a3fa840f2c7536342dde069394d6ca37cf6eda390fb198e959939d08e7",
+      "bytes": 505447
     },
     "tools/quest-quality-source-seal.js": {
       "mode": "100644",
@@ -3210,4 +3236,4 @@ export const SITE_BASICS_SOURCE = freeze({
     }
   }
 });
-export const SITE_BASICS_SOURCE_SHA256 = '6bf876dd1eabca0bd67a7865027b351c8750fbf14741487fb7c251461da9f305';
+export const SITE_BASICS_SOURCE_SHA256 = 'ca8588bfce728cb06b79646c08a5cb4dea9000fcf096342c53601cd06f9b4094';
