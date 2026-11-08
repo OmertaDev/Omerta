@@ -1,3 +1,4 @@
+import { questingHistoricalInput } from '../tools/questing-source-transfer.js';
 import { continuousCityHistoricalInput } from '../tools/continuous-city-source-compatibility.js';
 import {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from "../tools/commerce-current-enterprise-source-compatibility.js";
 import {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';
@@ -76,7 +77,10 @@ for (const unknown of ['src/worker.js', 'src/gameemployment.js', 'toString']) {
   assert.throws(() => assertGameEmploymentSourceTransfer(unknown, ''), /Unknown Game Employment/); assert.throws(() => qualifyGameEmploymentSource(unknown, ''), /Unknown Game Employment/);
 }
 assert.equal(gameEmploymentSourceBaseline('src/unknown.js', 'unknown'), 'unknown');
-const worker = companyWorkflowSourceBaseline('src/worker.js', fs.readFileSync('src/worker.js', 'utf8'));
+const workerInput = fs.readFileSync('src/worker.js', 'utf8');
+const unreviewedWorker = workerInput + '\n// unreviewed worker change\n';
+assert.equal(questingHistoricalInput('src/worker.js', unreviewedWorker), unreviewedWorker); negatives++;
+const worker = companyWorkflowSourceBaseline('src/worker.js', questingHistoricalInput('src/worker.js', workerInput));
 entire(worker, git('show', `${GAME_EMPLOYMENT_SOURCE_PREDECESSOR_REVISION}:src/worker.js`)); entire(worker, git('show', `${GAME_EMPLOYMENT_SOURCE_REVIEWED_REVISION}:src/worker.js`));
 assert.equal(hash(worker), COMPANY_OPERATOR_SOURCE_CURRENT_PINS['src/worker.js']); sha256Comparisons++;
 assert.equal(blob(worker), COMPANY_OPERATOR_SOURCE_CURRENT_BLOBS['src/worker.js']); blobComparisons++;
