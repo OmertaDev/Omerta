@@ -241,5 +241,29 @@ try {
   await noLoader.waitForFunction(() => window.OmertaLandingReady === true);
   assert.equal(await noLoader.locator('#client-load-failure').isHidden(), true, 'A failed bootstrap has a visible, working reload recovery.');
   await noLoader.close();
+
+  const installed = await browser.newContext({ reducedMotion: 'reduce' });
+  const installedPage = await installed.newPage();
+  await installedPage.goto(base + '/wiki', { waitUntil: 'networkidle' });
+  await installedPage.evaluate(async () => {
+    await navigator.serviceWorker.register('/sw.js');
+    await navigator.serviceWorker.ready;
+  });
+  await installedPage.waitForFunction(() => !!navigator.serviceWorker.controller);
+  await installedPage.evaluate(async () => {
+    const name = (await caches.keys()).find(key => key.startsWith('omerta-shell-'));
+    if (!name) throw new Error('The installed app shell cache is required.');
+    const cache = await caches.open(name);
+    await cache.put('/site-analytics.js', new Response('window.OmertaSiteAnalytics = { stale: true };',
+      { headers: { 'content-type': 'application/javascript' } }));
+  });
+  await installedPage.goto(base, { waitUntil: 'networkidle' });
+  assert.equal(await installedPage.evaluate(() => window.OmertaSiteAnalytics?.stale), undefined);
+  assert.equal(await installedPage.evaluate(() => typeof window.OmertaSiteAnalytics?.firstJobResult), 'function',
+    'An installed visitor receives current analytics despite the old cache-first script.');
+  assert.match(await installedPage.locator('script[src^="/site-analytics.js"]').getAttribute('src'), /\?v=[a-f0-9]{16}$/);
+  assert.match(await installedPage.evaluate(async () => (await caches.match('/site-analytics.js')).text()), /stale: true/,
+    'The content version bypasses the old entry without purging unrelated installed assets.');
+  await installed.close();
   console.log(`Client shell: ${compressed.rawPayload.length} compressed HTML bytes; deferred assets, exact runtime, version/retry recovery, actual signup/job counts and saved/OAuth/provider/wallet entry passed.`);
 } finally { await browser?.close(); await app.close(); }

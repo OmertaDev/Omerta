@@ -25,6 +25,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { walkSrc } from './lib/srcfiles.js';
+import { POLICY as FOUNDRY_API_POLICY } from '../tools/foundry-release-api.js';
 
 const read = (p) => fs.readFileSync(p, 'utf8').replaceAll('\r\n', '\n');
 // Counted the way `wc -l` counts — newlines, not `split('\n').length`, which adds a phantom line for
@@ -998,23 +999,41 @@ assert.deepEqual([...new Set(phantom)], [], `docs/AUDITS.md lists reports that d
 // CI failure cannot be reproduced locally, and this gate spent a session in that position with
 // three tests passing on the developer's machine and failing on the runner.
 //
-// The rule is deliberately two-sided, because half of it is not obvious: a `version` key alone is
-// not a pin. `stable` and `nightly` are CHANNELS — they satisfy "a version is declared" and still
-// resolve at run time, which is the state this guard exists to forbid wearing a version key.
+// The workflow runs the exact release API verifier. Its signed release policy supplies the pin;
+// an action channel or a version argument cannot substitute for that verified toolchain.
+const expectedForgeFoundrySetup = '      - name: Install Foundry\n        env:\n          GH_TOKEN: ${{ github.token }}\n        run: |\n          node ../test/foundry-release-api.js\n          node ../tools/foundry-release-api.js bootstrap';
+const pinnedFoundryVersion = workflow => {
+  const steps = workflow.split(/(?=^      - (?:uses:|run:|name:))/m);
+  const setup = steps.filter(step => step.includes('      - name: Install Foundry'));
+  assert.equal(setup.length, 1, 'Exactly one unconditional verified Foundry setup is required');
+  assert.equal(setup[0].trimEnd(), expectedForgeFoundrySetup,
+    'Foundry setup keeps its step-scoped token, offline guard and cryptographic bootstrap in order');
+  for (const command of ['node ../test/foundry-release-api.js', 'node ../tools/foundry-release-api.js bootstrap'])
+    assert.equal(workflow.split(command).length, 2, 'Foundry validation and installation run exactly once');
+  assert(/^permissions:\n  contents: read\n/m.test(workflow), 'Installer token keeps read-only repository permissions');
+  assert(!/foundry-rs\/foundry-toolchain@/.test(workflow), 'An action channel cannot replace the verified release API installer');
+  assert.equal(FOUNDRY_API_POLICY.version, 'v1.7.1');
+  assert.equal(FOUNDRY_API_POLICY.commit, '4072e48705af9d93e3c0f6e29e93b5e9a40caed8');
+  assert.equal(FOUNDRY_API_POLICY.archive.sha256, 'cf7e688ed0c4c48adffca788b496076e31060b67ac5afe1e43dbb5499c20c88b');
+  assert.equal(FOUNDRY_API_POLICY.pointer.sha256, 'c02be634804dc59dd1e2d27bb0be89dbe65e60a41e00598621db60f64819d052');
+  return FOUNDRY_API_POLICY.version.slice(1);
+};
 {
   const wf = read('.github/workflows/forge.yml');
-  const step = wf.match(/uses:\s*foundry-rs\/foundry-toolchain@[^\n]*\n([\s\S]*?)(?=\n\s*-\s|$)/);
-  assert(step, ".github/workflows/forge.yml no longer installs foundry-rs/foundry-toolchain — the "
-    + 'extractor found no step to check, which reads exactly like a clean sweep. If the gate now '
-    + 'gets its compiler some other way, pin THAT and re-point this guard at it.');
-  const version = step[1].match(/^\s*version:\s*(\S+)/m);
-  assert(version, '.github/workflows/forge.yml installs foundry-toolchain with NO `version:`, so it '
-    + 'resolves `stable` at run time. Every other dependency in this workflow is pinned by hand; the '
-    + 'compiler and test runner must be too, or a red gate cannot be reproduced locally.');
-  assert(!/^(stable|nightly|latest)$/i.test(version[1]),
-    `.github/workflows/forge.yml pins the toolchain to "${version[1]}", which is a CHANNEL rather `
-    + 'than a version — it still resolves at run time. Pin the release tag (e.g. v1.7.1), which is '
-    + 'the whole point: the log and the local run must be able to name the same binary.');
+  assert.equal(pinnedFoundryVersion(wf), '1.7.1');
+  for (const changed of [wf.replace(expectedForgeFoundrySetup, ''),
+    wf.replace(expectedForgeFoundrySetup, expectedForgeFoundrySetup + '\n' + expectedForgeFoundrySetup),
+    wf.replace('        env:\n          GH_TOKEN:', '        if: false\n        env:\n          GH_TOKEN:'),
+    wf.replace('        env:\n          GH_TOKEN:', '        continue-on-error: true\n        env:\n          GH_TOKEN:'),
+    wf.replace('GH_TOKEN: ${{ github.token }}', 'GH_TOKEN: ${{ secrets.UNREVIEWED_TOKEN }}'),
+    wf.replace('node ../test/foundry-release-api.js', 'echo guard skipped'),
+    wf.replace('node ../tools/foundry-release-api.js bootstrap', 'echo synthetic compiler'),
+    wf.replace('bootstrap', 'bootstrap --version stable'),
+    wf.replace('bootstrap', 'bootstrap || true'),
+    wf.replace('  contents: read', '  contents: write')]) {
+    assert.notEqual(changed, wf, 'Every Foundry workflow mutation changes actual source');
+    assert.throws(() => pinnedFoundryVersion(changed), 'Missing, mutable, skipped or optional compiler verification must reject');
+  }
   assert(/run:\s*forge --version/.test(wf),
     '.github/workflows/forge.yml no longer prints `forge --version`. The pin says which binary SHOULD '
     + 'run; the banner is how the log says which one DID, without anybody having to guess at it.');
@@ -1348,13 +1367,10 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
   assert(pktForge, 'CHAIN-AUDIT-PACKET.md freezes a Foundry test count and names no toolchain version. '
     + 'The count is version-dependent (invariant-only suites aggregate differently), so a figure without '
     + 'a compiler beside it cannot be reproduced — name it');
-  const wfPin = /foundry-toolchain@v1[\s\S]{0,200}?version:\s*v?(\d+\.\d+\.\d+)/
-    .exec(read('.github/workflows/forge.yml'));
-  assert(wfPin, 'the forge workflow has lost its pinned toolchain version — the packet cites one, so '
-    + 'this cross-check has nothing left to hold it to');
-  assert.equal(pktForge[1], wfPin[1],
+  const wfPin = pinnedFoundryVersion(read('.github/workflows/forge.yml'));
+  assert.equal(pktForge[1], wfPin,
     `the packet says its rebuilt measurement will use forge v${pktForge[1]} while the workflow pins `
-    + `v${wfPin[1]}. A stale toolchain claim beside a frozen figure is worse than none: it tells a `
+    + `v${wfPin}. A stale toolchain claim beside a frozen figure is worse than none: it tells a `
     + 'reader the count is reproducible under a compiler that is no longer the one that runs');
 
   console.log(`✓ the audit packet agrees with itself (${tableContracts} contracts + ${tableIfaces} `
@@ -1461,11 +1477,9 @@ console.log(`✅ docs test passed — every number in SPEC.md's size table check
     + 'version-dependent count needs its compiler beside it wherever the count appears');
   assert.equal(new Set(pktForge).size, 1,
     `the O1 packet names two toolchains: ${[...new Set(pktForge)].join(' and ')}`);
-  const wfPin = /foundry-toolchain@v1[\s\S]{0,200}?version:\s*v?(\d+\.\d+\.\d+)/
-    .exec(read('.github/workflows/forge.yml'));
-  assert(wfPin, 'the forge workflow has lost its pinned toolchain version');
-  assert.equal(pktForge[0], wfPin[1],
-    `the O1 packet freezes its count under forge v${pktForge[0]} while the workflow pins v${wfPin[1]}. `
+  const wfPin = pinnedFoundryVersion(read('.github/workflows/forge.yml'));
+  assert.equal(pktForge[0], wfPin,
+    `the O1 packet freezes its count under forge v${pktForge[0]} while the workflow pins v${wfPin}. `
     + 'A stale toolchain claim beside a frozen figure is worse than none: it tells a reader the count is '
     + 'reproducible under a compiler that is no longer the one that runs');
 

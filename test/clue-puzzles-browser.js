@@ -35,6 +35,7 @@ try {
   page.on('pageerror', (error) => errors.push(error.message));
   await page.addInitScript(token => { localStorage.setItem('omerta_token', token); for (const key of ['omerta_tour2', 'omerta_welcomed', 'omerta_alltabs']) localStorage.setItem(key, '1'); }, token);
   await page.goto(base, { waitUntil: 'domcontentloaded' });
+  await page.waitForFunction(() => window.OmertaGameReady === true);
   assert.equal(await page.evaluate(() => typeof window.renderOmertaCluePuzzle), 'function', 'the production page loads the clue renderer');
   await page.locator('#screen-main:not(.hidden)').waitFor();
   await page.evaluate(() => document.querySelectorAll('.modal-bg:not(.hidden)').forEach(element => element.classList.add('hidden')));
