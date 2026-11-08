@@ -434,8 +434,7 @@ console.log(`✅ Mounted-surface test passed — ${app.routes.length} registrati
 //
 //   • text compresses when the client asks, and MATERIALLY (a hook that ran and saved nothing would
 //     read exactly like a hook that works)
-//   • identity preserves the file's body after public metadata is added to the head — a client
-//     that cannot decode gzip must still get the complete playable console
+//   • identity preserves the reviewed markup; the game program transfers separately on entry
 //   • the gzip DECODES to the same bytes. A corrupt stream is the worst failure here: the page is
 //     blank and nothing 500s.
 //   • Vary: Accept-Encoding on BOTH branches, or a shared cache hands the compressed copy to a
@@ -449,12 +448,13 @@ console.log(`✅ Mounted-surface test passed — ${app.routes.length} registrati
   const GZ = { 'accept-encoding': 'gzip' };
   const ID = { 'accept-encoding': 'identity' };
   const get = (url, headers) => app.inject({ method: 'GET', url, headers });
+  const bodyOf = value => { const text = String(value).replaceAll('\r\n', '\n'); return text.slice(text.indexOf('</head>') + 7); };
   for (const name of ['defi', 'fee-flows', 'genesis-deploy']) {
     const expected = readFileSync(new URL('../public/' + name + '.html', import.meta.url));
     for (const path of ['/' + name, '/' + name + '.html']) {
       const page = await get(path, ID);
       assert.equal(page.statusCode, 200, 'Public crypto page must be reachable: ' + path);
-      assert.deepEqual(page.rawPayload, expected, 'Published page must match reviewed copy: ' + path);
+      assert.ok(bodyOf(page.body) === bodyOf(expected), 'Published page body must match reviewed copy after metadata enhancement: ' + path);
     }
   }
   for (const name of ['genesis-deploy-client.js', 'genesis-deploy-artifact.js',
@@ -474,11 +474,19 @@ console.log(`✅ Mounted-surface test passed — ${app.routes.length} registrati
   assert.equal(id.headers['content-encoding'], undefined, 'GET / must NOT compress for a client that asked for identity');
   // non-vacuity: a 1 MB shell that gzipped to 999 KB would satisfy "it compressed" and save nothing
   assert(raw.length > 200_000, `the shell is ${raw.length} bytes — this check is sized for the real one`);
-  assert(gz.rawPayload.length < raw.length * 0.6,
+  assert(gz.rawPayload.length < raw.length * 0.2,
     `GET / compressed to ${gz.rawPayload.length} of ${raw.length} — the hook ran but saved almost nothing`);
-  const source = raw.toString('utf8');
-  assert.ok(id.body.slice(id.body.indexOf('</head>') + 7) === source.slice(source.indexOf('</head>') + 7),
-    'metadata enhancement must preserve the complete document body');
+  const source = raw.toString('utf8').replaceAll('\r\n', '\n');
+  const authoredMarkup = bodyOf(source).split('<script src="/eth-staking.js')[0];
+  const publicMarkup = bodyOf(id.body).replace(/<p id="client-load-failure"[\s\S]*?<\/p>/, '')
+    .replace('id="screen-auth" class="landing"', 'id="screen-auth" class="landing hidden"');
+  assert.ok(publicMarkup.startsWith(authoredMarkup), 'Reviewed public and game markup remains intact before the deferred transport.');
+  const loaderUrl = id.body.match(/<script src="(\/landing-loader\.js\?v=[a-f0-9]+)"/)[1];
+  const loader = await get(loaderUrl, ID);
+  const runtimeUrl = JSON.parse(loader.body.match(/const CONFIG = (\{[^\n]+\});/)[1]).runtime;
+  const runtime = await get(runtimeUrl, ID);
+  assert.equal(runtime.body, source.match(/<script>\n(\(\(\) => \{[\s\S]*?)\n<\/script>\s*<\/body>/)[1],
+    'The deferred program must be exactly the reviewed canonical game source.');
   assert.deepEqual(zlib.gunzipSync(gz.rawPayload), id.rawPayload,
     'the gzipped shell must DECODE to the identity response — a corrupt stream is a blank page and no 500');
   for (const [name, r] of [['gzip', gz], ['identity', id]])
@@ -535,7 +543,7 @@ console.log(`✅ Mounted-surface test passed — ${app.routes.length} registrati
     'a sub-threshold payload must be left alone — gzip framing can make it bigger');
 
   console.log(`✅ the wire: the ${(raw.length / 1024).toFixed(0)} KB shell ships as ${(gz.rawPayload.length / 1024).toFixed(0)} KB and `
-    + `revalidates to a 304; identity is byte-exact; binary and sub-threshold payloads are untouched`);
+    + `revalidates to a 304; deferred runtime is byte-exact; binary and sub-threshold payloads are untouched`);
 }
 
 await app.close();

@@ -18,7 +18,7 @@ for (const [revision, tree] of [[source.revision, source.tree], [source.predeces
   assert.equal(git('rev-parse', revision + '^{tree}').trim(), tree);
 git('merge-base', '--is-ancestor', source.predecessor, source.revision);
 git('merge-base', '--is-ancestor', source.revision, 'HEAD');
-const scope = file => file === 'SPEC.md' || file === 'MARKETING-POSTS.md' || file === 'package.json' || file === 'schema.sql'
+const scope = file => file === 'SPEC.md' || file === 'MARKETING-POSTS.md' || file === 'package.json' || file === 'schema.sql' || file === 'render.yaml'
   || file === '.github/workflows/ci.yml' || /^(?:src|test|tools|public)\//.test(file);
 const excluded = new Set(['tools/site-basics-source-data.js', 'tools/enterprise-native-questing-inputs.js']);
 const changed = kind => git('diff', '--name-only', '--diff-filter=' + kind, '-z', source.predecessor, source.revision)
@@ -80,6 +80,13 @@ for (const [file, pin] of Object.entries(source.additions)) {
 for (const file of ['../src/server.js', 'src\\server.js', '__proto__', 'constructor', 'src/unapproved.js']) {
   const raw = 'unapproved source\n'; assert.throws(() => qualifySiteBasicsSource(file, raw));
   assert.strictEqual(siteBasicsHistoricalInput(file, raw), raw); refusals++;
+}
+// Historical readers preserve both established case-sensitive UTF-8 refusal contracts.
+const invalidUtf8 = Buffer.concat([Buffer.from(git('show', 'HEAD:package.json')), Buffer.from([0xff])]);
+for (const reader of [qualifySiteBasicsSource, siteBasicsHistoricalInput]) {
+  assert.throws(() => reader('package.json', invalidUtf8), error => error.code === 'ERR_ASSERTION'
+    && /Lossless UTF-8/.test(error.message) && /lossless UTF-8/.test(error.message));
+  refusals++;
 }
 assert.throws(() => git('grep', '-n', 'site-basics-source-transfer', '--', 'src'), error => error.status === 1);
 console.log(JSON.stringify({ phase: source.phase, authoredRevision: source.revision, positives, refusals,

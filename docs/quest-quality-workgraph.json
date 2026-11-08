@@ -33,7 +33,9 @@
     "test/quest-quality-content.js",
     "tools/quest-quality-studio.js",
     "tools/quest-quality-study.js",
-    "tools/quest-quality-workgraph.js"
+    "tools/quest-quality-workgraph.js",
+    "src/client-shell.js",
+    "public/landing-loader.js"
   ],
   "features": [
     {
@@ -42,7 +44,7 @@
       "title": "Independent inference",
       "dependsOn": [],
       "acceptance": "Resolve a conclusion by joining independent clues; copying a single sentence cannot satisfy the advanced proof.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-three-witnesses-v2/pack.json",
         "src/content/narrative.js"
@@ -51,10 +53,7 @@
         "test/quest-quality-content.js",
         "test/quest-quality-rules.js"
       ],
-      "executionIds": [
-        "quality-mw7dt65w-quest-quality-content",
-        "quality-mw7dtcg5-quest-quality-rules"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ02",
@@ -62,7 +61,7 @@
       "title": "Distinct quest identities",
       "dependsOn": [],
       "acceptance": "Each new case names and plays a distinct signature activity, central question and emotional turn.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "src/content/quest-quality-packs.js",
         "tools/quest-quality-studio.js"
@@ -71,10 +70,7 @@
         "test/quest-quality-content.js",
         "test/quest-quality-studio.js"
       ],
-      "executionIds": [
-        "quality-mw7dt65w-quest-quality-content",
-        "quality-mw7dtckh-quest-quality-studio"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ03",
@@ -82,7 +78,7 @@
       "title": "Private theories without suspicion",
       "dependsOn": [],
       "acceptance": "Saving, editing or clearing an actor's private draft changes no public revision, attempts, suspicion or NPC knowledge.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "src/content/quality-runtime.js",
         "public/ux-quest-quality.js"
@@ -95,14 +91,7 @@
         "test/quest-quality-postgres.js",
         "test/quest-quality-stateful.js"
       ],
-      "executionIds": [
-        "quality-mw7dt65w-quest-quality-content",
-        "quality-mw7dtd9y-quest-quality-runtime",
-        "quality-mw7dtgi9-quest-quality-api",
-        "quality-mw7dtjpp-quest-quality-browser",
-        "quality-mw7dty5h-quest-quality-postgres",
-        "quality-mw7du4c1-quest-quality-stateful"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ04",
@@ -113,7 +102,7 @@
         "QQ06"
       ],
       "acceptance": "The proof verifier accepts at least two authored sufficient evidence sets and rejects unsupported or unknown evidence.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "src/content/narrative.js",
         "src/content/runtime.js",
@@ -126,13 +115,7 @@
         "test/quest-quality-api.js",
         "test/quest-quality-browser.js"
       ],
-      "executionIds": [
-        "quality-mw7dt65w-quest-quality-content",
-        "quality-mw7dtcg5-quest-quality-rules",
-        "quality-mw7dtd9y-quest-quality-runtime",
-        "quality-mw7dtgi9-quest-quality-api",
-        "quality-mw7dtjpp-quest-quality-browser"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ05",
@@ -143,7 +126,7 @@
         "QQ30"
       ],
       "acceptance": "A player can finish once a sufficient proof is collected without visiting every optional lead.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-three-witnesses-v2/pack.json",
         "src/content/runtime.js"
@@ -152,10 +135,7 @@
         "test/quest-quality-content.js",
         "test/quest-quality-runtime.js"
       ],
-      "executionIds": [
-        "quality-mw7dt65w-quest-quality-content",
-        "quality-mw7dtd9y-quest-quality-runtime"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ06",
@@ -163,7 +143,7 @@
       "title": "Explicit world assumptions",
       "dependsOn": [],
       "acceptance": "Players can inspect the case's applicable clocks, suspect scope and world rules before reasoning.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "src/content/quality.js",
         "content/packs/quest-three-witnesses-v2/pack.json"
@@ -173,11 +153,7 @@
         "test/quest-quality-rules.js",
         "test/quest-quality-studio.js"
       ],
-      "executionIds": [
-        "quality-mw7dt65w-quest-quality-content",
-        "quality-mw7dtcg5-quest-quality-rules",
-        "quality-mw7dtckh-quest-quality-studio"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ07",
@@ -185,7 +161,7 @@
       "title": "Precise logic language",
       "dependsOn": [],
       "acceptance": "Authored quantifiers, conditions, negation and uncertainty survive projection and clause views.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "src/content/quality.js",
         "content/packs/quest-quality-truce/pack.json"
@@ -195,11 +171,7 @@
         "test/quest-quality-rules.js",
         "test/quest-quality-studio.js"
       ],
-      "executionIds": [
-        "quality-mw7dt65w-quest-quality-content",
-        "quality-mw7dtcg5-quest-quality-rules",
-        "quality-mw7dtckh-quest-quality-studio"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ08",
@@ -210,7 +182,7 @@
         "QQ07"
       ],
       "acceptance": "An absent expected record is usable evidence only with an authored established expectation and a checked source.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-three-witnesses-v2/pack.json"
       ],
@@ -218,10 +190,7 @@
         "test/quest-quality-content.js",
         "test/quest-quality-rules.js"
       ],
-      "executionIds": [
-        "quality-mw7dt65w-quest-quality-content",
-        "quality-mw7dtcg5-quest-quality-rules"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ09",
@@ -232,7 +201,7 @@
         "QQ04"
       ],
       "acceptance": "Wrong reasoning receives public-premise feedback without identifying secret correct items.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "src/content/runtime.js",
         "public/ux-quest-quality.js"
@@ -243,12 +212,7 @@
         "test/quest-quality-browser.js",
         "test/quest-quality-stateful.js"
       ],
-      "executionIds": [
-        "quality-mw7dt65w-quest-quality-content",
-        "quality-mw7dtd9y-quest-quality-runtime",
-        "quality-mw7dtjpp-quest-quality-browser",
-        "quality-mw7du4c1-quest-quality-stateful"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ10",
@@ -256,7 +220,7 @@
       "title": "Trustworthy narration",
       "dependsOn": [],
       "acceptance": "Direct narration is factual; uncertain or unreliable statements are visibly attributed.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "src/content/quality.js",
         "content/packs/quest-three-witnesses-v2/pack.json"
@@ -266,11 +230,7 @@
         "test/quest-quality-rules.js",
         "test/quest-quality-studio.js"
       ],
-      "executionIds": [
-        "quality-mw7dt65w-quest-quality-content",
-        "quality-mw7dtcg5-quest-quality-rules",
-        "quality-mw7dtckh-quest-quality-studio"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ11",
@@ -280,7 +240,7 @@
         "QQ02"
       ],
       "acceptance": "A playable alternative challenges the employer's premise and reaches a substantive resolution.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-three-witnesses-v2/pack.json",
         "content/packs/quest-quality-open-office/pack.json"
@@ -288,9 +248,7 @@
       "evaluations": [
         "test/quest-quality-content.js"
       ],
-      "executionIds": [
-        "quality-mw7dt65w-quest-quality-content"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ12",
@@ -298,7 +256,7 @@
       "title": "Player motives without morality scores",
       "dependsOn": [],
       "acceptance": "Players can choose their own motive without hidden morality or currency effects.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "src/content/quality-runtime.js",
         "public/ux-quest-quality.js",
@@ -307,9 +265,7 @@
       "evaluations": [
         "test/quest-quality-content.js"
       ],
-      "executionIds": [
-        "quality-mw7dt65w-quest-quality-content"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ13",
@@ -321,7 +277,7 @@
         "QQ41"
       ],
       "acceptance": "A witness can sincerely believe a false claim with an evidence-backed limitation and a playable correction.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-three-witnesses-v2/pack.json",
         "src/content/quality.js",
@@ -331,10 +287,7 @@
         "test/quest-quality-content.js",
         "test/quest-quality-rules.js"
       ],
-      "executionIds": [
-        "quality-mw7dt65w-quest-quality-content",
-        "quality-mw7dtcg5-quest-quality-rules"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ14",
@@ -344,16 +297,14 @@
         "QQ41"
       ],
       "acceptance": "An antagonist follows an observable authored principle across decisions.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-quality-open-office/pack.json"
       ],
       "evaluations": [
         "test/quest-quality-content.js"
       ],
-      "executionIds": [
-        "quality-mw7dt65w-quest-quality-content"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ15",
@@ -361,7 +312,7 @@
       "title": "Distinct NPC voices",
       "dependsOn": [],
       "acceptance": "Authored NPC dialogue has distinct diction and perspective in actual scenes.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-three-witnesses-v2/pack.json",
         "content/packs/quest-quality-night-edition/pack.json"
@@ -370,10 +321,7 @@
         "test/quest-quality-content.js",
         "test/quest-quality-studio.js"
       ],
-      "executionIds": [
-        "quality-mw7dt65w-quest-quality-content",
-        "quality-mw7dtckh-quest-quality-studio"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ16",
@@ -384,7 +332,7 @@
         "QQ42"
       ],
       "acceptance": "Decisive facts have reachable foreshadowing before the resolution; the reveal introduces no required new evidence.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "src/content/quality.js",
         "content/packs/quest-three-witnesses-v2/pack.json"
@@ -394,11 +342,7 @@
         "test/quest-quality-rules.js",
         "test/quest-quality-studio.js"
       ],
-      "executionIds": [
-        "quality-mw7dt65w-quest-quality-content",
-        "quality-mw7dtcg5-quest-quality-rules",
-        "quality-mw7dtckh-quest-quality-studio"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ17",
@@ -408,7 +352,7 @@
         "QQ16"
       ],
       "acceptance": "An investigated red herring receives a reachable explanation or closure.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-three-witnesses-v2/pack.json"
       ],
@@ -416,10 +360,7 @@
         "test/quest-quality-content.js",
         "test/quest-quality-studio.js"
       ],
-      "executionIds": [
-        "quality-mw7dt65w-quest-quality-content",
-        "quality-mw7dtckh-quest-quality-studio"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ18",
@@ -429,16 +370,14 @@
         "QQ11"
       ],
       "acceptance": "A reasoned disagreement is a completed outcome with retained consequences.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-quality-small-fire/pack.json"
       ],
       "evaluations": [
         "test/quest-quality-content.js"
       ],
-      "executionIds": [
-        "quality-mw7dt65w-quest-quality-content"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ19",
@@ -446,16 +385,14 @@
       "title": "Human scale behind conspiracies",
       "dependsOn": [],
       "acceptance": "A playable investigation resolves an apparent conspiracy into a specific human problem.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-quality-small-fire/pack.json"
       ],
       "evaluations": [
         "test/quest-quality-content.js"
       ],
-      "executionIds": [
-        "quality-mw7dt65w-quest-quality-content"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ20",
@@ -465,7 +402,7 @@
         "QQ06"
       ],
       "acceptance": "The case states a fixed external outcome and gives consequential choices over what remains controllable.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-quality-last-ferry/pack.json"
       ],
@@ -473,10 +410,7 @@
         "test/quest-quality-content.js",
         "test/quest-quality-studio.js"
       ],
-      "executionIds": [
-        "quality-mw7dt65w-quest-quality-content",
-        "quality-mw7dtckh-quest-quality-studio"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ21",
@@ -487,16 +421,14 @@
         "QQ20"
       ],
       "acceptance": "A known culprit case makes protecting legitimate dependants an actionable planning problem.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-quality-open-office/pack.json"
       ],
       "evaluations": [
         "test/quest-quality-content.js"
       ],
-      "executionIds": [
-        "quality-mw7dt65w-quest-quality-content"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ22",
@@ -504,16 +436,14 @@
       "title": "Systemic mysteries without villains",
       "dependsOn": [],
       "acceptance": "A systemic failure case repairs handoffs and tests the repair without inventing a villain.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-quality-payday/pack.json"
       ],
       "evaluations": [
         "test/quest-quality-content.js"
       ],
-      "executionIds": [
-        "quality-mw7dt65w-quest-quality-content"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ23",
@@ -525,7 +455,7 @@
         "QQ36"
       ],
       "acceptance": "A fictional agreement can be tested against clauses and authored boundary cases.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-quality-truce/pack.json"
       ],
@@ -534,11 +464,7 @@
         "test/quest-quality-rules.js",
         "test/quest-quality-studio.js"
       ],
-      "executionIds": [
-        "quality-mw7dt65w-quest-quality-content",
-        "quality-mw7dtcg5-quest-quality-rules",
-        "quality-mw7dtckh-quest-quality-studio"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ24",
@@ -546,16 +472,14 @@
       "title": "A contained legitimate work shift",
       "dependsOn": [],
       "acceptance": "A contained legitimate shift contains playable work decisions, interruptions and an end state.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-quality-night-edition/pack.json"
       ],
       "evaluations": [
         "test/quest-quality-content.js"
       ],
-      "executionIds": [
-        "quality-mw7dt65w-quest-quality-content"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ25",
@@ -566,7 +490,7 @@
         "QQ41"
       ],
       "acceptance": "Players assign a bounded question and method, receive the authored report, and review the evidence.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-quality-field-notes/pack.json",
         "src/content/quality-runtime.js",
@@ -576,10 +500,7 @@
         "test/quest-quality-content.js",
         "test/quest-quality-social.js"
       ],
-      "executionIds": [
-        "quality-mw7dt65w-quest-quality-content",
-        "quality-mw7du546-quest-quality-social"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ26",
@@ -587,16 +508,14 @@
       "title": "Fictional obligations network",
       "dependsOn": [],
       "acceptance": "A fictional favor/guarantee network can be inspected and resolved without real monetary effects.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-quality-favors/pack.json"
       ],
       "evaluations": [
         "test/quest-quality-content.js"
       ],
-      "executionIds": [
-        "quality-mw7dt65w-quest-quality-content"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ27",
@@ -606,16 +525,14 @@
         "QQ07"
       ],
       "acceptance": "A case translates different institutional uses of the same terms using contrasting examples.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-quality-shared-meaning/pack.json"
       ],
       "evaluations": [
         "test/quest-quality-content.js"
       ],
-      "executionIds": [
-        "quality-mw7dt65w-quest-quality-content"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ28",
@@ -626,7 +543,7 @@
         "QQ41"
       ],
       "acceptance": "Players preview recipients and explicitly route only evidence they know; NPC knowledge changes accordingly.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-quality-field-notes/pack.json",
         "src/content/quality-runtime.js"
@@ -638,13 +555,7 @@
         "test/quest-quality-browser.js",
         "test/quest-quality-stateful.js"
       ],
-      "executionIds": [
-        "quality-mw7dt65w-quest-quality-content",
-        "quality-mw7dtgi9-quest-quality-api",
-        "quality-mw7du546-quest-quality-social",
-        "quality-mw7dtjpp-quest-quality-browser",
-        "quality-mw7du4c1-quest-quality-stateful"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ29",
@@ -655,16 +566,14 @@
         "QQ41"
       ],
       "acceptance": "A case distinguishes player knowledge from character knowledge and offers sensible interventions.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-quality-last-ferry/pack.json"
       ],
       "evaluations": [
         "test/quest-quality-content.js"
       ],
-      "executionIds": [
-        "quality-mw7dt65w-quest-quality-content"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ30",
@@ -672,16 +581,14 @@
       "title": "Open lead order",
       "dependsOn": [],
       "acceptance": "Independent leads can be visited in either order while essential proof remains reachable.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-three-witnesses-v2/pack.json"
       ],
       "evaluations": [
         "test/quest-quality-content.js"
       ],
-      "executionIds": [
-        "quality-mw7dt65w-quest-quality-content"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ31",
@@ -691,7 +598,7 @@
         "QQ30"
       ],
       "acceptance": "Search indexes only revealed questions in the actor's own case.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "public/ux-quest-quality.js",
         "src/content/quality-runtime.js"
@@ -700,10 +607,7 @@
         "test/quest-quality-spoilers.js",
         "test/quest-quality-browser.js"
       ],
-      "executionIds": [
-        "quality-mw7du8sf-quest-quality-spoilers",
-        "quality-mw7dtjpp-quest-quality-browser"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ32",
@@ -713,7 +617,7 @@
         "QQ01"
       ],
       "acceptance": "A repeat procedure can be skipped after demonstrated mastery while new deduction remains required.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "src/content/runtime.js",
         "content/packs/quest-three-witnesses-v2/pack.json",
@@ -724,11 +628,7 @@
         "test/quest-quality-runtime.js",
         "test/quest-quality-browser.js"
       ],
-      "executionIds": [
-        "quality-mw7dt65w-quest-quality-content",
-        "quality-mw7dtd9y-quest-quality-runtime",
-        "quality-mw7dtjpp-quest-quality-browser"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ33",
@@ -739,7 +639,7 @@
         "QQ31"
       ],
       "acceptance": "Returning players see revealed facts, the current open question and a concise factual recap.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "public/ux-quest-quality.js",
         "src/content/quality-runtime.js"
@@ -749,11 +649,7 @@
         "test/quest-quality-spoilers.js",
         "test/quest-quality-browser.js"
       ],
-      "executionIds": [
-        "quality-mw7dtd9y-quest-quality-runtime",
-        "quality-mw7du8sf-quest-quality-spoilers",
-        "quality-mw7dtjpp-quest-quality-browser"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ34",
@@ -763,7 +659,7 @@
         "QQ03"
       ],
       "acceptance": "Players can pin and compare revealed evidence without automatic answer selection.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "public/ux-quest-quality.js",
         "src/content/quality-runtime.js"
@@ -772,10 +668,7 @@
         "test/quest-quality-runtime.js",
         "test/quest-quality-browser.js"
       ],
-      "executionIds": [
-        "quality-mw7dtd9y-quest-quality-runtime",
-        "quality-mw7dtjpp-quest-quality-browser"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ35",
@@ -785,7 +678,7 @@
         "QQ03"
       ],
       "acceptance": "Consequential actions show an intent preview; uncommitted drafts can be changed or cleared.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "public/ux-quest-quality.js",
         "src/content/quality-runtime.js"
@@ -796,12 +689,7 @@
         "test/quest-quality-browser.js",
         "test/quest-quality-stateful.js"
       ],
-      "executionIds": [
-        "quality-mw7dtd9y-quest-quality-runtime",
-        "quality-mw7dtgi9-quest-quality-api",
-        "quality-mw7dtjpp-quest-quality-browser",
-        "quality-mw7du4c1-quest-quality-stateful"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ36",
@@ -811,7 +699,7 @@
         "QQ07"
       ],
       "acceptance": "Clause views preserve the exact authored conditions, negation and uncertainty.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "public/ux-quest-quality.js",
         "src/content/quality.js"
@@ -821,11 +709,7 @@
         "test/quest-quality-rules.js",
         "test/quest-quality-browser.js"
       ],
-      "executionIds": [
-        "quality-mw7dt65w-quest-quality-content",
-        "quality-mw7dtcg5-quest-quality-rules",
-        "quality-mw7dtjpp-quest-quality-browser"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ37",
@@ -835,7 +719,7 @@
         "QQ03"
       ],
       "acceptance": "Each participant can privately record an impression or uncertainty and choose whether to share it.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "public/ux-quest-quality.js",
         "src/content/quality-runtime.js"
@@ -847,13 +731,7 @@
         "test/quest-quality-postgres.js",
         "test/quest-quality-stateful.js"
       ],
-      "executionIds": [
-        "quality-mw7dtd9y-quest-quality-runtime",
-        "quality-mw7du546-quest-quality-social",
-        "quality-mw7dtjpp-quest-quality-browser",
-        "quality-mw7dty5h-quest-quality-postgres",
-        "quality-mw7du4c1-quest-quality-stateful"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ38",
@@ -864,7 +742,7 @@
         "QQ37"
       ],
       "acceptance": "A current member can propose a permitted scene delegate; affected participants acknowledge before commitment and can safely leave.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "public/ux-quest-quality.js",
         "src/content/quality-runtime.js",
@@ -879,15 +757,7 @@
         "test/quest-quality-postgres.js",
         "test/quest-quality-stateful.js"
       ],
-      "executionIds": [
-        "quality-mw7dt65w-quest-quality-content",
-        "quality-mw7dtcg5-quest-quality-rules",
-        "quality-mw7dtgi9-quest-quality-api",
-        "quality-mw7du546-quest-quality-social",
-        "quality-mw7dtjpp-quest-quality-browser",
-        "quality-mw7dty5h-quest-quality-postgres",
-        "quality-mw7du4c1-quest-quality-stateful"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ39",
@@ -897,7 +767,7 @@
         "QQ38"
       ],
       "acceptance": "Participants receive meaningful spotlight opportunities and can delegate without overriding original role gates.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "public/ux-quest-quality.js",
         "src/content/runtime.js",
@@ -910,13 +780,7 @@
         "test/quest-quality-browser.js",
         "test/quest-quality-postgres.js"
       ],
-      "executionIds": [
-        "quality-mw7dt65w-quest-quality-content",
-        "quality-mw7dtcg5-quest-quality-rules",
-        "quality-mw7du546-quest-quality-social",
-        "quality-mw7dtjpp-quest-quality-browser",
-        "quality-mw7dty5h-quest-quality-postgres"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ40",
@@ -927,7 +791,7 @@
         "QQ48"
       ],
       "acceptance": "Each player opens the verdict/debrief individually; other participants can finish independently without leaking the unopened verdict.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "public/ux-quest-quality.js",
         "src/content/quality-runtime.js",
@@ -942,15 +806,7 @@
         "test/quest-quality-postgres.js",
         "test/quest-quality-stateful.js"
       ],
-      "executionIds": [
-        "quality-mw7dtd9y-quest-quality-runtime",
-        "quality-mw7dtgi9-quest-quality-api",
-        "quality-mw7du546-quest-quality-social",
-        "quality-mw7du8sf-quest-quality-spoilers",
-        "quality-mw7dtjpp-quest-quality-browser",
-        "quality-mw7dty5h-quest-quality-postgres",
-        "quality-mw7du4c1-quest-quality-stateful"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ41",
@@ -958,7 +814,7 @@
       "title": "NPC knowledge and belief ledger",
       "dependsOn": [],
       "acceptance": "Authors declare what each NPC knows, believes, conceals and can learn; impossible knowledge and unjustified disclosures fail validation.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "src/content/quality.js",
         "src/content/quality-runtime.js",
@@ -970,11 +826,7 @@
         "test/quest-quality-rules.js",
         "test/quest-quality-studio.js"
       ],
-      "executionIds": [
-        "quality-mw7dt65w-quest-quality-content",
-        "quality-mw7dtcg5-quest-quality-rules",
-        "quality-mw7dtckh-quest-quality-studio"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ42",
@@ -984,7 +836,7 @@
         "QQ41"
       ],
       "acceptance": "Author tooling links narrative promises to reachable payoffs and reports unresolved promises.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "src/content/quality.js",
         "tools/quest-quality-studio.js"
@@ -993,10 +845,7 @@
         "test/quest-quality-rules.js",
         "test/quest-quality-studio.js"
       ],
-      "executionIds": [
-        "quality-mw7dtcg5-quest-quality-rules",
-        "quality-mw7dtckh-quest-quality-studio"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ43",
@@ -1007,16 +856,14 @@
         "QQ42"
       ],
       "acceptance": "Changing a fact previews dependent clues, dialogue, proofs and other references.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "tools/quest-quality-studio.js"
       ],
       "evaluations": [
         "test/quest-quality-studio.js"
       ],
-      "executionIds": [
-        "quality-mw7dtckh-quest-quality-studio"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ44",
@@ -1026,7 +873,7 @@
         "QQ42"
       ],
       "acceptance": "Author tooling reports branch costs and reconvergence while preserving authored consequences.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "src/content/quality.js",
         "tools/quest-quality-studio.js"
@@ -1035,10 +882,7 @@
         "test/quest-quality-rules.js",
         "test/quest-quality-studio.js"
       ],
-      "executionIds": [
-        "quality-mw7dtcg5-quest-quality-rules",
-        "quality-mw7dtckh-quest-quality-studio"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ45",
@@ -1049,16 +893,14 @@
         "QQ43"
       ],
       "acceptance": "Authors preview scenes immediately with prior-state presets using the same validation and projection rules.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "tools/quest-quality-studio.js"
       ],
       "evaluations": [
         "test/quest-quality-studio.js"
       ],
-      "executionIds": [
-        "quality-mw7dtckh-quest-quality-studio"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ46",
@@ -1068,7 +910,7 @@
         "QQ33"
       ],
       "acceptance": "An opted-in tester can submit what happened, why and what to do next; reports label evidence type and preserve raw responses.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "public/ux-quest-quality.js",
         "src/content/quality-runtime.js",
@@ -1082,13 +924,7 @@
         "test/quest-quality-stateful.js"
       ],
       "researchStatus": "awaiting_user_arranged_testers",
-      "executionIds": [
-        "quality-mw7dtd9y-quest-quality-runtime",
-        "quality-mw7dtgi9-quest-quality-api",
-        "quality-mw7dtjpp-quest-quality-browser",
-        "quality-mw7dubr2-quest-quality-study",
-        "quality-mw7du4c1-quest-quality-stateful"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ47",
@@ -1100,7 +936,7 @@
         "QQ45"
       ],
       "acceptance": "Authored tests exercise protecting a suspect, distrusting the employer and competing loyalties through real runtime paths.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "tools/quest-quality-studio.js",
         "test/quest-quality-content.js"
@@ -1109,10 +945,7 @@
         "test/quest-quality-content.js",
         "test/quest-quality-studio.js"
       ],
-      "executionIds": [
-        "quality-mw7dt65w-quest-quality-content",
-        "quality-mw7dtckh-quest-quality-studio"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ48",
@@ -1122,7 +955,7 @@
         "QQ10"
       ],
       "acceptance": "Author tooling flags spoiler-bearing titles, rewards, markers and errors before publication.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "tools/quest-quality-studio.js",
         "src/content/quality.js",
@@ -1133,11 +966,7 @@
         "test/quest-quality-spoilers.js",
         "test/quest-quality-studio.js"
       ],
-      "executionIds": [
-        "quality-mw7dtcg5-quest-quality-rules",
-        "quality-mw7du8sf-quest-quality-spoilers",
-        "quality-mw7dtckh-quest-quality-studio"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ49",
@@ -1148,7 +977,7 @@
         "QQ44"
       ],
       "acceptance": "Author tooling measures reading, reasoning, repetition and travel; reports chores separately from quiet or comic beats.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "tools/quest-quality-studio.js",
         "src/content/quality.js"
@@ -1157,10 +986,7 @@
         "test/quest-quality-rules.js",
         "test/quest-quality-studio.js"
       ],
-      "executionIds": [
-        "quality-mw7dtcg5-quest-quality-rules",
-        "quality-mw7dtckh-quest-quality-studio"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ50",
@@ -1170,7 +996,7 @@
         "QQ46"
       ],
       "acceptance": "An opted-in tester can submit enjoyment, understanding and unaided recall only after at least 24 hours of server time; results are not fabricated.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "public/ux-quest-quality.js",
         "src/content/quality-runtime.js",
@@ -1184,13 +1010,7 @@
         "test/quest-quality-stateful.js"
       ],
       "researchStatus": "awaiting_user_arranged_testers",
-      "executionIds": [
-        "quality-mw7dtd9y-quest-quality-runtime",
-        "quality-mw7dtgi9-quest-quality-api",
-        "quality-mw7dtjpp-quest-quality-browser",
-        "quality-mw7dubr2-quest-quality-study",
-        "quality-mw7du4c1-quest-quality-stateful"
-      ]
+      "executionIds": []
     }
   ],
   "executions": [

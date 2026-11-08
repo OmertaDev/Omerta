@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `4b84b4e219b1`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `92dae5ccfbde`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 5454 |
+| Commits in clone | 5457 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-11-08 — Bind current native admission to reviewed quest quality source |
+| Latest commit | 2026-11-08 — Merge pull request #321 from OmertaDev/codex/site-followups-production-20261107 |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 4332 |
+| OmertaDev | 4335 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 139 |
@@ -35,13 +35,13 @@
 | knowledge/generated/graph-summary.md | 907 | historical |
 | knowledge/generated/graph.json | 907 | historical |
 | knowledge/generated/inventory.md | 907 | historical |
-| [SPEC.md](../../SPEC.md) | 640 | yes |
+| [SPEC.md](../../SPEC.md) | 643 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 510 | yes |
 | [src/server.js](../../src/server.js) | 460 | yes |
 | knowledge/generated/documents.md | 398 | historical |
 | [schema.sql](../../schema.sql) | 384 | yes |
-| [package.json](../../package.json) | 369 | yes |
+| [package.json](../../package.json) | 370 | yes |
 | knowledge/generated/modules.md | 311 | historical |
 | [BALANCE.md](../../BALANCE.md) | 258 | yes |
 | knowledge/generated/graph.mmd | 248 | historical |
@@ -58,9 +58,9 @@
 | [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | 128 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 127 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
-| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | 121 | yes |
+| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | 123 | yes |
 | [public/wiki.html](../../public/wiki.html) | 104 | yes |
-| [src/agentgateway.js](../../src/agentgateway.js) | 101 | yes |
+| [src/agentgateway.js](../../src/agentgateway.js) | 100 | yes |
 | [test/levers.js](../../test/levers.js) | 98 | yes |
 | [test/growth.js](../../test/growth.js) | 95 | yes |
 | [test/migrate.js](../../test/migrate.js) | 94 | yes |

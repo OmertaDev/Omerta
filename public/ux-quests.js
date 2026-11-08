@@ -470,7 +470,16 @@
       if (error) { const alert = el('p', 'quest-error', error); alert.setAttribute('role', 'alert'); nodes.push(alert); }
       if (loading && !(view === 'cases' ? board : view === 'community' ? workshop : legacy)) nodes.push(el('p', 'quest-muted', 'Opening the file…'));
       else nodes.push(view === 'cases' ? caseFiles() : view === 'community' ? workshopPanel() : legacyPanel());
-      root.replaceChildren(...nodes); root.setAttribute('aria-busy', String(loading || busy));
+      root.replaceChildren(...nodes);
+      // Keep issued-action forms stable during a commit. Private editors retain newer local
+      // text while their submitted snapshot is in flight; a reply never commits those edits.
+      if (busy) {
+        root.querySelectorAll('input,textarea,select').forEach(control => {
+          if (!control.closest('[data-quality-section="workbench"],[data-quality-section="impression"]')) control.disabled = true;
+        });
+        root.querySelectorAll('[data-quest-quality] button').forEach(control => { control.disabled = true; });
+      }
+      root.setAttribute('aria-busy', String(loading || busy));
       document.dispatchEvent(new CustomEvent('omerta:ux-panels-changed'));
       if (focused?.label) {
         const target = [...root.querySelectorAll('input,textarea,select')].find(node => node.getAttribute('aria-label') === focused.label);

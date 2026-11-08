@@ -555,7 +555,9 @@
     }
     const pages = new Map();
     for (const row of data.rows || []) {
-      const label = row.event === 'cta' ? `${row.page} → ${row.target === 'guest_start' ? 'Play as guest' : row.target}` : row.page;
+      const completion = row.target === 'signup_success' ? 'Guest signups' : 'First-job milestones claimed';
+      const label = row.event === 'cta' ? `${row.page} → ${row.target === 'guest_start' ? 'Play as guest' : row.target}`
+        : row.event === 'completion' ? completion : row.page;
       const key = `${row.event}:${label}`;
       const previous = pages.get(key);
       pages.set(key, { label, event: row.event, count: (previous?.count || 0) + Number(row.count || 0) });
@@ -563,8 +565,10 @@
     const top = [...pages.values()].sort((a, b) => b.count - a.count).slice(0, 12);
     panel.innerHTML = `<div class="row"><span class="k">page views</span><span class="v">${fmt(data.totals.pageviews)}</span></div>`
       + `<div class="row"><span class="k">public CTA clicks</span><span class="v">${fmt(data.totals.ctaClicks)}</span></div>`
-      + `<div class="note">Opted-in counts since ${esc(data.since)}. Browser privacy signals are respected. These are event totals, not unique visitors.</div>`
-      + (top.length ? top.map(row => `<div class="row"><span class="k">${esc(row.label)}${row.event === 'cta' ? ' · clicks' : ' · views'}</span><span class="v">${fmt(row.count)}</span></div>`).join('')
+      + `<div class="row"><span class="k">guest signups</span><span class="v">${fmt(data.totals.guestSignups || 0)}</span></div>`
+      + `<div class="row"><span class="k">first-job milestones claimed</span><span class="v">${fmt(data.totals.firstJobMilestones || 0)}</span></div>`
+      + `<div class="note">Opted-in counts since ${esc(data.since)}. First-job milestones are counted when their one-time reward is claimed. Browser privacy signals are respected. These are event totals, not unique visitors or conversion rates.</div>`
+      + (top.length ? top.map(row => `<div class="row"><span class="k">${esc(row.label)}${row.event === 'cta' ? ' · clicks' : row.event === 'completion' ? ' · completions' : ' · views'}</span><span class="v">${fmt(row.count)}</span></div>`).join('')
         : '<div class="note">No optional counts yet. Visitors can enable them in Analytics choices.</div>');
   }
 

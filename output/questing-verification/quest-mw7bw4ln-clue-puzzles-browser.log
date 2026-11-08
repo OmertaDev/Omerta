@@ -1,0 +1,6 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+{"component":"player-command","phase":"request","correlationId":"9b193f30-fe4f-43e6-b50b-6bb55d568b5f"}
+{"component":"player-command","phase":"authorization","correlationId":"9b193f30-fe4f-43e6-b50b-6bb55d568b5f","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"9b193f30-fe4f-43e6-b50b-6bb55d568b5f","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"9b193f30-fe4f-43e6-b50b-6bb55d568b5f","statusCode":409,"elapsedMs":5}
+clue browser: authenticated production Streets renderer/action, all four real deduction interactions, hints, wrong-answer recovery, casket completion and mobile fit passed

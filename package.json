@@ -7,7 +7,7 @@
   },
   "scripts": {
     "test:site": "node test/site-basics-source-transfer.js && node test/site-seo.js && node test/site-basics.js && node test/site-analytics.js && node test/site-analytics-isolation.js",
-    "test:site:browser": "node test/site-entry-browser.js",
+    "test:site:browser": "node test/site-entry-browser.js && node test/client-shell-browser.js",
     "test:player-experience": "node test/player-experience.js && node test/player-experience-client.js && node test/player-experience-api.js && npm run test:decision-guide",
     "test:agent-economy-commerce": "node test/commerce-source-compatibility.js && node test/commerce-current-native-guard.js && node test/saleattribution.js && node test/saleattribution-witness.js && node test/saleattribution-expiry.js && node test/saleattribution-api.js && node test/saleattribution-estate.js && node test/saleattribution-native-guard.js && node test/merchantloyalty.js && node test/merchantloyalty-accounting.js && node test/merchantloyalty-boundary.js && node test/merchantloyalty-expiry.js && node test/merchantloyalty-estate.js && node test/merchantloyalty-api.js && node test/merchantloyalty-native-guard.js && node test/shoppingbasket.js && node test/shoppingbasket-boundary.js && node test/shoppingbasket-atomicity.js && node test/shoppingbasket-finalization.js && node test/shoppingbasket-expiry.js && node test/shoppingbasket-estate.js && node test/shoppingbasket-api.js && node test/shoppingbasket-native-guard.js && node test/eventmarkets.js && node test/eventmarkets-boundary.js && node test/eventmarkets-integration.js && node test/commercialcampaigns-contracts.js && node test/commercialcampaigns-descriptors.js && node test/commercialcampaigns-metadata.js && node test/commerce-release-phase2-migration-catalog.js",
     "test:agent-economy-commerce:postgres": "node tools/commerce-native.js --ci",
@@ -318,7 +318,7 @@
     "test:eth-staking:browser": "node test/eth-staking.js --browser",
     "test:questing": "node test/content-narrative.js && node test/content-narrative-security.js && node test/content-casework.js && node test/quest-saga.js && node test/quest-saga-social.js && node test/quest-specialist.js && node test/quest-workshop.js && node test/clue-puzzles.js && node test/content-api.js && npm run test:quest-quality",
     "test:questing:browser": "node test/quest-experience-browser.js && node test/clue-puzzles-browser.js && node test/quest-quality-browser.js",
-    "questing:check": "node tools/questing-content.js check && node tools/questing-workgraph.js check && node tools/quest-quality-workgraph.js check",
+    "questing:check": "node tools/questing-content.js check && node tools/questing-workgraph.js check --complete && node tools/quest-quality-workgraph.js check",
     "test:questing:postgres": "node test/questing-postgres.js && node test/quest-quality-postgres.js",
     "test:quest-quality": "node test/quest-quality-source-transfer.js && node test/quest-quality-rules.js && node test/quest-quality-stateful.js && node test/quest-quality-api.js && node test/quest-quality-runtime.js && node test/quest-quality-social.js && node test/quest-quality-spoilers.js && node test/quest-quality-content.js && node test/quest-quality-studio.js && node test/quest-quality-study.js",
     "quest-quality:verify": "node tools/quest-quality-workgraph.js verify",

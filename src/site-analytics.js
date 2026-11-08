@@ -8,8 +8,15 @@ export const SITE_ANALYTICS_PAGES = Object.freeze([
 ]);
 const pages = SITE_ANALYTICS_PAGES;
 const targets = Object.freeze(['/', '/wiki', '/arena', '/play', '/sale', '/path', '/agents', '/defi', '/fee-flows', '/guides/getting-started', 'guest_start']);
+const completionTargets = Object.freeze(['signup_success', 'first_job_completed']);
 export const SITE_ANALYTICS_RETENTION_DAYS = 90;
 const counterPrefix = 'website_count:';
+
+function validDimensions(page, event, target) {
+  return pages.includes(page) && (event === 'pageview' ? target === ''
+    : event === 'cta' ? targets.includes(target)
+      : event === 'completion' && page === '/' && completionTargets.includes(target));
+}
 
 function dailyCounter(row, since, today) {
   if (!row.id.startsWith(counterPrefix)) return null;
@@ -18,8 +25,7 @@ function dailyCounter(row, since, today) {
   if (!Array.isArray(dimensions) || dimensions.length !== 4) return null;
   const [day, page, event, target] = dimensions;
   if (typeof day !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(day) || day < since || day > today
-    || !pages.includes(page) || !['pageview', 'cta'].includes(event)
-    || (event === 'pageview' ? target !== '' : !targets.includes(target))) return null;
+    || !validDimensions(page, event, target)) return null;
   const midnight = new Date(`${day}T00:00:00.000Z`);
   const count = Number(row.props);
   if (!Number.isFinite(midnight.getTime()) || midnight.toISOString().slice(0, 10) !== day
@@ -49,9 +55,8 @@ export function registerSiteAnalytics(app, { pool, modAuth, baseUrl }) {
     const body = req.body;
     if (!body || typeof body !== 'object' || Array.isArray(body)
       || Object.keys(body).some(key => !['consent', 'page', 'event', 'target'].includes(key))
-      || body.consent !== true || !pages.includes(body.page)
-      || !['pageview', 'cta'].includes(body.event)
-      || (body.event === 'pageview' ? body.target !== undefined : !targets.includes(body.target)))
+      || body.consent !== true || (body.event === 'pageview' && body.target !== undefined)
+      || !validDimensions(body.page, body.event, body.target || ''))
       return reply.code(400).send({ error: 'analytics_event' });
     const day = new Date().toISOString().slice(0, 10);
     const id = counterPrefix + JSON.stringify([day, body.page, body.event, body.target || '']);
@@ -70,7 +75,9 @@ export function registerSiteAnalytics(app, { pool, modAuth, baseUrl }) {
         || a.event.localeCompare(b.event) || a.target.localeCompare(b.target));
     return { since, retentionDays: SITE_ANALYTICS_RETENTION_DAYS, consent: 'opt-in',
       totals: { pageviews: rows.filter(row => row.event === 'pageview').reduce((sum, row) => sum + Number(row.count), 0),
-        ctaClicks: rows.filter(row => row.event === 'cta').reduce((sum, row) => sum + Number(row.count), 0) },
+        ctaClicks: rows.filter(row => row.event === 'cta').reduce((sum, row) => sum + Number(row.count), 0),
+        guestSignups: rows.filter(row => row.event === 'completion' && row.target === 'signup_success').reduce((sum, row) => sum + row.count, 0),
+        firstJobMilestones: rows.filter(row => row.event === 'completion' && row.target === 'first_job_completed').reduce((sum, row) => sum + row.count, 0) },
       rows };
   });
 }

@@ -167,7 +167,7 @@ services:
                                       # and keep devDependencies (playwright-core) OUT of the prod image.
                                       # Optional deps (@resvg/resvg-js) still install, so PNG cards work.
     startCommand: npm start
-    healthCheckPath: /             # Render pings this; the homepage returns 200 when the server is healthy
+    healthCheckPath: /health       # Readiness checks database connectivity; worker liveness remains informational.
                                    # (NOT /v1/session — that requires a login and returns 401, failing the check)
     # Releases are exact-SHA, maintenance-gated manual cutovers. Keep Blueprint sync aligned with the
     # dashboard: a merge must never start an API deploy before the operator establishes the drain.
