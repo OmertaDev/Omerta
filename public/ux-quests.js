@@ -19,6 +19,10 @@
     const districtTabs = new Set(['streets', 'city', 'map', 'fieldwork']);
     const pending = new Map(), local = new Map(), openSections = new Set(), interactionDrafts = new Map();
     const state = () => getState() || {};
+    const qualityUX = window.createOmertaQuestQuality?.({ getState,
+      onOperation: (instance, payload, label) => mutate('/v1/content/instances/' + encode(instance.id) + '/quality', {
+        expectedRevision: instance.revision, expectedQualityRevision: instance.quality.revision, ...payload,
+      }, label), onSubmit: submitAction, repaint: () => paint() });
     const identity = () => [String(state().session?.accountId || state().me?.accountId || ''), String(state().me?.id || '')];
     const saved = () => workspace?.get('quests', {}) || local.get(owner) || {};
     const save = patch => { const next = { ...saved(), ...patch }; local.set(owner, next); workspace?.set('quests', next); };
@@ -28,6 +32,7 @@
       if (next !== owner || character !== actor) {
         owner = next; actor = character; epoch++; board = workshop = legacy = mystery = null; selected = ''; view = 'cases';
         loading = busy = false; error = ''; legacyReadAt = districtAttemptAt = 0; requestedCase = ''; pending.clear(); openSections.clear(); interactionDrafts.clear(); root?.remove(); root = null; districtRoot?.remove(); districtRoot = null;
+        qualityUX?.reset();
       }
       return !!owner && !!actor && !destroyed;
     }
@@ -235,6 +240,7 @@
     function runFile(instance) {
       const root = el('div', 'quest-run'); root.dataset.questInstance = instance.id;
       root.append(recap(instance));
+      if (instance.quality) { const workbench = qualityUX?.render(instance); if (workbench) root.append(workbench); }
       if (instance.agenda?.prompt) { const agenda = el('aside', 'quest-private-agenda'); agenda.append(el('strong', '', 'Your private agenda'), el('p', '', instance.agenda.prompt), el('small', 'quest-muted', instance.agenda.completed ? 'Your objective is recorded as complete.' : 'This objective is private until the case debrief.')); root.append(agenda); }
       if (instance.suspicion != null) {
         const value = typeof instance.suspicion === 'object' ? instance.suspicion.value ?? instance.suspicion.current : instance.suspicion;
@@ -248,7 +254,7 @@
         root.append(el('p', 'quest-complete', 'Case closed. Your decisions are on the record.'));
         for (const award of list(instance.awards?.mine)) root.append(el('p', '', (award.title || words(award.kind)) + ' · ' + words(award.state)));
         if (list(instance.awards?.mine).some(award => award.state === 'pending')) root.append(button('Claim my case record', () => mutate('/v1/content/instances/' + encode(instance.id) + '/claim', { expectedRevision: instance.revision }, 'Claim case record')));
-        if (list(instance.debrief).length) { const debrief = el('div'); for (const entry of instance.debrief) debrief.append(el('p', '', (entry.name || words(entry.roleId)) + ': ' + entry.prompt + ' · ' + (entry.completed ? 'Objective fulfilled' : 'Objective not fulfilled'))); root.append(section(instance.id + ':debrief', 'The party’s private perspectives', debrief)); }
+        if (!instance.quality && list(instance.debrief).length) { const debrief = el('div'); for (const entry of instance.debrief) debrief.append(el('p', '', (entry.name || words(entry.roleId)) + ': ' + entry.prompt + ' · ' + (entry.completed ? 'Objective fulfilled' : 'Objective not fulfilled'))); root.append(section(instance.id + ':debrief', 'The party’s private perspectives', debrief)); }
       } else {
         for (const item of list(instance.actions)) root.append(issuedAction(instance, item));
         if (!list(instance.actions).length) root.append(el('p', 'quest-muted', 'No move is issued to your role yet. Another contribution may be needed.'));
@@ -271,11 +277,13 @@
       return mutate('/v1/content/instances/' + encode(instance.id) + '/act', { expectedRevision: instance.revision, actionId: item.id, ...payload }, label || item.title || 'Continue case');
     }
     function issuedAction(instance, item) {
-      const root = el('section', 'quest-action'); root.dataset.questAction = item.id;
+      const root = el('section', 'quest-action'); root.dataset.questAction = item.id; if (item.nodeId) root.dataset.questNode = item.nodeId;
       root.append(el('span', 'quest-kicker', item.interaction ? words(item.interaction.kind) : words(item.kind)), el('h4', '', item.title || 'Continue the case'));
+      if (instance.quality && item.spotlight?.title) root.append(el('p', 'quest-muted', item.spotlight.title + ' has the spotlight; any participant can volunteer.'));
       if (item.prompt) root.append(el('p', 'quest-prompt', item.prompt));
       if (item.feedback) { const feedback = el('p', 'quest-attempt-feedback', item.feedback); feedback.setAttribute('role', 'status'); root.append(feedback); }
       if (item.kind === 'start_instance') root.append(button('Start the case', () => submitAction(instance, item, {}, 'Start the case')));
+      else if (item.kind === 'choose' && instance.quality && qualityUX) root.append(qualityUX.choice(instance, item));
       else if (item.kind === 'choose') {
         const choices = el('div', 'quest-choices');
         for (const choice of list(item.options)) {
@@ -283,6 +291,9 @@
           pick.disabled = busy || choice.available === false; wrap.append(pick, blockers(choice.blockedBy)); choices.append(wrap);
         }
         root.append(choices);
+      } else if (item.submissionKind === 'proof_sets') {
+        if (instance.quality && qualityUX) root.append(qualityUX.interaction(instance, item));
+        else root.append(el('p', 'quest-muted', 'The evidence-backed deduction interface could not be opened. Refresh the case file.'));
       } else if (item.interaction) root.append(interactionForm(instance, item));
       else if (item.kind === 'solve') {
         const form = el('form', 'quest-form'), answer = field('Your answer'); answer.input.required = true; answer.input.autocomplete = 'off'; answer.input.maxLength = 2000;
@@ -474,6 +485,13 @@
       if (state().currentTab !== 'desk') return;
       paint(); if (!(view === 'cases' ? board : view === 'community' ? workshop : legacy) && !loading && !error) load();
     }
-    return { render, observe, reloadWorkspace() { if (scope()) { paint(); paintDistrictAftermath(); } }, destroy() { destroyed = true; epoch++; pending.clear(); root?.remove(); root = null; districtRoot?.remove(); districtRoot = null; } };
+    const openQualityCase = event => {
+      if (!scope() || !list(board?.instances).some(instance => instance.id === event.detail?.instanceId && instance.quality)) return;
+      selected = 'run:' + event.detail.instanceId; view = 'cases'; paint();
+      const target = root?.querySelector('.quest-quality-heading h4');
+      if (target) { target.tabIndex = -1; target.focus(); target.scrollIntoView({ block: 'start' }); }
+    };
+    document.addEventListener('omerta:quality-case', openQualityCase);
+    return { render, observe, reloadWorkspace() { if (scope()) { paint(); paintDistrictAftermath(); } }, destroy() { destroyed = true; epoch++; pending.clear(); qualityUX?.reset(); document.removeEventListener('omerta:quality-case', openQualityCase); root?.remove(); root = null; districtRoot?.remove(); districtRoot = null; } };
   };
 })();

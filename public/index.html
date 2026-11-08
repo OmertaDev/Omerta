@@ -1305,6 +1305,7 @@
 <link rel="stylesheet" href="/ux-identity.css?v=20261025-1">
 <link rel="stylesheet" href="/ux-story.css?v=20261025-1">
 <link rel="stylesheet" href="/ux-quests.css?v=20261106-1">
+<link rel="stylesheet" href="/ux-quest-quality.css?v=20261107-1">
 <link rel="stylesheet" href="/ux-clues.css?v=20261106-1">
 <link rel="stylesheet" href="/ux-community.css?v=20261025-1">
 <link rel="stylesheet" href="/ux-tactics.css?v=20261024-2">
@@ -1786,7 +1787,8 @@
 <script src="/ux-tools.js?v=20261025-1"></script>
 <script src="/ux-identity.js?v=20261025-1"></script>
 <script src="/ux-story.js?v=20261025-1"></script>
-<script src="/ux-quests.js?v=20261106-1"></script>
+<script src="/ux-quest-quality.js?v=20261107-1"></script>
+<script src="/ux-quests.js?v=20261107-1"></script>
 <script src="/ux-clues.js?v=20261106-1"></script>
 <script src="/ux-community.js?v=20261025-1"></script>
 <script src="/ux-tactics.js?v=20261105-noir-release"></script>
@@ -2674,6 +2676,7 @@
     if (Array.isArray(body?.claimed) && body.instance)
       return `case record claimed: ${body.claimed.map((item) => txt(item.title || item.kind)).join(', ') || 'filed'}`;
     if (body?.instance?.namespace && body.instance?.title) {
+      if (body.instance.quality) return `case file updated: ${txt(body.instance.title)}. Review your recorded changes in the investigation workbench.`;
       if (body.instance.status === 'completed') return `case closed: ${txt(body.instance.title)}. Your ending is on the permanent record.`;
       if (body.instance.status === 'active') return `case advanced: ${txt(body.instance.title)}. The next issued move is on the Desk.`;
       return `party file updated: ${txt(body.instance.title)}. ${body.instance.members?.length || 1} seat${body.instance.members?.length === 1 ? '' : 's'} filled.`;
@@ -8079,6 +8082,7 @@
     </li>`).join('')}</ol>`;
   }
   function deskIssuedActions(instance) {
+    if (instance.quality && instance.status !== 'forming') return `<section class="desk-prompt"><span class="desk-kicker">Investigation workbench</span><h3>Review your reasoning before committing.</h3><p>Your private drafts, evidence and decision previews are in the case file below.</p><button class="act prime" type="button" data-desk-quality-case="${esc(instance.id)}">Open investigation workbench</button></section>`;
     const actions = deskList(instance.actions);
     if (!actions.length) return instance.status === 'active'
       ? `<div class="desk-empty desk-empty--compact"><b>No move is issued to you.</b><span>Another party role may need to act before this file advances.</span></div>` : '';
@@ -8277,6 +8281,9 @@
     const board = deskState.board;
     if (!panel) return;
     panel.querySelectorAll('[data-desk-reload]').forEach((button) => { button.onclick = () => reloadContentDesk(); });
+    panel.querySelectorAll('[data-desk-quality-case]').forEach((button) => {
+      button.onclick = () => document.dispatchEvent(new CustomEvent('omerta:quality-case', { detail: { instanceId: button.dataset.deskQualityCase } }));
+    });
     panel.querySelectorAll('[data-desk-view]').forEach((button) => {
       button.onclick = () => { deskState.view = button.dataset.deskView; drawContentDesk(); };
     });
