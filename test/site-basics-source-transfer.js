@@ -23,7 +23,8 @@ const excluded = new Set(['tools/site-basics-source-data.js', 'tools/enterprise-
 const changed = kind => git('diff', '--name-only', '--diff-filter=' + kind, '-z', source.predecessor, source.revision)
   .split('\0').filter(file => scope(file) && !excluded.has(file));
 assert.deepEqual(Object.keys(source.files), changed('M'), 'Every modified website comparison domain is independently pinned');
-assert.deepEqual(Object.keys(source.additions), changed('A').filter(file => /\.(?:js|json|html|css|sql)$/.test(file)),
+assert.deepEqual(Object.keys(source.additions), changed('A').filter(file => /\.(?:js|json|html|css|sql)$/.test(file)
+  || file === 'tools/install-foundry-verified.sh'),
   'All new text inputs are admitted as actual additions without historical qualification');
 assert.equal(fs.readFileSync(new URL('../tools/site-basics-source-data.js', import.meta.url), 'utf8').replaceAll('\r\n', '\n'),
   siteBasicsSourceDataBytes(source), 'The only self-reference is complete generated data without executable additions');

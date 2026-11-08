@@ -144,7 +144,8 @@ const html = decomment(readFileSync(new URL('../public/index.html', import.meta.
       const describe = () => 'Completed', cineFor = () => null, revealFor = noop, sfx = noop, bragText = () => null;
       const busy = { setAttribute: noop, removeAttribute: noop, classList: { add: noop, remove: noop } };
       const document = { body: { style: {} } }, $ = () => node;
-      const analyticsResults = [], window = { OmertaSiteAnalytics: { firstJobResult: (...args) => analyticsResults.push(args) } };
+      const analyticsResults = [];
+      globalThis.OmertaSiteAnalytics = { firstJobResult: (...args) => analyticsResults.push(args) };
       const api = async () => ({ code: 200, body: {}, replayed: false });
       const refresh = async () => {
         if (${refreshCode} === 200 && !${ignored} && ${JSON.stringify(path)}.includes('/travel/')) {

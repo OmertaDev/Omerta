@@ -4134,7 +4134,82 @@ scopedSocialContext = async function(db) {
   assert.throws(()=>assertOwnedLockSetup(ownedSetupCore.replace(expectedOwnedLockSetup,expectedOwnedLockSetup+expectedOwnedLockSetup)),'Duplicate owned lock setup must reject');
   assert.equal(nativeShape(coreParts.header), "  pgcheck_core:\n    if: ${{ !inputs.tail_only }}\n    name: native core (${{ matrix.postgres }})\n    runs-on: ubuntu-latest\n    timeout-minutes: 120\n    strategy:\n      fail-fast: false\n      matrix:\n        postgres: ['16', '18.4']\n    services:\n      postgres:\n        image: ${{ matrix.postgres == '16' && 'docker.io/library/postgres@sha256:ca0bd484cb98bf4b24eb1010e73fb3fcbd6714d240fbc1a10eea5b7dbecb641d' || 'docker.io/library/postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636' }}\n        env:\n          POSTGRES_PASSWORD: pgcheck\n          POSTGRES_DB: omerta_check\n        ports: ['5432:5432']\n        options: >-\n          --shm-size=256m\n          --health-cmd \"pg_isready -U postgres\"\n          --health-interval 5s --health-timeout 5s --health-retries 20\n    steps:", 'Native core service, matrix and finite bound are closed');
   assert.equal(nativeShape(economyParts.header), "  pgcheck_economy:\n    if: ${{ !inputs.tail_only }}\n    name: native economy (${{ matrix.postgres }})\n    runs-on: ubuntu-latest\n    timeout-minutes: 90\n    strategy:\n      fail-fast: false\n      matrix:\n        postgres: ['16', '18.4']\n    services:\n      postgres:\n        image: ${{ matrix.postgres == '16' && 'docker.io/library/postgres@sha256:ca0bd484cb98bf4b24eb1010e73fb3fcbd6714d240fbc1a10eea5b7dbecb641d' || 'docker.io/library/postgres@sha256:a02db8cac496f15b094798a38254f14d6e00741f709360e5e00bb6668ea31636' }}\n        env:\n          POSTGRES_PASSWORD: pgcheck\n          POSTGRES_DB: omerta_check\n        ports: ['5432:5432']\n        options: >-\n          --health-cmd \"pg_isready -U postgres\"\n          --health-interval 5s --health-timeout 5s --health-retries 20\n    steps:", 'Native economy service, matrix and finite bound are closed');
-  const expectedEconomyParts = ["      - uses: actions/checkout@v7\n        with:\n          fetch-depth: 0","      - uses: actions/setup-node@v7\n        with:\n          node-version: '22'\n          cache: npm","      - run: npm ci","      - uses: foundry-rs/foundry-toolchain@v1\n        with:\n          version: v1.7.1","      - name: Compile original funded-work escrow artifact\n        run: npm run build:funded-work-artifact","      - name: Install PostgreSQL client tools matching the server major\n        run: bash tools/rc1-postgres-client.sh '${{ matrix.postgres }}'","      - name: Paid equipment, canonical repairs, negotiated deliveries, subscriptions and auctions (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          EQUIPMENT_ECONOMY_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:equipment-economy:postgres","      - name: Funded apprenticeships, Crew organizations, partnerships, governance and actual acquisitions (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          COMPANY_WORKFORCE_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:company-workforce:postgres","      - name: Restructuring, canonical disputes, insurance, concessions and territory sharing (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          COMPANY_COMMERCIAL_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:company-commercial:postgres","      - name: Economic intelligence, laboratories, operating memory, teams and offline funded work (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          COMPANY_AUTONOMY_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:company-autonomy:postgres"];
+  const expectedFoundrySteps = [
+    "      - uses: foundry-rs/foundry-toolchain@v1\n        with:\n          version: v1.7.1\n        id: foundry_setup\n        continue-on-error: true",
+    "      - name: Install verified Foundry from the official release API\n        if: steps.foundry_setup.outcome == 'failure'\n        timeout-minutes: 10\n        working-directory: ${{ github.workspace }}\n        env:\n          GH_TOKEN: ${{ github.token }}\n        run: bash tools/install-foundry-verified.sh",
+    "      - name: Require the pinned Foundry release build\n        shell: bash\n        run: |\n          set -euo pipefail\n          foundry_version=\"$(forge --version)\"\n          printf '%s\\n' \"$foundry_version\"\n          grep -Fxq 'forge Version: 1.7.1' <<< \"$foundry_version\"\n          grep -Fxq 'Commit SHA: 4072e48705af9d93e3c0f6e29e93b5e9a40caed8' <<< \"$foundry_version\"\n          grep -Fxq 'Build Profile: dist' <<< \"$foundry_version\""
+  ];
+  const expectedFoundrySetup = expectedFoundrySteps.join('\n');
+  const assertFoundrySetup = (block, expected = expectedFoundrySteps) => {
+    const normalized = block.replaceAll('\r\n', '\n');
+    const parts = splitNative(normalized).steps.map(nativeShape);
+    const starts = parts.flatMap((part, i) => part.includes('uses: foundry-rs/foundry-toolchain@') ? [i] : []);
+    assert.equal(starts.length, 1, 'Exactly one retained normal pinned Foundry action is required');
+    assert.deepEqual(parts.slice(starts[0], starts[0] + 3), expected,
+      'Only failed-action recovery followed by mandatory exact version, commit and profile verification is admitted');
+    assert.equal(normalized.split(expected.join('\n')).length, 2, 'The complete reviewed Foundry setup occurs exactly once');
+    assert.equal(normalized.split('        run: bash tools/install-foundry-verified.sh').length, 2);
+    assert.equal(normalized.split('      - name: Require the pinned Foundry release build').length, 2);
+  };
+  for (const block of [suites, suiteTail, economyNative, enterpriseNative, commerceNative]) assertFoundrySetup(block);
+  const expectedForgeFoundrySteps = [expectedFoundrySteps[0].replace('      - uses:', '      - name: Install Foundry\n        uses:'),
+    ...expectedFoundrySteps.slice(1)];
+  assertFoundrySetup(fs.readFileSync(path.join(ROOT, '.github/workflows/forge.yml'), 'utf8'), expectedForgeFoundrySteps);
+  for (const changed of [
+    expectedFoundrySetup.replace('version: v1.7.1', 'version: stable'),
+    expectedFoundrySetup.replace("if: steps.foundry_setup.outcome == 'failure'", 'if: always()'),
+    expectedFoundrySetup.replace("if: steps.foundry_setup.outcome == 'failure'", "if: steps.foundry_setup.conclusion == 'failure'"),
+    expectedFoundrySetup.replace('timeout-minutes: 10', 'timeout-minutes: 0'),
+    expectedFoundrySetup.replace('github.workspace', 'runner.temp'),
+    expectedFoundrySetup.replace('bash tools/install-foundry-verified.sh', 'bash tools/unverified-foundry.sh'),
+    expectedFoundrySetup.replace('Require the pinned Foundry release build\n', 'Require the pinned Foundry release build\n        continue-on-error: true\n'),
+    expectedFoundrySetup.replace('Require the pinned Foundry release build\n', 'Require the pinned Foundry release build\n        if: false\n'),
+    expectedFoundrySetup.replace('set -euo pipefail', 'set +e'),
+    expectedFoundrySetup.replace('forge Version: 1.7.1', 'forge Version: 1.7.0'),
+    expectedFoundrySetup.replace('4072e48705af9d93e3c0f6e29e93b5e9a40caed8', '0'.repeat(40)),
+    expectedFoundrySetup.replace('Build Profile: dist', 'Build Profile: dev'),
+    expectedFoundrySetup.replace(expectedFoundrySteps[1] + '\n', ''),
+    expectedFoundrySetup.replace(expectedFoundrySteps[2], ''),
+  ]) {
+    assert.notEqual(changed, expectedFoundrySetup);
+    assert.throws(() => assertFoundrySetup(changed), 'Changed, missing, optional or unverified Foundry setup must reject');
+  }
+  const expectedInstallerPins = [
+    'readonly archive_name=foundry_v1.7.1_linux_amd64.tar.gz',
+    'readonly archive_sha256=cf7e688ed0c4c48adffca788b496076e31060b67ac5afe1e43dbb5499c20c88b',
+    'readonly asset_route=repos/foundry-rs/foundry/releases/assets/415095756',
+  ];
+  const expectedInstallerVerification = [
+    "printf '%s  %s\\n' \"$archive_sha256\" \"$archive\" | sha256sum --check --status",
+    'timeout 180s gh attestation verify "$archive" --repo foundry-rs/foundry \\',
+    '  --signer-workflow foundry-rs/foundry/.github/workflows/release.yml',
+    "printf 'Verified Foundry v1.7.1 archive SHA-256: %s\\n' \"$archive_sha256\"",
+    'if [[ "$verify_only" == true ]]; then exit 0; fi',
+  ].join('\n');
+  const assertVerifiedInstaller = raw => {
+    const text = raw.replaceAll('\r\n', '\n');
+    assert(text.includes('set +x\nset -euo pipefail\numask 077\n'), 'Installer verification errors remain fatal and secrets are not traced');
+    for (const pin of expectedInstallerPins) assert.equal(text.split(pin + '\n').length, 2, 'One exact official release asset pin');
+    assert.equal(text.split(expectedInstallerVerification).length, 2, 'Checksum and signer attestation both succeed before extraction or verify-only completion');
+    assert(text.indexOf(expectedInstallerVerification) < text.indexOf('tar --extract --gzip --file "$archive"'),
+      'No archive extraction precedes verification');
+  };
+  const verifiedInstaller = fs.readFileSync(path.join(ROOT, 'tools/install-foundry-verified.sh'), 'utf8').replaceAll('\r\n', '\n');
+  assertVerifiedInstaller(verifiedInstaller);
+  for (const changed of [
+    verifiedInstaller.replace('set -euo pipefail', 'set +e'),
+    verifiedInstaller.replace('cf7e688ed0c4c48adffca788b496076e31060b67ac5afe1e43dbb5499c20c88b', '0'.repeat(64)),
+    verifiedInstaller.replace('releases/assets/415095756', 'releases/assets/1'),
+    verifiedInstaller.replace('sha256sum --check --status', 'sha256sum --check --status || true'),
+    verifiedInstaller.replace('--signer-workflow foundry-rs/foundry/.github/workflows/release.yml',
+      '--signer-workflow foundry-rs/foundry/.github/workflows/release.yml || true'),
+    verifiedInstaller.replace('--repo foundry-rs/foundry', '--repo unknown/foundry'),
+    verifiedInstaller.replace(expectedInstallerVerification, ''),
+  ]) {
+    assert.notEqual(changed, verifiedInstaller);
+    assert.throws(() => assertVerifiedInstaller(changed), 'Changed pins, ignored checksum/attestation failures or verification removal must reject');
+  }
+  const expectedEconomyParts = ["      - uses: actions/checkout@v7\n        with:\n          fetch-depth: 0","      - uses: actions/setup-node@v7\n        with:\n          node-version: '22'\n          cache: npm","      - run: npm ci",...expectedFoundrySteps,"      - name: Compile original funded-work escrow artifact\n        run: npm run build:funded-work-artifact","      - name: Install PostgreSQL client tools matching the server major\n        run: bash tools/rc1-postgres-client.sh '${{ matrix.postgres }}'","      - name: Paid equipment, canonical repairs, negotiated deliveries, subscriptions and auctions (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          EQUIPMENT_ECONOMY_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:equipment-economy:postgres","      - name: Funded apprenticeships, Crew organizations, partnerships, governance and actual acquisitions (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          COMPANY_WORKFORCE_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:company-workforce:postgres","      - name: Restructuring, canonical disputes, insurance, concessions and territory sharing (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          COMPANY_COMMERCIAL_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:company-commercial:postgres","      - name: Economic intelligence, laboratories, operating memory, teams and offline funded work (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          COMPANY_AUTONOMY_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:company-autonomy:postgres"];
   assert.deepEqual(economyParts.steps.map(nativeShape), expectedEconomyParts, 'Every native economy setup, command, environment and condition remains exact');
   const expectedEnterpriseOwnedLockSetup = expectedOwnedLockSetup.replace('Set owned test PostgreSQL lock capacity for populated migrations','Set owned enterprise test PostgreSQL lock capacity for full-schema catalog cleanup');
   const assertEnterpriseOwnedLockSetup = block => {
@@ -4159,12 +4234,12 @@ scopedSocialContext = async function(db) {
   const enterpriseScripts = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8')).scripts;
   assert.equal(enterpriseScripts['test:agent-economy-enterprise:postgres'], 'node tools/enterprise-native.js', 'The old native qualifier remains independently available');
   assert.equal(enterpriseScripts['test:agent-economy-enterprise:questing:postgres'], 'node tools/enterprise-native-questing.js', 'Current execution uses only its separate actual-current full16 runner');
-  assert.deepEqual(enterpriseParts.steps.map(nativeShape),[nativeShape(expectedEnterpriseOwnedLockSetup),...expectedEconomyParts.slice(0,6),nativeShape(expectedCurrentEnterpriseStep)],'The complete strict enterprise step executes exactly once after the owned setup and unchanged six prerequisite steps');
+  assert.deepEqual(enterpriseParts.steps.map(nativeShape),[nativeShape(expectedEnterpriseOwnedLockSetup),...expectedEconomyParts.slice(0,8),nativeShape(expectedCurrentEnterpriseStep)],'The complete strict enterprise step executes exactly once after the owned setup and the exact eight prerequisite steps');
   for(const changed of[expectedEnterpriseStep.replace('env -u RC1_PG_BIN ',''),expectedEnterpriseStep.replace('env -u RC1_PG_BIN','env -u NODE_OPTIONS'),expectedEnterpriseStep.replace("CHAIN_ENABLED: 'off'","CHAIN_ENABLED: 'on'"),expectedEnterpriseStep.replace("RESOURCE_ECONOMY: 'off'",''),expectedEnterpriseStep.replace('ENTERPRISE_NATIVE_PROFILE: ci','ENTERPRISE_NATIVE_PROFILE: local'),expectedEnterpriseStep.replace('127.0.0.1:5432','remote.invalid:5432'),expectedEnterpriseStep.replace('test:agent-economy-enterprise:postgres','test:agent-economy-enterprise:postgres -- --partial'),expectedEnterpriseStep.replace("if: '!cancelled()'","if: success()")])assert.notEqual(nativeShape(changed),nativeShape(expectedEnterpriseStep));
   const commerceParts=splitNative(commerceNative);
   const expectedCommerceStep="      - name: Attributed sales, merchant loyalty, atomic baskets, funded events and campaigns (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          CHAIN_ENABLED: 'off'\n          RESOURCE_ECONOMY: 'off'\n          COMMERCE_CURRENT_NATIVE_CI_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: env -u RC1_PG_BIN npm run test:agent-economy-commerce:postgres\n\n";
   assert.equal(nativeShape(commerceParts.header),nativeShape(economyParts.header).replace('  pgcheck_economy:','  pgcheck_commerce:').replace('name: native economy (','name: native commerce (').replace('timeout-minutes: 90','timeout-minutes: 226'),'Commerce retains the exact existing PG service and both majors with its separately closed226m bound');
-  assert.deepEqual(commerceParts.steps.map(nativeShape),[...expectedEconomyParts.slice(0,6),nativeShape(expectedCommerceStep)],'Every Commerce prerequisite and the exact unfiltered current33 CI proof driver execute once');
+  assert.deepEqual(commerceParts.steps.map(nativeShape),[...expectedEconomyParts.slice(0,8),nativeShape(expectedCommerceStep)],'Every Commerce prerequisite and the exact unfiltered current33 CI proof driver execute once');
   for(const changed of[expectedCommerceStep.replace("CHAIN_ENABLED: 'off'","CHAIN_ENABLED: 'on'"),expectedCommerceStep.replace("RESOURCE_ECONOMY: 'off'",''),expectedCommerceStep.replace('127.0.0.1:5432','remote.invalid:5432'),expectedCommerceStep.replace('env -u RC1_PG_BIN ',''),expectedCommerceStep.replace('test:agent-economy-commerce:postgres','test:agent-economy-commerce:postgres -- --partial'),expectedCommerceStep.replace("if: '!cancelled()'","if: success()")])assert.throws(()=>assert.equal(nativeShape(changed),nativeShape(expectedCommerceStep)));
   const expectedNextFiveStep = "      - name: Consignments, atomic barter, commissioned crafting, freight and warehouse work (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          NEXT_FIVE_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:agent-economy-next-five:postgres";
   const nextFiveParts = coreParts.steps.filter(part => part.includes('      - name: Consignments, atomic barter, commissioned crafting, freight and warehouse work (real PostgreSQL)'));
@@ -4176,7 +4251,7 @@ scopedSocialContext = async function(db) {
   assert.equal(nativeShape(nextLayerParts[0]), nativeShape(expectedNextLayerStep), 'Next-layer native condition, financial OFF, owned admin endpoint and unfiltered runner remain exact');
   assert.equal(ownedSetupCore.split(expectedOwnedLockSetup).length,2,'Only the exact complete once-reviewed non-proof setup may leave the command-inventory view');
   const coreAsOriginal = ownedSetupCore.replace(expectedOwnedLockSetup,'').replace('  pgcheck_core:', '  pgcheck:').replace('name: native core (', 'name: real Postgres (');
-  const artifactParts = ["      - uses: foundry-rs/foundry-toolchain@v1\n        with:\n          version: v1.7.1\n","      - name: Compile original funded-work escrow artifact\n        run: npm run build:funded-work-artifact\n\n"];
+  const artifactParts = [expectedFoundrySetup + '\n',"      - name: Compile original funded-work escrow artifact\n        run: npm run build:funded-work-artifact\n\n"];
   const economyProofParts = ["      - name: Paid equipment, canonical repairs, negotiated deliveries, subscriptions and auctions (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          EQUIPMENT_ECONOMY_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:equipment-economy:postgres\n\n","      - name: Funded apprenticeships, Crew organizations, partnerships, governance and actual acquisitions (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          COMPANY_WORKFORCE_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:company-workforce:postgres\n\n","      - name: Restructuring, canonical disputes, insurance, concessions and territory sharing (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          COMPANY_COMMERCIAL_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:company-commercial:postgres\n\n","      - name: Economic intelligence, laboratories, operating memory, teams and offline funded work (real PostgreSQL)\n        if: '!cancelled()'\n        env:\n          RESOURCE_ECONOMY: 'off'\n          COMPANY_AUTONOMY_NATIVE_ADMIN_DATABASE_URL: postgresql://postgres:pgcheck@127.0.0.1:5432/postgres\n        run: npm run test:company-autonomy:postgres\n\n"];
   const buildBoundary = '      - name: Install PostgreSQL client tools matching the server major';
   const tailBoundary = "      - name: Consignments, atomic barter, commissioned crafting, freight and warehouse work (real PostgreSQL)";
@@ -4250,7 +4325,7 @@ scopedSocialContext = async function(db) {
     'duplicate native wall bounds must reject');
 
 
-  const expectedSuiteTail = "  suite_tail:\n    name: worker harness + economy simulations\n    needs: suites\n    runs-on: ubuntu-latest\n    timeout-minutes: 45\n    steps:\n      - uses: actions/checkout@v7\n        with:\n          fetch-depth: 0\n      - uses: actions/setup-node@v7\n        with:\n          node-version: '22'\n          cache: npm\n      - run: npm ci\n      - uses: foundry-rs/foundry-toolchain@v1\n        with:\n          version: v1.7.1\n      - name: Compile original funded-work escrow artifact\n        run: npm run build:funded-work-artifact\n      - name: Invite-only launch admission and Crew allowance\n        run: npm run test:invites\n      - name: RC1 telemetry isolation and complementary campaign regressions\n        run: npm run test:rc1\n      - name: RC1 private command diagnostics and passive confirmation regression\n        run: npm run test:rc1:observability\n      - name: RC1 original worker scheduling and diagnostic harness controls\n        run: npm run test:rc1:harness\n      - name: economy sim (§10.4 drift-0)\n        run: npm run sim\n      - name: scale (population-scale market reachability + §10.4)\n        env:\n          SCALE_PLAYERS: '18'\n          SCALE_DAYS: '2'\n        run: npm run scale";
+  const expectedSuiteTail = "  suite_tail:\n    name: worker harness + economy simulations\n    needs: suites\n    runs-on: ubuntu-latest\n    timeout-minutes: 45\n    steps:\n      - uses: actions/checkout@v7\n        with:\n          fetch-depth: 0\n      - uses: actions/setup-node@v7\n        with:\n          node-version: '22'\n          cache: npm\n      - run: npm ci\n" + expectedFoundrySetup + "\n      - name: Compile original funded-work escrow artifact\n        run: npm run build:funded-work-artifact\n      - name: Invite-only launch admission and Crew allowance\n        run: npm run test:invites\n      - name: RC1 telemetry isolation and complementary campaign regressions\n        run: npm run test:rc1\n      - name: RC1 private command diagnostics and passive confirmation regression\n        run: npm run test:rc1:observability\n      - name: RC1 original worker scheduling and diagnostic harness controls\n        run: npm run test:rc1:harness\n      - name: economy sim (§10.4 drift-0)\n        run: npm run sim\n      - name: scale (population-scale market reachability + §10.4)\n        env:\n          SCALE_PLAYERS: '18'\n          SCALE_DAYS: '2'\n        run: npm run scale";
   const requireSuiteTail = block => assert.equal(nativeShape(block), expectedSuiteTail,
     'Every tail setup, prerequisite, complete command and scale value is unconditional and exact');
   requireSuiteTail(suiteTail);
@@ -4336,7 +4411,10 @@ scopedSocialContext = async function(db) {
     'node test/readiness-migration-failure.js',
   ]);
   const nativeCommandsFrom = (block) => {
-    const lines = block.replaceAll('\r\n', '\n').split('\n');
+    const normalized = block.replaceAll('\r\n', '\n');
+    assertFoundrySetup(normalized);
+    // Only the complete independently checked non-proof setup leaves this original npm inventory view.
+    const lines = normalized.replace(expectedFoundrySetup, expectedFoundrySteps[0]).split('\n');
     const blank = (line) => /^[ \t]*$/.test(line);
     const trimShellSpace = (line) => line.replace(/^[ \t]+|[ \t]+$/g, '');
     const payloads = [];
@@ -4529,7 +4607,7 @@ scopedSocialContext = async function(db) {
   assert.equal(autonomyScripts['test:company-autonomy:postgres'],'node tools/company-autonomy-native.js');
   const expectedArtifactCommand="mkdir -p omerta-contracts/lib/openzeppelin-contracts && curl --fail --location https://github.com/OpenZeppelin/openzeppelin-contracts/archive/refs/tags/v5.6.1.tar.gz | tar xz -C omerta-contracts/lib/openzeppelin-contracts --strip-components=1 && forge build --root omerta-contracts src/market-v2/OmertaWorkEscrowV2.sol";
   assert.equal(autonomyScripts['build:funded-work-artifact'],expectedArtifactCommand,'Genuine pinned OZ/compiler build only');
-  const artifactAdmits=(job,command)=>job.includes('      - uses: foundry-rs/foundry-toolchain@v1\n        with:\n          version: v1.7.1')&&job.includes('        run: npm run build:funded-work-artifact')&&command===expectedArtifactCommand;
+  const artifactAdmits=(job,command)=>{try{assertFoundrySetup(job);return job.includes('        run: npm run build:funded-work-artifact')&&command===expectedArtifactCommand;}catch{return false;}};
   assert(artifactAdmits(suites.replaceAll('\r\n','\n'),expectedArtifactCommand));assert(artifactAdmits(pgcheck.replaceAll('\r\n','\n'),expectedArtifactCommand));
   for(const bad of [expectedArtifactCommand.replace('v5.6.1','master'),'cp retained-artifact.json omerta-contracts/out/OmertaWorkEscrowV2.json','echo synthetic'])assert(!artifactAdmits(pgcheck.replaceAll('\r\n','\n'),bad));
   assert(!artifactAdmits(pgcheck.replaceAll('\r\n','\n').replace('version: v1.7.1','version: stable'),expectedArtifactCommand));

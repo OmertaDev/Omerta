@@ -60,6 +60,10 @@ for (const change of [
     value.files = value.files.filter(row => row.file !== 'src/casinorakeback.js');
     value.additions = value.additions.filter(row => row.file !== 'src/casinorakeback.js');
   },
+  value => {
+    value.files = value.files.filter(row => row.file !== 'tools/install-foundry-verified.sh');
+    value.additions = value.additions.filter(row => row.file !== 'tools/install-foundry-verified.sh');
+  },
 ]) {
   const mutated = structuredClone(candidate); change(mutated);
   assert.throws(() => assertQuestingNativeDefinition(freeze(mutated))); rejections++;
@@ -119,6 +123,23 @@ if (actual.status === 'UNSEALED') {
     [companionCurrent, { ...companionAuthored, blob: '1'.repeat(40) }, companionBytes],
     [companionCurrent, companionAuthored, Buffer.concat([companionBytes, Buffer.from('\n// altered companion\n')])],
   ]) { assert.throws(() => assertQuestingEnterpriseTrackedInput(companion.file, now, anchor, raw)); actualArgumentRefusals++; }
+  const installer = actual.files.find(input => input.file === 'tools/install-foundry-verified.sh');
+  assert.ok(installer, 'The CI installer has its own exact current native pin.');
+  const installerCurrent = record('HEAD', installer.file), installerAuthored = record(actual.authoredRevision, installer.file);
+  const installerBytes = git('show', `HEAD:${installer.file}`), installerPhysical = fs.readFileSync(installer.file);
+  assert.ok(fs.lstatSync(installer.file).isFile() && !fs.lstatSync(installer.file).isSymbolicLink());
+  assertEnterpriseNativeTrackedBytes(installerPhysical, installerBytes, false);
+  assert.strictEqual(assertQuestingEnterpriseTrackedInput(installer.file, installerCurrent, installerAuthored, installerBytes).current,
+    installer, 'The complete installer bytes and both Git identities qualify without executing the shell script.');
+  const installerOtherMode = installerCurrent.mode === '100644' ? '100755' : '100644';
+  for (const [now, anchor, raw] of [
+    [{ ...installerCurrent, mode: installerOtherMode }, installerAuthored, installerBytes],
+    [installerCurrent, { ...installerAuthored, mode: installerOtherMode }, installerBytes],
+    [{ ...installerCurrent, blob: '0'.repeat(40) }, installerAuthored, installerBytes],
+    [installerCurrent, { ...installerAuthored, blob: '1'.repeat(40) }, installerBytes],
+    [installerCurrent, installerAuthored, Buffer.concat([installerBytes, Buffer.from('\n# altered installer\n')])],
+    [installerCurrent, installerAuthored, installerBytes.subarray(1)],
+  ]) { assert.throws(() => assertQuestingEnterpriseTrackedInput(installer.file, now, anchor, raw)); actualArgumentRefusals++; }
 }
 console.log(JSON.stringify({ phase: 'SOURCE_ONLY_ACTUAL_CURRENT_ENTERPRISE_GUARDS', syntheticDefinition: true,
   mutationRejections: rejections + 1, predecessorInputs: predecessor.files.length, mandatoryNativeCases: ENTERPRISE_NATIVE_PROOFS.length,

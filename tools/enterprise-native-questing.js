@@ -20,6 +20,7 @@ export const QUESTING_NATIVE_PREDECESSOR_METADATA = 'tools/enterprise-native-con
 export { declaration as QUESTING_ENTERPRISE_NATIVE_INPUTS };
 export const QUESTING_NATIVE_SUPPORT = Object.freeze([
   'tools/enterprise-native-questing.js', 'tools/enterprise-native-questing-seal.js',
+  'tools/install-foundry-verified.sh',
   'test/enterprise-native-questing-guard.js', QUESTING_NATIVE_PREDECESSOR_METADATA,
   'tools/questing-enterprise-catalog.js', 'test/questing-enterprise-catalog-guard.js',
   'tools/questing-ux-release-phase2-native-catalog.js',

@@ -1,8 +1,10 @@
 # Playtest remediation release and continuation
 
 Release phase: candidate verification; deployment is a separate recorded operation.
-Base source: `bb4a6c451465d6f58caa1e320ffcbed8992b4b1b` (current main), preserving its
-signup-origin authority, age-21 cookie-policy binding and player privacy behavior.
+Initial base: `bb4a6c451465d6f58caa1e320ffcbed8992b4b1b`; main was subsequently
+integrated through `c638bfa3119e30ae78704a5ddcca8e2945b9d841`, preserving its
+signup-origin authority, age-21 cookie-policy binding, analytics compatibility and
+player privacy behavior. Both source histories and historical proof pins remain.
 The older dirty development checkout was not copied wholesale into this release.
 
 ## Reviewed changes
@@ -29,6 +31,13 @@ The older dirty development checkout was not copied wholesale into this release.
 - A finite three-agent QA coordinator uses separate private identities, bounded
   actions and an overlap lease. It stops on the lead's level-100 goal, identity loss
   or required attention rather than replacing characters silently.
+
+Historical source comparisons and native input declarations are regenerated for
+the combined committed source, retaining their predecessors and refusal controls.
+Quest verification executes the existing evaluators and preserves both histories.
+Repeated upstream Foundry download failures are handled by an official release-API
+fallback for the same pinned build: exact archive digest and GitHub provenance must
+pass before installation, followed by exact version, commit and build-profile checks.
 
 ## Executed local evidence
 

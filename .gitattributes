@@ -1,4 +1,5 @@
 knowledge/generated/** text eol=lf
+tools/install-foundry-verified.sh text eol=lf
 
 # Preserve the exact bytes hashed by this source-pinned evidence package.
 omerta-contracts/audits/2026-10-14-v4-hook-security/** -text

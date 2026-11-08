@@ -40,7 +40,8 @@ assert.equal(git('status', '--porcelain', '--untracked-files=all').trim(), '', '
 git('merge-base', '--is-ancestor', predecessor, revision);
 const changed = git('diff', '--name-only', '--diff-filter=M', '-z', predecessor, revision).split('\0').filter(file => scope(file) && !excluded.has(file));
 const added = git('diff', '--name-only', '--diff-filter=A', '-z', predecessor, revision).split('\0')
-  .filter(file => scope(file) && !excluded.has(file) && /\.(?:js|json|html|css|sql)$/.test(file));
+  .filter(file => scope(file) && !excluded.has(file)
+    && (/\.(?:js|json|html|css|sql)$/.test(file) || file === 'tools/install-foundry-verified.sh'));
 const value = { status: 'SEALED', phase: 'EXACT_SITE_BASICS_SOURCE_COMPARISON_ONLY', revision,
   tree: git('rev-parse', revision + '^{tree}').trim(), predecessor,
   predecessorTree: git('rev-parse', predecessor + '^{tree}').trim(), files: {}, additions: {} };
