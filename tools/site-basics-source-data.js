@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const SITE_BASICS_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_SITE_BASICS_SOURCE_COMPARISON_ONLY",
-  "revision": "c0a0dcb5ec483413436f2252b9a097afa026427c",
-  "tree": "335a0be66eb8294fc470030a77f2a6e071c6e52e",
+  "revision": "c867c13a3d345b7be662b14bff2c1190410660aa",
+  "tree": "6bc551c5ac98f746626327ef27905bf220273ae6",
   "predecessor": "d763d0623b69aa223eab9fae01beb7aec6cdce75",
   "predecessorTree": "c5242f2cf0fe8a1100bf09caf88d2161c011fecd",
   "files": {
@@ -716,6 +716,47 @@ export const SITE_BASICS_SOURCE = freeze({
         }
       ]
     },
+    "test/genesis-fee-readiness-source-transfer.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "dec3754fd17e8bc3f7cccdc9377bff3c6601ae19",
+        "sha256": "3cd8374fc1920956c338d634484fb0a151ea541b6edad5636a590189632dddcc",
+        "bytes": 23859
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "c610490223c2ce4b4120a1f18613e587a1109ca9",
+        "sha256": "21dd64da615676d057d6f93aae4d710640357779201b531fa04ab738c8ec27cb",
+        "bytes": 22466
+      },
+      "inverses": [
+        {
+          "at": 101,
+          "current": "import { execFileSync } from 'node:child_process';\nimport { nativeEthHistoricalInput } from '../tools/native-eth-source-transfer.js';\nimport { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';\nimport { SITE_BASICS_SOURCE, qualifySiteBasicsSource } from '../tools/site-basics-source-transfer.js';\nimport { contractReleaseFeeInput } from '../tools/contract-release-source-transfer.js';\nimport { QUESTING_SOURCE, qualifyQuestingSource, questingHistoricalInput,\n  questingHistoricalEntry } from '../tools/questing-source-transfer.js';\n",
+          "baseline": "import { execFileSync } from 'node:child_process';\nimport { nativeEthHistoricalInput } from '../tools/native-eth-source-transfer.js';\nimport { CONTRACT_RELEASE_SOURCE_DATA } from '../tools/contract-release-source-data.js';\nimport { contractReleaseFeeInput } from '../tools/contract-release-source-transfer.js';\nimport { QUESTING_SOURCE, qualifyQuestingSource, questingHistoricalInput,\n  questingHistoricalEntry } from '../tools/questing-source-transfer.js';\n"
+        },
+        {
+          "at": 11764,
+          "current": "    assertGenesisHistoricalReaderSourceTransfer, genesisHistoricalReaderHistoricalInput } = await import('../tools/genesis-historical-reader-source-transfer.js');\n  const { economyHardeningSourceBaseline } = await import('../tools/economy-hardening-source-transfer.js');\n  const fixture = binding.file;\n  const site = Object.hasOwn(SITE_BASICS_SOURCE.files, fixture) ? SITE_BASICS_SOURCE.files[fixture] : null;\n  const actualEntry = git('ls-tree', 'HEAD', '--', fixture).trim();\n  const actual = actualEntry.match(/^(100644|100755) blob ([a-f0-9]{40})\\t(.+)$/);\n  assert(actual && actual[3] === fixture, 'Regular actual fixture source qualifies first');\n",
+          "baseline": "    assertGenesisHistoricalReaderSourceTransfer, genesisHistoricalReaderHistoricalInput } = await import('../tools/genesis-historical-reader-source-transfer.js');\n  const { economyHardeningSourceBaseline } = await import('../tools/economy-hardening-source-transfer.js');\n  const fixture = binding.file;\n  const actualEntry = git('ls-tree', 'HEAD', '--', fixture).trim();\n  const actual = actualEntry.match(/^(100644|100755) blob ([a-f0-9]{40})\\t(.+)$/);\n  assert(actual && actual[3] === fixture, 'Regular actual fixture source qualifies first');\n"
+        },
+        {
+          "at": 13021,
+          "current": "  assert(physical === head || physical === head.replaceAll('\\n', '\\r\\n'),\n    'Whole actual fixture LF/CRLF bytes qualify before projection');\n  assert.deepEqual({ mode: actual[1], blob: actual[2], sha256: sha(head), bytes: Buffer.byteLength(head) },\n    site?.current || QUESTING_SOURCE.files[fixture].current, 'The real current fixture independently matches its exact current source pin');\n  function fixtureComparison(file, input, tree, index) {\n    assert.equal(arguments.length, 4, 'Only the closed fixture byte/tree/index comparison is accepted');\n    assert.equal(file, fixture, 'Only the exact Genesis historical fixture comparison');\n    assert(Buffer.isBuffer(input), 'Complete physical fixture Buffer required');\n    assert.equal(tree, actualEntry, 'Complete actual fixture HEAD qualifies before historical comparison');\n    assert.equal(index, actualIndex, 'Complete actual fixture index qualifies before historical comparison');\n    const siteProof = site ? qualifySiteBasicsSource(file, input) : null;\n    if (siteProof) assert.deepEqual([siteProof.sourceOnly, siteProof.runtime, siteProof.native, siteProof.financial,\n      siteProof.activation, siteProof.deployment, siteProof.priorResultsTransferred], [true, false, false, false, false, false, false]);\n    const proof = qualifyQuestingSource(file, siteProof ? Buffer.from(siteProof.baselineText) : input);\n    assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native, proof.financial, proof.activation,\n      proof.deployment, proof.priorResultsTransferred], [true, false, false, false, false, false, false]);\n    const source = questingHistoricalInput(file, input), text = source.toString('utf8');\n",
+          "baseline": "  assert(physical === head || physical === head.replaceAll('\\n', '\\r\\n'),\n    'Whole actual fixture LF/CRLF bytes qualify before projection');\n  assert.deepEqual({ mode: actual[1], blob: actual[2], sha256: sha(head), bytes: Buffer.byteLength(head) },\n    QUESTING_SOURCE.files[fixture].current, 'The real current fixture independently matches its exact questing pin');\n  function fixtureComparison(file, input, tree, index) {\n    assert.equal(arguments.length, 4, 'Only the closed fixture byte/tree/index comparison is accepted');\n    assert.equal(file, fixture, 'Only the exact Genesis historical fixture comparison');\n    assert(Buffer.isBuffer(input), 'Complete physical fixture Buffer required');\n    const proof = qualifyQuestingSource(file, input);\n    assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native, proof.financial, proof.activation,\n      proof.deployment, proof.priorResultsTransferred], [true, false, false, false, false, false, false]);\n    const source = questingHistoricalInput(file, input), text = source.toString('utf8');\n"
+        },
+        {
+          "at": 21845,
+          "current": "    comparison.source, head, null]) {\n    assert.throws(() => fixtureComparison(fixture, supplied, actualEntry, actualIndex)); currentRefusals++;\n  }\n  if (site) {\n    const stale = Buffer.from(git('show', SITE_BASICS_SOURCE.predecessor + ':' + fixture));\n    assert.notEqual(stale.toString('utf8'), head, 'The stale website fixture differs from actual HEAD');\n    assert.throws(() => fixtureComparison(fixture, stale, actualEntry, actualIndex)); currentRefusals++;\n    assert.throws(() => fixtureComparison(fixture, stale,\n      site.baseline.mode + ' blob ' + site.baseline.blob + '\\t' + fixture,\n      site.baseline.mode + ' ' + site.baseline.blob + ' 0\\t' + fixture)); currentRefusals++;\n  }\n  for (const kind of ['tree', 'index']) {\n    const entry = kind === 'tree' ? actualEntry : actualIndex;\n    for (const changed of [entry.replace(actual[2], '0'.repeat(40)), entry.replace(actual[1], '100755'),\n",
+          "baseline": "    comparison.source, head, null]) {\n    assert.throws(() => fixtureComparison(fixture, supplied, actualEntry, actualIndex)); currentRefusals++;\n  }\n  for (const kind of ['tree', 'index']) {\n    const entry = kind === 'tree' ? actualEntry : actualIndex;\n    for (const changed of [entry.replace(actual[2], '0'.repeat(40)), entry.replace(actual[1], '100755'),\n"
+        },
+        {
+          "at": 23275,
+          "current": "  assert.throws(() => fixtureComparison(fixture, raw, actualEntry)); currentRefusals++;\n  assert.throws(() => fixtureComparison(fixture, raw, actualEntry, actualIndex, {})); currentRefusals++;\n  assert.throws(() => { comparison.proof.native = true; }, TypeError); currentRefusals++;\n  assert.equal(currentPositives, 2); assert.equal(currentRefusals, 30 + (site ? 2 : 0));\n  console.log(JSON.stringify({ phase: 'GENESIS_QUESTING_FIXTURE_COMPARISON_CONTROLS', currentPositives,\n    currentRefusals, sourceOnly: true, runtime: false, native: false, projectedSourceExecuted: false }));\n}\n",
+          "baseline": "  assert.throws(() => fixtureComparison(fixture, raw, actualEntry)); currentRefusals++;\n  assert.throws(() => fixtureComparison(fixture, raw, actualEntry, actualIndex, {})); currentRefusals++;\n  assert.throws(() => { comparison.proof.native = true; }, TypeError); currentRefusals++;\n  assert.equal(currentPositives, 2); assert.equal(currentRefusals, 30);\n  console.log(JSON.stringify({ phase: 'GENESIS_QUESTING_FIXTURE_COMPARISON_CONTROLS', currentPositives,\n    currentRefusals, sourceOnly: true, runtime: false, native: false, projectedSourceExecuted: false }));\n}\n"
+        }
+      ]
+    },
     "test/hardening.js": {
       "current": {
         "mode": "100644",
@@ -1314,4 +1355,4 @@ export const SITE_BASICS_SOURCE = freeze({
     }
   }
 });
-export const SITE_BASICS_SOURCE_SHA256 = '6856ccbc5980ce3b93a9c862df00e7303b76c7e3ae49a441526c2704434b5fda';
+export const SITE_BASICS_SOURCE_SHA256 = 'f5ac5dc97289e7e2efca130eb306fc3a3885e824abdc309cb2ce1d5abfa46a2e';
