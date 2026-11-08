@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const QUEST_QUALITY_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_QUEST_QUALITY_SOURCE_COMPARISON_ONLY",
-  "revision": "a4649811142323e0483ff43594059b9208483ab4",
-  "tree": "a8b05a3223c47c9fedd0f01ba546509fa7016ed9",
+  "revision": "21b1d61e27004af89b375271569d4531b659bfb1",
+  "tree": "c633949558cceb28e13fe76ad3029bb33f2a6d9b",
   "predecessor": "7c63a604dc0d2b8a39bc9eb845c4dcb97aa707e9",
   "predecessorTree": "75d872c408cd5b5b76c364485d7b2c154f38af9a",
   "files": {
@@ -635,9 +635,9 @@ export const QUEST_QUALITY_SOURCE = freeze({
     },
     "test/quest-quality-postgres.js": {
       "mode": "100644",
-      "blob": "0732a4a84c885074e6c1d531df3a1f5f29d736e7",
-      "sha256": "2db2c58279dc1eb0c9eb48960700ef9b60882fb31e43add707e78dcc7228d400",
-      "bytes": 8361
+      "blob": "374a212760b326460fcc704e48c87a34e9bf86e8",
+      "sha256": "f8b535feb91fc5ad23b2b61c56432eca948c5c3eb4e9a5b6962eea9abd905e7a",
+      "bytes": 8564
     },
     "test/quest-quality-rules.js": {
       "mode": "100644",
@@ -719,4 +719,4 @@ export const QUEST_QUALITY_SOURCE = freeze({
     }
   }
 });
-export const QUEST_QUALITY_SOURCE_SHA256 = 'e570e5c5da11d246a4bf1a3a26310cfe9ed42caabb8390de91fc915fde6cac24';
+export const QUEST_QUALITY_SOURCE_SHA256 = '29377c4e83606c277a7eeb2e62bb5b030abd604867d06f8047d886e2c15c9170';
