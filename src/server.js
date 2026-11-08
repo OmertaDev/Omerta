@@ -534,8 +534,9 @@ export async function buildServer() {
   // changes on every deploy, so it is `no-cache` (revalidate, never stale) rather than a max-age, and
   // an unchanged deploy answers 304 in a few hundred bytes instead of 319 KB. That is the same
   // reasoning public/sw.js already applies to navigations, one layer down.
+  const analyticsRevision = crypto.createHash('sha256').update(readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'site-analytics.js'))).digest('hex').slice(0, 16);
   const publicPageHtml = (html, path) => enhancePage(html, { baseUrl, path })
-    .replace('</head>', '<script src="/site-analytics.js" defer></script></head>');
+    .replace('</head>', `<script src="/site-analytics.js?v=${analyticsRevision}" defer></script></head>`);
   const servePage = (html, extra = {}, path = null) => {
     if (path) html = publicPageHtml(html, path);
     const raw = Buffer.from(html, 'utf8');
