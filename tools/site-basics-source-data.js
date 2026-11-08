@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const SITE_BASICS_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_SITE_BASICS_SOURCE_COMPARISON_ONLY",
-  "revision": "db8e5aaf6c182ac337ed86fd30e2169fd458f1b5",
-  "tree": "1234e7609ed9c594cc3651b06715770feba3e7b7",
+  "revision": "e4282941ecee1e7d0cfddba4edc64d6607e0d577",
+  "tree": "89193b8145eefe5dda17169f03d098bacbb666b1",
   "predecessor": "d763d0623b69aa223eab9fae01beb7aec6cdce75",
   "predecessorTree": "c5242f2cf0fe8a1100bf09caf88d2161c011fecd",
   "files": {
@@ -981,6 +981,42 @@ export const SITE_BASICS_SOURCE = freeze({
         }
       ]
     },
+    "test/rc1-world-duration-evidence.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "c78b737e4030e3e9c9da1ee24ff9202b4fdf065a",
+        "sha256": "4361fee0ac434d34cfd42f80bbd8c8ddbf8c3c9191c4d34733eccaf035989e2a",
+        "bytes": 12128
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "601f8ea3efb5021e1c86cc307031c4cf1c279241",
+        "sha256": "70f631fe820930d61206d27390970134e7ce321bdf7c6b8d8baa5d815c406e27",
+        "bytes": 11037
+      },
+      "inverses": [
+        {
+          "at": 0,
+          "current": "import './site-basics-source-transfer.js';\nimport { questingHistoricalInput } from '../tools/questing-source-transfer.js';\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs/promises';\nimport { execFileSync } from 'node:child_process';\n",
+          "baseline": "import assert from 'node:assert/strict';\nimport fs from 'node:fs/promises';\nimport { execFileSync } from 'node:child_process';\n"
+        },
+        {
+          "at": 637,
+          "current": "import { cityGameplaySourceBaseline } from '../tools/rc1-city-gameplay-source-compatibility.js';\nimport { companyWorkflowSourceBaseline } from '../tools/rc1-company-workflow-source-compatibility.js';\nimport { firstBatchSourceBaseline } from '../tools/rc1-first-batch-source-compatibility.js';\nimport { INTEL_SOURCE_BASELINE_PINS, INTEL_SOURCE_BASELINE_BLOBS, INTEL_SOURCE_CURRENT_PINS, INTEL_SOURCE_INVERSES, qualifyIntelSource } from '../tools/rc1-intel-source-compatibility.js';\nimport { COVERAGE_SOURCE_CURRENT_PINS, COVERAGE_SOURCE_BASELINE_PINS, COVERAGE_SOURCE_BASELINE_BLOBS,\n  COVERAGE_SOURCE_INVERSES, coverageSourceBaseline } from '../tools/rc1-logistics-coverage-source-compatibility.js';\n\n",
+          "baseline": "import { cityGameplaySourceBaseline } from '../tools/rc1-city-gameplay-source-compatibility.js';\nimport { companyWorkflowSourceBaseline } from '../tools/rc1-company-workflow-source-compatibility.js';\nimport { firstBatchSourceBaseline } from '../tools/rc1-first-batch-source-compatibility.js';\nimport { INTEL_SOURCE_BASELINE_PINS, INTEL_SOURCE_BASELINE_BLOBS, INTEL_SOURCE_CURRENT_PINS, INTEL_SOURCE_INVERSES } from '../tools/rc1-intel-source-compatibility.js';\nimport { COVERAGE_SOURCE_CURRENT_PINS, COVERAGE_SOURCE_BASELINE_PINS, COVERAGE_SOURCE_BASELINE_BLOBS,\n  COVERAGE_SOURCE_INVERSES, coverageSourceBaseline } from '../tools/rc1-logistics-coverage-source-compatibility.js';\n\n"
+        },
+        {
+          "at": 4697,
+          "current": "// duration scope; accepting additions never loosens the historical source pin.\nconst workerFile = 'src/worker.js';\nassert.equal(WORKER_SOURCE_PINS[workerFile], INTEL_SOURCE_BASELINE_PINS[workerFile]);\nconst rawWorker = controller.transformations.find(row => row.file === workerFile).originalSource;\nconst comparisonWorker = questingHistoricalInput(workerFile, rawWorker);\nassert.notEqual(comparisonWorker, rawWorker, 'The complete current worker has a separate exact historical comparison');\nassert.deepEqual(qualifyIntelSource(workerFile, rawWorker), qualifyIntelSource(workerFile, comparisonWorker));\nassert.deepEqual(qualifyIntelSource(workerFile, rawWorker.replaceAll('\\n', '\\r\\n')), qualifyIntelSource(workerFile, rawWorker));\nconst operatorWorker = companyWorkflowSourceBaseline(workerFile, comparisonWorker);\nassert.equal(sha256(operatorWorker), COMPANY_OPERATOR_SOURCE_CURRENT_PINS[workerFile]);\nconst currentWorker = companyOperatorSourceBaseline(workerFile, operatorWorker);\nassert.equal(sha256(currentWorker), INTEL_SOURCE_CURRENT_PINS[workerFile]);\n",
+          "baseline": "// duration scope; accepting additions never loosens the historical source pin.\nconst workerFile = 'src/worker.js';\nassert.equal(WORKER_SOURCE_PINS[workerFile], INTEL_SOURCE_BASELINE_PINS[workerFile]);\nconst operatorWorker = companyWorkflowSourceBaseline(workerFile, controller.transformations.find(row => row.file === workerFile).originalSource);\nassert.equal(sha256(operatorWorker), COMPANY_OPERATOR_SOURCE_CURRENT_PINS[workerFile]);\nconst currentWorker = companyOperatorSourceBaseline(workerFile, operatorWorker);\nassert.equal(sha256(currentWorker), INTEL_SOURCE_CURRENT_PINS[workerFile]);\n"
+        },
+        {
+          "at": 6682,
+          "current": "  assert.deepEqual(measureWorldWorkerDuration(value), measured);\n}\nlet sourceCorruptions = 0;\nfor (const changed of [rawWorker + '\\n// unreviewed website worker suffix\\n', rawWorker.slice(1),\n  rawWorker.replace('runCompanyOperators(pool, 20)', 'runCompanyOperators(pool, 21)'),\n  rawWorker.replace('\\n', '\\r\\n')]) {\n  assert.notEqual(changed, rawWorker);\n  const value = fixture(); value.trace.transformations.find(row => row.file === workerFile).originalSource = changed;\n  assert.throws(() => measureWorldWorkerDuration(value), /source changed/); sourceCorruptions++;\n}\nfor (const chunk of INTEL_SOURCE_INVERSES[workerFile]) for (const changed of [\n  currentWorker.replace(chunk, ''), currentWorker.replace(chunk, chunk + chunk),\n  currentWorker.replace(chunk, chunk + '// unreviewed change\\n'),\n",
+          "baseline": "  assert.deepEqual(measureWorldWorkerDuration(value), measured);\n}\nlet sourceCorruptions = 0;\nfor (const chunk of INTEL_SOURCE_INVERSES[workerFile]) for (const changed of [\n  currentWorker.replace(chunk, ''), currentWorker.replace(chunk, chunk + chunk),\n  currentWorker.replace(chunk, chunk + '// unreviewed change\\n'),\n"
+        }
+      ]
+    },
     "test/routes.js": {
       "current": {
         "mode": "100644",
@@ -1071,6 +1107,32 @@ export const SITE_BASICS_SOURCE = freeze({
           "at": 529678,
           "current": "// qualified. No native manifest or runtime loader imports this identity view.\nexport function questingHistoricalEntry(file, entry, kind) {\n  assert(kind === 'tree' || kind === 'index', 'Choose an explicit Git identity shape');\n  entry = siteBasicsHistoricalEntry(file, entry, kind);\n  if (!known(file)) return entry;\n  definition();\n  const row = source.files[file];\n",
           "baseline": "// qualified. No native manifest or runtime loader imports this identity view.\nexport function questingHistoricalEntry(file, entry, kind) {\n  assert(kind === 'tree' || kind === 'index', 'Choose an explicit Git identity shape');\n  if (!known(file)) return entry;\n  definition();\n  const row = source.files[file];\n"
+        }
+      ]
+    },
+    "tools/rc1-intel-source-compatibility.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "66dee2e01fb57274ba79ad1382dc880d89348462",
+        "sha256": "2f057fee66c590d2c6340a7c9dec8ef72bf7448b100839ed3398902a2ad590c5",
+        "bytes": 9176
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "45f8ec914fbb05788fa082bc6fb8a22c1f0558d8",
+        "sha256": "33e7d00f130b8899810c9ff99938267902ba16ebba7150d25b88c42ce6f02ab7",
+        "bytes": 8878
+      },
+      "inverses": [
+        {
+          "at": 0,
+          "current": "import { questingHistoricalInput } from './questing-source-transfer.js';\nimport { BUSINESS_SEASON_SOURCE_CURRENT_PINS, assertBusinessSeasonSourceTransfer } from './rc1-business-season-source-compatibility.js';\nimport { COMPANY_OPPORTUNITY_SOURCE_CURRENT_PINS, assertCompanyOpportunitySourceTransfer } from './rc1-company-opportunity-source-compatibility.js';\nimport { BUYER_COOPERATIVE_SOURCE_CURRENT_PINS, assertBuyerCooperativeSourceTransfer } from './rc1-buyer-cooperative-source-compatibility.js';\n",
+          "baseline": "import { BUSINESS_SEASON_SOURCE_CURRENT_PINS, assertBusinessSeasonSourceTransfer } from './rc1-business-season-source-compatibility.js';\nimport { COMPANY_OPPORTUNITY_SOURCE_CURRENT_PINS, assertCompanyOpportunitySourceTransfer } from './rc1-company-opportunity-source-compatibility.js';\nimport { BUYER_COOPERATIVE_SOURCE_CURRENT_PINS, assertBuyerCooperativeSourceTransfer } from './rc1-buyer-cooperative-source-compatibility.js';\n"
+        },
+        {
+          "at": 8224,
+          "current": "// Unchanged historical source is accepted without expanding its original scope.\nexport function qualifyIntelSource(file, input) {\n  assert(Object.hasOwn(INTEL_SOURCE_BASELINE_PINS, file), 'Unknown Intel source compatibility file');\n  // Exact current worker bytes reconstruct only the historical source comparison.\n  // Unknown bytes remain untouched for the original rejecting Intel guard.\n  const text = normalize(file === 'src/worker.js' ? questingHistoricalInput(file, input) : input), actualSha256 = hash(text);\n  if (actualSha256 === INTEL_SOURCE_BASELINE_PINS[file])\n    return { file, actualSha256, baselineSha256: actualSha256, baselineText: text, inverseChunks: 0,\n      sourceRevision: INTEL_SOURCE_PREDECESSOR_REVISION, sourceBlob: INTEL_SOURCE_BASELINE_BLOBS[file],\n",
+          "baseline": "// Unchanged historical source is accepted without expanding its original scope.\nexport function qualifyIntelSource(file, input) {\n  assert(Object.hasOwn(INTEL_SOURCE_BASELINE_PINS, file), 'Unknown Intel source compatibility file');\n  const text = normalize(input), actualSha256 = hash(text);\n  if (actualSha256 === INTEL_SOURCE_BASELINE_PINS[file])\n    return { file, actualSha256, baselineSha256: actualSha256, baselineText: text, inverseChunks: 0,\n      sourceRevision: INTEL_SOURCE_PREDECESSOR_REVISION, sourceBlob: INTEL_SOURCE_BASELINE_BLOBS[file],\n"
         }
       ]
     }
@@ -1180,4 +1242,4 @@ export const SITE_BASICS_SOURCE = freeze({
     }
   }
 });
-export const SITE_BASICS_SOURCE_SHA256 = 'd5607d2bcefb279ce62bf4626e7dcaeb9ccf3fe084ca7f76e37fc3ef6c826f08';
+export const SITE_BASICS_SOURCE_SHA256 = '905e58a4eabf14e12f9d32819562cbf126b6fdad9cffa4f33a015f95fb3491cf';
