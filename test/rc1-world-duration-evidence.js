@@ -1,3 +1,5 @@
+import './site-basics-source-transfer.js';
+import { questingHistoricalInput } from '../tools/questing-source-transfer.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import { execFileSync } from 'node:child_process';
@@ -8,7 +10,7 @@ import { COMPANY_OPERATOR_SOURCE_CURRENT_PINS, companyOperatorSourceBaseline } f
 import { cityGameplaySourceBaseline } from '../tools/rc1-city-gameplay-source-compatibility.js';
 import { companyWorkflowSourceBaseline } from '../tools/rc1-company-workflow-source-compatibility.js';
 import { firstBatchSourceBaseline } from '../tools/rc1-first-batch-source-compatibility.js';
-import { INTEL_SOURCE_BASELINE_PINS, INTEL_SOURCE_BASELINE_BLOBS, INTEL_SOURCE_CURRENT_PINS, INTEL_SOURCE_INVERSES } from '../tools/rc1-intel-source-compatibility.js';
+import { INTEL_SOURCE_BASELINE_PINS, INTEL_SOURCE_BASELINE_BLOBS, INTEL_SOURCE_CURRENT_PINS, INTEL_SOURCE_INVERSES, qualifyIntelSource } from '../tools/rc1-intel-source-compatibility.js';
 import { COVERAGE_SOURCE_CURRENT_PINS, COVERAGE_SOURCE_BASELINE_PINS, COVERAGE_SOURCE_BASELINE_BLOBS,
   COVERAGE_SOURCE_INVERSES, coverageSourceBaseline } from '../tools/rc1-logistics-coverage-source-compatibility.js';
 
@@ -60,7 +62,12 @@ assert.equal(measured.matrixQualifying, false);
 // duration scope; accepting additions never loosens the historical source pin.
 const workerFile = 'src/worker.js';
 assert.equal(WORKER_SOURCE_PINS[workerFile], INTEL_SOURCE_BASELINE_PINS[workerFile]);
-const operatorWorker = companyWorkflowSourceBaseline(workerFile, controller.transformations.find(row => row.file === workerFile).originalSource);
+const rawWorker = controller.transformations.find(row => row.file === workerFile).originalSource;
+const comparisonWorker = questingHistoricalInput(workerFile, rawWorker);
+assert.notEqual(comparisonWorker, rawWorker, 'The complete current worker has a separate exact historical comparison');
+assert.deepEqual(qualifyIntelSource(workerFile, rawWorker), qualifyIntelSource(workerFile, comparisonWorker));
+assert.deepEqual(qualifyIntelSource(workerFile, rawWorker.replaceAll('\n', '\r\n')), qualifyIntelSource(workerFile, rawWorker));
+const operatorWorker = companyWorkflowSourceBaseline(workerFile, comparisonWorker);
 assert.equal(sha256(operatorWorker), COMPANY_OPERATOR_SOURCE_CURRENT_PINS[workerFile]);
 const currentWorker = companyOperatorSourceBaseline(workerFile, operatorWorker);
 assert.equal(sha256(currentWorker), INTEL_SOURCE_CURRENT_PINS[workerFile]);
@@ -75,6 +82,13 @@ for (const originalSource of [currentWorker.replaceAll('\n', '\r\n'), baselineWo
   assert.deepEqual(measureWorldWorkerDuration(value), measured);
 }
 let sourceCorruptions = 0;
+for (const changed of [rawWorker + '\n// unreviewed website worker suffix\n', rawWorker.slice(1),
+  rawWorker.replace('runCompanyOperators(pool, 20)', 'runCompanyOperators(pool, 21)'),
+  rawWorker.replace('\n', '\r\n')]) {
+  assert.notEqual(changed, rawWorker);
+  const value = fixture(); value.trace.transformations.find(row => row.file === workerFile).originalSource = changed;
+  assert.throws(() => measureWorldWorkerDuration(value), /source changed/); sourceCorruptions++;
+}
 for (const chunk of INTEL_SOURCE_INVERSES[workerFile]) for (const changed of [
   currentWorker.replace(chunk, ''), currentWorker.replace(chunk, chunk + chunk),
   currentWorker.replace(chunk, chunk + '// unreviewed change\n'),
