@@ -87,6 +87,26 @@ for (const [file, before, after] of [
   assert.equal(text.split(before).length, 2, 'Targeted accounting/quote/fraction guard exists exactly once');
   assert.throws(() => qualifyInvoiceSource(file, text.replace(before, after)), /source changed/); negatives++;
 }
+// The exact current population source must enter SITE before the existing
+// hardening/invoice chain. These are source-comparison controls, not native evidence.
+const populationInput = fs.readFileSync('src/population.js', 'utf8');
+const populationLf = normalize(populationInput);
+const populationBaseline = gitText('545c16d65cc482ffbc5364ba2aaa0a56916d7b79:src/population.js');
+assert.equal(hash(populationBaseline), '7ca4cfe884b3b2f8acd44a9c34c88507c9c42e0730688cac1d4bd358a7d9cecb');
+for (const input of [populationInput, populationLf, populationLf.replaceAll('\n', '\r\n')])
+  assert.equal(invoiceSourceBaseline('src/population.js', input), populationBaseline);
+const checkpointImport = "import { checkpointCasinoRakeback, checkpointCasinoOwnerRemoval } from './casinorakeback.js';\n";
+assert.equal(populationLf.split(checkpointImport).length, 2, 'The partial-current control removes exactly one reviewed import');
+assert.equal(populationLf.split('ORDER BY id LIMIT 24').length, 2, 'The query drift changes the exact jailbird selection');
+for (const changed of [populationLf + '\n// unsupported population source suffix\n',
+  populationLf.replace(checkpointImport, ''),
+  populationLf.replace('ORDER BY id LIMIT 24', 'ORDER BY id DESC LIMIT 24')]) {
+  assert.notEqual(changed, populationLf, 'Every population refusal changes the actual source');
+  assert.equal(invoiceSourceBaseline('src/population.js', changed), changed,
+    'Unknown, partial-current and query-changed population source cannot acquire historical admission');
+  negatives++;
+}
+
 assert.throws(() => qualifyInvoiceSource('src/worker.js', ''), /Unknown Invoice source/);
 const workerInput = fs.readFileSync('src/worker.js', 'utf8');
 const unreviewedWorker = workerInput + '\n// unreviewed worker change\n';
