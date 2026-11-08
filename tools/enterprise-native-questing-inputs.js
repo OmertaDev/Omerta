@@ -4,7 +4,7 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "ACTUAL_CURRENT_QUESTING_ENTERPRISE_NATIVE_INPUTS",
-  "authoredRevision": "de009a6c8a45e9d742a46051a4b6856f279a75f3",
+  "authoredRevision": "aa842eedde62e6ca5e294ac35829bb2c513153c5",
   "predecessorDefinitionSha256": "6b9128d3311945fc511748f852803354ac415a23082b6b5ce017980a2b7596bf",
   "proofInventorySha256": "3fd878600cd363ebdd9d89bb59b7cc3de7650f895062d83711b2bd1774c298e9",
   "files": [
@@ -11315,8 +11315,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/quest-quality-source-data.js",
       "mode": "100644",
-      "blob": "c1144c3d35c36dff3d78026dc69b080f7a1b822f",
-      "sha256": "07e3d34b8d5dbc1dab376f45e25fb5fba49e2956ed82848dc899f6f21a87354b"
+      "blob": "610434e5864ce9e9d40dd13d98d2ad8b502936f1",
+      "sha256": "98a9fe6073ace45691855a5561bf079763f7deb52b10a5525491fb333a6c378c"
     },
     {
       "file": "tools/quest-quality-source-transfer.js",
@@ -12477,8 +12477,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/quest-quality-source-data.js",
       "mode": "100644",
-      "blob": "c1144c3d35c36dff3d78026dc69b080f7a1b822f",
-      "sha256": "07e3d34b8d5dbc1dab376f45e25fb5fba49e2956ed82848dc899f6f21a87354b"
+      "blob": "610434e5864ce9e9d40dd13d98d2ad8b502936f1",
+      "sha256": "98a9fe6073ace45691855a5561bf079763f7deb52b10a5525491fb333a6c378c"
     },
     {
       "file": "tools/quest-quality-source-transfer.js",
@@ -12518,4 +12518,4 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     }
   ]
 });
-export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "d87a9c55cda8b4583fecc9b82a25852016fa9b68f964b7f7280a8d44bb6fff09";
+export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "db01983b6b8d8ea7367633d0a2c8f080ab8dcd60c3c07246e0420c7fe3d330bc";
