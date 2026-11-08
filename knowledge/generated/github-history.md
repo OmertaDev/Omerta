@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `b218a5bf80a5`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `e8ea20bd2bda`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 5571 |
+| Commits in clone | 5576 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-11-08 — Merge main artifact refresh before current release generation |
+| Latest commit | 2026-11-08 — Bind actual native inputs for resilient dependency delivery |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 4442 |
+| OmertaDev | 4447 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 146 |
@@ -31,21 +31,21 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 926 | historical |
-| knowledge/generated/graph-summary.md | 926 | historical |
-| knowledge/generated/graph.json | 926 | historical |
-| knowledge/generated/inventory.md | 926 | historical |
+| knowledge/generated/github-history.md | 927 | historical |
+| knowledge/generated/graph-summary.md | 927 | historical |
+| knowledge/generated/graph.json | 927 | historical |
+| knowledge/generated/inventory.md | 927 | historical |
 | [SPEC.md](../../SPEC.md) | 645 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 512 | yes |
 | [src/server.js](../../src/server.js) | 462 | yes |
-| knowledge/generated/documents.md | 404 | historical |
+| knowledge/generated/documents.md | 405 | historical |
 | [schema.sql](../../schema.sql) | 384 | yes |
-| [package.json](../../package.json) | 372 | yes |
+| [package.json](../../package.json) | 373 | yes |
 | knowledge/generated/modules.md | 316 | historical |
 | [BALANCE.md](../../BALANCE.md) | 258 | yes |
 | knowledge/generated/graph.mmd | 251 | historical |
-| [test/gates.js](../../test/gates.js) | 221 | yes |
+| [test/gates.js](../../test/gates.js) | 222 | yes |
 | [src/game.js](../../src/game.js) | 199 | yes |
 | [src/rules.js](../../src/rules.js) | 189 | yes |
 | knowledge/generated/schema.md | 177 | historical |

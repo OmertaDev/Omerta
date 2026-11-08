@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "b218a5bf80a5f67f86b05ec308c56f89f0a0e179",
+  "sourceRevision": "e8ea20bd2bda5da32d9049900b71b7c5a354c2a3",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 18676,
-    "edges": 74719,
+    "nodes": 18681,
+    "edges": 74736,
     "byNodeType": {
       "Artifact": 7592,
       "Command": 318,
-      "Commit": 5571,
+      "Commit": 5576,
       "Contract": 156,
       "Document": 973,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5966,
-      "CHANGED": 29016,
+      "CHANGED": 29028,
       "CONTAINS": 7613,
       "DECLARES": 318,
       "DEFINED_IN": 1817,
       "DEPENDS_ON": 69,
       "EXECUTES": 1260,
       "HANDLED_BY": 950,
-      "HAS_COMMIT": 5571,
+      "HAS_COMMIT": 5576,
       "IMPLEMENTS": 124,
       "IMPORTS": 9228,
       "INHERITS": 47,
@@ -41699,20 +41699,20 @@
       "path": "docs/quest-quality-release-review.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 10590,
-      "lines": 56,
-      "version": "a9e74f35fdd3502c",
+      "bytes": 11506,
+      "lines": 58,
+      "version": "d1534569a3543113",
       "text": true,
       "provenance": [
         {
           "file": "docs/quest-quality-release-review.md",
           "line": 1,
-          "version": "a9e74f35fdd3502c"
+          "version": "d1534569a3543113"
         }
       ],
-      "lastChangedAt": "2026-11-08T11:28:21.000Z",
+      "lastChangedAt": "2026-11-08T12:00:49.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "27c393fe378838db1f8368d835aab1eea9b684e5"
+      "lastChangedCommit": "dcdce0075d0b56bfaa3b37bea5b5077a959a505b"
     },
     {
       "key": "Artifact:docs/quest-quality-workgraph.json",
@@ -41722,20 +41722,20 @@
       "path": "docs/quest-quality-workgraph.json",
       "kind": "artifact",
       "extension": ".json",
-      "bytes": 358993,
-      "lines": 4745,
-      "version": "c7caccaf67574e60",
+      "bytes": 404995,
+      "lines": 5251,
+      "version": "e59dd2d0d6d7f833",
       "text": true,
       "provenance": [
         {
           "file": "docs/quest-quality-workgraph.json",
           "line": 1,
-          "version": "c7caccaf67574e60"
+          "version": "e59dd2d0d6d7f833"
         }
       ],
-      "lastChangedAt": "2026-11-08T10:34:07.000Z",
+      "lastChangedAt": "2026-11-08T11:59:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "f5fda77bcf81e25cc7781fbb97177ae5905ea85a"
+      "lastChangedCommit": "eac51e664a28580d5af3b5f113d8a4fa6a30d24f"
     },
     {
       "key": "Artifact:docs/questing-next-30.md",
@@ -41837,20 +41837,20 @@
       "path": "docs/questing-workgraph.json",
       "kind": "artifact",
       "extension": ".json",
-      "bytes": 1044351,
-      "lines": 12583,
-      "version": "fc50770c98746615",
+      "bytes": 1099249,
+      "lines": 13199,
+      "version": "6a52a49b7177bf33",
       "text": true,
       "provenance": [
         {
           "file": "docs/questing-workgraph.json",
           "line": 1,
-          "version": "fc50770c98746615"
+          "version": "6a52a49b7177bf33"
         }
       ],
-      "lastChangedAt": "2026-11-08T10:45:07.000Z",
+      "lastChangedAt": "2026-11-08T11:59:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c41dded672ca992174d6d2ecae3873083e209b19"
+      "lastChangedCommit": "eac51e664a28580d5af3b5f113d8a4fa6a30d24f"
     },
     {
       "key": "Artifact:docs/rc1-alliance-continuation.md",
@@ -94409,20 +94409,20 @@
       "path": "package.json",
       "kind": "package-config",
       "extension": ".json",
-      "bytes": 63302,
+      "bytes": 63500,
       "lines": 349,
-      "version": "c617aac24c9a8050",
+      "version": "08d8a72bf591b8ec",
       "text": true,
       "provenance": [
         {
           "file": "package.json",
           "line": 1,
-          "version": "c617aac24c9a8050"
+          "version": "08d8a72bf591b8ec"
         }
       ],
-      "lastChangedAt": "2026-11-08T10:34:07.000Z",
+      "lastChangedAt": "2026-11-08T11:59:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "f5fda77bcf81e25cc7781fbb97177ae5905ea85a"
+      "lastChangedCommit": "eac51e664a28580d5af3b5f113d8a4fa6a30d24f"
     },
     {
       "key": "Artifact:Procfile",
@@ -149862,20 +149862,20 @@
       "path": "test/gates.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 489523,
+      "bytes": 489721,
       "lines": 5435,
-      "version": "953c2003fae456b7",
+      "version": "bdcac48c67748de7",
       "text": true,
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "953c2003fae456b7"
+          "version": "bdcac48c67748de7"
         }
       ],
-      "lastChangedAt": "2026-11-08T10:45:33.000Z",
+      "lastChangedAt": "2026-11-08T11:59:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "2d7cc96b248e8ab0b0f10bb872077b920b63751c"
+      "lastChangedCommit": "eac51e664a28580d5af3b5f113d8a4fa6a30d24f"
     },
     {
       "key": "Artifact:test/gateway-api.js",
@@ -167599,18 +167599,18 @@
       "extension": ".js",
       "bytes": 470252,
       "lines": 12492,
-      "version": "3e042209a96adca2",
+      "version": "cef6f62f0e69110d",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-questing-inputs.js",
           "line": 1,
-          "version": "3e042209a96adca2"
+          "version": "cef6f62f0e69110d"
         }
       ],
-      "lastChangedAt": "2026-11-08T11:28:41.000Z",
+      "lastChangedAt": "2026-11-08T12:01:04.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4810a942a440744d6c77174ad2b3c3c50bbbeb1e"
+      "lastChangedCommit": "e8ea20bd2bda5da32d9049900b71b7c5a354c2a3"
     },
     {
       "key": "Artifact:tools/enterprise-native-questing-seal.js",
@@ -170112,20 +170112,20 @@
       "path": "tools/quest-quality-source-data.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 206633,
-      "lines": 1048,
-      "version": "0792856a3f0c5882",
+      "bytes": 212208,
+      "lines": 1058,
+      "version": "4ca279b9501fa89c",
       "text": true,
       "provenance": [
         {
           "file": "tools/quest-quality-source-data.js",
           "line": 1,
-          "version": "0792856a3f0c5882"
+          "version": "4ca279b9501fa89c"
         }
       ],
-      "lastChangedAt": "2026-11-08T11:28:30.000Z",
+      "lastChangedAt": "2026-11-08T12:00:58.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4abe3b31d4c425e00401b581d82b8a7414f7fd16"
+      "lastChangedCommit": "72de4a2790569660f4a7a5db16ce2d9c4e07e490"
     },
     {
       "key": "Artifact:tools/quest-quality-source-seal.js",
@@ -174780,7 +174780,7 @@
       "type": "Command",
       "id": "npm:build:funded-work-artifact",
       "label": "npm run build:funded-work-artifact",
-      "command": "mkdir -p omerta-contracts/lib/openzeppelin-contracts && curl --fail --location https://github.com/OpenZeppelin/openzeppelin-contracts/archive/refs/tags/v5.6.1.tar.gz | tar xz -C omerta-contracts/lib/openzeppelin-contracts --strip-components=1 && forge build --root omerta-contracts src/market-v2/OmertaWorkEscrowV2.sol",
+      "command": "omerta_oz_archive=$(mktemp) && trap 'rm -f \"$omerta_oz_archive\"' EXIT && curl --fail --location --retry 3 --retry-max-time 180 --connect-timeout 15 --max-time 60 --output \"$omerta_oz_archive\" https://github.com/OpenZeppelin/openzeppelin-contracts/archive/refs/tags/v5.6.1.tar.gz && mkdir -p omerta-contracts/lib/openzeppelin-contracts && tar xzf \"$omerta_oz_archive\" -C omerta-contracts/lib/openzeppelin-contracts --strip-components=1 && forge build --root omerta-contracts src/market-v2/OmertaWorkEscrowV2.sol",
       "provenance": [
         {
           "file": "package.json",
@@ -213641,6 +213641,22 @@
       ]
     },
     {
+      "key": "Commit:64a3ba3e597609caa0e3dbb098e7dad79bd1cdb7",
+      "type": "Commit",
+      "id": "64a3ba3e597609caa0e3dbb098e7dad79bd1cdb7",
+      "label": "Refresh artifacts after reviewed native capture integration",
+      "title": "Refresh artifacts after reviewed native capture integration",
+      "date": "2026-11-08T11:36:36.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/64a3ba3e597609caa0e3dbb098e7dad79bd1cdb7",
+      "provenance": [
+        {
+          "commit": "64a3ba3e597609caa0e3dbb098e7dad79bd1cdb7",
+          "url": "https://github.com/OmertaDev/Omerta/commit/64a3ba3e597609caa0e3dbb098e7dad79bd1cdb7"
+        }
+      ]
+    },
+    {
       "key": "Commit:64a90aa78fadd3d049909aefe4c667c1f4257c34",
       "type": "Commit",
       "id": "64a90aa78fadd3d049909aefe4c667c1f4257c34",
@@ -218965,6 +218981,22 @@
         {
           "commit": "72de19d1c8219c1ee3224133245a84e45626fd83",
           "url": "https://github.com/OmertaDev/Omerta/commit/72de19d1c8219c1ee3224133245a84e45626fd83"
+        }
+      ]
+    },
+    {
+      "key": "Commit:72de4a2790569660f4a7a5db16ce2d9c4e07e490",
+      "type": "Commit",
+      "id": "72de4a2790569660f4a7a5db16ce2d9c4e07e490",
+      "label": "Bind quest source with bounded genuine dependency delivery",
+      "title": "Bind quest source with bounded genuine dependency delivery",
+      "date": "2026-11-08T12:00:58.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/72de4a2790569660f4a7a5db16ce2d9c4e07e490",
+      "provenance": [
+        {
+          "commit": "72de4a2790569660f4a7a5db16ce2d9c4e07e490",
+          "url": "https://github.com/OmertaDev/Omerta/commit/72de4a2790569660f4a7a5db16ce2d9c4e07e490"
         }
       ]
     },
@@ -255737,6 +255769,22 @@
       ]
     },
     {
+      "key": "Commit:dcdce0075d0b56bfaa3b37bea5b5077a959a505b",
+      "type": "Commit",
+      "id": "dcdce0075d0b56bfaa3b37bea5b5077a959a505b",
+      "label": "Record bounded dependency transfer review and negative controls",
+      "title": "Record bounded dependency transfer review and negative controls",
+      "date": "2026-11-08T12:00:49.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/dcdce0075d0b56bfaa3b37bea5b5077a959a505b",
+      "provenance": [
+        {
+          "commit": "dcdce0075d0b56bfaa3b37bea5b5077a959a505b",
+          "url": "https://github.com/OmertaDev/Omerta/commit/dcdce0075d0b56bfaa3b37bea5b5077a959a505b"
+        }
+      ]
+    },
+    {
       "key": "Commit:dcdf43d2cf0e46ea88549fbe61b3964fdb1df63e",
       "type": "Commit",
       "id": "dcdf43d2cf0e46ea88549fbe61b3964fdb1df63e",
@@ -259769,6 +259817,22 @@
       ]
     },
     {
+      "key": "Commit:e8ea20bd2bda5da32d9049900b71b7c5a354c2a3",
+      "type": "Commit",
+      "id": "e8ea20bd2bda5da32d9049900b71b7c5a354c2a3",
+      "label": "Bind actual native inputs for resilient dependency delivery",
+      "title": "Bind actual native inputs for resilient dependency delivery",
+      "date": "2026-11-08T12:01:04.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/e8ea20bd2bda5da32d9049900b71b7c5a354c2a3",
+      "provenance": [
+        {
+          "commit": "e8ea20bd2bda5da32d9049900b71b7c5a354c2a3",
+          "url": "https://github.com/OmertaDev/Omerta/commit/e8ea20bd2bda5da32d9049900b71b7c5a354c2a3"
+        }
+      ]
+    },
+    {
       "key": "Commit:e90448539194839ce05e4984421cf76203d0b25a",
       "type": "Commit",
       "id": "e90448539194839ce05e4984421cf76203d0b25a",
@@ -260229,6 +260293,22 @@
         {
           "commit": "eac01816382f0bcb6436ab3bfd23799968a974a2",
           "url": "https://github.com/OmertaDev/Omerta/commit/eac01816382f0bcb6436ab3bfd23799968a974a2"
+        }
+      ]
+    },
+    {
+      "key": "Commit:eac51e664a28580d5af3b5f113d8a4fa6a30d24f",
+      "type": "Commit",
+      "id": "eac51e664a28580d5af3b5f113d8a4fa6a30d24f",
+      "label": "Retry pinned dependency downloads before genuine artifact extraction",
+      "title": "Retry pinned dependency downloads before genuine artifact extraction",
+      "date": "2026-11-08T11:59:40.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/eac51e664a28580d5af3b5f113d8a4fa6a30d24f",
+      "provenance": [
+        {
+          "commit": "eac51e664a28580d5af3b5f113d8a4fa6a30d24f",
+          "url": "https://github.com/OmertaDev/Omerta/commit/eac51e664a28580d5af3b5f113d8a4fa6a30d24f"
         }
       ]
     },
@@ -280422,13 +280502,13 @@
       "id": "docs/quest-quality-release-review.md",
       "label": "docs/quest-quality-release-review.md",
       "documentType": "documentation",
-      "lines": 56,
-      "version": "a9e74f35fdd3502c",
+      "lines": 58,
+      "version": "d1534569a3543113",
       "provenance": [
         {
           "file": "docs/quest-quality-release-review.md",
           "line": 1,
-          "version": "a9e74f35fdd3502c"
+          "version": "d1534569a3543113"
         }
       ]
     },
@@ -288529,11 +288609,11 @@
         },
         {
           "file": "tools/quest-quality-source-data.js",
-          "line": 684
+          "line": 689
         },
         {
           "file": "tools/quest-quality-source-data.js",
-          "line": 685
+          "line": 690
         },
         {
           "file": "tools/quest-quality-study.js",
@@ -295200,6 +295280,9 @@
           "commit": "641af48e212b91a8b989f931bb8e8038623ff229"
         },
         {
+          "commit": "64a3ba3e597609caa0e3dbb098e7dad79bd1cdb7"
+        },
+        {
           "commit": "64ff651ce74a5f0c09ec94a6e7fc2fa6bb8b9e5a"
         },
         {
@@ -297031,6 +297114,9 @@
         },
         {
           "commit": "6485e8d0a01a3fb18417ec5eeded7cc1c62238b9"
+        },
+        {
+          "commit": "64a3ba3e597609caa0e3dbb098e7dad79bd1cdb7"
         },
         {
           "commit": "64ff651ce74a5f0c09ec94a6e7fc2fa6bb8b9e5a"
@@ -299820,6 +299906,9 @@
           "commit": "6485e8d0a01a3fb18417ec5eeded7cc1c62238b9"
         },
         {
+          "commit": "64a3ba3e597609caa0e3dbb098e7dad79bd1cdb7"
+        },
+        {
           "commit": "64ff651ce74a5f0c09ec94a6e7fc2fa6bb8b9e5a"
         },
         {
@@ -302605,6 +302694,9 @@
         },
         {
           "commit": "6485e8d0a01a3fb18417ec5eeded7cc1c62238b9"
+        },
+        {
+          "commit": "64a3ba3e597609caa0e3dbb098e7dad79bd1cdb7"
         },
         {
           "commit": "64ff651ce74a5f0c09ec94a6e7fc2fa6bb8b9e5a"
@@ -306154,6 +306246,9 @@
         },
         {
           "commit": "6485e8d0a01a3fb18417ec5eeded7cc1c62238b9"
+        },
+        {
+          "commit": "64a3ba3e597609caa0e3dbb098e7dad79bd1cdb7"
         },
         {
           "commit": "64ff651ce74a5f0c09ec94a6e7fc2fa6bb8b9e5a"
@@ -322995,7 +323090,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "b218a5bf80a5f67f86b05ec308c56f89f0a0e179",
+      "revision": "e8ea20bd2bda5da32d9049900b71b7c5a354c2a3",
       "currentBranch": "codex/questing-quality-50",
       "defaultBranch": "main",
       "visibility": "public",
@@ -367257,12 +367352,12 @@
       "id": "test/gates.js",
       "label": "test/gates.js",
       "lines": 5435,
-      "version": "953c2003fae456b7",
+      "version": "bdcac48c67748de7",
       "provenance": [
         {
           "file": "test/gates.js",
           "line": 1,
-          "version": "953c2003fae456b7"
+          "version": "bdcac48c67748de7"
         }
       ]
     },
@@ -513206,6 +513301,46 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:64a3ba3e597609caa0e3dbb098e7dad79bd1cdb7",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "64a3ba3e597609caa0e3dbb098e7dad79bd1cdb7"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:64a3ba3e597609caa0e3dbb098e7dad79bd1cdb7",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "64a3ba3e597609caa0e3dbb098e7dad79bd1cdb7"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:64a3ba3e597609caa0e3dbb098e7dad79bd1cdb7",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "64a3ba3e597609caa0e3dbb098e7dad79bd1cdb7"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:64a3ba3e597609caa0e3dbb098e7dad79bd1cdb7",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "64a3ba3e597609caa0e3dbb098e7dad79bd1cdb7"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:64a3ba3e597609caa0e3dbb098e7dad79bd1cdb7",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "64a3ba3e597609caa0e3dbb098e7dad79bd1cdb7"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:64a90aa78fadd3d049909aefe4c667c1f4257c34",
       "to": "Artifact:docs/business-partnerships-security-review.md",
       "provenance": {
@@ -523650,6 +523785,14 @@
       "to": "Artifact:docs/business-season-source-transfer-review.md",
       "provenance": {
         "commit": "72de19d1c8219c1ee3224133245a84e45626fd83"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:72de4a2790569660f4a7a5db16ce2d9c4e07e490",
+      "to": "Artifact:tools/quest-quality-source-data.js",
+      "provenance": {
+        "commit": "72de4a2790569660f4a7a5db16ce2d9c4e07e490"
       }
     },
     {
@@ -626678,6 +626821,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:dcdce0075d0b56bfaa3b37bea5b5077a959a505b",
+      "to": "Artifact:docs/quest-quality-release-review.md",
+      "provenance": {
+        "commit": "dcdce0075d0b56bfaa3b37bea5b5077a959a505b"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:dcdf43d2cf0e46ea88549fbe61b3964fdb1df63e",
       "to": "Artifact:test/multihopcourier-estate.js",
       "provenance": {
@@ -639854,6 +640005,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:e8ea20bd2bda5da32d9049900b71b7c5a354c2a3",
+      "to": "Artifact:tools/enterprise-native-questing-inputs.js",
+      "provenance": {
+        "commit": "e8ea20bd2bda5da32d9049900b71b7c5a354c2a3"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:e90448539194839ce05e4984421cf76203d0b25a",
       "to": "Artifact:src/companyrestructuring.js",
       "provenance": {
@@ -640770,6 +640929,38 @@
       "to": "Artifact:tools/rc1-source-pair.js",
       "provenance": {
         "commit": "eabda163ae89dfb787c7ed823d5c3348d5310088"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:eac51e664a28580d5af3b5f113d8a4fa6a30d24f",
+      "to": "Artifact:docs/quest-quality-workgraph.json",
+      "provenance": {
+        "commit": "eac51e664a28580d5af3b5f113d8a4fa6a30d24f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:eac51e664a28580d5af3b5f113d8a4fa6a30d24f",
+      "to": "Artifact:docs/questing-workgraph.json",
+      "provenance": {
+        "commit": "eac51e664a28580d5af3b5f113d8a4fa6a30d24f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:eac51e664a28580d5af3b5f113d8a4fa6a30d24f",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "eac51e664a28580d5af3b5f113d8a4fa6a30d24f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:eac51e664a28580d5af3b5f113d8a4fa6a30d24f",
+      "to": "Artifact:test/gates.js",
+      "provenance": {
+        "commit": "eac51e664a28580d5af3b5f113d8a4fa6a30d24f"
       }
     },
     {
@@ -789109,6 +789300,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:64a3ba3e597609caa0e3dbb098e7dad79bd1cdb7",
+      "provenance": {
+        "commit": "64a3ba3e597609caa0e3dbb098e7dad79bd1cdb7"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:64a90aa78fadd3d049909aefe4c667c1f4257c34",
       "provenance": {
         "commit": "64a90aa78fadd3d049909aefe4c667c1f4257c34"
@@ -791768,6 +791967,14 @@
       "to": "Commit:72de19d1c8219c1ee3224133245a84e45626fd83",
       "provenance": {
         "commit": "72de19d1c8219c1ee3224133245a84e45626fd83"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:72de4a2790569660f4a7a5db16ce2d9c4e07e490",
+      "provenance": {
+        "commit": "72de4a2790569660f4a7a5db16ce2d9c4e07e490"
       }
     },
     {
@@ -810157,6 +810364,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:dcdce0075d0b56bfaa3b37bea5b5077a959a505b",
+      "provenance": {
+        "commit": "dcdce0075d0b56bfaa3b37bea5b5077a959a505b"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:dcdf43d2cf0e46ea88549fbe61b3964fdb1df63e",
       "provenance": {
         "commit": "dcdf43d2cf0e46ea88549fbe61b3964fdb1df63e"
@@ -812173,6 +812388,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:e8ea20bd2bda5da32d9049900b71b7c5a354c2a3",
+      "provenance": {
+        "commit": "e8ea20bd2bda5da32d9049900b71b7c5a354c2a3"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:e90448539194839ce05e4984421cf76203d0b25a",
       "provenance": {
         "commit": "e90448539194839ce05e4984421cf76203d0b25a"
@@ -812400,6 +812623,14 @@
       "to": "Commit:eac01816382f0bcb6436ab3bfd23799968a974a2",
       "provenance": {
         "commit": "eac01816382f0bcb6436ab3bfd23799968a974a2"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:eac51e664a28580d5af3b5f113d8a4fa6a30d24f",
+      "provenance": {
+        "commit": "eac51e664a28580d5af3b5f113d8a4fa6a30d24f"
       }
     },
     {
@@ -893910,7 +894141,7 @@
       "to": "Artifact:tools/company-autonomy-native.js",
       "provenance": {
         "file": "tools/quest-quality-source-data.js",
-        "line": 729
+        "line": 739
       }
     },
     {
@@ -893919,7 +894150,7 @@
       "to": "Artifact:tools/company-autonomy-native.js",
       "provenance": {
         "file": "tools/quest-quality-source-data.js",
-        "line": 730
+        "line": 740
       }
     },
     {
@@ -893928,7 +894159,7 @@
       "to": "Artifact:tools/deed-quest-source-transfer.js",
       "provenance": {
         "file": "tools/quest-quality-source-data.js",
-        "line": 664
+        "line": 669
       }
     },
     {
@@ -893937,7 +894168,7 @@
       "to": "Artifact:tools/deed-quest-source-transfer.js",
       "provenance": {
         "file": "tools/quest-quality-source-data.js",
-        "line": 665
+        "line": 670
       }
     },
     {
@@ -893946,7 +894177,7 @@
       "to": "ExternalDependency:pg",
       "provenance": {
         "file": "tools/quest-quality-source-data.js",
-        "line": 684
+        "line": 689
       }
     },
     {
@@ -893955,7 +894186,7 @@
       "to": "ExternalDependency:pg",
       "provenance": {
         "file": "tools/quest-quality-source-data.js",
-        "line": 685
+        "line": 690
       }
     },
     {
