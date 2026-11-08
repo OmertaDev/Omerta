@@ -3,11 +3,32 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const QUEST_QUALITY_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_QUEST_QUALITY_SOURCE_COMPARISON_ONLY",
-  "revision": "4a988f9bbb5d0fdd3d6b106aa4230f8dd827c954",
-  "tree": "88bf607bed5c9d457ae1f613668bcf32cdfafa87",
+  "revision": "4d10164292061e8f14f3ca980eb9b90a508f3278",
+  "tree": "9c9546bd641ff92d24535d102331e4f275a932c8",
   "predecessor": "e0752e881aa5dc9cd867f9f4fb9752b6a6e2abaf",
   "predecessorTree": "94f08db0aa0cb43f52efc76e34efb7eb8ee182ec",
   "files": {
+    ".github/workflows/ci.yml": {
+      "current": {
+        "mode": "100644",
+        "blob": "f85c93d30c5263c83d47bbe1439719e71fa32501",
+        "sha256": "f17bff21eb600b60713017fcada3d1ea1f583c3f5b40667015fcb04c09c65a95",
+        "bytes": 79093
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "5c58de842c8905b6b9cf566dd1bb5683270533fb",
+        "sha256": "867e277d67cbab1bd844b6680404ba3372ffd7a604b4a780115fb8fdaba09806",
+        "bytes": 79093
+      },
+      "inverses": [
+        {
+          "at": 12040,
+          "current": "  questing_native:\n    name: Quest authority and concurrency (PostgreSQL)\n    runs-on: ubuntu-latest\n    timeout-minutes: 30\n    services:\n      postgres:\n        image: postgres:18.4\n",
+          "baseline": "  questing_native:\n    name: Quest authority and concurrency (PostgreSQL)\n    runs-on: ubuntu-latest\n    timeout-minutes: 15\n    services:\n      postgres:\n        image: postgres:18.4\n"
+        }
+      ]
+    },
     "package.json": {
       "current": {
         "mode": "100644",
@@ -797,4 +818,4 @@ export const QUEST_QUALITY_SOURCE = freeze({
     }
   }
 });
-export const QUEST_QUALITY_SOURCE_SHA256 = 'c8dc40ec60f4babebbc13f278e44d17692edacbde8059a915a350c98637f8ec6';
+export const QUEST_QUALITY_SOURCE_SHA256 = '6107ee6d04ae548381215ac6c272a75a546d97bd21c1b0e3967af99be44c06d7';
