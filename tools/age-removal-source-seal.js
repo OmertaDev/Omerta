@@ -39,7 +39,7 @@ const generated = new Set([metadata, 'tools/enterprise-native-questing-inputs.js
   'output/questing-verification/quest-mw8vfoh3-content-casework.log',
   'output/questing-verification/quest-mw8vfry3-quest-workshop.log']);
 const allowed = new Set([
-  'AGENTS.md', 'docs/legal-security-setup.md', 'omerta-mcp/README.md', 'omerta-mcp/index.js',
+  'AGENTS.md', 'SPEC.md', 'docs/legal-security-setup.md', 'omerta-mcp/README.md', 'omerta-mcp/index.js',
   'public/index.html', 'public/invite.html', 'src/agentgateway.js', 'src/auth.js', 'src/legal.js', 'src/server.js',
   'test/age.js', 'test/agent-onboarding.js', 'test/auth-fixture.js', 'test/client-shell-browser.js',
   'test/customerlayaway-integration.js',
