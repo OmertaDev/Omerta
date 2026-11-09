@@ -1,6 +1,7 @@
 // THE CONTROL ROOM - supported deployed-service controls and recovery boundaries.
-// Superseded transfer-tax market setters are retired here. Contract sources, ABIs,
-// historical indexing and claim obligations remain intact. No on-chain action occurs.
+// Superseded transfer-tax tuning and pair registration are retired here. Two
+// all-zero emergency fee-off shortcuts remain. Contracts, ABIs, historical indexing
+// and claim obligations remain intact. This panel never executes an on-chain action.
 //
 // Founder-directed 2026-08-11: "a GUI on the admin panel where I can edit all the variables of the
 // smart contracts like bond discount etc."
@@ -52,7 +53,8 @@ const secs = { unit: 'seconds' };
 /// `mirror` — the backend value this must equal, and where it lives. The lockstep check.
 /// `why`    — what breaks if this is wrong. Shown on the row; this is a control room, and a number
 ///            without its consequence is how a wrong one gets typed confidently.
-const RETIRED_MARKET_PARAMS = new Set(['hook.sellTax', 'omr.sellTax', 'omr.pair']);
+const RETIRED_MARKET_PARAMS = new Set(['omr.pair']);
+const LEGACY_FEE_OFF_PARAMS = new Set(['hook.sellTax', 'omr.sellTax']);
 
 export const CHAIN_PARAMS = [
   // ── ISSUANCE: the four walls that replaced "nothing mints" ──────────────────────────────────────
@@ -118,6 +120,25 @@ export const CHAIN_PARAMS = [
       + 'close and no further.',
   },
 
+  // Keep practical fee-off recovery while refusing to retune the superseded market.
+  {
+    key: 'hook.sellTax', contract: 'OmertaHook', env: 'OMERTA_HOOK_ADDRESS',
+    label: 'Emergency: disable legacy hook base tax', ...bps,
+    read: 'sellTaxBps', write: { fn: 'setSellTax', args: ['bps', 'devBps', 'rwaBps', 'communityBps'] },
+    wall: 'Only all four arguments set to zero are accepted. No fee increase or retuning.',
+    why: 'Preserves the Safe-only emergency base-tax off call for an existing deployment. Separate '
+      + 'surge and opening charges are not disabled by this call. Verify the chain, address and owner '
+      + 'in docs/contract-retirement-20261109.md before the Safe signs.',
+  },
+  {
+    key: 'omr.sellTax', contract: 'OMR', env: 'OMR_ADDRESS',
+    label: 'Emergency: disable legacy token base tax', ...bps,
+    read: 'sellTaxBps', write: { fn: 'setSellTax', args: ['bps', 'devBps', 'rwaBps', 'communityBps'] },
+    wall: 'Only all four arguments set to zero are accepted. No fee increase or retuning.',
+    why: 'Preserves the Safe-only emergency transfer-tax off call for an existing token. Separate '
+      + 'hook surge and opening charges remain unchanged. Verify the chain, address and owner '
+      + 'in docs/contract-retirement-20261109.md before the Safe signs.',
+  },
   // Existing issuance controls remain for deployed obligations and emergency recovery.
   {
     key: 'omr.minter', contract: 'OMR', env: 'OMR_ADDRESS',
@@ -280,6 +301,8 @@ export async function buildParamTx(key, values) {
   if (!p) throw new Error(`unknown parameter: ${key}`);
   const to = process.env[p.env];
   const { encodeFunctionData, isAddress } = await import('viem');
+  if ((!to || !isAddress(to)) && LEGACY_FEE_OFF_PARAMS.has(key))
+    throw new Error(`${p.env} is unset or not an address - verify the existing deployment and owner; do not deploy a retired contract for this shortcut`);
   if (!to || !isAddress(to)) throw new Error(`${p.env} is unset or not an address — deploy ${p.contract} first`);
 
   // Shape the arguments the same way the setter declares them, so a missing field is a named error
@@ -297,6 +320,8 @@ export async function buildParamTx(key, values) {
     if (n < 0n) throw new Error(`${name} cannot be negative`);
     return n;
   });
+  if (LEGACY_FEE_OFF_PARAMS.has(key) && args.some(value => value !== 0n))
+    throw new Error(`${key} only supports all-zero emergency fee-off; legacy market tuning is retired`);
 
   const abi = [{
     type: 'function', name: p.write.fn, stateMutability: 'nonpayable', outputs: [],
