@@ -1,4 +1,6 @@
-// THE CONTROL ROOM — every on-chain parameter, what it is set to, and what it must agree with.
+// THE CONTROL ROOM - supported deployed-service controls and recovery boundaries.
+// Superseded transfer-tax market setters are retired here. Contract sources, ABIs,
+// historical indexing and claim obligations remain intact. No on-chain action occurs.
 //
 // Founder-directed 2026-08-11: "a GUI on the admin panel where I can edit all the variables of the
 // smart contracts like bond discount etc."
@@ -34,7 +36,7 @@
 // Each row below names its backend counterpart, so the panel shows both numbers side by side and
 // says which disagree. That is the check no single layer can perform on itself.
 
-import { BONDS, SELL_TAX, MINT_TRANCHES, STORE } from './rules.js';
+import { BONDS, MINT_TRANCHES, STORE } from './rules.js';
 
 const bps = { unit: 'bps', hint: '100 = 1%' };
 const wei = { unit: 'wei', hint: 'ETH in wei (1 ETH = 1e18)' };
@@ -50,6 +52,8 @@ const secs = { unit: 'seconds' };
 /// `mirror` — the backend value this must equal, and where it lives. The lockstep check.
 /// `why`    — what breaks if this is wrong. Shown on the row; this is a control room, and a number
 ///            without its consequence is how a wrong one gets typed confidently.
+const RETIRED_MARKET_PARAMS = new Set(['hook.sellTax', 'omr.sellTax', 'omr.pair']);
+
 export const CHAIN_PARAMS = [
   // ── ISSUANCE: the four walls that replaced "nothing mints" ──────────────────────────────────────
   {
@@ -114,40 +118,7 @@ export const CHAIN_PARAMS = [
       + 'close and no further.',
   },
 
-  // ── THE MARKET: the sell tax, in two layers that must agree ──────────────────────────────────────
-  {
-    key: 'hook.sellTax', contract: 'OmertaHook', env: 'OMERTA_HOOK_ADDRESS',
-    label: 'v4 pool sell tax (total / dev / treasury / community)', ...bps,
-    read: 'sellTaxBps', write: { fn: 'setSellTax', args: ['bps', 'devBps', 'rwaBps', 'communityBps'] },
-    wall: 'Hard-capped at MAX_SELL_TAX_BPS (1000). The LP slice is the REMAINDER — do not pass it, or '
-      + 'three independent divisions leave a wei owned by nobody.',
-    why: 'The live tax on the canonical pool. There is deliberately NO pause on the hook, so '
-      + 'setSellTax(0,0,0,0) IS the off switch: the fee stops and the pool keeps trading.',
-    mirror: () => ({ label: 'backend SELL_TAX', value: `${SELL_TAX.BPS} total / ${SELL_TAX.DEV_BPS} dev / ${SELL_TAX.RWA_BPS} treasury / ${Number(process.env.SELL_TAX_COMMUNITY_BPS ?? 0)} community bps` }),
-    relation: () => (BONDS.DISCOUNT_BPS >= SELL_TAX.BPS
-      ? `BOND DISCOUNT (${BONDS.DISCOUNT_BPS}) IS NOT BELOW THE TAX (${SELL_TAX.BPS}) — a bond flipped `
-        + 'straight back through the pool now makes money, so bonding is a subsidy on selling rather '
-        + 'than capital formation. The bonder holds known size on a known schedule and is the most '
-        + 'motivated bypass-seeker OMR will have.'
-      : null),
-  },
-  {
-    key: 'omr.sellTax', contract: 'OMR', env: 'OMR_ADDRESS',
-    label: 'ERC-20 sell tax — THE BACKSTOP (total / dev / treasury / community)', ...bps,
-    read: 'sellTaxBps', write: { fn: 'setSellTax', args: ['bps', 'devBps', 'rwaBps', 'communityBps'] },
-    wall: 'Hard-capped at MAX_SELL_TAX_BPS (1000) — the anti-rug wall. LP is the remainder.',
-    why: 'ARMED AT ZERO on purpose. A hook tax is a property of ONE pool and anyone may open an '
-      + 'unhooked one; this one is universal. The trigger to arm it is not "we lost some tax" — it is '
-      + '"bonds have become an arbitrage".',
-  },
-  {
-    key: 'omr.pair', contract: 'OMR', env: 'OMR_ADDRESS',
-    label: 'Register / unregister an AMM pair', unit: 'address, bool',
-    read: null, write: { fn: 'setPair', args: ['pair', 'isPair'] },
-    wall: 'Only transfers INTO a registered pair are taxed. Buys and wallet transfers never are.',
-    why: 'Which pools the ERC-20 backstop applies to. Registering the wrong address taxes nothing; '
-      + 'it does not break anything.',
-  },
+  // Existing issuance controls remain for deployed obligations and emergency recovery.
   {
     key: 'omr.minter', contract: 'OMR', env: 'OMR_ADDRESS',
     label: 'Minter (the bond contract)', unit: 'address',
@@ -303,6 +274,8 @@ export async function readChainParams() {
 
 /// Validates a proposed change and returns the CALLDATA for the Safe. Never signs, never sends.
 export async function buildParamTx(key, values) {
+  if (RETIRED_MARKET_PARAMS.has(key))
+    throw new Error(`retired market parameter: ${key}; existing claims and read-only compatibility remain available`);
   const p = CHAIN_PARAMS.find((x) => x.key === key);
   if (!p) throw new Error(`unknown parameter: ${key}`);
   const to = process.env[p.env];
