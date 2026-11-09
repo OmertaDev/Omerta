@@ -1,10 +1,12 @@
 // Actual website Git/index/physical identities qualify before any historical comparison.
+import './age-removal-source-transfer.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { SITE_BASICS_SOURCE as source, qualifySiteBasicsSource,
   siteBasicsHistoricalInput, siteBasicsHistoricalEntry, siteBasicsSourceDataBytes } from '../tools/site-basics-source-transfer.js';
+import { ageRemovalHistoricalRecord } from '../tools/age-removal-source-transfer.js';
 
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], {
   encoding: 'utf8', windowsHide: true, maxBuffer: 64 * 1024 * 1024,
@@ -30,20 +32,24 @@ assert.equal(fs.readFileSync(new URL('../tools/site-basics-source-data.js', impo
   siteBasicsSourceDataBytes(source), 'The only self-reference is complete generated data without executable additions');
 let positives = 0, refusals = 0;
 function actual(file, pin) {
-  const committed = git('show', 'HEAD:' + file), authored = git('show', source.revision + ':' + file);
+  const actualCommitted = git('show', 'HEAD:' + file), authored = git('show', source.revision + ':' + file);
   const stat = fs.lstatSync(file), physical = fs.readFileSync(file);
   assert(stat.isFile() && !stat.isSymbolicLink());
-  assert(physical.equals(Buffer.from(committed)) || physical.equals(Buffer.from(committed.replaceAll('\n', '\r\n'))),
+  assert(physical.equals(Buffer.from(actualCommitted)) || physical.equals(Buffer.from(actualCommitted.replaceAll('\n', '\r\n'))),
     'Actual whole committed and physical source qualify before historical comparison: ' + file);
-  const actualBlob = createHash('sha1').update('blob ' + Buffer.byteLength(committed) + '\0').update(committed).digest('hex');
-  assert.equal(git('ls-tree', 'HEAD', '--', file).trim(), pin.mode + ' blob ' + actualBlob + '\t' + file);
-  assert.equal(git('ls-files', '--stage', '--', file).trim(), pin.mode + ' ' + actualBlob + ' 0\t' + file);
-  const text = committed, raw = physical;
+  const actualBlob = createHash('sha1').update('blob ' + Buffer.byteLength(actualCommitted) + '\0').update(actualCommitted).digest('hex');
+  const actualMode = git('ls-tree', 'HEAD', '--', file).trim().split(' ')[0];
+  const actualIndex = git('ls-files', '--stage', '--', file).trim();
+  assert.equal(actualIndex, actualMode + ' ' + actualBlob + ' 0\t' + file);
+  const historical = ageRemovalHistoricalRecord(file, { head: { mode: actualMode, blob: actualBlob }, index: actualIndex,
+    committed: Buffer.from(actualCommitted), physical, regular: stat.isFile(), symbolic: stat.isSymbolicLink() });
+  const committed = historical.committed.toString('utf8');
+  assert.equal(historical.head.mode, pin.mode); assert.equal(historical.head.blob, pin.blob);
+  const text = committed, raw = historical.physical;
   assert.equal(text, authored, 'Whole authored source remains the actual committed source: ' + file);
   assert.equal(sha(text), pin.sha256); assert.equal(Buffer.byteLength(text), pin.bytes);
   const entry = pin.mode + ' blob ' + pin.blob + '\t' + file;
-  assert.equal(git('ls-tree', 'HEAD', '--', file).trim(), entry);
-  assert.equal(git('ls-files', '--stage', '--', file).trim(), pin.mode + ' ' + pin.blob + ' 0\t' + file);
+  assert.equal(historical.index, pin.mode + ' ' + pin.blob + ' 0\t' + file);
   assert(raw.equals(Buffer.from(text)) || raw.equals(Buffer.from(text.replaceAll('\n', '\r\n'))),
     'Complete physical UTF-8 source is uniformly LF/CRLF: ' + file);
   return { text, raw, entry };
