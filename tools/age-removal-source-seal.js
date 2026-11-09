@@ -86,6 +86,8 @@ const generated = new Set([metadata, 'tools/enterprise-native-questing-inputs.js
   "output/quest-quality-verification/quality-mw94mag6-quest-quality-study.log",
 ]);
 const allowed = new Set([
+  // Release-gate regression repair: native quest disclosure state survives refetch repaint.
+  'public/ux-quests.js', 'test/quest-experience-browser.js',
   // The approved combined release includes the complete noir UI source and build inputs.
   "package-lock.json",
   "package.json",

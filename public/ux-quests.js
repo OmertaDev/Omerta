@@ -19,6 +19,7 @@
     const districtTabs = new Set(['streets', 'city', 'map', 'fieldwork']);
     const pending = new Map(), local = new Map(), openSections = new Set(), interactionDrafts = new Map();
     const qualityButtonDisabled = new WeakMap();
+    const sectionStates = new WeakMap();
     const state = () => getState() || {};
     const qualityUX = window.createOmertaQuestQuality?.({ getState,
       onOperation: (instance, payload, label) => mutate('/v1/content/instances/' + encode(instance.id) + '/quality', {
@@ -90,7 +91,12 @@
     }
     function section(id, title, content) {
       const panel = disclosure(title); panel.dataset.questSection = id; panel.open = openSections.has(id);
-      panel.addEventListener('toggle', () => panel.open ? openSections.add(id) : openSections.delete(id));
+      sectionStates.set(panel, panel.open);
+      panel.addEventListener('toggle', () => {
+        if (!panel.isConnected) return;
+        sectionStates.set(panel, panel.open);
+        panel.open ? openSections.add(id) : openSections.delete(id);
+      });
       panel.append(content); return panel;
     }
     function blockers(entries) {
@@ -475,6 +481,14 @@
       updateQualityButtons();
       if (active && !busy && (!force || !active.closest('.quest-quality,.quest-quality-proof'))) return;
       const focused = force && active ? { label: active.getAttribute('aria-label'), start: active.selectionStart, end: active.selectionEnd } : force ? focusedEditor : null;
+      // Native toggle events are deferred. Preserve a user's latest disclosure choice before
+      // a refetch replaces the panel, without undoing an intentional programmatic opening.
+      root.querySelectorAll('details[data-quest-section]').forEach(panel => {
+        if (sectionStates.get(panel) === panel.open) return;
+        const id = panel.dataset.questSection;
+        panel.open ? openSections.add(id) : openSections.delete(id);
+        sectionStates.set(panel, panel.open);
+      });
       const header = el('header', 'quest-heading'); header.append(el('span', 'quest-kicker', 'Bureau of unfinished business'), el('h2', '', 'Your case files'));
       const controls = el('nav', 'quest-tabs'); controls.setAttribute('aria-label', 'Quest tools');
       for (const [id, title] of [['cases', 'Case files'], ['community', 'Community mysteries'], ['legacy', 'Your history']]) { const tab = button(title, () => { view = id; error = ''; load(); }); tab.setAttribute('aria-pressed', String(view === id)); tab.disabled = busy || loading; controls.append(tab); }
