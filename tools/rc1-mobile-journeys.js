@@ -122,8 +122,6 @@ try {
     try {
       await page.goto(origin, { waitUntil: 'networkidle' });
       await page.locator('#btn-guest').click();
-      await page.locator('#age-date').fill('1990-01-01');
-      await page.getByRole('dialog', { name: 'Your birth date' }).getByRole('button', { name: 'Continue', exact: true }).click();
       await page.waitForSelector('#screen-create:not(.hidden)');
       await page.locator('#new-name').fill(`RC1 Mobile ${width}`);
       await page.locator('#btn-create').click();

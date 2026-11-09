@@ -101,13 +101,11 @@ try {
   assert.equal(analytics.filter(event => event.event === 'completion').length, 0, 'Failed loading creates no signup completion.');
   await page.getByRole('button', { name: 'Try loading again', exact: true }).click();
   assert.equal(await page.locator('#btn-guest').isDisabled(), true);
-  resume();
-  await page.locator('#age-date').waitFor();
-  assert.equal(analytics.filter(event => event.target === 'guest_start').length, 1, 'A delayed physical activation is counted once after replay.');
-  await page.locator('#age-date').fill('1990-01-01');
   const signup = page.waitForRequest(request => request.url().endsWith('/site-analytics/event') && request.postDataJSON().target === 'signup_success');
-  await page.locator('dialog[open] button[type="submit"]').click();
+  resume();
   await signup; await page.locator('#screen-create:not(.hidden)').waitFor();
+  assert.equal(await page.locator('#age-date').count(), 0, 'Guest entry proceeds without age verification.');
+  assert.equal(analytics.filter(event => event.target === 'guest_start').length, 1, 'A delayed physical activation is counted once after replay.');
   assert.equal(analytics.filter(event => event.target === 'signup_success').length, 1);
   assert.equal(analytics.filter(event => event.target === 'guest_start').length, 1);
   assert.equal(await page.locator('#landing-language-controls').count(), 0, 'Core entry removes the temporary picker before mounting its own.');
@@ -187,7 +185,6 @@ try {
   rejected.on('request', request => { if (request.url().endsWith('/site-analytics/event')) rejectedCounts.push(request.postDataJSON()); });
   await rejected.route('**/v1/auth/guest', route => route.fulfill({ status: 503, contentType: 'application/json', body: JSON.stringify({ message: 'Retry this signup.' }) }));
   await rejected.goto(base); await rejected.locator('#btn-guest').click();
-  await rejected.locator('#age-date').fill('1990-01-01'); await rejected.locator('dialog[open] button[type="submit"]').click();
   await rejected.waitForFunction(() => document.querySelector('#guest-status').textContent === 'Retry this signup.' && !document.querySelector('#btn-guest').disabled);
   assert.equal(rejectedCounts.filter(event => event.event === 'completion').length, 0, 'A confirmed failed signup records no successful completion.');
   await rejected.close();
@@ -206,8 +203,7 @@ try {
   const signIn = await browser.newPage({ reducedMotion: 'reduce' });
   await signIn.route('**/v1/auth/x/start', route => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ url: base + '/?oauth-return=1#token=' + encodeURIComponent(guest.token) }) }));
   await signIn.goto(base); await signIn.locator('#xoauth-row:not(.hidden)').waitFor();
-  await signIn.locator('#btn-xoauth').click(); await signIn.locator('#age-date').fill('1990-01-01');
-  await signIn.locator('dialog[open] button[type="submit"]').click(); await signIn.locator('#screen-main:not(.hidden)').waitFor();
+  await signIn.locator('#btn-xoauth').click(); await signIn.locator('#screen-main:not(.hidden)').waitFor();
   assert.equal(new URL(signIn.url()).hash, '', 'Configured X entry retains the existing callback flow.'); await signIn.close();
   delete process.env.X_CLIENT_ID;
 
@@ -216,14 +212,13 @@ try {
   await provider.route('**/v1/auth/privy', route => { providerToken = route.request().postDataJSON().token; return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ token: guest.token }) }); });
   await provider.goto(base); await provider.locator('#token-signin > summary').click();
   await provider.locator('#auth-provider').selectOption('privy'); await provider.locator('#auth-token').fill('synthetic-provider-token');
-  await provider.locator('#btn-provider').click(); await provider.locator('#age-date').fill('1990-01-01');
-  await provider.locator('dialog[open] button[type="submit"]').click(); await provider.locator('#screen-main:not(.hidden)').waitFor();
+  await provider.locator('#btn-provider').click(); await provider.locator('#screen-main:not(.hidden)').waitFor();
   assert.equal(providerToken, 'synthetic-provider-token', 'Deferred initialization preserves an explicitly entered provider token.'); await provider.close();
 
   const wallet = await browser.newPage({ reducedMotion: 'reduce' });
-  await wallet.goto(base); await wallet.locator('#btn-wallet-onboard').click(); await wallet.locator('#age-date').waitFor();
+  await wallet.goto(base); await wallet.locator('#btn-wallet-onboard').click(); await wallet.locator('#screen-create:not(.hidden)').waitFor();
   assert.equal(await wallet.evaluate(() => sessionStorage.getItem('omerta-wallet-onboarding')), '1');
-  await wallet.locator('#age-cancel').click(); await wallet.close();
+  await wallet.close();
 
   const broken = await browser.newPage({ reducedMotion: 'reduce' });
   broken.on('pageerror', () => {}); let brokenLoads = 0;

@@ -215,16 +215,16 @@ async function recoverCommittedGuestBootstrap(pool, recoveryHash, ip, agent = fa
 }
 
 export async function accountForGuestBootstrap(
-  pool, recoverySecret, ip, invite, beforeCreate = () => {}, createdIpAuthority = null,
+  pool, recoverySecret, ip, invite, createdIpAuthority = null,
 ) {
-  return accountForBootstrap(pool, recoverySecret, ip, invite, beforeCreate, false, createdIpAuthority);
+  return accountForBootstrap(pool, recoverySecret, ip, invite, false, createdIpAuthority);
 }
 
 export async function accountForAgentBootstrap(pool, recoverySecret, ip, invite, createdIpAuthority = null) {
-  return accountForBootstrap(pool, recoverySecret, ip, invite, () => {}, true, createdIpAuthority);
+  return accountForBootstrap(pool, recoverySecret, ip, invite, true, createdIpAuthority);
 }
 
-async function accountForBootstrap(pool, recoverySecret, ip, invite, beforeCreate, agent, createdIpAuthority) {
+async function accountForBootstrap(pool, recoverySecret, ip, invite, agent, createdIpAuthority) {
   if (typeof recoverySecret !== 'string' || !/^[A-Za-z0-9_-]{43}$/.test(recoverySecret)) {
     throw new GameError('bootstrap_credential', 'Invalid guest bootstrap credential.');
   }
@@ -239,8 +239,6 @@ async function accountForBootstrap(pool, recoverySecret, ip, invite, beforeCreat
   return withGuestBootstrapLock(recoveryHash, async () => {
     const existing = await recoverCommittedGuestBootstrap(pool, recoveryHash, ip, agent);
     if (existing) return existing;
-
-    await beforeCreate();
 
     const id = crypto.randomUUID();
     const tokenVersion = 0;

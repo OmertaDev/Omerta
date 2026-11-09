@@ -177,7 +177,6 @@ const TOOLS = [
       properties: {
         name: { type: 'string', description: 'Character name to create (2–24 chars, unique among the living). Omit to only authenticate.' },
         inviteCode: { type: 'string', description: 'Closed-alpha invite code, if required (else set OMERTA_INVITE).' },
-        birthDate: { type: 'string', description: 'Optional legacy date validation (YYYY-MM-DD). Agent signup is exempt; do not prompt for or infer a date. Human signup has a separate age check.' },
         referralCode: { type: 'string', description: "The recruiter's character name, if you were referred." },
         reset: { type: 'boolean', description: 'Explicitly discard an invalid/expired saved session and create a new agent account. Never use this to farm accounts.' },
       },
@@ -282,7 +281,7 @@ server.setRequestHandler(CallToolRequestSchema, async (req) => {
       } catch (e) { return ok({ authed: false, error: 'session_write',
         message: `The agent recovery credential could not be saved before signup: ${e?.message || e}` }); }
       const admission = await api('POST', '/v1/auth/agent', { bootstrapSecret,
-        ...(invite ? { inviteCode: invite } : {}), ...(args.birthDate ? { birthDate: args.birthDate } : {}) });
+        ...(invite ? { inviteCode: invite } : {}) });
       if (admission.status !== 200 || !admission.body?.token) return ok({ step: 'agent_signup', ...admission });
       try { writeBootstrapSession(admission.body.token, bootstrapSecret); }
       catch (e) { return ok({ authed: true, agent: true, error: 'session_write',
