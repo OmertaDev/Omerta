@@ -35,6 +35,10 @@ async function noOverflow(page, label) {
   const size = await page.evaluate(() => ({ width: innerWidth, scroll: document.documentElement.scrollWidth }));
   assert.ok(size.scroll <= size.width + 2, `${label} overflows: ${JSON.stringify(size)}`);
 }
+async function openDirectory(page) {
+  if (await page.locator('#city-directory').getAttribute('open') === null)
+    await page.locator('#city-directory > summary').click();
+}
 async function aboveFold(page, selector, label) {
   const position = await page.locator(selector).evaluate(element => {
     const rect = element.getBoundingClientRect();
@@ -73,7 +77,7 @@ try {
   assert.equal(await page.locator('#tabpanel #coachwrap').count(), 1, 'next action belongs beside the operation');
   assert.equal(await page.locator('#game-menu[open]').count(), 0, 'secondary utilities start closed');
   assert.equal(await page.locator('#ux-screen-tools[open]').count(), 0, 'workspace controls do not precede gameplay by default');
-  assert.equal(await page.locator('#city-directory[open]').count(), 1, 'desktop navigation remains visible');
+  assert.equal(await page.locator('#city-directory[open]').count(), 0, 'the complete directory starts collapsed beside the five main destinations');
   assert.equal(await page.locator('#game-menu #btn-logout').count(), 1, 'account controls remain available in the utility menu');
   await aboveFold(page, '#tab-start .start-next-card .act', 'desktop first-week action');
   const onboardingOrder = await page.evaluate(() => {
@@ -87,6 +91,7 @@ try {
   await noOverflow(page, 'desktop Start Here');
   await page.screenshot({ path: path.join(artifacts, 'shell-desktop.png') });
 
+  await openDirectory(page);
   await page.locator('#city-sidebar #tabs [data-tab="start"]').focus();
   await page.keyboard.press('ArrowDown');
   await page.locator('#tab-streets.on').waitFor();
@@ -94,6 +99,7 @@ try {
     'vertical navigation follows ArrowDown and retains keyboard focus');
   await openTab(page, 'start');
   await page.locator('#tab-start .start-next-card').waitFor();
+  await page.locator('#city-directory > summary').click();
 
   const menu = page.locator('#game-menu > summary');
   await menu.click();
@@ -133,6 +139,7 @@ try {
   // Secondary onboarding remains useful after a live server refresh.
   await page.locator('#tab-start details[data-sect="start-outreach"] > summary').click();
   await page.locator('#ref-claim-name').fill('Unsent referral draft');
+  await openDirectory(page);
   await page.locator('#character-sheet > summary').click();
   const sheetRefreshed = page.waitForResponse(response => [`${base}/v1/me`, `${base}/v1/projections/player`].includes(response.url()) && response.status() === 200);
   await page.locator('#btn-refresh').click();
@@ -152,6 +159,7 @@ try {
   await aboveFold(page, `${standardCrime} >> nth=0`, 'desktop crime action');
   await noOverflow(page, 'desktop Streets');
   await page.screenshot({ path: path.join(artifacts, 'shell-streets-desktop.png') });
+  await openDirectory(page);
   await page.locator('#tabs-more').click();
   assert.ok(await page.locator('#grouprail [data-group]:visible').count() >= 8, 'the whole city exposes every navigation group');
   await page.locator('#grouprail [data-group="earners"]').click();

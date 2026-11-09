@@ -13,7 +13,7 @@ export function prepareClientShell(source, readAsset = () => null) {
   const revision = version(html);
   const scripts = [...html.matchAll(/<script src="([^"]+)"[^>]*><\/script>/g)].map(match => match[1]);
   const styles = [...html.matchAll(/<link rel="stylesheet" href="([^"]+)"[^>]*>/g)]
-    .map(match => match[1]).filter(url => !url.startsWith('/omerta-ui.css'));
+    .map(match => match[1]).filter(url => !['/omerta-ui.css', '/noir-ui.css', '/noir-landing.css'].includes(url.split('?')[0]));
   if (!scripts.length || [...scripts, ...styles].some(url => !/^\/[a-z0-9][a-z0-9_./?=&-]*$/i.test(url) || url.split(/[/?]/).includes('..')))
     throw new Error('Game dependencies must remain explicit local assets.');
   const languageStart = runtime.indexOf('  const I18N = {');
