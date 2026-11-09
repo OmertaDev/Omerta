@@ -131,7 +131,7 @@
         + dialogue(item) + (item.instanceId ? '<button type="button" data-fieldwork-mystery="' + escape(item.graphId) + '">Read this journal</button>' : '')
         + actionButtons(item, item.title || 'Investigation') + '</article>').join('');
       const detail = mysteryDetail ? '<section class="fieldwork-case"><div class="fieldwork-case__heading"><h2>' + escape(cases.find(item => item.graphId === selectedMystery)?.title || 'Investigation') + '</h2>' + stamp(mysteryDetail.status) + '</div>'
-        + dialogue(mysteryDetail) + progress(mysteryDetail) + nextLead(mysteryDetail) + list(mysteryDetail.nodes).map(node => nodeCard(node)).join('') + actionButtons(mysteryDetail, 'Investigation') + '</section>' : '';
+        + dialogue(mysteryDetail) + progress(mysteryDetail) + nextLead(mysteryDetail) + list(mysteryDetail.nodes).filter(node => node.status !== 'excluded').map(node => nodeCard(node)).join('') + actionButtons(mysteryDetail, 'Investigation') + '</section>' : '';
       const historical = list(board.historicalInstances).map(instance => '<article class="fieldwork-card"><header><h3>' + escape(instance.title || words(instance.graphId)) + '</h3>' + stamp(instance.status) + '</header><p>Recorded work from a previous character. Custody and escrow stay attached to that history.</p>' + actionButtons(instance, 'Historical investigation') + '</article>').join('');
       return '<div class="fieldwork-intro"><h2>Your journal</h2><p>Follow a lead, make your choice, and see where the story takes you. Your progress is saved as you go.</p></div>' + detail
         + (detail ? '<h2 class="fieldwork-section-title">Your stories</h2>' : '') + '<div class="fieldwork-grid">' + (index || empty('Meet The Fixer in your neighborhood to find your first lead.')) + '</div>'
@@ -144,23 +144,41 @@
       return next ? '<aside class="fieldwork-next-lead"><div><h3>Your next lead</h3><p>' + escape(title(next)) + '</p><button type="button" data-fieldwork-lead="' + escape(next.id) + '">Review this step ↓</button></div></aside>' : '';
     }
 
+    function accomplishments() {
+      const records = list(boards.operations?.completedOperations);
+      if (!records.length) return '';
+      return '<section class="fieldwork-accomplishments"><h2 class="fieldwork-section-title">Your accomplishments</h2><p>Your completed Crew work. These records do not create a reward.</p><div class="fieldwork-grid">'
+        + records.map(item => '<article class="fieldwork-card"><h3>' + escape(item.title) + '</h3><p>Completed as ' + escape(item.roleTitle)
+          + (item.completedAt ? ' · ' + escape(new Date(item.completedAt).toLocaleDateString()) : '') + '</p>'
+          + (list(item.milestones).length ? '<ul>' + list(item.milestones).map(milestone => '<li>' + escape(milestone) + '</li>').join('') + '</ul>' : '')
+          + '</article>').join('') + '</div></section>';
+    }
+
     function operationsView() {
       const board = boards.operations || {}, operations = list(board.operations);
       const index = operations.map(item => '<article class="fieldwork-card"><header><h3>' + escape(item.title || words(item.operationNodeId)) + '</h3>' + stamp(item.status || (item.available ? 'ready' : 'requirements')) + '</header>'
         + '<p>' + count(item.minimumDistinctAccounts) + ' distinct Crew members required.</p>' + blockers(item.blockedBy)
         + (item.operationId ? '<button type="button" data-fieldwork-operation="' + escape(item.operationId) + '">Open operation board</button>' : '')
         + actionButtons(item, item.title || 'Crew operation', true) + '</article>').join('');
-      const detail = operationDetail ? '<section class="fieldwork-case"><div class="fieldwork-case__heading"><h2>Crew operation</h2>' + stamp(operationDetail.status) + '</div>'
+      const turnRoles = list(operationDetail?.roles).filter(role => role.turn);
+      const turn = operationDetail?.status === 'completed' ? 'Run complete. Your contributions are recorded.'
+        : operationDetail?.status === 'forming' ? 'Waiting for the remaining members to take their own roles.'
+        : turnRoles.length ? turnRoles.map(role => role.occupant?.self ? 'Your turn: ' + role.title : role.title + ' is up next').join(' · ')
+        : operationDetail?.status === 'active' ? 'All contributions are in. Use the issued completion action to close the run.' : '';
+      const detail = operationDetail ? '<section class="fieldwork-case"><div class="fieldwork-case__heading"><h2>' + escape(operations.find(item => item.operationId === selectedOperation)?.title || 'Crew operation') + '</h2>' + stamp(operationDetail.status) + '</div>'
+        + '<p class="fieldwork-handoff" role="status">' + escape(turn) + '</p><p>Refresh to check for contributions from your Crew. Each member takes their own role.</p>'
         + '<p>' + count(operationDetail.filledRoleCount) + ' / ' + count(operationDetail.requiredRoleCount) + ' roles filled</p>'
-        + '<div class="fieldwork-grid">' + list(operationDetail.roles).map(role => '<article class="fieldwork-card" data-fieldwork-role="' + escape(role.roleId) + '"><header><h3>' + escape(role.title || words(role.roleId)) + '</h3>' + stamp(role.filled ? 'filled' : 'open') + '</header><p>' + count(role.contributions) + ' contributions</p>' + actionButtons(role, role.title || 'Crew role') + '</article>').join('') + '</div>'
+        + '<div class="fieldwork-grid">' + list(operationDetail.roles).map(role => '<article class="fieldwork-card" data-fieldwork-role="' + escape(role.roleId) + '"><header><h3>' + escape(role.title || words(role.roleId)) + '</h3>' + stamp(role.filled ? 'filled' : 'open') + '</header><p>' + escape(role.occupant?.self ? 'You' : role.occupant?.name || (role.filled ? 'Crew member · name not learned' : 'Unclaimed')) + '</p>'
+          + (role.occupant?.name ? '<small>Name from your notebook' + (role.occupant.observedAt ? ' · ' + escape(new Date(role.occupant.observedAt).toLocaleDateString()) : '') + '</small>' : '')
+          + '<p>' + count(role.contributions) + ' confirmed contributions</p>' + actionButtons(role, role.title || 'Crew role') + '</article>').join('') + '</div>'
         + progress(operationDetail) + list(operationDetail.nodes).map(node => nodeCard(node, false)).join('')
-        + (roleDetail ? '<div class="fieldwork-role"><h2>Your role</h2><p>Only your assigned role receives these clues and contribution actions.</p>' + list(roleDetail.nodes).filter(node => list(node.actions).length || node.privateEvidence).map(node => nodeCard(node)).join('') + '</div>' : '')
+        + (roleDetail ? '<div class="fieldwork-role"><h2>Your role</h2><p>Only your assigned role receives these clues and contribution actions.</p>' + list(roleDetail.nodes).filter(node => node.status !== 'excluded' && (list(node.uiActions || node.actions).length || node.privateEvidence)).map(node => nodeCard(node)).join('') + '</div>' : '')
         + actionButtons(operationDetail, 'Crew operation') + '</section>' : '';
       const currentIds = new Set(operations.map(item => item.operationId).filter(Boolean));
       const recovery = list(board.recoverableOperations).filter(item => !currentIds.has(item.operationId))
         .map(item => '<article class="fieldwork-card"><header><h3>' + escape(item.title || 'Recorded Crew operation') + '</h3>' + stamp(item.status) + '</header><p>Work you opened with an earlier Crew. Closing it returns held items to their recorded depositors.</p>' + actionButtons(item, 'Recorded Crew operation') + '</article>').join('');
       return '<div class="fieldwork-intro"><h2>The shared job</h2><p>Take an issued role, follow its clues and contribute your part. Private evidence stays with the assigned player.</p></div><div class="fieldwork-grid">' + (index || empty('No shared operations are currently issued.')) + '</div>' + detail
-        + (recovery ? '<h2 class="fieldwork-section-title">Recover earlier work</h2><div class="fieldwork-grid">' + recovery + '</div>' : '');
+        + (recovery ? '<h2 class="fieldwork-section-title">Recover earlier work</h2><div class="fieldwork-grid">' + recovery + '</div>' : '') + accomplishments();
     }
 
     function draw() {
