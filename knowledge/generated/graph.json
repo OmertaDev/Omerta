@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "c5e7235f5861ad868eb226f14a2005d71cb75b1b",
+  "sourceRevision": "62f3583eeef62cdf8ae5af119e5bb730fc8fecdc",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 19004,
-    "edges": 75738,
+    "nodes": 19033,
+    "edges": 75805,
     "byNodeType": {
-      "Artifact": 7713,
+      "Artifact": 7735,
       "Command": 321,
-      "Commit": 5756,
+      "Commit": 5763,
       "Contract": 156,
       "Document": 974,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5997,
-      "CHANGED": 29560,
-      "CONTAINS": 7734,
+      "CHANGED": 29598,
+      "CONTAINS": 7756,
       "DECLARES": 321,
       "DEFINED_IN": 1817,
       "DEPENDS_ON": 69,
       "EXECUTES": 1272,
       "HANDLED_BY": 951,
-      "HAS_COMMIT": 5756,
+      "HAS_COMMIT": 5763,
       "IMPLEMENTS": 124,
       "IMPORTS": 9317,
       "INHERITS": 47,
@@ -41768,20 +41768,20 @@
       "path": "docs/quest-quality-workgraph.json",
       "kind": "artifact",
       "extension": ".json",
-      "bytes": 635000,
-      "lines": 7781,
-      "version": "737cd4407e10ff14",
+      "bytes": 681001,
+      "lines": 8287,
+      "version": "9f05a6ea8c6946f5",
       "text": true,
       "provenance": [
         {
           "file": "docs/quest-quality-workgraph.json",
           "line": 1,
-          "version": "737cd4407e10ff14"
+          "version": "9f05a6ea8c6946f5"
         }
       ],
-      "lastChangedAt": "2026-11-09T10:37:11.000Z",
+      "lastChangedAt": "2026-11-09T11:01:13.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b2c4a9026af74119e49298b54cb404283894216b"
+      "lastChangedCommit": "1fd0ff9fe3c7b81298f470e828a69c3269265930"
     },
     {
       "key": "Artifact:docs/questing-next-30.md",
@@ -41883,20 +41883,20 @@
       "path": "docs/questing-workgraph.json",
       "kind": "artifact",
       "extension": ".json",
-      "bytes": 1488528,
-      "lines": 17567,
-      "version": "c2dcfeec14c9c663",
+      "bytes": 1543424,
+      "lines": 18183,
+      "version": "209cd0a9d4a51812",
       "text": true,
       "provenance": [
         {
           "file": "docs/questing-workgraph.json",
           "line": 1,
-          "version": "c2dcfeec14c9c663"
+          "version": "209cd0a9d4a51812"
         }
       ],
-      "lastChangedAt": "2026-11-09T10:37:11.000Z",
+      "lastChangedAt": "2026-11-09T11:01:13.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b2c4a9026af74119e49298b54cb404283894216b"
+      "lastChangedCommit": "1fd0ff9fe3c7b81298f470e828a69c3269265930"
     },
     {
       "key": "Artifact:docs/rc1-alliance-continuation.md",
@@ -92907,6 +92907,259 @@
       "lastChangedCommit": "b2c4a9026af74119e49298b54cb404283894216b"
     },
     {
+      "key": "Artifact:output/quest-quality-verification/quality-mw95fwdp-quest-quality-content.log",
+      "type": "Artifact",
+      "id": "output/quest-quality-verification/quality-mw95fwdp-quest-quality-content.log",
+      "label": "quality-mw95fwdp-quest-quality-content.log",
+      "path": "output/quest-quality-verification/quality-mw95fwdp-quest-quality-content.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 402,
+      "lines": null,
+      "version": "a0f9bded0c0dba10",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/quest-quality-verification/quality-mw95fwdp-quest-quality-content.log",
+          "line": 1,
+          "version": "a0f9bded0c0dba10"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T11:02:13.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+    },
+    {
+      "key": "Artifact:output/quest-quality-verification/quality-mw95g3m2-quest-quality-rules.log",
+      "type": "Artifact",
+      "id": "output/quest-quality-verification/quality-mw95g3m2-quest-quality-rules.log",
+      "label": "quality-mw95g3m2-quest-quality-rules.log",
+      "path": "output/quest-quality-verification/quality-mw95g3m2-quest-quality-rules.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 224,
+      "lines": null,
+      "version": "88811fafc6080514",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/quest-quality-verification/quality-mw95g3m2-quest-quality-rules.log",
+          "line": 1,
+          "version": "88811fafc6080514"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T11:02:13.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+    },
+    {
+      "key": "Artifact:output/quest-quality-verification/quality-mw95g3zd-quest-quality-studio.log",
+      "type": "Artifact",
+      "id": "output/quest-quality-verification/quality-mw95g3zd-quest-quality-studio.log",
+      "label": "quality-mw95g3zd-quest-quality-studio.log",
+      "path": "output/quest-quality-verification/quality-mw95g3zd-quest-quality-studio.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 475,
+      "lines": null,
+      "version": "8a42ef7c6087d618",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/quest-quality-verification/quality-mw95g3zd-quest-quality-studio.log",
+          "line": 1,
+          "version": "8a42ef7c6087d618"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T11:02:13.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+    },
+    {
+      "key": "Artifact:output/quest-quality-verification/quality-mw95g4wk-quest-quality-runtime.log",
+      "type": "Artifact",
+      "id": "output/quest-quality-verification/quality-mw95g4wk-quest-quality-runtime.log",
+      "label": "quality-mw95g4wk-quest-quality-runtime.log",
+      "path": "output/quest-quality-verification/quality-mw95g4wk-quest-quality-runtime.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 187,
+      "lines": null,
+      "version": "a363aa602a6835fb",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/quest-quality-verification/quality-mw95g4wk-quest-quality-runtime.log",
+          "line": 1,
+          "version": "a363aa602a6835fb"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T11:02:13.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+    },
+    {
+      "key": "Artifact:output/quest-quality-verification/quality-mw95g8q0-quest-quality-api.log",
+      "type": "Artifact",
+      "id": "output/quest-quality-verification/quality-mw95g8q0-quest-quality-api.log",
+      "label": "quality-mw95g8q0-quest-quality-api.log",
+      "path": "output/quest-quality-verification/quality-mw95g8q0-quest-quality-api.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 209,
+      "lines": null,
+      "version": "985787db98e929e5",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/quest-quality-verification/quality-mw95g8q0-quest-quality-api.log",
+          "line": 1,
+          "version": "985787db98e929e5"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T11:02:13.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+    },
+    {
+      "key": "Artifact:output/quest-quality-verification/quality-mw95gc3d-quest-quality-browser.log",
+      "type": "Artifact",
+      "id": "output/quest-quality-verification/quality-mw95gc3d-quest-quality-browser.log",
+      "label": "quality-mw95gc3d-quest-quality-browser.log",
+      "path": "output/quest-quality-verification/quality-mw95gc3d-quest-quality-browser.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 2029,
+      "lines": null,
+      "version": "f1d28d65aa614241",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/quest-quality-verification/quality-mw95gc3d-quest-quality-browser.log",
+          "line": 1,
+          "version": "f1d28d65aa614241"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T11:02:13.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+    },
+    {
+      "key": "Artifact:output/quest-quality-verification/quality-mw95grhg-quest-quality-postgres.log",
+      "type": "Artifact",
+      "id": "output/quest-quality-verification/quality-mw95grhg-quest-quality-postgres.log",
+      "label": "quality-mw95grhg-quest-quality-postgres.log",
+      "path": "output/quest-quality-verification/quality-mw95grhg-quest-quality-postgres.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 287,
+      "lines": null,
+      "version": "2874350f76d5da38",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/quest-quality-verification/quality-mw95grhg-quest-quality-postgres.log",
+          "line": 1,
+          "version": "2874350f76d5da38"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T11:02:13.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+    },
+    {
+      "key": "Artifact:output/quest-quality-verification/quality-mw95gyfv-quest-quality-stateful.log",
+      "type": "Artifact",
+      "id": "output/quest-quality-verification/quality-mw95gyfv-quest-quality-stateful.log",
+      "label": "quality-mw95gyfv-quest-quality-stateful.log",
+      "path": "output/quest-quality-verification/quality-mw95gyfv-quest-quality-stateful.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 186,
+      "lines": null,
+      "version": "c42d213b405266e1",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/quest-quality-verification/quality-mw95gyfv-quest-quality-stateful.log",
+          "line": 1,
+          "version": "c42d213b405266e1"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T11:02:13.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+    },
+    {
+      "key": "Artifact:output/quest-quality-verification/quality-mw95gzjg-quest-quality-social.log",
+      "type": "Artifact",
+      "id": "output/quest-quality-verification/quality-mw95gzjg-quest-quality-social.log",
+      "label": "quality-mw95gzjg-quest-quality-social.log",
+      "path": "output/quest-quality-verification/quality-mw95gzjg-quest-quality-social.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 221,
+      "lines": null,
+      "version": "57991e1c79099eaf",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/quest-quality-verification/quality-mw95gzjg-quest-quality-social.log",
+          "line": 1,
+          "version": "57991e1c79099eaf"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T11:02:13.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+    },
+    {
+      "key": "Artifact:output/quest-quality-verification/quality-mw95h410-quest-quality-spoilers.log",
+      "type": "Artifact",
+      "id": "output/quest-quality-verification/quality-mw95h410-quest-quality-spoilers.log",
+      "label": "quality-mw95h410-quest-quality-spoilers.log",
+      "path": "output/quest-quality-verification/quality-mw95h410-quest-quality-spoilers.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 189,
+      "lines": null,
+      "version": "98af7a8ae248cf72",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/quest-quality-verification/quality-mw95h410-quest-quality-spoilers.log",
+          "line": 1,
+          "version": "98af7a8ae248cf72"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T11:02:13.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+    },
+    {
+      "key": "Artifact:output/quest-quality-verification/quality-mw95h79m-quest-quality-study.log",
+      "type": "Artifact",
+      "id": "output/quest-quality-verification/quality-mw95h79m-quest-quality-study.log",
+      "label": "quality-mw95h79m-quest-quality-study.log",
+      "path": "output/quest-quality-verification/quality-mw95h79m-quest-quality-study.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 119,
+      "lines": null,
+      "version": "6c0b311473da2bf2",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/quest-quality-verification/quality-mw95h79m-quest-quality-study.log",
+          "line": 1,
+          "version": "6c0b311473da2bf2"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T11:02:13.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+    },
+    {
       "key": "Artifact:output/questing-verification/quest-mw7bvisg-quest-saga.log",
       "type": "Artifact",
       "id": "output/questing-verification/quest-mw7bvisg-quest-saga.log",
@@ -96470,6 +96723,259 @@
       "lastChangedAt": "2026-11-09T10:37:11.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "b2c4a9026af74119e49298b54cb404283894216b"
+    },
+    {
+      "key": "Artifact:output/questing-verification/quest-mw95fvn8-quest-saga.log",
+      "type": "Artifact",
+      "id": "output/questing-verification/quest-mw95fvn8-quest-saga.log",
+      "label": "quest-mw95fvn8-quest-saga.log",
+      "path": "output/questing-verification/quest-mw95fvn8-quest-saga.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 247,
+      "lines": null,
+      "version": "38e9a8e9540aacac",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/questing-verification/quest-mw95fvn8-quest-saga.log",
+          "line": 1,
+          "version": "38e9a8e9540aacac"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T11:02:13.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+    },
+    {
+      "key": "Artifact:output/questing-verification/quest-mw95g1vy-content-narrative-security.log",
+      "type": "Artifact",
+      "id": "output/questing-verification/quest-mw95g1vy-content-narrative-security.log",
+      "label": "quest-mw95g1vy-content-narrative-security.log",
+      "path": "output/questing-verification/quest-mw95g1vy-content-narrative-security.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 143,
+      "lines": null,
+      "version": "9fd43ea7087d190a",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/questing-verification/quest-mw95g1vy-content-narrative-security.log",
+          "line": 1,
+          "version": "9fd43ea7087d190a"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T11:02:13.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+    },
+    {
+      "key": "Artifact:output/questing-verification/quest-mw95g2ym-quest-specialist.log",
+      "type": "Artifact",
+      "id": "output/questing-verification/quest-mw95g2ym-quest-specialist.log",
+      "label": "quest-mw95g2ym-quest-specialist.log",
+      "path": "output/questing-verification/quest-mw95g2ym-quest-specialist.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 225,
+      "lines": null,
+      "version": "dc16d63834905afa",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/questing-verification/quest-mw95g2ym-quest-specialist.log",
+          "line": 1,
+          "version": "dc16d63834905afa"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T11:02:13.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+    },
+    {
+      "key": "Artifact:output/questing-verification/quest-mw95g8gp-clue-puzzles.log",
+      "type": "Artifact",
+      "id": "output/questing-verification/quest-mw95g8gp-clue-puzzles.log",
+      "label": "quest-mw95g8gp-clue-puzzles.log",
+      "path": "output/questing-verification/quest-mw95g8gp-clue-puzzles.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 235,
+      "lines": null,
+      "version": "e92c2a507abc6cfe",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/questing-verification/quest-mw95g8gp-clue-puzzles.log",
+          "line": 1,
+          "version": "e92c2a507abc6cfe"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T11:02:13.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+    },
+    {
+      "key": "Artifact:output/questing-verification/quest-mw95gd8w-clue-puzzles-browser.log",
+      "type": "Artifact",
+      "id": "output/questing-verification/quest-mw95gd8w-clue-puzzles-browser.log",
+      "label": "quest-mw95gd8w-clue-puzzles-browser.log",
+      "path": "output/questing-verification/quest-mw95gd8w-clue-puzzles-browser.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 733,
+      "lines": null,
+      "version": "cdf1c6855bcabd2b",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/questing-verification/quest-mw95gd8w-clue-puzzles-browser.log",
+          "line": 1,
+          "version": "cdf1c6855bcabd2b"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T11:02:13.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+    },
+    {
+      "key": "Artifact:output/questing-verification/quest-mw95gkbe-content-narrative.log",
+      "type": "Artifact",
+      "id": "output/questing-verification/quest-mw95gkbe-content-narrative.log",
+      "label": "quest-mw95gkbe-content-narrative.log",
+      "path": "output/questing-verification/quest-mw95gkbe-content-narrative.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 199,
+      "lines": null,
+      "version": "968b7cbe4e321ee6",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/questing-verification/quest-mw95gkbe-content-narrative.log",
+          "line": 1,
+          "version": "968b7cbe4e321ee6"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T11:02:13.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+    },
+    {
+      "key": "Artifact:output/questing-verification/quest-mw95go95-quest-experience-browser.log",
+      "type": "Artifact",
+      "id": "output/questing-verification/quest-mw95go95-quest-experience-browser.log",
+      "label": "quest-mw95go95-quest-experience-browser.log",
+      "path": "output/questing-verification/quest-mw95go95-quest-experience-browser.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 2095,
+      "lines": null,
+      "version": "38f2c4f2eb11167d",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/questing-verification/quest-mw95go95-quest-experience-browser.log",
+          "line": 1,
+          "version": "38f2c4f2eb11167d"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T11:02:13.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+    },
+    {
+      "key": "Artifact:output/questing-verification/quest-mw95h4c7-content-api.log",
+      "type": "Artifact",
+      "id": "output/questing-verification/quest-mw95h4c7-content-api.log",
+      "label": "quest-mw95h4c7-content-api.log",
+      "path": "output/questing-verification/quest-mw95h4c7-content-api.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 54,
+      "lines": null,
+      "version": "106619fa56b4a6f4",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/questing-verification/quest-mw95h4c7-content-api.log",
+          "line": 1,
+          "version": "106619fa56b4a6f4"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T11:02:13.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+    },
+    {
+      "key": "Artifact:output/questing-verification/quest-mw95h5mq-quest-saga-social.log",
+      "type": "Artifact",
+      "id": "output/questing-verification/quest-mw95h5mq-quest-saga-social.log",
+      "label": "quest-mw95h5mq-quest-saga-social.log",
+      "path": "output/questing-verification/quest-mw95h5mq-quest-saga-social.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 222,
+      "lines": null,
+      "version": "bd1546dbdf6591df",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/questing-verification/quest-mw95h5mq-quest-saga-social.log",
+          "line": 1,
+          "version": "bd1546dbdf6591df"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T11:02:13.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+    },
+    {
+      "key": "Artifact:output/questing-verification/quest-mw95h9vw-content-casework.log",
+      "type": "Artifact",
+      "id": "output/questing-verification/quest-mw95h9vw-content-casework.log",
+      "label": "quest-mw95h9vw-content-casework.log",
+      "path": "output/questing-verification/quest-mw95h9vw-content-casework.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 234,
+      "lines": null,
+      "version": "b16cee8d6d1436db",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/questing-verification/quest-mw95h9vw-content-casework.log",
+          "line": 1,
+          "version": "b16cee8d6d1436db"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T11:02:13.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+    },
+    {
+      "key": "Artifact:output/questing-verification/quest-mw95hdcd-quest-workshop.log",
+      "type": "Artifact",
+      "id": "output/questing-verification/quest-mw95hdcd-quest-workshop.log",
+      "label": "quest-mw95hdcd-quest-workshop.log",
+      "path": "output/questing-verification/quest-mw95hdcd-quest-workshop.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 203,
+      "lines": null,
+      "version": "67c6217c57b09a8d",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/questing-verification/quest-mw95hdcd-quest-workshop.log",
+          "line": 1,
+          "version": "67c6217c57b09a8d"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T11:02:13.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
     },
     {
       "key": "Artifact:package-lock.json",
@@ -128035,20 +128541,20 @@
       "path": "public/ux-quests.js",
       "kind": "web-surface",
       "extension": ".js",
-      "bytes": 48243,
-      "lines": 528,
-      "version": "8b8aeb833b7704f9",
+      "bytes": 48930,
+      "lines": 542,
+      "version": "8997879a339d9123",
       "text": true,
       "provenance": [
         {
           "file": "public/ux-quests.js",
           "line": 1,
-          "version": "8b8aeb833b7704f9"
+          "version": "8997879a339d9123"
         }
       ],
-      "lastChangedAt": "2026-11-08T12:52:00.000Z",
+      "lastChangedAt": "2026-11-09T10:59:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "68d967296d266cd04d1d233f93f7491563ff2507"
+      "lastChangedCommit": "018cc031c595901bb59aee7303e3dd16ee3c053b"
     },
     {
       "key": "Artifact:public/ux-social.css",
@@ -153473,20 +153979,20 @@
       "path": "test/lib/age-removal-source-transfer-proof.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 13347,
-      "lines": 183,
-      "version": "9361fb88ec2208bc",
+      "bytes": 15106,
+      "lines": 206,
+      "version": "eba04ba9ee8a53ae",
       "text": true,
       "provenance": [
         {
           "file": "test/lib/age-removal-source-transfer-proof.js",
           "line": 1,
-          "version": "9361fb88ec2208bc"
+          "version": "eba04ba9ee8a53ae"
         }
       ],
-      "lastChangedAt": "2026-11-09T10:37:11.000Z",
+      "lastChangedAt": "2026-11-09T11:02:13.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b2c4a9026af74119e49298b54cb404283894216b"
+      "lastChangedCommit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
     },
     {
       "key": "Artifact:test/lib/business-control-desk-fixture.js",
@@ -158188,20 +158694,20 @@
       "path": "test/quest-experience-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 32695,
-      "lines": 336,
-      "version": "38453a9487242b44",
+      "bytes": 34736,
+      "lines": 363,
+      "version": "0cee33effbeb473a",
       "text": true,
       "provenance": [
         {
           "file": "test/quest-experience-browser.js",
           "line": 1,
-          "version": "38453a9487242b44"
+          "version": "0cee33effbeb473a"
         }
       ],
-      "lastChangedAt": "2026-11-08T04:59:11.000Z",
+      "lastChangedAt": "2026-11-09T10:59:39.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e3785fd561cfe8e93d7a71f57819b333fd03e588"
+      "lastChangedCommit": "018cc031c595901bb59aee7303e3dd16ee3c053b"
     },
     {
       "key": "Artifact:test/quest-quality-api.js",
@@ -167319,20 +167825,20 @@
       "path": "tools/age-removal-source-data.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 268467,
-      "lines": 1677,
-      "version": "7d4aad2d64c925f5",
+      "bytes": 277419,
+      "lines": 1729,
+      "version": "f09c84fe02aa0886",
       "text": true,
       "provenance": [
         {
           "file": "tools/age-removal-source-data.js",
           "line": 1,
-          "version": "7d4aad2d64c925f5"
+          "version": "f09c84fe02aa0886"
         }
       ],
-      "lastChangedAt": "2026-11-09T10:37:42.000Z",
+      "lastChangedAt": "2026-11-09T11:02:27.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "ead4f29b3336b6e30a2b17cab6e75c77f7bfbbbc"
+      "lastChangedCommit": "9fd933cb19ea8089fd5a385f99c9aa927dabd3c0"
     },
     {
       "key": "Artifact:tools/age-removal-source-seal.js",
@@ -167342,20 +167848,20 @@
       "path": "tools/age-removal-source-seal.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 11931,
-      "lines": 183,
-      "version": "837013473d26e4e0",
+      "bytes": 13844,
+      "lines": 208,
+      "version": "bd6bfc74f8dfad3a",
       "text": true,
       "provenance": [
         {
           "file": "tools/age-removal-source-seal.js",
           "line": 1,
-          "version": "837013473d26e4e0"
+          "version": "bd6bfc74f8dfad3a"
         }
       ],
-      "lastChangedAt": "2026-11-09T10:37:11.000Z",
+      "lastChangedAt": "2026-11-09T11:02:13.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b2c4a9026af74119e49298b54cb404283894216b"
+      "lastChangedCommit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
     },
     {
       "key": "Artifact:tools/age-removal-source-transfer.js",
@@ -170313,18 +170819,18 @@
       "extension": ".js",
       "bytes": 486299,
       "lines": 12945,
-      "version": "6cc418b3f5f5b453",
+      "version": "08b109e2b817e342",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-questing-inputs.js",
           "line": 1,
-          "version": "6cc418b3f5f5b453"
+          "version": "08b109e2b817e342"
         }
       ],
-      "lastChangedAt": "2026-11-09T10:37:48.000Z",
+      "lastChangedAt": "2026-11-09T11:03:00.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c5e7235f5861ad868eb226f14a2005d71cb75b1b"
+      "lastChangedCommit": "62f3583eeef62cdf8ae5af119e5bb730fc8fecdc"
     },
     {
       "key": "Artifact:tools/enterprise-native-questing-seal.js",
@@ -182348,6 +182854,22 @@
       ]
     },
     {
+      "key": "Commit:018cc031c595901bb59aee7303e3dd16ee3c053b",
+      "type": "Commit",
+      "id": "018cc031c595901bb59aee7303e3dd16ee3c053b",
+      "label": "Preserve quest disclosures across asynchronous refetch repaint",
+      "title": "Preserve quest disclosures across asynchronous refetch repaint",
+      "date": "2026-11-09T10:59:39.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/018cc031c595901bb59aee7303e3dd16ee3c053b",
+      "provenance": [
+        {
+          "commit": "018cc031c595901bb59aee7303e3dd16ee3c053b",
+          "url": "https://github.com/OmertaDev/Omerta/commit/018cc031c595901bb59aee7303e3dd16ee3c053b"
+        }
+      ]
+    },
+    {
       "key": "Commit:019aea1cf60f3d63e614855aa52a583091c4602e",
       "type": "Commit",
       "id": "019aea1cf60f3d63e614855aa52a583091c4602e",
@@ -187884,6 +188406,22 @@
       ]
     },
     {
+      "key": "Commit:12436d6d31eab4427f2b93a35d4f7b740709774b",
+      "type": "Commit",
+      "id": "12436d6d31eab4427f2b93a35d4f7b740709774b",
+      "label": "Retain exact raw evidence for the repaired quest source",
+      "title": "Retain exact raw evidence for the repaired quest source",
+      "date": "2026-11-09T11:02:13.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/12436d6d31eab4427f2b93a35d4f7b740709774b",
+      "provenance": [
+        {
+          "commit": "12436d6d31eab4427f2b93a35d4f7b740709774b",
+          "url": "https://github.com/OmertaDev/Omerta/commit/12436d6d31eab4427f2b93a35d4f7b740709774b"
+        }
+      ]
+    },
+    {
       "key": "Commit:126e410b6dd957cda0e4ce5980139bc1b6c1c832",
       "type": "Commit",
       "id": "126e410b6dd957cda0e4ce5980139bc1b6c1c832",
@@ -192824,6 +193362,22 @@
         {
           "commit": "1fc6049c91036fab811603c9eccb969bdf629350",
           "url": "https://github.com/OmertaDev/Omerta/commit/1fc6049c91036fab811603c9eccb969bdf629350"
+        }
+      ]
+    },
+    {
+      "key": "Commit:1fd0ff9fe3c7b81298f470e828a69c3269265930",
+      "type": "Commit",
+      "id": "1fd0ff9fe3c7b81298f470e828a69c3269265930",
+      "label": "Record fresh quest evaluations after disclosure race repair",
+      "title": "Record fresh quest evaluations after disclosure race repair",
+      "date": "2026-11-09T11:01:13.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/1fd0ff9fe3c7b81298f470e828a69c3269265930",
+      "provenance": [
+        {
+          "commit": "1fd0ff9fe3c7b81298f470e828a69c3269265930",
+          "url": "https://github.com/OmertaDev/Omerta/commit/1fd0ff9fe3c7b81298f470e828a69c3269265930"
         }
       ]
     },
@@ -216908,6 +217462,22 @@
       ]
     },
     {
+      "key": "Commit:62f3583eeef62cdf8ae5af119e5bb730fc8fecdc",
+      "type": "Commit",
+      "id": "62f3583eeef62cdf8ae5af119e5bb730fc8fecdc",
+      "label": "Bind native declarations to repaired release inputs",
+      "title": "Bind native declarations to repaired release inputs",
+      "date": "2026-11-09T11:03:00.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/62f3583eeef62cdf8ae5af119e5bb730fc8fecdc",
+      "provenance": [
+        {
+          "commit": "62f3583eeef62cdf8ae5af119e5bb730fc8fecdc",
+          "url": "https://github.com/OmertaDev/Omerta/commit/62f3583eeef62cdf8ae5af119e5bb730fc8fecdc"
+        }
+      ]
+    },
+    {
       "key": "Commit:62fd09df1f1f1a79d28555311c51075f6c12463a",
       "type": "Commit",
       "id": "62fd09df1f1f1a79d28555311c51075f6c12463a",
@@ -229196,6 +229766,22 @@
       ]
     },
     {
+      "key": "Commit:8334975228592b5d8f65ec69deb5f3eb41dc8355",
+      "type": "Commit",
+      "id": "8334975228592b5d8f65ec69deb5f3eb41dc8355",
+      "label": "Refresh knowledge for combined UI and direct signup release",
+      "title": "Refresh knowledge for combined UI and direct signup release",
+      "date": "2026-11-09T10:42:30.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/8334975228592b5d8f65ec69deb5f3eb41dc8355",
+      "provenance": [
+        {
+          "commit": "8334975228592b5d8f65ec69deb5f3eb41dc8355",
+          "url": "https://github.com/OmertaDev/Omerta/commit/8334975228592b5d8f65ec69deb5f3eb41dc8355"
+        }
+      ]
+    },
+    {
       "key": "Commit:833f1a90a49f832150c557ff77e21c2475c638c4",
       "type": "Commit",
       "id": "833f1a90a49f832150c557ff77e21c2475c638c4",
@@ -239692,6 +240278,22 @@
       ]
     },
     {
+      "key": "Commit:9f53bc10fd317430c032140bce000e26023d89f2",
+      "type": "Commit",
+      "id": "9f53bc10fd317430c032140bce000e26023d89f2",
+      "label": "Seal combined release with quest disclosure repair",
+      "title": "Seal combined release with quest disclosure repair",
+      "date": "2026-11-09T11:01:27.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/9f53bc10fd317430c032140bce000e26023d89f2",
+      "provenance": [
+        {
+          "commit": "9f53bc10fd317430c032140bce000e26023d89f2",
+          "url": "https://github.com/OmertaDev/Omerta/commit/9f53bc10fd317430c032140bce000e26023d89f2"
+        }
+      ]
+    },
+    {
       "key": "Commit:9f592d62b26a3a4233e57e4cc70e16e2f1d211b0",
       "type": "Commit",
       "id": "9f592d62b26a3a4233e57e4cc70e16e2f1d211b0",
@@ -239880,6 +240482,22 @@
         {
           "commit": "9fcdc03111e80acc1e15b31b1a0c0ed31d587ae9",
           "url": "https://github.com/OmertaDev/Omerta/commit/9fcdc03111e80acc1e15b31b1a0c0ed31d587ae9"
+        }
+      ]
+    },
+    {
+      "key": "Commit:9fd933cb19ea8089fd5a385f99c9aa927dabd3c0",
+      "type": "Commit",
+      "id": "9fd933cb19ea8089fd5a385f99c9aa927dabd3c0",
+      "label": "Seal repaired release and exact evaluation evidence",
+      "title": "Seal repaired release and exact evaluation evidence",
+      "date": "2026-11-09T11:02:27.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/9fd933cb19ea8089fd5a385f99c9aa927dabd3c0",
+      "provenance": [
+        {
+          "commit": "9fd933cb19ea8089fd5a385f99c9aa927dabd3c0",
+          "url": "https://github.com/OmertaDev/Omerta/commit/9fd933cb19ea8089fd5a385f99c9aa927dabd3c0"
         }
       ]
     },
@@ -303358,6 +303976,9 @@
           "commit": "82c86b16e2b84c029e6b934f8628ab9d5479aeeb"
         },
         {
+          "commit": "8334975228592b5d8f65ec69deb5f3eb41dc8355"
+        },
+        {
           "commit": "833f1a90a49f832150c557ff77e21c2475c638c4"
         },
         {
@@ -306247,6 +306868,9 @@
           "commit": "82c86b16e2b84c029e6b934f8628ab9d5479aeeb"
         },
         {
+          "commit": "8334975228592b5d8f65ec69deb5f3eb41dc8355"
+        },
+        {
           "commit": "833f1a90a49f832150c557ff77e21c2475c638c4"
         },
         {
@@ -309134,6 +309758,9 @@
         },
         {
           "commit": "82c86b16e2b84c029e6b934f8628ab9d5479aeeb"
+        },
+        {
+          "commit": "8334975228592b5d8f65ec69deb5f3eb41dc8355"
         },
         {
           "commit": "833f1a90a49f832150c557ff77e21c2475c638c4"
@@ -312805,6 +313432,9 @@
           "commit": "82c86b16e2b84c029e6b934f8628ab9d5479aeeb"
         },
         {
+          "commit": "8334975228592b5d8f65ec69deb5f3eb41dc8355"
+        },
+        {
           "commit": "833f1a90a49f832150c557ff77e21c2475c638c4"
         },
         {
@@ -314635,6 +315265,9 @@
           "commit": "81583e991da50050e65c67b80120a1b2406a804f"
         },
         {
+          "commit": "8334975228592b5d8f65ec69deb5f3eb41dc8355"
+        },
+        {
           "commit": "83479446113cc3acffef1ee857a5d8d8e9fdc52c"
         },
         {
@@ -315398,6 +316031,9 @@
         },
         {
           "commit": "80ac0d99bd93ecd8e84d9478b5b8384940d6c090"
+        },
+        {
+          "commit": "8334975228592b5d8f65ec69deb5f3eb41dc8355"
         },
         {
           "commit": "83659f77604f2571ead7bff876c1ac1270083089"
@@ -329401,12 +330037,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "c5e7235f5861ad868eb226f14a2005d71cb75b1b",
+      "revision": "62f3583eeef62cdf8ae5af119e5bb730fc8fecdc",
       "currentBranch": "codex/remove-age-verification-20261109",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 7713,
+      "currentArtifactCount": 7735,
       "provenance": [
         {
           "file": "README.md",
@@ -374517,13 +375153,13 @@
       "type": "TestSuite",
       "id": "test/lib/age-removal-source-transfer-proof.js",
       "label": "test/lib/age-removal-source-transfer-proof.js",
-      "lines": 183,
-      "version": "9361fb88ec2208bc",
+      "lines": 206,
+      "version": "eba04ba9ee8a53ae",
       "provenance": [
         {
           "file": "test/lib/age-removal-source-transfer-proof.js",
           "line": 1,
-          "version": "9361fb88ec2208bc"
+          "version": "eba04ba9ee8a53ae"
         }
       ]
     },
@@ -377577,13 +378213,13 @@
       "type": "TestSuite",
       "id": "test/quest-experience-browser.js",
       "label": "test/quest-experience-browser.js",
-      "lines": 336,
-      "version": "38453a9487242b44",
+      "lines": 363,
+      "version": "0cee33effbeb473a",
       "provenance": [
         {
           "file": "test/quest-experience-browser.js",
           "line": 1,
-          "version": "38453a9487242b44"
+          "version": "0cee33effbeb473a"
         }
       ]
     },
@@ -438757,6 +439393,30 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:018cc031c595901bb59aee7303e3dd16ee3c053b",
+      "to": "Artifact:public/ux-quests.js",
+      "provenance": {
+        "commit": "018cc031c595901bb59aee7303e3dd16ee3c053b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:018cc031c595901bb59aee7303e3dd16ee3c053b",
+      "to": "Artifact:test/quest-experience-browser.js",
+      "provenance": {
+        "commit": "018cc031c595901bb59aee7303e3dd16ee3c053b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:018cc031c595901bb59aee7303e3dd16ee3c053b",
+      "to": "Artifact:tools/age-removal-source-seal.js",
+      "provenance": {
+        "commit": "018cc031c595901bb59aee7303e3dd16ee3c053b"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:019aea1cf60f3d63e614855aa52a583091c4602e",
       "to": "Artifact:tools/enterprise-native-inputs.js",
       "provenance": {
@@ -449049,6 +449709,198 @@
       "to": "Artifact:test/enterprise-native-guard.js",
       "provenance": {
         "commit": "123c1b2e1da3e24398ca88b1b261185c08dd3988"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12436d6d31eab4427f2b93a35d4f7b740709774b",
+      "to": "Artifact:output/quest-quality-verification/quality-mw95fwdp-quest-quality-content.log",
+      "provenance": {
+        "commit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12436d6d31eab4427f2b93a35d4f7b740709774b",
+      "to": "Artifact:output/quest-quality-verification/quality-mw95g3m2-quest-quality-rules.log",
+      "provenance": {
+        "commit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12436d6d31eab4427f2b93a35d4f7b740709774b",
+      "to": "Artifact:output/quest-quality-verification/quality-mw95g3zd-quest-quality-studio.log",
+      "provenance": {
+        "commit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12436d6d31eab4427f2b93a35d4f7b740709774b",
+      "to": "Artifact:output/quest-quality-verification/quality-mw95g4wk-quest-quality-runtime.log",
+      "provenance": {
+        "commit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12436d6d31eab4427f2b93a35d4f7b740709774b",
+      "to": "Artifact:output/quest-quality-verification/quality-mw95g8q0-quest-quality-api.log",
+      "provenance": {
+        "commit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12436d6d31eab4427f2b93a35d4f7b740709774b",
+      "to": "Artifact:output/quest-quality-verification/quality-mw95gc3d-quest-quality-browser.log",
+      "provenance": {
+        "commit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12436d6d31eab4427f2b93a35d4f7b740709774b",
+      "to": "Artifact:output/quest-quality-verification/quality-mw95grhg-quest-quality-postgres.log",
+      "provenance": {
+        "commit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12436d6d31eab4427f2b93a35d4f7b740709774b",
+      "to": "Artifact:output/quest-quality-verification/quality-mw95gyfv-quest-quality-stateful.log",
+      "provenance": {
+        "commit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12436d6d31eab4427f2b93a35d4f7b740709774b",
+      "to": "Artifact:output/quest-quality-verification/quality-mw95gzjg-quest-quality-social.log",
+      "provenance": {
+        "commit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12436d6d31eab4427f2b93a35d4f7b740709774b",
+      "to": "Artifact:output/quest-quality-verification/quality-mw95h410-quest-quality-spoilers.log",
+      "provenance": {
+        "commit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12436d6d31eab4427f2b93a35d4f7b740709774b",
+      "to": "Artifact:output/quest-quality-verification/quality-mw95h79m-quest-quality-study.log",
+      "provenance": {
+        "commit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12436d6d31eab4427f2b93a35d4f7b740709774b",
+      "to": "Artifact:output/questing-verification/quest-mw95fvn8-quest-saga.log",
+      "provenance": {
+        "commit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12436d6d31eab4427f2b93a35d4f7b740709774b",
+      "to": "Artifact:output/questing-verification/quest-mw95g1vy-content-narrative-security.log",
+      "provenance": {
+        "commit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12436d6d31eab4427f2b93a35d4f7b740709774b",
+      "to": "Artifact:output/questing-verification/quest-mw95g2ym-quest-specialist.log",
+      "provenance": {
+        "commit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12436d6d31eab4427f2b93a35d4f7b740709774b",
+      "to": "Artifact:output/questing-verification/quest-mw95g8gp-clue-puzzles.log",
+      "provenance": {
+        "commit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12436d6d31eab4427f2b93a35d4f7b740709774b",
+      "to": "Artifact:output/questing-verification/quest-mw95gd8w-clue-puzzles-browser.log",
+      "provenance": {
+        "commit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12436d6d31eab4427f2b93a35d4f7b740709774b",
+      "to": "Artifact:output/questing-verification/quest-mw95gkbe-content-narrative.log",
+      "provenance": {
+        "commit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12436d6d31eab4427f2b93a35d4f7b740709774b",
+      "to": "Artifact:output/questing-verification/quest-mw95go95-quest-experience-browser.log",
+      "provenance": {
+        "commit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12436d6d31eab4427f2b93a35d4f7b740709774b",
+      "to": "Artifact:output/questing-verification/quest-mw95h4c7-content-api.log",
+      "provenance": {
+        "commit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12436d6d31eab4427f2b93a35d4f7b740709774b",
+      "to": "Artifact:output/questing-verification/quest-mw95h5mq-quest-saga-social.log",
+      "provenance": {
+        "commit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12436d6d31eab4427f2b93a35d4f7b740709774b",
+      "to": "Artifact:output/questing-verification/quest-mw95h9vw-content-casework.log",
+      "provenance": {
+        "commit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12436d6d31eab4427f2b93a35d4f7b740709774b",
+      "to": "Artifact:output/questing-verification/quest-mw95hdcd-quest-workshop.log",
+      "provenance": {
+        "commit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12436d6d31eab4427f2b93a35d4f7b740709774b",
+      "to": "Artifact:test/lib/age-removal-source-transfer-proof.js",
+      "provenance": {
+        "commit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:12436d6d31eab4427f2b93a35d4f7b740709774b",
+      "to": "Artifact:tools/age-removal-source-seal.js",
+      "provenance": {
+        "commit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
       }
     },
     {
@@ -461577,6 +462429,22 @@
       "to": "Artifact:test/gates.js",
       "provenance": {
         "commit": "1fc6049c91036fab811603c9eccb969bdf629350"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1fd0ff9fe3c7b81298f470e828a69c3269265930",
+      "to": "Artifact:docs/quest-quality-workgraph.json",
+      "provenance": {
+        "commit": "1fd0ff9fe3c7b81298f470e828a69c3269265930"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1fd0ff9fe3c7b81298f470e828a69c3269265930",
+      "to": "Artifact:docs/questing-workgraph.json",
+      "provenance": {
+        "commit": "1fd0ff9fe3c7b81298f470e828a69c3269265930"
       }
     },
     {
@@ -517909,6 +518777,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:62f3583eeef62cdf8ae5af119e5bb730fc8fecdc",
+      "to": "Artifact:tools/enterprise-native-questing-inputs.js",
+      "provenance": {
+        "commit": "62f3583eeef62cdf8ae5af119e5bb730fc8fecdc"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:62fd09df1f1f1a79d28555311c51075f6c12463a",
       "to": "Artifact:AUDIT-market-skills-underworld.md",
       "provenance": {
@@ -547613,6 +548489,54 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:8334975228592b5d8f65ec69deb5f3eb41dc8355",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "8334975228592b5d8f65ec69deb5f3eb41dc8355"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8334975228592b5d8f65ec69deb5f3eb41dc8355",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "8334975228592b5d8f65ec69deb5f3eb41dc8355"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8334975228592b5d8f65ec69deb5f3eb41dc8355",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "8334975228592b5d8f65ec69deb5f3eb41dc8355"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8334975228592b5d8f65ec69deb5f3eb41dc8355",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "8334975228592b5d8f65ec69deb5f3eb41dc8355"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8334975228592b5d8f65ec69deb5f3eb41dc8355",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "8334975228592b5d8f65ec69deb5f3eb41dc8355"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8334975228592b5d8f65ec69deb5f3eb41dc8355",
+      "to": "HistoricalArtifact:knowledge/generated/routes.md",
+      "provenance": {
+        "commit": "8334975228592b5d8f65ec69deb5f3eb41dc8355"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:833f1a90a49f832150c557ff77e21c2475c638c4",
       "to": "HistoricalArtifact:knowledge/generated/github-history.md",
       "provenance": {
@@ -572213,6 +573137,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:9f53bc10fd317430c032140bce000e26023d89f2",
+      "to": "Artifact:tools/age-removal-source-data.js",
+      "provenance": {
+        "commit": "9f53bc10fd317430c032140bce000e26023d89f2"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:9f592d62b26a3a4233e57e4cc70e16e2f1d211b0",
       "to": "HistoricalArtifact:knowledge/generated/documents.md",
       "provenance": {
@@ -572913,6 +573845,14 @@
       "to": "HistoricalArtifact:knowledge/generated/schema.md",
       "provenance": {
         "commit": "9fcdc03111e80acc1e15b31b1a0c0ed31d587ae9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9fd933cb19ea8089fd5a385f99c9aa927dabd3c0",
+      "to": "Artifact:tools/age-removal-source-data.js",
+      "provenance": {
+        "commit": "9fd933cb19ea8089fd5a385f99c9aa927dabd3c0"
       }
     },
     {
@@ -706849,6 +707789,105 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:output/quest-quality-verification/quality-mw95fwdp-quest-quality-content.log",
+      "provenance": {
+        "file": "output/quest-quality-verification/quality-mw95fwdp-quest-quality-content.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/quest-quality-verification/quality-mw95g3m2-quest-quality-rules.log",
+      "provenance": {
+        "file": "output/quest-quality-verification/quality-mw95g3m2-quest-quality-rules.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/quest-quality-verification/quality-mw95g3zd-quest-quality-studio.log",
+      "provenance": {
+        "file": "output/quest-quality-verification/quality-mw95g3zd-quest-quality-studio.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/quest-quality-verification/quality-mw95g4wk-quest-quality-runtime.log",
+      "provenance": {
+        "file": "output/quest-quality-verification/quality-mw95g4wk-quest-quality-runtime.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/quest-quality-verification/quality-mw95g8q0-quest-quality-api.log",
+      "provenance": {
+        "file": "output/quest-quality-verification/quality-mw95g8q0-quest-quality-api.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/quest-quality-verification/quality-mw95gc3d-quest-quality-browser.log",
+      "provenance": {
+        "file": "output/quest-quality-verification/quality-mw95gc3d-quest-quality-browser.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/quest-quality-verification/quality-mw95grhg-quest-quality-postgres.log",
+      "provenance": {
+        "file": "output/quest-quality-verification/quality-mw95grhg-quest-quality-postgres.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/quest-quality-verification/quality-mw95gyfv-quest-quality-stateful.log",
+      "provenance": {
+        "file": "output/quest-quality-verification/quality-mw95gyfv-quest-quality-stateful.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/quest-quality-verification/quality-mw95gzjg-quest-quality-social.log",
+      "provenance": {
+        "file": "output/quest-quality-verification/quality-mw95gzjg-quest-quality-social.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/quest-quality-verification/quality-mw95h410-quest-quality-spoilers.log",
+      "provenance": {
+        "file": "output/quest-quality-verification/quality-mw95h410-quest-quality-spoilers.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/quest-quality-verification/quality-mw95h79m-quest-quality-study.log",
+      "provenance": {
+        "file": "output/quest-quality-verification/quality-mw95h79m-quest-quality-study.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:output/questing-verification/quest-mw7bvisg-quest-saga.log",
       "provenance": {
         "file": "output/questing-verification/quest-mw7bvisg-quest-saga.log",
@@ -708238,6 +709277,105 @@
       "to": "Artifact:output/questing-verification/quest-mw94m4xu-quest-workshop.log",
       "provenance": {
         "file": "output/questing-verification/quest-mw94m4xu-quest-workshop.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/questing-verification/quest-mw95fvn8-quest-saga.log",
+      "provenance": {
+        "file": "output/questing-verification/quest-mw95fvn8-quest-saga.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/questing-verification/quest-mw95g1vy-content-narrative-security.log",
+      "provenance": {
+        "file": "output/questing-verification/quest-mw95g1vy-content-narrative-security.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/questing-verification/quest-mw95g2ym-quest-specialist.log",
+      "provenance": {
+        "file": "output/questing-verification/quest-mw95g2ym-quest-specialist.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/questing-verification/quest-mw95g8gp-clue-puzzles.log",
+      "provenance": {
+        "file": "output/questing-verification/quest-mw95g8gp-clue-puzzles.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/questing-verification/quest-mw95gd8w-clue-puzzles-browser.log",
+      "provenance": {
+        "file": "output/questing-verification/quest-mw95gd8w-clue-puzzles-browser.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/questing-verification/quest-mw95gkbe-content-narrative.log",
+      "provenance": {
+        "file": "output/questing-verification/quest-mw95gkbe-content-narrative.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/questing-verification/quest-mw95go95-quest-experience-browser.log",
+      "provenance": {
+        "file": "output/questing-verification/quest-mw95go95-quest-experience-browser.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/questing-verification/quest-mw95h4c7-content-api.log",
+      "provenance": {
+        "file": "output/questing-verification/quest-mw95h4c7-content-api.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/questing-verification/quest-mw95h5mq-quest-saga-social.log",
+      "provenance": {
+        "file": "output/questing-verification/quest-mw95h5mq-quest-saga-social.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/questing-verification/quest-mw95h9vw-content-casework.log",
+      "provenance": {
+        "file": "output/questing-verification/quest-mw95h9vw-content-casework.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/questing-verification/quest-mw95hdcd-quest-workshop.log",
+      "provenance": {
+        "file": "output/questing-verification/quest-mw95hdcd-quest-workshop.log",
         "line": 1
       }
     },
@@ -784534,6 +785672,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:018cc031c595901bb59aee7303e3dd16ee3c053b",
+      "provenance": {
+        "commit": "018cc031c595901bb59aee7303e3dd16ee3c053b"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:019aea1cf60f3d63e614855aa52a583091c4602e",
       "provenance": {
         "commit": "019aea1cf60f3d63e614855aa52a583091c4602e"
@@ -787302,6 +788448,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:12436d6d31eab4427f2b93a35d4f7b740709774b",
+      "provenance": {
+        "commit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:126e410b6dd957cda0e4ce5980139bc1b6c1c832",
       "provenance": {
         "commit": "126e410b6dd957cda0e4ce5980139bc1b6c1c832"
@@ -789769,6 +790923,14 @@
       "to": "Commit:1fc6049c91036fab811603c9eccb969bdf629350",
       "provenance": {
         "commit": "1fc6049c91036fab811603c9eccb969bdf629350"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:1fd0ff9fe3c7b81298f470e828a69c3269265930",
+      "provenance": {
+        "commit": "1fd0ff9fe3c7b81298f470e828a69c3269265930"
       }
     },
     {
@@ -801814,6 +802976,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:62f3583eeef62cdf8ae5af119e5bb730fc8fecdc",
+      "provenance": {
+        "commit": "62f3583eeef62cdf8ae5af119e5bb730fc8fecdc"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:62fd09df1f1f1a79d28555311c51075f6c12463a",
       "provenance": {
         "commit": "62fd09df1f1f1a79d28555311c51075f6c12463a"
@@ -807958,6 +809128,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:8334975228592b5d8f65ec69deb5f3eb41dc8355",
+      "provenance": {
+        "commit": "8334975228592b5d8f65ec69deb5f3eb41dc8355"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:833f1a90a49f832150c557ff77e21c2475c638c4",
       "provenance": {
         "commit": "833f1a90a49f832150c557ff77e21c2475c638c4"
@@ -813206,6 +814384,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:9f53bc10fd317430c032140bce000e26023d89f2",
+      "provenance": {
+        "commit": "9f53bc10fd317430c032140bce000e26023d89f2"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:9f592d62b26a3a4233e57e4cc70e16e2f1d211b0",
       "provenance": {
         "commit": "9f592d62b26a3a4233e57e4cc70e16e2f1d211b0"
@@ -813297,6 +814483,14 @@
       "to": "Commit:9fcdc03111e80acc1e15b31b1a0c0ed31d587ae9",
       "provenance": {
         "commit": "9fcdc03111e80acc1e15b31b1a0c0ed31d587ae9"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:9fd933cb19ea8089fd5a385f99c9aa927dabd3c0",
+      "provenance": {
+        "commit": "9fd933cb19ea8089fd5a385f99c9aa927dabd3c0"
       }
     },
     {
@@ -900500,7 +901694,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "tools/age-removal-source-data.js",
-        "line": 985
+        "line": 1037
       }
     },
     {
@@ -900509,7 +901703,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "tools/age-removal-source-data.js",
-        "line": 986
+        "line": 1038
       }
     },
     {
@@ -900518,7 +901712,7 @@
       "to": "Artifact:src/social/estate.js",
       "provenance": {
         "file": "tools/age-removal-source-data.js",
-        "line": 611
+        "line": 642
       }
     },
     {
@@ -900527,7 +901721,7 @@
       "to": "Artifact:src/social/estate.js",
       "provenance": {
         "file": "tools/age-removal-source-data.js",
-        "line": 612
+        "line": 643
       }
     },
     {
@@ -900536,7 +901730,7 @@
       "to": "Artifact:tools/questing-source-transfer.js",
       "provenance": {
         "file": "tools/age-removal-source-data.js",
-        "line": 658
+        "line": 689
       }
     },
     {
@@ -900545,7 +901739,7 @@
       "to": "Artifact:tools/questing-source-transfer.js",
       "provenance": {
         "file": "tools/age-removal-source-data.js",
-        "line": 659
+        "line": 690
       }
     },
     {
