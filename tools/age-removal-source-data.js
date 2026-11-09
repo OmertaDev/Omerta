@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const AGE_REMOVAL_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_AGE_REMOVAL_SOURCE_COMPARISON_ONLY",
-  "revision": "b2c4a9026af74119e49298b54cb404283894216b",
-  "tree": "a62c468b60cc9b1f841d4381ba096c817356ed45",
+  "revision": "1fd0ff9fe3c7b81298f470e828a69c3269265930",
+  "tree": "5a31416bddce9937a502d76c07b2d31b288f35d5",
   "predecessor": "35913ec1b448275b227019ede2a2ef8047be55aa",
   "predecessorTree": "c74c606d97ee2f8ebb6c5201a4ddd2c2781d5db0",
   "files": {
@@ -315,6 +315,37 @@ export const AGE_REMOVAL_SOURCE = freeze({
           "at": 2150,
           "current": "\n  const isNav = req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html');\n  if (isNav || url.pathname === '/omerta-ui.css'\n    || /^\\/noir-(?:ui|landing|shell)\\.(?:js|css)$/.test(url.pathname)\n    || /^\\/strategy-command\\.(?:js|css)$/.test(url.pathname) || url.pathname === '/vendor/strategy-city-renderer.js'\n    || /^\\/ux-(?:feedback|progression|social|navigation|workspace|world|tactics|investigation|coordination|feel|tools|identity|story|community)\\.(?:js|css)$/.test(url.pathname)\n    || ['/player-experience.js', '/city-scene.js', '/city-scene.css', '/world-fieldwork.js', '/world-fieldwork.css', '/vendor/phaser.js'].includes(url.pathname)) {\n    // NETWORK-FIRST: a Codex visit belongs to its own URL, never the root game's offline slot.\n",
           "baseline": "\n  const isNav = req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html');\n  if (isNav || url.pathname === '/omerta-ui.css'\n    || /^\\/ux-(?:feedback|progression|social|navigation|workspace|world|tactics|investigation|coordination|feel|tools|identity|story|community)\\.(?:js|css)$/.test(url.pathname)\n    || ['/player-experience.js', '/city-scene.js', '/city-scene.css', '/world-fieldwork.js', '/world-fieldwork.css', '/vendor/phaser.js'].includes(url.pathname)) {\n    // NETWORK-FIRST: a Codex visit belongs to its own URL, never the root game's offline slot.\n"
+        }
+      ]
+    },
+    "public/ux-quests.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "bb47e0b2aeda913a607a6b9a9981168b964ce902",
+        "sha256": "8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205",
+        "bytes": 48930
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "61b4ec05c45408e3d992434b42d119652dcf702d",
+        "sha256": "8b8aeb833b7704f9051099f421551b91dcd1c1670076dc825ac6f78699f5beeb",
+        "bytes": 48243
+      },
+      "inverses": [
+        {
+          "at": 1729,
+          "current": "    const districtTabs = new Set(['streets', 'city', 'map', 'fieldwork']);\n    const pending = new Map(), local = new Map(), openSections = new Set(), interactionDrafts = new Map();\n    const qualityButtonDisabled = new WeakMap();\n    const sectionStates = new WeakMap();\n    const state = () => getState() || {};\n    const qualityUX = window.createOmertaQuestQuality?.({ getState,\n      onOperation: (instance, payload, label) => mutate('/v1/content/instances/' + encode(instance.id) + '/quality', {\n",
+          "baseline": "    const districtTabs = new Set(['streets', 'city', 'map', 'fieldwork']);\n    const pending = new Map(), local = new Map(), openSections = new Set(), interactionDrafts = new Map();\n    const qualityButtonDisabled = new WeakMap();\n    const state = () => getState() || {};\n    const qualityUX = window.createOmertaQuestQuality?.({ getState,\n      onOperation: (instance, payload, label) => mutate('/v1/content/instances/' + encode(instance.id) + '/quality', {\n"
+        },
+        {
+          "at": 7011,
+          "current": "    }\n    function section(id, title, content) {\n      const panel = disclosure(title); panel.dataset.questSection = id; panel.open = openSections.has(id);\n      sectionStates.set(panel, panel.open);\n      panel.addEventListener('toggle', () => {\n        if (!panel.isConnected) return;\n        sectionStates.set(panel, panel.open);\n        panel.open ? openSections.add(id) : openSections.delete(id);\n      });\n      panel.append(content); return panel;\n    }\n    function blockers(entries) {\n",
+          "baseline": "    }\n    function section(id, title, content) {\n      const panel = disclosure(title); panel.dataset.questSection = id; panel.open = openSections.has(id);\n      panel.addEventListener('toggle', () => panel.open ? openSections.add(id) : openSections.delete(id));\n      panel.append(content); return panel;\n    }\n    function blockers(entries) {\n"
+        },
+        {
+          "at": 43917,
+          "current": "      updateQualityButtons();\n      if (active && !busy && (!force || !active.closest('.quest-quality,.quest-quality-proof'))) return;\n      const focused = force && active ? { label: active.getAttribute('aria-label'), start: active.selectionStart, end: active.selectionEnd } : force ? focusedEditor : null;\n      // Native toggle events are deferred. Preserve a user's latest disclosure choice before\n      // a refetch replaces the panel, without undoing an intentional programmatic opening.\n      root.querySelectorAll('details[data-quest-section]').forEach(panel => {\n        if (sectionStates.get(panel) === panel.open) return;\n        const id = panel.dataset.questSection;\n        panel.open ? openSections.add(id) : openSections.delete(id);\n        sectionStates.set(panel, panel.open);\n      });\n      const header = el('header', 'quest-heading'); header.append(el('span', 'quest-kicker', 'Bureau of unfinished business'), el('h2', '', 'Your case files'));\n      const controls = el('nav', 'quest-tabs'); controls.setAttribute('aria-label', 'Quest tools');\n      for (const [id, title] of [['cases', 'Case files'], ['community', 'Community mysteries'], ['legacy', 'Your history']]) { const tab = button(title, () => { view = id; error = ''; load(); }); tab.setAttribute('aria-pressed', String(view === id)); tab.disabled = busy || loading; controls.append(tab); }\n",
+          "baseline": "      updateQualityButtons();\n      if (active && !busy && (!force || !active.closest('.quest-quality,.quest-quality-proof'))) return;\n      const focused = force && active ? { label: active.getAttribute('aria-label'), start: active.selectionStart, end: active.selectionEnd } : force ? focusedEditor : null;\n      const header = el('header', 'quest-heading'); header.append(el('span', 'quest-kicker', 'Bureau of unfinished business'), el('h2', '', 'Your case files'));\n      const controls = el('nav', 'quest-tabs'); controls.setAttribute('aria-label', 'Quest tools');\n      for (const [id, title] of [['cases', 'Case files'], ['community', 'Community mysteries'], ['legacy', 'Your history']]) { const tab = button(title, () => { view = id; error = ''; load(); }); tab.setAttribute('aria-pressed', String(view === id)); tab.disabled = busy || loading; controls.append(tab); }\n"
         }
       ]
     },
@@ -895,6 +926,27 @@ export const AGE_REMOVAL_SOURCE = freeze({
           "at": 3713,
           "current": "  return page;\n};\nconst wetWork = async (page) => {\n  const directory = page.locator('#city-directory');\n  if (!await directory.evaluate(node => node.open)) await directory.locator(':scope > summary').click();\n  await page.locator('#grouprail [data-group=\"blood\"]').click();\n  if (!await directory.evaluate(node => node.open)) await directory.locator(':scope > summary').click();\n  await page.locator('#tabs [data-tab=\"pvp\"]').click();\n  await page.locator('#tab-pvp h2').filter({ hasText: 'People you know' }).waitFor();\n};\n",
           "baseline": "  return page;\n};\nconst wetWork = async (page) => {\n  await page.locator('#grouprail [data-group=\"blood\"]').click();\n  await page.locator('#tabs [data-tab=\"pvp\"]').click();\n  await page.locator('#tab-pvp h2').filter({ hasText: 'People you know' }).waitFor();\n};\n"
+        }
+      ]
+    },
+    "test/quest-experience-browser.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "0eaf437ea7bbb7cb2954e1e10910832cf7e4d64b",
+        "sha256": "0cee33effbeb473a18960e4c5dcc72b896748fa6695968605de3453d5525f7cc",
+        "bytes": 34736
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "b72ec8946c2e0d54ed1616e53f93c1148e23d868",
+        "sha256": "38453a9487242b44d8bf3e3d06f39f00fbc26520939afd85f7b12aa259f90110",
+        "bytes": 32695
+      },
+      "inverses": [
+        {
+          "at": 10210,
+          "current": "  }\n  await page.getByRole('button', { name: 'The family hiding below the pier', exact: true }).click();\n  await page.getByText('Case closed. Your decisions are on the record.', { exact: true }).waitFor();\n  await page.waitForFunction(() => document.querySelector('#ux-quests')?.getAttribute('aria-busy') === 'false');\n  // A refetch may repaint before the browser delivers a details element's deferred toggle event.\n  const disclosureRace = await page.evaluate(async () => {\n    const findTheory = () => [...document.querySelectorAll('#ux-quests details')].find(panel => panel.querySelector(':scope > summary')?.textContent === 'Your working theory');\n    const first = findTheory(), firstToggle = new Promise(resolve => first.addEventListener('toggle', resolve, { once: true }));\n    first.querySelector(':scope > summary').click();\n    questUx.render();\n    const stayedOpen = findTheory().open;\n    await firstToggle;\n    const second = findTheory(), secondToggle = new Promise(resolve => second.addEventListener('toggle', resolve, { once: true }));\n    second.querySelector(':scope > summary').click();\n    questUx.render();\n    const stayedClosed = !findTheory().open;\n    await secondToggle;\n    questUx.render();\n    const remainsClosed = !findTheory().open;\n    const cancelled = findTheory().querySelector(':scope > summary');\n    cancelled.addEventListener('click', event => event.preventDefault(), { once: true });\n    cancelled.click(); questUx.render();\n    return { stayedOpen, stayedClosed, remainsClosed, cancelledClickRemainsClosed: !findTheory().open };\n  });\n  assert.deepEqual(disclosureRace, { stayedOpen: true, stayedClosed: true, remainsClosed: true, cancelledClickRemainsClosed: true }, 'Private-note disclosures retain native open and close choices across a refetch repaint and late detached toggle events.');\n  const theories = page.locator('details').filter({ has: page.locator('summary', { hasText: 'Your working theory' }) }); await disclosure(theories);\n  const theorySummary = theories.locator(':scope > summary');\n  await theorySummary.focus(); await theorySummary.press('Enter');\n  assert.equal(await theories.evaluate(panel => panel.open), false, 'Native keyboard activation closes the disclosure.');\n  await theorySummary.press('Space');\n  assert.equal(await theories.evaluate(panel => panel.open), true, 'Native keyboard activation reopens the disclosure.');\n  await page.getByLabel('Your private working theory', { exact: true }).fill('Only my account should see this <img id=\"quest-xss\">');\n  await page.getByRole('button', { name: 'Save private theory', exact: true }).click();\n  assert.equal(await page.locator('#quest-xss').count(), 0, 'private theories are text, never HTML');\n",
+          "baseline": "  }\n  await page.getByRole('button', { name: 'The family hiding below the pier', exact: true }).click();\n  await page.getByText('Case closed. Your decisions are on the record.', { exact: true }).waitFor();\n  const theories = page.locator('details').filter({ has: page.locator('summary', { hasText: 'Your working theory' }) }); await disclosure(theories);\n  await page.getByLabel('Your private working theory', { exact: true }).fill('Only my account should see this <img id=\"quest-xss\">');\n  await page.getByRole('button', { name: 'Save private theory', exact: true }).click();\n  assert.equal(await page.locator('#quest-xss').count(), 0, 'private theories are text, never HTML');\n"
         }
       ]
     },
@@ -1649,9 +1701,9 @@ export const AGE_REMOVAL_SOURCE = freeze({
     },
     "tools/age-removal-source-seal.js": {
       "mode": "100644",
-      "blob": "84d3b0dac7f39e55cac3ca4dc49e3e9cb65f6c8a",
-      "sha256": "837013473d26e4e0858a56af879eec5ccd25aa149fdd7db8edbba0456c144270",
-      "bytes": 11931
+      "blob": "5d0b72a3740b6ab68078438fd6a3f43940b52b2a",
+      "sha256": "fbbae9d17323aa9cf99eb5c9b6b4c85f500f00f9da9031115479341a5a4bd594",
+      "bytes": 12085
     },
     "tools/age-removal-source-transfer.js": {
       "mode": "100644",
@@ -1673,4 +1725,4 @@ export const AGE_REMOVAL_SOURCE = freeze({
     }
   }
 });
-export const AGE_REMOVAL_SOURCE_SHA256 = 'd811b77c235630a8098e598ffa0ca0bd48464bf91c9dfcf370917a490c3f6888';
+export const AGE_REMOVAL_SOURCE_SHA256 = 'f4cdd39684c193fe95c0f01c704d20d9c5f114135ade1000fad6f52c9600cb1b';
