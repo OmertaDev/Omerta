@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const AGE_REMOVAL_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_AGE_REMOVAL_SOURCE_COMPARISON_ONLY",
-  "revision": "226a1f62306431c198cfd355c93d0267a94c1aee",
-  "tree": "9bbff68a118d1c1c55089f09731d1493dedfc0c5",
+  "revision": "9c11db8a179f1941894a61b4e48ad69a224db74e",
+  "tree": "a3d2f8bad8ebc51df890294ccfa8880c73848096",
   "predecessor": "35913ec1b448275b227019ede2a2ef8047be55aa",
   "predecessorTree": "c74c606d97ee2f8ebb6c5201a4ddd2c2781d5db0",
   "files": {
@@ -419,6 +419,32 @@ export const AGE_REMOVAL_SOURCE = freeze({
           "at": 16281,
           "current": "  await provider.route('**/v1/auth/privy', route => { providerToken = route.request().postDataJSON().token; return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ token: guest.token }) }); });\n  await provider.goto(base); await provider.locator('#token-signin > summary').click();\n  await provider.locator('#auth-provider').selectOption('privy'); await provider.locator('#auth-token').fill('synthetic-provider-token');\n  await provider.locator('#btn-provider').click(); await provider.locator('#screen-main:not(.hidden)').waitFor();\n  assert.equal(providerToken, 'synthetic-provider-token', 'Deferred initialization preserves an explicitly entered provider token.'); await provider.close();\n\n  const wallet = await browser.newPage({ reducedMotion: 'reduce' });\n  await wallet.goto(base); await wallet.locator('#btn-wallet-onboard').click(); await wallet.locator('#screen-create:not(.hidden)').waitFor();\n  assert.equal(await wallet.evaluate(() => sessionStorage.getItem('omerta-wallet-onboarding')), '1');\n  await wallet.close();\n\n  const broken = await browser.newPage({ reducedMotion: 'reduce' });\n  broken.on('pageerror', () => {}); let brokenLoads = 0;\n",
           "baseline": "  await provider.route('**/v1/auth/privy', route => { providerToken = route.request().postDataJSON().token; return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ token: guest.token }) }); });\n  await provider.goto(base); await provider.locator('#token-signin > summary').click();\n  await provider.locator('#auth-provider').selectOption('privy'); await provider.locator('#auth-token').fill('synthetic-provider-token');\n  await provider.locator('#btn-provider').click(); await provider.locator('#age-date').fill('1990-01-01');\n  await provider.locator('dialog[open] button[type=\"submit\"]').click(); await provider.locator('#screen-main:not(.hidden)').waitFor();\n  assert.equal(providerToken, 'synthetic-provider-token', 'Deferred initialization preserves an explicitly entered provider token.'); await provider.close();\n\n  const wallet = await browser.newPage({ reducedMotion: 'reduce' });\n  await wallet.goto(base); await wallet.locator('#btn-wallet-onboard').click(); await wallet.locator('#age-date').waitFor();\n  assert.equal(await wallet.evaluate(() => sessionStorage.getItem('omerta-wallet-onboarding')), '1');\n  await wallet.locator('#age-cancel').click(); await wallet.close();\n\n  const broken = await browser.newPage({ reducedMotion: 'reduce' });\n  broken.on('pageerror', () => {}); let brokenLoads = 0;\n"
+        }
+      ]
+    },
+    "test/customerlayaway-integration.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "3adebc91ec245f02d9cb1defa4db206716646fbe",
+        "sha256": "ab04a832f7cc8ab83a8e1dec533d1f3ef655f4df26d679eb030e33f86f490203",
+        "bytes": 7125
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "8b27939c13d0b56d82b5b65becf1ed186719ba9e",
+        "sha256": "5bb691447d2b5e13b8fe94490bc3b0d30fe87ab5dcaa51f5da2abf30811d8175",
+        "bytes": 7368
+      },
+      "inverses": [
+        {
+          "at": 95,
+          "current": "import {runEstate} from '../src/social/estate.js';\nimport {runLedgerInvariants} from '../src/invariants.js';\nimport {canonicalDatabaseSnapshot} from '../tools/rc1-native-proof.js';\nconst f=await fixture(true),{app,pool,tx,I,L,G,native,tool,terms,ref,pay,invoke,state}=f;\nconst tokens=Object.fromEntries(['seller','buyer','other','third','fourth','fifth'].map(a=>[a,app.jwt.sign({sub:a,tv:0,agent:true})]));let serial=0;\nconst call=(a,url,body,key='shared-'+(++serial))=>app.inject({method:'POST',url,payload:body,headers:{authorization:'Bearer '+tokens[a],'idempotency-key':key}});\n",
+          "baseline": "import {runEstate} from '../src/social/estate.js';\nimport {runLedgerInvariants} from '../src/invariants.js';\nimport {canonicalDatabaseSnapshot} from '../tools/rc1-native-proof.js';\nimport {adultAuthFixture} from './auth-fixture.js';\nconst f=await fixture(true),{app,pool,tx,I,L,G,native,tool,terms,ref,pay,invoke,state}=f;\nconst tokens=Object.fromEntries(['seller','buyer','other','third','fourth','fifth'].map(a=>[a,app.jwt.sign({sub:a,tv:0,agent:true})]));let serial=0;\nconst call=(a,url,body,key='shared-'+(++serial))=>app.inject({method:'POST',url,payload:body,headers:{authorization:'Bearer '+tokens[a],'idempotency-key':key}});\n"
+        },
+        {
+          "at": 788,
+          "current": "const offer=async(a='seller',b='buyer')=>invoke('offerCustomerLayaway',a,{...terms(await tool(a),b),lifetimeSeconds:600},'shared-offer-'+(++serial));\nconst books=async()=>{assert.deepEqual(await L.collectCustomerLayawayIssues(pool),[]);const r=await runLedgerInvariants(pool,{alert:false});assert.deepEqual(r.checks.filter(x=>!x.ok),[]);};\ntry{\n const guest=await app.inject({method:'POST',url:'/v1/auth/guest',payload:{}});assert.equal(guest.statusCode,200,guest.body);assert(guest.json().token);console.log('actual guest admission without a birth date PASS');\n if(native){const quote=await offer('fourth','fifth');let signal,resume,paused=false,entered=false,committed;const observed=new Promise(r=>signal=r),release=new Promise(r=>resume=r);\n const instrumented=new Proxy(pool,{get(t,k){if(k==='connect')return async()=>{const c=await t.connect();return new Proxy(c,{get(target,key){if(key==='query')return async(...args)=>{const result=await target.query(...args);if(!paused&&args[0]===\"SELECT seller_character,buyer_character FROM customer_layaways WHERE status='active' AND (seller_character=$1 OR buyer_character=$1) ORDER BY id LIMIT 5\"&&args[1]?.[0]==='fifth-actor'){paused=true;signal();await release;}return result;};const v=target[key];return typeof v==='function'?v.bind(target):v;}});};const v=t[k];return typeof v==='function'?v.bind(t):v;}});\n const pending=G.withTwoCharacters(instrumented,'other','fifth-actor',async()=>{entered=true;},{meet:false}),rejected=assert.rejects(pending,e=>e.code==='contention'&&/counterpart/i.test(e.message));await Promise.race([observed,new Promise((_,reject)=>setTimeout(()=>reject(Error('layaway preactor discovery not observed')),5000))]);try{await ok('fifth','/v1/customer/layaway/pay',pay(quote,1),'new-counterpart-pay');committed=await state();}finally{resume();}await rejected;assert(!entered);assert.deepEqual(await state(),committed);await ok('fifth','/v1/customer/layaway/cancel',ref(quote));console.log('native first installment introduces real new counterpart: complete preactor union recheck refuses before gameplay, unchanged committed source/cash/custody PASS');}\n",
+          "baseline": "const offer=async(a='seller',b='buyer')=>invoke('offerCustomerLayaway',a,{...terms(await tool(a),b),lifetimeSeconds:600},'shared-offer-'+(++serial));\nconst books=async()=>{assert.deepEqual(await L.collectCustomerLayawayIssues(pool),[]);const r=await runLedgerInvariants(pool,{alert:false});assert.deepEqual(r.checks.filter(x=>!x.ok),[]);};\ntry{\n let r=await app.inject({method:'POST',url:'/v1/auth/guest',payload:{}});assert.equal(r.statusCode,400,r.body);assert.equal(r.json().error,'age_required');r=await app.inject({method:'POST',url:'/v1/auth/guest',payload:adultAuthFixture('POST','/v1/auth/guest',{})});assert.equal(r.statusCode,200,r.body);assert(r.json().token);console.log('actual adult fixture guest admission and missing-age refusal PASS');\n if(native){const quote=await offer('fourth','fifth');let signal,resume,paused=false,entered=false,committed;const observed=new Promise(r=>signal=r),release=new Promise(r=>resume=r);\n const instrumented=new Proxy(pool,{get(t,k){if(k==='connect')return async()=>{const c=await t.connect();return new Proxy(c,{get(target,key){if(key==='query')return async(...args)=>{const result=await target.query(...args);if(!paused&&args[0]===\"SELECT seller_character,buyer_character FROM customer_layaways WHERE status='active' AND (seller_character=$1 OR buyer_character=$1) ORDER BY id LIMIT 5\"&&args[1]?.[0]==='fifth-actor'){paused=true;signal();await release;}return result;};const v=target[key];return typeof v==='function'?v.bind(target):v;}});};const v=t[k];return typeof v==='function'?v.bind(t):v;}});\n const pending=G.withTwoCharacters(instrumented,'other','fifth-actor',async()=>{entered=true;},{meet:false}),rejected=assert.rejects(pending,e=>e.code==='contention'&&/counterpart/i.test(e.message));await Promise.race([observed,new Promise((_,reject)=>setTimeout(()=>reject(Error('layaway preactor discovery not observed')),5000))]);try{await ok('fifth','/v1/customer/layaway/pay',pay(quote,1),'new-counterpart-pay');committed=await state();}finally{resume();}await rejected;assert(!entered);assert.deepEqual(await state(),committed);await ok('fifth','/v1/customer/layaway/cancel',ref(quote));console.log('native first installment introduces real new counterpart: complete preactor union recheck refuses before gameplay, unchanged committed source/cash/custody PASS');}\n"
         }
       ]
     },
@@ -991,9 +1017,9 @@ export const AGE_REMOVAL_SOURCE = freeze({
     },
     "tools/age-removal-source-seal.js": {
       "mode": "100644",
-      "blob": "5981189d7ca48d2360729f82deab1a76992df9a3",
-      "sha256": "43f29e66efbd6601fa2c445c04132bf13707ba8e20e8c4c98556f62afc2a42d2",
-      "bytes": 7337
+      "blob": "11a4129e5b5e972084c9b46cda47c058dd41cec2",
+      "sha256": "772eca4b23f860051895f6cc5b725b6fbeef89587e8bcd444e512334ef3ccdc0",
+      "bytes": 7378
     },
     "tools/age-removal-source-transfer.js": {
       "mode": "100644",
@@ -1003,4 +1029,4 @@ export const AGE_REMOVAL_SOURCE = freeze({
     }
   }
 });
-export const AGE_REMOVAL_SOURCE_SHA256 = 'bf975b5c1cc2f559d6da1c3977f2deb24a18f78d3a1d5b84e383d7c558d12774';
+export const AGE_REMOVAL_SOURCE_SHA256 = 'eef593cd3ff6aa0448a23275b7bb6b248edacea041daa20542b5b8072bd1f8af';
