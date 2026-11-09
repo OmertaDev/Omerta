@@ -66,6 +66,20 @@ try {
   assert.equal(muted.playing, 0, 'the physical mute click stops audio in the same event turn');
   assert.equal(muted.retained, 0, 'mute releases all current and outgoing media resources');
   await mute.click(); await page.waitForFunction(() => __audioSnapshot().playing === 1);
+  const dataSaver = await page.evaluate(() => {
+    if (!navigator.connection?.dispatchEvent) throw new Error('This Chromium proof requires Network Information change events');
+    Object.defineProperty(navigator.connection, 'saveData', { configurable: true, value: true });
+    navigator.connection.dispatchEvent(new Event('change'));
+    return __audioSnapshot();
+  });
+  assert.equal(dataSaver.playing, 0, 'the real connection change event stops audio immediately');
+  assert.equal(dataSaver.retained, 0, 'data saver releases every media resource');
+  await page.evaluate(() => {
+    Object.defineProperty(navigator.connection, 'saveData', { configurable: true, value: false });
+    navigator.connection.dispatchEvent(new Event('change'));
+  });
+  await page.waitForFunction(() => __audioSnapshot().playing === 1);
+  assert.equal((await page.evaluate(() => __audioSnapshot())).created, dataSaver.created + 1, 'disabling data saver starts exactly one fresh bed');
   for (const event of ['visibilitychange', 'pagehide', 'freeze']) {
     const stopped = await page.evaluate(event => {
       if (event === 'visibilitychange') {
@@ -86,5 +100,5 @@ try {
     assert.equal((await page.evaluate(() => __audioSnapshot())).created, stopped.created + 1, 'return starts exactly one fresh bed');
   }
   assert.deepEqual(errors, []);
-  console.log(`Ambient mobile browser: ${walked.created} beds exercised; real navigation, immediate mute, hide/show, pagehide/pageshow, document freeze/resume, and resource release passed.`);
+  console.log(`Ambient mobile browser: ${walked.created} beds exercised; real navigation, immediate mute, connection data saver, hide/show, pagehide/pageshow, document freeze/resume, and resource release passed.`);
 } finally { await browser?.close(); await app.close(); }

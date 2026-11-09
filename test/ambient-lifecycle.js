@@ -11,13 +11,14 @@ assert(start > 0 && end > start);
 const source = html.slice(start, end) + '\nglobalThis.engine = AMBIENT;';
 const flush = async () => { await Promise.resolve(); await Promise.resolve(); };
 
-function fixture({ deferredPlay = false } = {}) {
+function fixture({ deferredPlay = false, connection = 'events' } = {}) {
   const beds = [], timers = new Map(); let now = 0, nextId = 0, enabled = true;
   const events = () => ({ listeners: new Map(), addEventListener(name, callback) {
     const callbacks = this.listeners.get(name) || []; callbacks.push(callback); this.listeners.set(name, callbacks);
   }, dispatch(name) { for (const callback of this.listeners.get(name) || []) callback(); } });
   const document = Object.assign(events(), { hidden: false }), window = events();
-  const preferences = { ambience: true }, navigator = { connection: { saveData: false } };
+  const preferences = { ambience: true }, navigator = connection === 'absent' ? {}
+    : { connection: Object.assign(connection === 'events' ? events() : {}, { saveData: false }) };
   const schedule = (callback, delay, interval) => {
     const id = ++nextId; timers.set(id, { callback, at: now + delay, interval }); return id;
   };
@@ -128,3 +129,22 @@ test('restoring a page while muted does not create a new bed', async () => {
   assert.equal(f.beds.length, 1); f.unmute(); f.engine.sync(); await flush(); f.advance(600);
   assert.equal(f.beds.length, 2); assert.equal(f.beds.at(-1).paused, false);
 });
+
+test('connection change immediately stops every bed and restores the selected soundscape once', async () => {
+  const f = fixture(); await f.begin();
+  f.engine.soundscape({ enabled: true, key: 'bed-docks', volume: 40 }); await flush(); f.advance(120);
+  assert.equal(f.beds.filter(bed => !bed.paused).length, 2, 'data saver must interrupt a live crossfade');
+  f.navigator.connection.saveData = true; f.navigator.connection.dispatch('change'); silent(f);
+  f.engine.set('den', 'vice'); f.engine.sync(); f.navigator.connection.dispatch('change'); silent(f);
+  assert.equal(f.beds.length, 2, 'navigation and duplicate events cannot start beds while data saver is active');
+  f.navigator.connection.saveData = false; f.navigator.connection.dispatch('change'); await flush(); f.advance(600);
+  assert.equal(f.beds.length, 3); assert.equal(f.beds.at(-1).src, '/art/hype/bed-docks.m4a');
+  assert.equal(f.beds.at(-1).volume, .11 * .4); assert.equal(f.beds.filter(bed => !bed.paused).length, 1);
+  assert.equal(f.navigator.connection.listeners.get('change').length, 1, 'sync and navigation do not duplicate the connection subscription');
+});
+
+for (const connection of ['absent', 'legacy']) test(
+  'ambient lifecycle remains usable with ' + connection + ' connection event support', async () => {
+    const f = fixture({ connection }); await f.begin(); assert.equal(f.beds[0].paused, false);
+    f.mute(); f.engine.sync(); silent(f);
+  });
