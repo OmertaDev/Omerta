@@ -213,7 +213,7 @@
 | [.agents/skills/viem-integration/references/wagmi-react.md](../../.agents/skills/viem-integration/references/wagmi-react.md) | documentation | 624 | 2026-08-27 |
 | [.agents/skills/viem-integration/references/writing-transactions.md](../../.agents/skills/viem-integration/references/writing-transactions.md) | documentation | 467 | 2026-08-27 |
 | [.agents/skills/viem-integration/SKILL.md](../../.agents/skills/viem-integration/SKILL.md) | documentation | 271 | 2026-08-27 |
-| [AGENTS.md](../../AGENTS.md) | documentation | 754 | 2026-11-08 |
+| [AGENTS.md](../../AGENTS.md) | documentation | 753 | 2026-11-09 |
 | [AGENTS.override.md](../../AGENTS.override.md) | documentation | 32 | 2026-09-25 |
 | [AUDIT-bank-city-leg.md](../../AUDIT-bank-city-leg.md) | audit | 119 | 2026-08-12 |
 | [AUDIT-blood-war.md](../../AUDIT-blood-war.md) | audit | 95 | 2026-08-05 |
@@ -522,7 +522,7 @@
 | [docs/investors/02-technical-detail.md](../../docs/investors/02-technical-detail.md) | documentation | 456 | 2026-10-06 |
 | [docs/item-durability-integrated-review.md](../../docs/item-durability-integrated-review.md) | documentation | 16 | 2026-10-13 |
 | [docs/LAUNCH-TWEETS.md](../../docs/LAUNCH-TWEETS.md) | documentation | 131 | 2026-09-25 |
-| [docs/legal-security-setup.md](../../docs/legal-security-setup.md) | documentation | 56 | 2026-10-31 |
+| [docs/legal-security-setup.md](../../docs/legal-security-setup.md) | documentation | 54 | 2026-11-09 |
 | [docs/living-world-director/evidence/README.md](../../docs/living-world-director/evidence/README.md) | documentation | 34 | 2026-09-18 |
 | [docs/living-world-director/HANDOFF.md](../../docs/living-world-director/HANDOFF.md) | documentation | 118 | 2026-09-18 |
 | [docs/living-world-director/OPPORTUNITY-FEED.md](../../docs/living-world-director/OPPORTUNITY-FEED.md) | documentation | 71 | 2026-09-18 |

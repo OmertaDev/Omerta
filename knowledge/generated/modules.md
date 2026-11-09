@@ -8,9 +8,9 @@
 | [src/accountdaily.js](../../src/accountdaily.js) | 79 | platform-core | 0 / 10 | 0 | 2 | 2 |
 | [src/accrual.js](../../src/accrual.js) | 245 | platform-core | 0 / 9 | 0 | 3 | 9 |
 | [src/actioncooldown.js](../../src/actioncooldown.js) | 22 | platform-core | 2 / 3 | 0 | 1 | 1 |
-| [src/age.js](../../src/age.js) | 44 | platform-core | 1 / 2 | 0 | 0 | 1 |
+| [src/age.js](../../src/age.js) | 44 | platform-core | 1 / 0 | 0 | 0 | 0 |
 | [src/agentcompany.js](../../src/agentcompany.js) | 73 | platform-core | 1 / 17 | 3 | 5 | 15 |
-| [src/agentgateway.js](../../src/agentgateway.js) | 2482 | platform-core | 38 / 11 | 0 | 23 | 10 |
+| [src/agentgateway.js](../../src/agentgateway.js) | 2474 | platform-core | 38 / 11 | 0 | 23 | 10 |
 | [src/agentoperatingmemory.js](../../src/agentoperatingmemory.js) | 70 | platform-core | 3 / 5 | 0 | 11 | 2 |
 | [src/agentreferrals.js](../../src/agentreferrals.js) | 122 | platform-core | 0 / 1 | 0 | 2 | 0 |
 | [src/agentturn.js](../../src/agentturn.js) | 727 | platform-core | 20 / 3 | 0 | 5 | 1 |
@@ -21,7 +21,7 @@
 | [src/atomicbarter.js](../../src/atomicbarter.js) | 169 | platform-core | 5 / 6 | 0 | 5 | 3 |
 | [src/atomicbarterinvariants.js](../../src/atomicbarterinvariants.js) | 33 | platform-core | 0 / 2 | 0 | 4 | 1 |
 | [src/auction.js](../../src/auction.js) | 250 | platform-core | 4 / 5 | 5 | 7 | 3 |
-| [src/auth.js](../../src/auth.js) | 374 | platform-core | 3 / 8 | 7 | 6 | 4 |
+| [src/auth.js](../../src/auth.js) | 372 | platform-core | 3 / 8 | 7 | 6 | 4 |
 | [src/avatar.js](../../src/avatar.js) | 63 | platform-core | 1 / 4 | 0 | 0 | 2 |
 | [src/bank.js](../../src/bank.js) | 526 | platform-core | 3 / 6 | 4 | 14 | 2 |
 | [src/bloodline.js](../../src/bloodline.js) | 80 | platform-core | 1 / 3 | 2 | 4 | 0 |
@@ -542,7 +542,7 @@
 | [src/saleattribution.js](../../src/saleattribution.js) | 380 | platform-core | 6 / 7 | 0 | 7 | 2 |
 | [src/season.js](../../src/season.js) | 150 | world-progression | 1 / 7 | 2 | 8 | 4 |
 | [src/secrets.js](../../src/secrets.js) | 203 | law-intelligence | 4 / 6 | 5 | 6 | 2 |
-| [src/server.js](../../src/server.js) | 4123 | platform-core | 259 / 48 | 459 | 46 | 22 |
+| [src/server.js](../../src/server.js) | 4106 | platform-core | 258 / 49 | 458 | 46 | 22 |
 | [src/servicesubscriptions.js](../../src/servicesubscriptions.js) | 65 | platform-core | 5 / 6 | 0 | 10 | 2 |
 | [src/shipment.js](../../src/shipment.js) | 175 | enterprise-logistics | 2 / 3 | 3 | 8 | 1 |
 | [src/shoppingbasket-api.js](../../src/shoppingbasket-api.js) | 13 | platform-core | 3 / 1 | 0 | 2 | 0 |
