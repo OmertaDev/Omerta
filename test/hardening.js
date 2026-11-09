@@ -1544,15 +1544,25 @@ if (artShipped) assert(photoCount >= 100, `the shipped catalog photos are actual
 // This is the whole silent-failure class the drift monitor exists to catch, aimed at the monitor itself.
 {
   const { webhookText } = await import('../src/invariants.js');
+  const { CHAIN_PARITY_NOTE } = await import('../src/worker.js');
+  assert.match(CHAIN_PARITY_NOTE || '', /legacy and account-service deployments/,
+    'Parity alerts must identify their deployment scope rather than present retired taxes as current-market policy');
+  assert.match(CHAIN_PARITY_NOTE, /not the current market manager/);
+  assert.match(CHAIN_PARITY_NOTE, /preserved obligations/);
+  assert(!/the fix is the ENV|enable.*tax/i.test(CHAIN_PARITY_NOTE),
+    'An observational warning must not prescribe enabling or changing legacy tax configuration');
+  assert.match(readFileSync('src/worker.js', 'utf8'),
+    /name: 'chain parity', mismatches: sp.mismatches,\s+note: CHAIN_PARITY_NOTE/,
+    'The worker must pass the scoped note to the real alert payload');
   const split = webhookText('split', [{ name: 'chain parity', mismatches: [
     { what: 'OmertaBond.polBps', onchain: 7500, backend: 6500 },
     { what: 'OmertaFees.mintFee', onchain: '5000000000000000', backend: '3000000000000000' },
     { what: 'OmertaFees.mintDevBps', onchain: null, backend: 10000 },
-  ], note: 'Check the active deployment configuration.' }]);
+  ], note: CHAIN_PARITY_NOTE }]);
   assert(split.includes('OmertaBond.polBps: on-chain 7500 vs backend 6500'));
   assert(split.includes('5000000000000000 vs backend 3000000000000000'));
   assert(split.includes('on-chain null vs backend 10000'));
-  assert(split.includes('Check the active deployment configuration.'));
+  assert(split.includes(CHAIN_PARITY_NOTE));
   assert(!split.includes('[object Object]'));
   assert(webhookText('backup', [{ name: 'nested', detail: { archive: 'off' } }])
     .includes('detail={"archive":"off"}'), 'other nested diagnostics remain readable');

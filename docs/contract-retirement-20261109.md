@@ -7,6 +7,13 @@ superseded market controls from the active admin registry: `hook.sellTax`,
 `omr.sellTax` and `omr.pair`. Direct requests to build their transaction calldata
 are refused before address lookup or encoding, including requests from stale clients.
 The other 17 deployed-service and emergency-recovery controls remain unchanged.
+The removed panel shortcuts include the old `setSellTax(0,0,0,0)` fee-off builder
+and the old bond/transfer-tax relation notice. The retained contract ABI and
+direct Safe-owned functions still provide that emergency action; this change
+does not claim that every former panel workflow remains available.
+The parity warning also identifies its legacy/account-service scope and no longer
+prescribes changing environment values as a generic remedy. Its comparisons,
+hourly cadence, alert latch and delivery remain unchanged.
 
 This is application-source retirement, not an on-chain transaction. It changes no
 fee values, contract addresses, credentials, balances, reserves, indexing cursors,
@@ -65,6 +72,12 @@ calldata requests were explicitly refused. The test pins the complete remaining
 17-key registry, checks the dormant admin board omits the retired controls, and
 retains the existing no-signing, independent calldata decoding, live mirror and
 argument-validation assertions.
+The alert regression first rejected the missing deployment-scope note, then passed
+with the real worker note supplied to the existing webhook formatter. The complete
+hardening suite and focused chainparams, signed-lever, router, treasury and Vig
+suites passed locally on Node v24.19.0. Deliberately injected drift, failed-network
+and recovery messages in the hardening output are test fixtures, not production
+observations. No zero-tax arithmetic or economic configuration was changed.
 
 Required before deployment: independent review, current-source/native declaration
 updates and the repository's full exact-candidate CI. Focused checks alone do not
