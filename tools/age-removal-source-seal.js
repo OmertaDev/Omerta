@@ -42,6 +42,7 @@ const allowed = new Set([
   'AGENTS.md', 'docs/legal-security-setup.md', 'omerta-mcp/README.md', 'omerta-mcp/index.js',
   'public/index.html', 'public/invite.html', 'src/agentgateway.js', 'src/auth.js', 'src/legal.js', 'src/server.js',
   'test/age.js', 'test/agent-onboarding.js', 'test/auth-fixture.js', 'test/client-shell-browser.js',
+  'test/customerlayaway-integration.js',
   'test/gates.js', 'test/hardening.js', 'test/launch-invites-browser.js', 'test/legal-security.js',
   'test/genesis-fee-readiness-source-transfer.js',
   'test/rc1-mobile-postgres.js', 'test/routes.js', 'test/server-fixture.js', 'test/site-entry-browser.js',
