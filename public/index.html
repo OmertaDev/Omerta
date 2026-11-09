@@ -2056,7 +2056,18 @@
     const GROUP_BED = { streets: 'bed-streets', earners: 'bed-streets', city: 'bed-streets', start: 'bed-streets',
       vice: 'bed-den', blood: 'bed-law', family: 'bed-family', legit: 'bed-legit' };
     let cur = null, curKey = null, wantKey = null, gestured = false, customBed = null;
-    const bedFades = new Map(), retiringBeds = new Set();
+    const bedFades = new Map(), bedKills = new Map(), retiringBeds = new Set();
+    // A fade is cosmetic: retiring audio has an independent stop deadline, and mute/lifecycle
+    // cleanup releases every element immediately even if volume writes or timers are throttled.
+    const halt = (a) => {
+      if (!a) return;
+      clearInterval(bedFades.get(a)); bedFades.delete(a);
+      clearTimeout(bedKills.get(a)); bedKills.delete(a); retiringBeds.delete(a);
+      try { a.pause(); } catch {}
+      // An empty src resolves to the current page URL. Remove it and release the media resource.
+      try { a.removeAttribute('src'); a.load?.(); } catch {}
+    };
+    const silence = () => { halt(cur); for (const bed of retiringBeds) halt(bed); cur = null; curKey = null; };
     const VOL = 0.11;
     const fadeTo = (a, target, ms, done) => {
       clearInterval(bedFades.get(a)); bedFades.delete(a);
@@ -2069,7 +2080,12 @@
         }
       }, 60); bedFades.set(a, timer);
     };
-    const stop = () => { if (cur) { const dying = cur; retiringBeds.add(dying); fadeTo(dying, 0, 500, () => { dying.pause(); dying.src = ''; retiringBeds.delete(dying); }); cur = null; curKey = null; } };
+    const stop = () => {
+      if (!cur) return;
+      const dying = cur; cur = null; curKey = null; retiringBeds.add(dying);
+      bedKills.set(dying, setTimeout(() => halt(dying), 1200));
+      fadeTo(dying, 0, 500, () => halt(dying));
+    };
     const start = (key) => {
       const a = new Audio(`/art/hype/${key}.m4a`);
       a.loop = true; a.preload = 'auto'; a.volume = 0;
@@ -2079,13 +2095,19 @@
     };
     const sync = () => {
       const ok = SFX.enabled() && feedbackPreferences().ambience && !navigator.connection?.saveData && !document.hidden && gestured;
+      if (!ok) { silence(); return; }
       const wanted = customBed?.key || wantKey;
-      const key = ok && wanted && MOTION.beds.has(wanted) ? wanted : null;
+      const key = wanted && MOTION.beds.has(wanted) ? wanted : null;
       if (key === curKey) { if (cur && cur.paused && key) cur.play?.()?.catch?.(() => {}); if (cur) fadeTo(cur, VOL * (customBed?.volume ?? 100) / 100, 200); return; }
       stop(); if (key) start(key);
     };
     document.addEventListener('pointerdown', () => { if (!gestured) { gestured = true; sync(); } }, { capture: true, passive: true });
-    document.addEventListener('visibilitychange', () => { if (document.hidden) { cur?.pause(); for (const bed of retiringBeds) bed.pause(); } else sync(); });
+    document.addEventListener('visibilitychange', () => { if (document.hidden) silence(); else sync(); });
+    addEventListener('pagehide', silence);
+    addEventListener('pageshow', sync);
+    // Page Lifecycle freeze/resume are document events and do not bubble to window.
+    document.addEventListener('freeze', silence);
+    document.addEventListener('resume', sync);
     return { set(tabId, grp) { wantKey = TAB_BED[tabId] || GROUP_BED[grp] || null; sync(); }, sync,
       soundscape(settings = {}) {
         if (settings.enabled && !MOTION.beds.has(settings.key)) return false;
