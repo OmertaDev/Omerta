@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const SITE_BASICS_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_SITE_BASICS_SOURCE_COMPARISON_ONLY",
-  "revision": "9a69c2d83897f0ca88f4f6b70abbad487c500737",
-  "tree": "c9aaf7bfd0a305d802d8e88252557586191e241a",
+  "revision": "c7c83751fe96100806bb5d8f5b32726bf622c65a",
+  "tree": "c130bdafd1cfa02b05e43cfe794dd364875ede79",
   "predecessor": "d763d0623b69aa223eab9fae01beb7aec6cdce75",
   "predecessorTree": "c5242f2cf0fe8a1100bf09caf88d2161c011fecd",
   "files": {
@@ -170,8 +170,8 @@ export const SITE_BASICS_SOURCE = freeze({
     "SPEC.md": {
       "current": {
         "mode": "100644",
-        "blob": "d6ec9b96046c622b0fd6230e5f8acacffc901364",
-        "sha256": "2593831d2e445b5fef8e8a88128650af80dd3661339e726e3dd142d06394bbf4",
+        "blob": "7e17c3f34d03d3247c100c5f9848231429f18230",
+        "sha256": "7b277a01a0c1f310d44b30531fcd83c3e1d0c967b05c948d4ad23242e881fdec",
         "bytes": 57294
       },
       "baseline": {
@@ -183,7 +183,7 @@ export const SITE_BASICS_SOURCE = freeze({
       "inverses": [
         {
           "at": 41,
-          "current": "\nA complete inventory of the built system, and an honest technical-debt register.\n\nThe census below records the combined release source inventory measured on 2026-11-07. Availability and activation are documented separately in the deployment guides.\n\n---\n\n## 1. Size, measured\n\nCounts were measured for the combined release source on 2026-11-07, before generated release records; they do not identify a deployed revision.\n\nFile counts include the combined playtest fixes and quest-quality additions as of 2026-11-08. Line totals retain the 2026-11-07 snapshot.\n\n| | |\n|---|---|\n| Backend modules | **618** files, **141073** lines (recursive source inventory) |\n| Test suites | **1032** files, **213491** lines (recursive source inventory) |\n| HTTP routes | **1386** registrations (**1386** unique; 1274 under `/v1`) |\n| Database tables | **585** (`schema.sql`, 9820 lines) |\n| Client | **14683** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n| Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |\n| Smart contracts | **41** top-level Solidity files, **11590** lines, **1125** declared top-level Foundry test functions; the release gate re-measures the passing suite |\n| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |\n| Design + audit docs | **987** markdown files, **158083** lines — dated security evidence is indexed in `docs/AUDITS.md` |\n| Ledger invariants | **133** checks — **127** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |\n\nRoughly **369,000 lines** of backend code, tests, schema and top-level contracts.\n",
+          "current": "\nA complete inventory of the built system, and an honest technical-debt register.\n\nThe census below records the combined release source inventory measured on 2026-11-07. Availability and activation are documented separately in the deployment guides.\n\n---\n\n## 1. Size, measured\n\nCounts were measured for the combined release source on 2026-11-07, before generated release records; they do not identify a deployed revision.\n\nFile counts include the combined playtest fixes and quest-quality additions as of 2026-11-08. Line totals retain the 2026-11-07 snapshot.\n\n| | |\n|---|---|\n| Backend modules | **618** files, **141073** lines (recursive source inventory) |\n| Test suites | **1035** files, **213491** lines (recursive source inventory) |\n| HTTP routes | **1386** registrations (**1386** unique; 1274 under `/v1`) |\n| Database tables | **585** (`schema.sql`, 9820 lines) |\n| Client | **14683** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n| Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |\n| Smart contracts | **41** top-level Solidity files, **11590** lines, **1125** declared top-level Foundry test functions; the release gate re-measures the passing suite |\n| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |\n| Design + audit docs | **987** markdown files, **158083** lines — dated security evidence is indexed in `docs/AUDITS.md` |\n| Ledger invariants | **133** checks — **127** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |\n\nRoughly **369,000 lines** of backend code, tests, schema and top-level contracts.\n",
           "baseline": "\nA complete inventory of the built system, and an honest technical-debt register.\n\nThe census below records the combined release source inventory measured on 2026-11-06. Availability and activation are documented separately in the deployment guides.\n\n---\n\n## 1. Size, measured\n\nCounts were measured for the combined release source on 2026-11-06, before generated release records; they do not identify a deployed revision.\n\n| | |\n|---|---|\n| Backend modules | **610** files, **140775** lines (recursive source inventory) |\n| Test suites | **1002** files, **212398** lines (recursive source inventory) |\n| HTTP routes | **1378** registrations (**1378** unique; 1273 under `/v1`) |\n| Database tables | **585** (`schema.sql`, 9820 lines) |\n| Client | **14652** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n| Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |\n| Smart contracts | **41** top-level Solidity files, **11590** lines, **1125** declared top-level Foundry test functions; the release gate re-measures the passing suite |\n| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |\n| Design + audit docs | **983** markdown files, **158083** lines — dated security evidence is indexed in `docs/AUDITS.md` |\n| Ledger invariants | **133** checks — **127** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |\n\nRoughly **369,000 lines** of backend code, tests, schema and top-level contracts.\n"
         }
       ]
@@ -2271,6 +2271,27 @@ export const SITE_BASICS_SOURCE = freeze({
         }
       ]
     },
+    "test/player-intel-browser.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "655d4ed46e5b0ef101a4a1b0e9d3ef7d09adca9e",
+        "sha256": "24073ba6a79a28c148e84df670592db28916ae90066f28e635d1326fb7385f72",
+        "bytes": 8820
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "9f31fb5fccd1dc1a0bf099e073fc8e46793e99a2",
+        "sha256": "d2afc0551a651f27bc00aad376c62ad08d1b62bb25a25802c6fe5bcb45d87077",
+        "bytes": 8557
+      },
+      "inverses": [
+        {
+          "at": 3713,
+          "current": "  return page;\n};\nconst wetWork = async (page) => {\n  const directory = page.locator('#city-directory');\n  if (!await directory.evaluate(node => node.open)) await directory.locator(':scope > summary').click();\n  await page.locator('#grouprail [data-group=\"blood\"]').click();\n  if (!await directory.evaluate(node => node.open)) await directory.locator(':scope > summary').click();\n  await page.locator('#tabs [data-tab=\"pvp\"]').click();\n  await page.locator('#tab-pvp h2').filter({ hasText: 'People you know' }).waitFor();\n};\n",
+          "baseline": "  return page;\n};\nconst wetWork = async (page) => {\n  await page.locator('#grouprail [data-group=\"blood\"]').click();\n  await page.locator('#tabs [data-tab=\"pvp\"]').click();\n  await page.locator('#tab-pvp h2').filter({ hasText: 'People you know' }).waitFor();\n};\n"
+        }
+      ]
+    },
     "test/playthrough-truth.js": {
       "current": {
         "mode": "100644",
@@ -3704,9 +3725,9 @@ export const SITE_BASICS_SOURCE = freeze({
     },
     "tools/quest-quality-source-data.js": {
       "mode": "100644",
-      "blob": "f814200d9026cb01de022519d700308c00a67e44",
-      "sha256": "ca4db41d8d57f42e2fa033cfa339ed6edd039b18b09d0c2642f48543a79cb7c6",
-      "bytes": 602710
+      "blob": "7229ec265f06c4073ac2beeff097f57b424fbd1f",
+      "sha256": "b88e9377d4652462b053a729b8efc45764c5792e50d2199ff11bbc9946218690",
+      "bytes": 604132
     },
     "tools/quest-quality-source-seal.js": {
       "mode": "100644",
@@ -3752,4 +3773,4 @@ export const SITE_BASICS_SOURCE = freeze({
     }
   }
 });
-export const SITE_BASICS_SOURCE_SHA256 = '918357ac06ff62683821b64334c6f8b26e957bef51cc3a112180086e6cf329c5';
+export const SITE_BASICS_SOURCE_SHA256 = '2f05b23dae3c1dc79906629b46e91c9d35334364f1fd3f335ce97184a44da38c';
