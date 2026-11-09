@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "d15cdee306b59b99fc36cf24a9bb1b855e9060a9",
+  "sourceRevision": "a5ca10a913196423645eaf3966511cf69ddf9086",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 18906,
-    "edges": 75461,
+    "nodes": 18910,
+    "edges": 75480,
     "byNodeType": {
       "Artifact": 7656,
       "Command": 320,
-      "Commit": 5721,
+      "Commit": 5725,
       "Contract": 156,
       "Document": 974,
       "Domain": 13,
@@ -65,16 +65,16 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5984,
-      "CHANGED": 29414,
+      "CHANGED": 29426,
       "CONTAINS": 7677,
       "DECLARES": 320,
       "DEFINED_IN": 1817,
       "DEPENDS_ON": 69,
       "EXECUTES": 1269,
       "HANDLED_BY": 951,
-      "HAS_COMMIT": 5721,
+      "HAS_COMMIT": 5725,
       "IMPLEMENTS": 124,
-      "IMPORTS": 9298,
+      "IMPORTS": 9301,
       "INHERITS": 47,
       "REFERENCES": 3978,
       "REPRESENTS": 2769,
@@ -151472,20 +151472,20 @@
       "path": "test/genesis-fee-readiness-source-transfer.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 25941,
+      "bytes": 25966,
       "lines": 348,
-      "version": "8f3f6d412f9bc679",
+      "version": "001f238a5dd826b9",
       "text": true,
       "provenance": [
         {
           "file": "test/genesis-fee-readiness-source-transfer.js",
           "line": 1,
-          "version": "8f3f6d412f9bc679"
+          "version": "001f238a5dd826b9"
         }
       ],
-      "lastChangedAt": "2026-11-09T06:12:45.000Z",
+      "lastChangedAt": "2026-11-09T06:35:15.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "858949e455cda97ee8f476bce4a7878674b2ab89"
+      "lastChangedCommit": "226a1f62306431c198cfd355c93d0267a94c1aee"
     },
     {
       "key": "Artifact:test/genesisauction.js",
@@ -152277,20 +152277,20 @@
       "path": "test/lib/age-removal-source-transfer-proof.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 8093,
-      "lines": 112,
-      "version": "4a8d21329b0fea6d",
+      "bytes": 9838,
+      "lines": 136,
+      "version": "99602837579eaccf",
       "text": true,
       "provenance": [
         {
           "file": "test/lib/age-removal-source-transfer-proof.js",
           "line": 1,
-          "version": "4a8d21329b0fea6d"
+          "version": "99602837579eaccf"
         }
       ],
-      "lastChangedAt": "2026-11-09T06:12:45.000Z",
+      "lastChangedAt": "2026-11-09T06:35:15.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "858949e455cda97ee8f476bce4a7878674b2ab89"
+      "lastChangedCommit": "226a1f62306431c198cfd355c93d0267a94c1aee"
     },
     {
       "key": "Artifact:test/lib/business-control-desk-fixture.js",
@@ -153151,20 +153151,20 @@
       "path": "test/lib/ux-journeys.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 22566,
-      "lines": 263,
-      "version": "f4edfb0d836f75fc",
+      "bytes": 23252,
+      "lines": 271,
+      "version": "4df40879cee8d1e4",
       "text": true,
       "provenance": [
         {
           "file": "test/lib/ux-journeys.js",
           "line": 1,
-          "version": "f4edfb0d836f75fc"
+          "version": "4df40879cee8d1e4"
         }
       ],
-      "lastChangedAt": "2026-11-08T07:39:13.000Z",
+      "lastChangedAt": "2026-11-09T06:35:15.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4e8ad9db903147cd4d479d21b9732d374099b2c3"
+      "lastChangedCommit": "226a1f62306431c198cfd355c93d0267a94c1aee"
     },
     {
       "key": "Artifact:test/lib/ux-native-director-guard.js",
@@ -157130,20 +157130,20 @@
       "path": "test/quest-quality-source-transfer.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 5773,
-      "lines": 71,
-      "version": "4e9f41ce0178a814",
+      "bytes": 6642,
+      "lines": 81,
+      "version": "509a9b85fc11bf8e",
       "text": true,
       "provenance": [
         {
           "file": "test/quest-quality-source-transfer.js",
           "line": 1,
-          "version": "4e9f41ce0178a814"
+          "version": "509a9b85fc11bf8e"
         }
       ],
-      "lastChangedAt": "2026-11-08T14:23:58.000Z",
+      "lastChangedAt": "2026-11-09T06:35:15.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "03ac403da1e6503e1728b8c6e8a20f6fcd93ac1e"
+      "lastChangedCommit": "226a1f62306431c198cfd355c93d0267a94c1aee"
     },
     {
       "key": "Artifact:test/quest-quality-spoilers.js",
@@ -166054,20 +166054,20 @@
       "path": "tools/age-removal-source-data.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 145357,
-      "lines": 919,
-      "version": "6e55892d4c77d4c0",
+      "bytes": 157937,
+      "lines": 1007,
+      "version": "cda3eb73407b3b61",
       "text": true,
       "provenance": [
         {
           "file": "tools/age-removal-source-data.js",
           "line": 1,
-          "version": "6e55892d4c77d4c0"
+          "version": "cda3eb73407b3b61"
         }
       ],
-      "lastChangedAt": "2026-11-09T06:13:24.000Z",
+      "lastChangedAt": "2026-11-09T06:35:43.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "185614d9acc75f9d938a3fd7097d698d413da23f"
+      "lastChangedCommit": "208696a6d479000a0be549f732088595aa42771f"
     },
     {
       "key": "Artifact:tools/age-removal-source-seal.js",
@@ -166077,20 +166077,20 @@
       "path": "tools/age-removal-source-seal.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 5480,
-      "lines": 81,
-      "version": "6e38b61f3257c853",
+      "bytes": 7337,
+      "lines": 106,
+      "version": "43f29e66efbd6601",
       "text": true,
       "provenance": [
         {
           "file": "tools/age-removal-source-seal.js",
           "line": 1,
-          "version": "6e38b61f3257c853"
+          "version": "43f29e66efbd6601"
         }
       ],
-      "lastChangedAt": "2026-11-09T06:12:45.000Z",
+      "lastChangedAt": "2026-11-09T06:35:15.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "858949e455cda97ee8f476bce4a7878674b2ab89"
+      "lastChangedCommit": "226a1f62306431c198cfd355c93d0267a94c1aee"
     },
     {
       "key": "Artifact:tools/age-removal-source-transfer.js",
@@ -169025,18 +169025,18 @@
       "extension": ".js",
       "bytes": 484224,
       "lines": 12888,
-      "version": "5e888df4304f43b8",
+      "version": "0dac502ec66de0b2",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-questing-inputs.js",
           "line": 1,
-          "version": "5e888df4304f43b8"
+          "version": "0dac502ec66de0b2"
         }
       ],
-      "lastChangedAt": "2026-11-09T06:13:49.000Z",
+      "lastChangedAt": "2026-11-09T06:36:08.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "8ae12225423b13814f8d27c8c5bd0f48b685021a"
+      "lastChangedCommit": "a5ca10a913196423645eaf3966511cf69ddf9086"
     },
     {
       "key": "Artifact:tools/enterprise-native-questing-seal.js",
@@ -171627,20 +171627,20 @@
       "path": "tools/quest-quality-source-transfer.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 4679,
-      "lines": 73,
-      "version": "c056c3b8e2efe22e",
+      "bytes": 4940,
+      "lines": 77,
+      "version": "9c3b0784a18eb890",
       "text": true,
       "provenance": [
         {
           "file": "tools/quest-quality-source-transfer.js",
           "line": 1,
-          "version": "c056c3b8e2efe22e"
+          "version": "9c3b0784a18eb890"
         }
       ],
-      "lastChangedAt": "2026-11-08T05:19:48.000Z",
+      "lastChangedAt": "2026-11-09T06:35:15.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "65b948457e4a85f026a3d2e2f3c034a00fc578b9"
+      "lastChangedCommit": "226a1f62306431c198cfd355c93d0267a94c1aee"
     },
     {
       "key": "Artifact:tools/quest-quality-studio.js",
@@ -180956,6 +180956,22 @@
         {
           "commit": "017cf06031664399e0bf1dff440353b5f0e05b8d",
           "url": "https://github.com/OmertaDev/Omerta/commit/017cf06031664399e0bf1dff440353b5f0e05b8d"
+        }
+      ]
+    },
+    {
+      "key": "Commit:017f7024a5f79d19ec9f2be2ba4cb65f667371c5",
+      "type": "Commit",
+      "id": "017f7024a5f79d19ec9f2be2ba4cb65f667371c5",
+      "label": "Refresh release knowledge after verification evidence",
+      "title": "Refresh release knowledge after verification evidence",
+      "date": "2026-11-09T06:26:22.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/017f7024a5f79d19ec9f2be2ba4cb65f667371c5",
+      "provenance": [
+        {
+          "commit": "017f7024a5f79d19ec9f2be2ba4cb65f667371c5",
+          "url": "https://github.com/OmertaDev/Omerta/commit/017f7024a5f79d19ec9f2be2ba4cb65f667371c5"
         }
       ]
     },
@@ -191744,6 +191760,22 @@
       ]
     },
     {
+      "key": "Commit:208696a6d479000a0be549f732088595aa42771f",
+      "type": "Commit",
+      "id": "208696a6d479000a0be549f732088595aa42771f",
+      "label": "Seal quality and UX current-source qualification",
+      "title": "Seal quality and UX current-source qualification",
+      "date": "2026-11-09T06:35:43.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/208696a6d479000a0be549f732088595aa42771f",
+      "provenance": [
+        {
+          "commit": "208696a6d479000a0be549f732088595aa42771f",
+          "url": "https://github.com/OmertaDev/Omerta/commit/208696a6d479000a0be549f732088595aa42771f"
+        }
+      ]
+    },
+    {
       "key": "Commit:209119a3a28b99e40eec58dd8eb46261616395ec",
       "type": "Commit",
       "id": "209119a3a28b99e40eec58dd8eb46261616395ec",
@@ -192348,6 +192380,22 @@
         {
           "commit": "225e1420dfd9ef72d27240ba6fc10aa461843362",
           "url": "https://github.com/OmertaDev/Omerta/commit/225e1420dfd9ef72d27240ba6fc10aa461843362"
+        }
+      ]
+    },
+    {
+      "key": "Commit:226a1f62306431c198cfd355c93d0267a94c1aee",
+      "type": "Commit",
+      "id": "226a1f62306431c198cfd355c93d0267a94c1aee",
+      "label": "Qualify current source in quality and UX historical readers",
+      "title": "Qualify current source in quality and UX historical readers",
+      "date": "2026-11-09T06:35:15.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/226a1f62306431c198cfd355c93d0267a94c1aee",
+      "provenance": [
+        {
+          "commit": "226a1f62306431c198cfd355c93d0267a94c1aee",
+          "url": "https://github.com/OmertaDev/Omerta/commit/226a1f62306431c198cfd355c93d0267a94c1aee"
         }
       ]
     },
@@ -240316,6 +240364,22 @@
         {
           "commit": "a5c3b764d4ae55c663a76452b950b1c6940932c9",
           "url": "https://github.com/OmertaDev/Omerta/commit/a5c3b764d4ae55c663a76452b950b1c6940932c9"
+        }
+      ]
+    },
+    {
+      "key": "Commit:a5ca10a913196423645eaf3966511cf69ddf9086",
+      "type": "Commit",
+      "id": "a5ca10a913196423645eaf3966511cf69ddf9086",
+      "label": "Reseal actual inputs for complete quest and UX qualification",
+      "title": "Reseal actual inputs for complete quest and UX qualification",
+      "date": "2026-11-09T06:36:08.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a5ca10a913196423645eaf3966511cf69ddf9086",
+      "provenance": [
+        {
+          "commit": "a5ca10a913196423645eaf3966511cf69ddf9086",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a5ca10a913196423645eaf3966511cf69ddf9086"
         }
       ]
     },
@@ -299944,6 +300008,9 @@
           "commit": "011930200e9f4266d92b7a8f77646013d96b697b"
         },
         {
+          "commit": "017f7024a5f79d19ec9f2be2ba4cb65f667371c5"
+        },
+        {
           "commit": "025e51b2cd76e1e4c01d3e877e59510661b9e453"
         },
         {
@@ -302812,6 +302879,9 @@
           "commit": "011930200e9f4266d92b7a8f77646013d96b697b"
         },
         {
+          "commit": "017f7024a5f79d19ec9f2be2ba4cb65f667371c5"
+        },
+        {
           "commit": "025e51b2cd76e1e4c01d3e877e59510661b9e453"
         },
         {
@@ -305678,6 +305748,9 @@
         },
         {
           "commit": "011930200e9f4266d92b7a8f77646013d96b697b"
+        },
+        {
+          "commit": "017f7024a5f79d19ec9f2be2ba4cb65f667371c5"
         },
         {
           "commit": "025e51b2cd76e1e4c01d3e877e59510661b9e453"
@@ -309323,6 +309396,9 @@
         },
         {
           "commit": "011930200e9f4266d92b7a8f77646013d96b697b"
+        },
+        {
+          "commit": "017f7024a5f79d19ec9f2be2ba4cb65f667371c5"
         },
         {
           "commit": "025e51b2cd76e1e4c01d3e877e59510661b9e453"
@@ -327379,7 +327455,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "d15cdee306b59b99fc36cf24a9bb1b855e9060a9",
+      "revision": "a5ca10a913196423645eaf3966511cf69ddf9086",
       "currentBranch": "codex/remove-age-verification-20261109",
       "defaultBranch": "main",
       "visibility": "public",
@@ -371971,12 +372047,12 @@
       "id": "test/genesis-fee-readiness-source-transfer.js",
       "label": "test/genesis-fee-readiness-source-transfer.js",
       "lines": 348,
-      "version": "8f3f6d412f9bc679",
+      "version": "001f238a5dd826b9",
       "provenance": [
         {
           "file": "test/genesis-fee-readiness-source-transfer.js",
           "line": 1,
-          "version": "8f3f6d412f9bc679"
+          "version": "001f238a5dd826b9"
         }
       ]
     },
@@ -372495,13 +372571,13 @@
       "type": "TestSuite",
       "id": "test/lib/age-removal-source-transfer-proof.js",
       "label": "test/lib/age-removal-source-transfer-proof.js",
-      "lines": 112,
-      "version": "4a8d21329b0fea6d",
+      "lines": 136,
+      "version": "99602837579eaccf",
       "provenance": [
         {
           "file": "test/lib/age-removal-source-transfer-proof.js",
           "line": 1,
-          "version": "4a8d21329b0fea6d"
+          "version": "99602837579eaccf"
         }
       ]
     },
@@ -373050,13 +373126,13 @@
       "type": "TestSuite",
       "id": "test/lib/ux-journeys.js",
       "label": "test/lib/ux-journeys.js",
-      "lines": 263,
-      "version": "f4edfb0d836f75fc",
+      "lines": 271,
+      "version": "4df40879cee8d1e4",
       "provenance": [
         {
           "file": "test/lib/ux-journeys.js",
           "line": 1,
-          "version": "f4edfb0d836f75fc"
+          "version": "4df40879cee8d1e4"
         }
       ]
     },
@@ -375645,13 +375721,13 @@
       "type": "TestSuite",
       "id": "test/quest-quality-source-transfer.js",
       "label": "test/quest-quality-source-transfer.js",
-      "lines": 71,
-      "version": "4e9f41ce0178a814",
+      "lines": 81,
+      "version": "509a9b85fc11bf8e",
       "provenance": [
         {
           "file": "test/quest-quality-source-transfer.js",
           "line": 1,
-          "version": "4e9f41ce0178a814"
+          "version": "509a9b85fc11bf8e"
         }
       ]
     },
@@ -436429,6 +436505,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:017f7024a5f79d19ec9f2be2ba4cb65f667371c5",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "017f7024a5f79d19ec9f2be2ba4cb65f667371c5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:017f7024a5f79d19ec9f2be2ba4cb65f667371c5",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "017f7024a5f79d19ec9f2be2ba4cb65f667371c5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:017f7024a5f79d19ec9f2be2ba4cb65f667371c5",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "017f7024a5f79d19ec9f2be2ba4cb65f667371c5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:017f7024a5f79d19ec9f2be2ba4cb65f667371c5",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "017f7024a5f79d19ec9f2be2ba4cb65f667371c5"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:0184843b67401e8ab5eb0a77fbc0da743ad6c6ff",
       "to": "Artifact:docs/infrastructure-concessions-security-review.md",
       "provenance": {
@@ -459789,6 +459897,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:208696a6d479000a0be549f732088595aa42771f",
+      "to": "Artifact:tools/age-removal-source-data.js",
+      "provenance": {
+        "commit": "208696a6d479000a0be549f732088595aa42771f"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:209119a3a28b99e40eec58dd8eb46261616395ec",
       "to": "HistoricalArtifact:knowledge/generated/github-history.md",
       "provenance": {
@@ -460681,6 +460797,54 @@
       "to": "HistoricalArtifact:knowledge/generated/inventory.md",
       "provenance": {
         "commit": "225e1420dfd9ef72d27240ba6fc10aa461843362"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:226a1f62306431c198cfd355c93d0267a94c1aee",
+      "to": "Artifact:test/genesis-fee-readiness-source-transfer.js",
+      "provenance": {
+        "commit": "226a1f62306431c198cfd355c93d0267a94c1aee"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:226a1f62306431c198cfd355c93d0267a94c1aee",
+      "to": "Artifact:test/lib/age-removal-source-transfer-proof.js",
+      "provenance": {
+        "commit": "226a1f62306431c198cfd355c93d0267a94c1aee"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:226a1f62306431c198cfd355c93d0267a94c1aee",
+      "to": "Artifact:test/lib/ux-journeys.js",
+      "provenance": {
+        "commit": "226a1f62306431c198cfd355c93d0267a94c1aee"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:226a1f62306431c198cfd355c93d0267a94c1aee",
+      "to": "Artifact:test/quest-quality-source-transfer.js",
+      "provenance": {
+        "commit": "226a1f62306431c198cfd355c93d0267a94c1aee"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:226a1f62306431c198cfd355c93d0267a94c1aee",
+      "to": "Artifact:tools/age-removal-source-seal.js",
+      "provenance": {
+        "commit": "226a1f62306431c198cfd355c93d0267a94c1aee"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:226a1f62306431c198cfd355c93d0267a94c1aee",
+      "to": "Artifact:tools/quest-quality-source-transfer.js",
+      "provenance": {
+        "commit": "226a1f62306431c198cfd355c93d0267a94c1aee"
       }
     },
     {
@@ -574497,6 +574661,14 @@
       "to": "Artifact:src/engagement.js",
       "provenance": {
         "commit": "a5c3b764d4ae55c663a76452b950b1c6940932c9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a5ca10a913196423645eaf3966511cf69ddf9086",
+      "to": "Artifact:tools/enterprise-native-questing-inputs.js",
+      "provenance": {
+        "commit": "a5ca10a913196423645eaf3966511cf69ddf9086"
       }
     },
     {
@@ -780601,6 +780773,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:017f7024a5f79d19ec9f2be2ba4cb65f667371c5",
+      "provenance": {
+        "commit": "017f7024a5f79d19ec9f2be2ba4cb65f667371c5"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:0184843b67401e8ab5eb0a77fbc0da743ad6c6ff",
       "provenance": {
         "commit": "0184843b67401e8ab5eb0a77fbc0da743ad6c6ff"
@@ -785993,6 +786173,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:208696a6d479000a0be549f732088595aa42771f",
+      "provenance": {
+        "commit": "208696a6d479000a0be549f732088595aa42771f"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:209119a3a28b99e40eec58dd8eb46261616395ec",
       "provenance": {
         "commit": "209119a3a28b99e40eec58dd8eb46261616395ec"
@@ -786292,6 +786480,14 @@
       "to": "Commit:225e1420dfd9ef72d27240ba6fc10aa461843362",
       "provenance": {
         "commit": "225e1420dfd9ef72d27240ba6fc10aa461843362"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:226a1f62306431c198cfd355c93d0267a94c1aee",
+      "provenance": {
+        "commit": "226a1f62306431c198cfd355c93d0267a94c1aee"
       }
     },
     {
@@ -810276,6 +810472,14 @@
       "to": "Commit:a5c3b764d4ae55c663a76452b950b1c6940932c9",
       "provenance": {
         "commit": "a5c3b764d4ae55c663a76452b950b1c6940932c9"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:a5ca10a913196423645eaf3966511cf69ddf9086",
+      "provenance": {
+        "commit": "a5ca10a913196423645eaf3966511cf69ddf9086"
       }
     },
     {
@@ -871287,7 +871491,7 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/lib/ux-journeys.js",
-      "to": "Artifact:tools/businessdesk-combined-source-transfer.js",
+      "to": "Artifact:tools/age-removal-source-transfer.js",
       "provenance": {
         "file": "test/lib/ux-journeys.js",
         "line": 5
@@ -871296,10 +871500,19 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/lib/ux-journeys.js",
+      "to": "Artifact:tools/businessdesk-combined-source-transfer.js",
+      "provenance": {
+        "file": "test/lib/ux-journeys.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/lib/ux-journeys.js",
       "to": "Artifact:tools/commerce-current-enterprise-source-compatibility.js",
       "provenance": {
         "file": "test/lib/ux-journeys.js",
-        "line": 13
+        "line": 14
       }
     },
     {
@@ -871344,7 +871557,7 @@
       "to": "Artifact:tools/ux-afterword-source-compatibility.js",
       "provenance": {
         "file": "test/lib/ux-journeys.js",
-        "line": 12
+        "line": 13
       }
     },
     {
@@ -877870,6 +878083,15 @@
       "provenance": {
         "file": "test/quest-quality-social.js",
         "line": 3
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/quest-quality-source-transfer.js",
+      "to": "Artifact:tools/age-removal-source-transfer.js",
+      "provenance": {
+        "file": "test/quest-quality-source-transfer.js",
+        "line": 8
       }
     },
     {
@@ -896193,7 +896415,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "tools/age-removal-source-data.js",
-        "line": 659
+        "line": 711
       }
     },
     {
@@ -896202,7 +896424,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "tools/age-removal-source-data.js",
-        "line": 660
+        "line": 712
       }
     },
     {
@@ -904195,6 +904417,15 @@
       "provenance": {
         "file": "tools/quest-quality-source-seal.js",
         "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/quest-quality-source-transfer.js",
+      "to": "Artifact:tools/age-removal-source-transfer.js",
+      "provenance": {
+        "file": "tools/quest-quality-source-transfer.js",
+        "line": 5
       }
     },
     {
