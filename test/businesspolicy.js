@@ -34,7 +34,7 @@ const one = snapshot();one.treasury.availableUsdMicros=17000;
 assert.equal(evaluateBusiness(one,policy).proposals.filter(p=>p.kind==='bid').length,1,'Quote reserves allocate across all proposals');
 const day = snapshot();day.policy.maxPerDayUsdMicros=12000;
 assert.equal(evaluateBusiness(day,policy).capacity.proposedWorkSlots,1);
-const priority = snapshot();priority.capacity.activeJobs=1;priority.jobs=[{id:'urgent',state:'claimed',expiresAt:'2026-10-09T12:05:00.000Z',settledRevenueUsdMicros:0,settledComputeCostsUsdMicros:12000}];
+const priority = snapshot();priority.capacity.activeJobs=1;priority.jobs=[{id:'urgent',state:'claimed',expiresAt:'2026-10-09T12:05:01.000Z',settledRevenueUsdMicros:0,settledComputeCostsUsdMicros:12000}];
 const prioritised=evaluateBusiness(priority,{...policy,maxProposals:1});
 assert.equal(prioritised.proposals[0].kind,'prioritize_delivery');assert.equal(prioritised.capacity.proposedWorkSlots,0,'Dropped proposals cannot occupy phantom slots');
 assert.deepEqual(evaluateBusiness(snapshot(),policy),evaluateBusiness(snapshot(),{...policy,duty:'general'}),'Default duty preserves general planning');
@@ -200,6 +200,95 @@ assert.throws(()=>normalizeBusinessPolicy({paymentFeeBps:-1}));assert.throws(()=
 assert.throws(()=>normalizeBusinessPolicy({operatingCostPerJobUsdMicros:1.5}));
 assert.throws(()=>normalizeBusinessPolicy({targetMarginBps:9000,paymentFeeBps:1000}));
 assert.equal(evaluateBusiness(snapshot(),{...policy,operatingCostPerJobUsdMicros:1000000000}).pricing.suggestedPriceUsdMicros,null,'Impossible prices are not proposed');
+const defaults=normalizeBusinessPolicy();
+assert.equal(defaults.workSecondsPerJob,300);assert.equal(defaults.planningHorizonSeconds,3600);
+for(const workSecondsPerJob of [59,3601,1.5,Infinity,null,'300',true])assert.throws(()=>normalizeBusinessPolicy({workSecondsPerJob}));
+for(const planningHorizonSeconds of [59,86401,1.5,Infinity,null,'3600',true])assert.throws(()=>normalizeBusinessPolicy({planningHorizonSeconds}));
+for(const seconds of [60,3600])assert.equal(normalizeBusinessPolicy({workSecondsPerJob:seconds}).workSecondsPerJob,seconds);
+for(const seconds of [60,86400])assert.equal(normalizeBusinessPolicy({planningHorizonSeconds:seconds}).planningHorizonSeconds,seconds);
+for(const jobs of [[],pending(2).jobs]){
+ const s=snapshot();s.asOf='+275760-09-13T00:00:00.000Z';s.jobs=jobs;s.capacity.activeJobs=jobs.length;
+ assert.throws(()=>evaluateBusiness(s,policy),/snapshot.*time range/,'Parseable dates must leave representable scheduling time');
+}
+const timePlan=evaluateBusiness(snapshot(),{...policy,workSecondsPerJob:600,planningHorizonSeconds:1200});
+assert.equal(timePlan.capacity.proposedWorkSlots,2,'All proposals share the same time budget');
+assert.equal(timePlan.scheduling.proposedWorkSeconds,1200);
+assert.equal(timePlan.scheduling.remainingAfterProposalsSeconds,0);
+const times=timePlan.proposals.filter(p=>p.kind==='bid');
+assert.equal(times[0].plannedStartAt,at);assert.equal(times[0].plannedFinishAt,times[1].plannedStartAt);
+assert(times.every(p=>p.estimatedWorkSeconds===600&&p.deliverySeconds===3600&&p.requiresOwnerApproval&&p.eligibleToExecute===false));
+const commitments=pending(2);
+commitments.jobs=[{id:'later',state:'claimed',expiresAt:'2026-10-09T13:00:00Z'},{id:'earlier',state:'open',expiresAt:'2026-10-09T12:20:01Z'}];
+const workload=evaluateBusiness(commitments,{...policy,workSecondsPerJob:600,planningHorizonSeconds:1800});
+assert.deepEqual(workload.scheduling.commitments.map(j=>j.jobId),['earlier','later']);
+assert(workload.scheduling.commitments.every(j=>j.feasibleByDeadline));
+assert.equal(workload.scheduling.reservedWorkSeconds,1200);
+assert.equal(workload.capacity.proposedWorkSlots,1);
+assert.equal(workload.proposals.find(p=>p.kind==='bid').plannedStartAt,'2026-10-09T12:20:00.000Z');
+const tied=pending(2);tied.jobs.reverse();
+assert.deepEqual(evaluateBusiness(tied,policy).scheduling.commitments.map(j=>j.jobId),['pending-0','pending-1'],'Equal deadlines use stable job IDs');
+for(const expiresAt of [at,'invalid',null,'2026-10-09T12:05:00Z','2026-10-09T12:04:59Z']){
+ const s=pending();s.jobs[0].expiresAt=expiresAt;
+ const planned=evaluateBusiness(s,policy);
+ assert(planned.riskFlags.includes('awarded_work_deadline_risk'));
+ assert.equal(planned.capacity.proposedWorkSlots,0,'Invalid, expired and exact-finish deadlines hold bids');
+ assert.equal(planned.scheduling.commitments.length,1,'Unsafe awarded work remains visible');
+ assert.equal(planned.scheduling.commitments[0].feasibleByDeadline,false);
+ assert.equal(planned.scheduling.reservedWorkSeconds,300,'Unsafe awarded work still reserves estimated time');
+}
+const jointlyLate=pending(2);jointlyLate.jobs.forEach(job=>{job.expiresAt='2026-10-09T12:09:00Z';});
+const jointlyLatePlan=evaluateBusiness(jointlyLate,policy);
+assert.deepEqual(jointlyLatePlan.scheduling.commitments.map(job=>job.feasibleByDeadline),[true,false]);
+assert.equal(jointlyLatePlan.capacity.proposedWorkSlots,0,'Individually feasible deadlines cannot share the same execution time');
+for(const s of [missingActive,inconsistentActive]){
+ const planned=evaluateBusiness(s,policy);
+ assert(planned.scheduling.activeDetailsIncomplete);assert(planned.riskFlags.includes('active_work_details_incomplete'));
+ assert.equal(planned.capacity.proposedWorkSlots,0);
+}
+for(const state of ['submitted','disputed','accepted','refunded']){
+ const s=pending();s.jobs[0].state=state;s.capacity.activeJobs=['submitted','disputed'].includes(state)?1:0;
+ const planned=evaluateBusiness(s,policy);
+ assert.equal(planned.scheduling.reservedWorkSeconds,0,'Submitted and terminal jobs do not execute twice');
+ assert.equal(planned.capacity.proposedWorkSlots,3-s.capacity.activeJobs);
+}
+const pendingTime=snapshot();pendingTime.commitments.pendingAwardBids=1;
+const pendingTimePlan=evaluateBusiness(pendingTime,{...policy,workSecondsPerJob:600,planningHorizonSeconds:1200});
+assert.equal(pendingTimePlan.scheduling.pendingAwardWorkSeconds,600);
+assert.equal(pendingTimePlan.capacity.proposedWorkSlots,1,'Potential awards protect time as well as slots and funds');
+assert.equal(pendingTimePlan.proposals.find(p=>p.kind==='bid').plannedStartAt,'2026-10-09T12:10:00.000Z');
+const bothTime=pending();bothTime.commitments.pendingAwardBids=1;
+const bothTimePlan=evaluateBusiness(bothTime,{...policy,workSecondsPerJob:600,planningHorizonSeconds:1800});
+assert.equal(bothTimePlan.capacity.proposedWorkSlots,1);
+assert.equal(bothTimePlan.proposals.find(p=>p.kind==='bid').plannedStartAt,'2026-10-09T12:20:00.000Z');
+for(const s of [missingCommitments,overflowingCommitments]){
+ const planned=evaluateBusiness(s,policy);
+ assert.equal(planned.scheduling.pendingAwardWorkSeconds,null);
+ assert.equal(planned.scheduling.remainingWorkSeconds,null);
+ assert.equal(planned.scheduling.remainingAfterProposalsSeconds,null,'Unknown time cannot imply unused capacity');
+ assert.equal(planned.capacity.proposedWorkSlots,0);
+}
+assert(evaluateBusiness(overflowingCommitments,policy).riskFlags.includes('pending_bid_work_outside_exact_bounds'));
+const noTime=evaluateBusiness(snapshot(),{...policy,workSecondsPerJob:600,planningHorizonSeconds:599});
+assert.equal(noTime.capacity.proposedWorkSlots,0);assert(noTime.riskFlags.includes('work_time_capacity_full'));
+const beyondHorizon=evaluateBusiness(pending(2),{...policy,workSecondsPerJob:600,planningHorizonSeconds:600});
+assert.equal(beyondHorizon.scheduling.reservedWorkSeconds,1200);assert.equal(beyondHorizon.scheduling.remainingWorkSeconds,0);
+for(const expiresAt of ['2026-10-09T12:04:59Z','2026-10-09T12:05:00Z']){
+ const s=snapshot();s.policy.expiresAt=expiresAt;
+ const planned=evaluateBusiness(s,policy);
+ assert.equal(planned.capacity.proposedWorkSlots,0,'Work must finish strictly before current authority expires');
+ assert(planned.riskFlags.includes('owner_authority_window_insufficient'));
+ assert(!planned.riskFlags.includes('work_time_capacity_full'),'Authority expiry is distinct from the planning horizon');
+}
+const exactAuthority=snapshot();exactAuthority.policy.expiresAt='2026-10-09T12:05:00.001Z';
+assert.equal(evaluateBusiness(exactAuthority,policy).capacity.proposedWorkSlots,1);
+const longPlan=evaluateBusiness(snapshot(),{...policy,workSecondsPerJob:3600,planningHorizonSeconds:10800});
+assert.deepEqual(longPlan.proposals.filter(p=>p.kind==='bid').map(p=>p.deliverySeconds),[3601,7201,10801],
+ 'A proposed delivery deadline must leave time to submit strictly before expiry');
+assert.equal(evaluateBusiness(priority,{...policy,maxProposals:1}).scheduling.proposedWorkSeconds,0,'A capped proposal reserves no phantom time');
+assert.equal(evaluateBusiness(priority,{...policy,duty:'fulfillment'}).scheduling.proposedWorkSeconds,0,'Out-of-duty bids reserve no phantom time');
+const salesTime=evaluateBusiness(priority,{...policy,duty:'sales',maxProposals:1});
+assert.equal(salesTime.scheduling.proposedWorkSeconds,300);assert.equal(salesTime.scheduling.reservedWorkSeconds,300);
+assert.equal(JSON.stringify(original),encoded,'Scheduling never mutates the snapshot or owner authority');
 let state=1947;const next=()=>{state=(Math.imul(state,1664525)+1013904223)>>>0;return state;};
 for(let i=0;i<200;i++){
  const s=snapshot();s.catalog=[{...entry,inputUsdMicrosPerMillion:next()%100000000,outputUsdMicrosPerMillion:next()%100000000}];
@@ -214,4 +303,19 @@ for(let i=0;i<200;i++){
  const price=evaluated.pricing.suggestedPriceUsdMicros,cost=evaluated.pricing.planningComputeCostUsdMicros;
  if(price!==null){const roundedFee=(BigInt(price)*BigInt(fee)+99999999n)/100000000n*10000n;const profit=BigInt(price)-BigInt(cost)-BigInt(operating)-roundedFee;assert(profit*10000n>=BigInt(price)*BigInt(Math.min(margin,9000)));assert(profit>=10000n);assert.equal(price%10000,0);}
 }
-console.log('businesspolicy PASS: shadow-only proposals, exact margins, shared capacity/funds/daily reserves, unknowns, retention, comparison and 400 pricing trials seed1947');
+for(let i=0;i<200;i++){
+ const duration=60+next()%3541,horizon=60+next()%86341,s=pending(next()%3);
+ s.commitments.pendingAwardBids=next()%(4-s.capacity.activeJobs);
+ const planned=evaluateBusiness(s,{...policy,workSecondsPerJob:duration,planningHorizonSeconds:horizon});
+ assert.equal(planned.scheduling.proposedWorkSeconds,planned.capacity.proposedWorkSlots*duration);
+ const bids=planned.proposals.filter(p=>p.kind==='bid');
+ let finish=Date.parse(at)+(planned.scheduling.reservedWorkSeconds+planned.scheduling.pendingAwardWorkSeconds)*1000;
+ for(const bid of bids){
+  assert.equal(Date.parse(bid.plannedStartAt),finish);finish=Date.parse(bid.plannedFinishAt);
+  assert.equal(finish-Date.parse(bid.plannedStartAt),duration*1000);
+  assert(finish<=Date.parse(at)+horizon*1000);assert(finish<Date.parse(s.policy.expiresAt));
+  assert.equal(bid.eligibleToExecute,false);assert(bid.requiresOwnerApproval);
+ }
+ assert.equal(planned.scheduling.remainingAfterProposalsSeconds,Math.max(0,horizon-(finish-Date.parse(at))/1000));
+}
+console.log('businesspolicy PASS: shadow-only proposals, exact margins, protected commitments, deadlines and 400 pricing / 200 scheduling trials seed1947');
