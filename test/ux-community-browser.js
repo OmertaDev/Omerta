@@ -4,6 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { chromium } from 'playwright-core';
 import { buildServer } from './server-fixture.js';
+import { revealOptional } from './lib/ux-disclosure-browser.js';
 import { MENTOR } from '../src/rules.js';
 
 if (process.env.DATABASE_URL) throw new Error('Community browser checks require disposable pg-mem.');
@@ -15,7 +16,7 @@ const api = async (method, url, token, body) => { const r = await app.inject({ m
 const create = async (name) => { const { token } = await api('POST', '/v1/auth/guest'); await api('POST', '/v1/character', token, { name }); return { token, ch: (await pool.query('SELECT * FROM characters WHERE name=$1', [name])).rows[0] }; };
 const ready = (page) => page.waitForFunction(() => !document.querySelector('#operation-desk[aria-busy=true]'));
 const openTab = async (page, tab) => { await page.locator('#btn-jump').click(); await page.locator('#jump-q').fill(tab); await page.locator(`#jump-list [data-jump="${tab}"]`).click(); await page.locator(`#tab-${tab}.on`).waitFor(); };
-const openForm = async (page, type, subject = '') => { const f = page.locator(`form[data-community-form="${type}"][data-subject="${subject}"]`); for (const parent of await f.locator('xpath=ancestor::details').all()) if (!await parent.evaluate((n) => n.open)) await parent.locator(':scope > summary').click(); return f; };
+const openForm = async (page, type, subject = '') => { const f = page.locator(`form[data-community-form="${type}"][data-subject="${subject}"]`); await revealOptional(f); for (const parent of await f.locator('xpath=ancestor::details').all()) if (!await parent.evaluate((n) => n.open)) await parent.locator(':scope > summary').click(); return f; };
 const submit = async (page, type, values, subject = '', expected = 200) => {
  const f = await openForm(page, type, subject);
  for (const [name, value] of Object.entries(values)) {
@@ -55,7 +56,7 @@ try {
   const page = await ctx.newPage(); page.on('pageerror', (e) => errors.push(e.message)); page.on('console', (m) => { if (m.type() === 'warning' && /UI .*unavailable/.test(m.text())) errors.push(m.text()); });
   await page.goto(base, { waitUntil: 'domcontentloaded' }); await page.locator('#screen-main:not(.hidden)').waitFor();
   await page.evaluate(() => document.querySelectorAll('.modal-bg:not(.hidden)').forEach((n) => n.classList.add('hidden')));
-  await openTab(page, 'crew'); if (noCrew) await page.locator('#ux-community [data-community-empty]').waitFor(); else await page.locator('#crew-room').waitFor(); await page.locator('#ux-community h3').waitFor(); return page;
+  await openTab(page, 'crew'); await revealOptional(page.locator('#ux-community')); if (noCrew) await page.locator('#ux-community [data-community-empty]').waitFor(); else await page.locator('#crew-room').waitFor(); await page.locator('#ux-community h3').waitFor(); return page;
  };
  const newcomer = await create('Culture Newcomer'), newcomerPage = await authenticate(newcomer, true);
  const newcomerRead = newcomerPage.waitForResponse((r) => r.url().endsWith(route) && r.request().method() === 'GET'); await newcomerPage.locator('[data-community-refresh]').click();
@@ -131,7 +132,7 @@ try {
  await page.waitForFunction(() => document.querySelector('form[data-community-form=manual] [name=body0]')?.value === 'A newer revision from the crew.');
  await page.locator('#ux-community details').filter({ has: page.locator(':scope > summary', { hasText: 'Crew map planning pins' }) }).first().locator(':scope > summary').click();
  await submit(page, 'pin', { title: 'Meet by the public canal', destinationId: 'canal', note: 'A crew planning destination, not a player sighting.', spoiler: false });
- await page.locator('[data-community-map]').click(); await page.locator('#ux-community-pins').waitFor();
+ await page.locator('[data-community-map]').click(); await revealOptional(page.locator('#ux-community-pins'));
  assert.match(await page.locator('#ux-community-pins').innerText(), /Meet by the public canal/);
  await page.setViewportSize({ width: 390, height: 844 });
  assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 2));

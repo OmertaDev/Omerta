@@ -6,6 +6,7 @@ import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { chromium } from 'playwright-core';
 import { buildServer } from './server-fixture.js';
+import { revealOptional } from './lib/ux-disclosure-browser.js';
 import { MEGAPROJECT } from '../src/rules.js';
 import { recordEventResult } from '../src/events.js';
 assert(!process.env.DATABASE_URL, 'Expanded UX browser checks require disposable pg-mem.');
@@ -89,6 +90,7 @@ try {
 
   await jump(page, 'fieldwork'); await page.locator('.world-fieldwork').waitFor();
   await page.locator('[data-fieldwork-view="mysteries"]').click();
+  await revealOptional(page.locator('.investigation-reading-desk'));
   await page.locator('.investigation-workspace').waitFor(); await page.locator('.investigation-speaker').first().waitFor();
   await page.getByLabel('Pin a found clue', { exact: true }).selectOption('evidence:neighborhood-timing');
   await page.locator('.investigation-pin').waitFor();
@@ -99,7 +101,7 @@ try {
   await page.locator('dialog.investigation-inspector').getByRole('button', { name: 'Close inspection', exact: true }).click();
   assert.deepEqual(gameWrites, [], 'opening and arranging the private case does not execute a game action');
 
-  await jump(page, 'crew'); await page.locator('#ux-coordination [data-coord-scope]').waitFor();
+  await jump(page, 'crew'); await revealOptional(page.locator('#ux-coordination')); await page.locator('#ux-coordination [data-coord-scope]').waitFor();
   assert.match(await page.locator('#ux-coordination').innerText(), /Expanded Planning Crew/);
   const planForm = page.locator('#ux-coordination form[data-coord-form="plan"]'); await disclosure(planForm.locator('..'));
   await planForm.locator('[name="title"]').fill('Expanded integration plan'); await planForm.locator('[name="nextStep"]').fill('Review the journal together.');
@@ -109,7 +111,7 @@ try {
   assert.equal((await api('GET', '/v1/ux/crew-workspace', mate.token)).notes.some(note => note.data.title === 'Expanded integration plan'), true, 'the actual teammate sees the saved planning note');
 
   await jump(page, 'start'); await page.locator('#tab-start .ux-world-panel').waitFor();
-  await jump(page, 'city'); await page.locator('#tab-city .ux-turf-sign').filter({ hasText: 'EXPD' }).waitFor();
+  await jump(page, 'city'); await revealOptional(page.locator('#tab-city .ux-world-panel')); await page.locator('#tab-city .ux-turf-sign').filter({ hasText: 'EXPD' }).waitFor();
   const liveMap = await api('GET', '/v1/map', player.token), docks = liveMap.districts.find(district => district.id === 'docks');
   assert.equal(docks.holder.tag, 'EXPD');
   assert.match(await page.locator('#tab-city .ux-district-scene').filter({ hasText: 'Turf held by EXPD' }).innerText(), /EXPD/);
@@ -124,6 +126,7 @@ try {
   await headline.locator('[data-world-go="boxing"]').click(); await page.locator('#tab-boxing.on').waitFor();
 
   await jump(page, 'life'); await page.locator('#tab-life [data-uwgift="doc"]').waitFor();
+  await revealOptional(page.locator('#tab-life .ux-world-panel'));
   const oldStanding = (await api('GET', '/v1/underworld', player.token)).npcs.find(npc => npc.id === 'doc').standing;
   const giftResponse = page.waitForResponse(reply => reply.url().endsWith('/v1/underworld/doc/gift') && reply.request().method() === 'POST');
   const giftBoardSettled = page.waitForResponse(reply => reply.url().endsWith('/v1/season/recap') && reply.status() === 200);
@@ -156,6 +159,7 @@ try {
   }, comfortableSize);
   const largeSize = await largeFont.jsonValue(); await largeFont.dispose();
   assert.ok(largeSize > comfortableSize, 'large reading mode changes visible typography');
+  await disclosure(page.locator('#city-directory'));
   await page.locator('[data-ux-focus]').click(); assert.equal(await page.locator('#leftcol').isVisible(), false, 'focus mode visibly removes the side column');
   assert.match(await page.locator('#ux-focus-vitals').innerText(), /Health.*nerve/);
   await page.locator('[data-ux-focus]').click(); assert.equal(await page.locator('#leftcol').isVisible(), true);
@@ -167,6 +171,7 @@ try {
   assert.notEqual(await page.evaluate(() => [...originalWorldParent.children].indexOf(originalWorldPanel)), await page.evaluate(() => worldIndex), 'keyboard Up visibly changes panel order');
   await page.evaluate(() => { window.originalTacticsPanel = document.querySelector('#tab-life > [data-ux-tactics]'); window.originalGiftControl = document.querySelector('#tab-life [data-uwgift="doc"]'); });
   const orderOfPanels = () => page.evaluate(() => [...document.querySelector('#tab-life').children].filter(node => node.dataset.uxPanel).map(node => node.dataset.uxPanel));
+  await disclosure(page.locator('#tab-life > [data-ux-tactics]'));
   const beforeDrag = await orderOfPanels();
   const dragHandle = page.locator('#tab-life > .ux-world-panel > .ux-panel-handle'), targetHandle = page.locator('#tab-life > [data-ux-tactics] > .ux-panel-handle');
   await dragHandle.dragTo(targetHandle);
@@ -203,7 +208,7 @@ try {
     await fresh.screenshot({ path: path.join(artifacts, 'expanded-fresh-device-failure.png'), fullPage: false }); throw error;
   }
   assert.equal(await fresh.locator('select[data-ux-density]').inputValue(), 'large', 'the visible preference control matches the hydrated typography');
-  await jump(fresh, 'fieldwork'); await fresh.locator('[data-fieldwork-view="mysteries"]').click(); await fresh.locator('.investigation-pin').waitFor();
+  await jump(fresh, 'fieldwork'); await fresh.locator('[data-fieldwork-view="mysteries"]').click(); await revealOptional(fresh.locator('.investigation-reading-desk')); await fresh.locator('.investigation-pin').waitFor();
   assert.match(await fresh.locator('.investigation-pin').first().innerText(), /Stopped Workshop Clock/, 'private workspace pins hydrate on a fresh device');
   const otherPage = await authenticate(other); assert.equal(await otherPage.locator('body').getAttribute('data-ux-density'), 'comfortable');
   await jump(otherPage, 'crew'); await otherPage.locator('#tab-crew.on').waitFor();
@@ -211,12 +216,12 @@ try {
   assert.equal((await api('GET', '/v1/ux/workspace', other.token)).values.investigation?.['neighborhood-initiation'], undefined, 'private deduction workspace is account-isolated');
   const mobile = await authenticate(player, true); await mobile.waitForFunction(() => document.body.dataset.uxDensity === 'large');
   assert.equal(await mobile.locator('select[data-ux-density]').inputValue(), 'large');
-  await jump(mobile, 'fieldwork'); await mobile.locator('[data-fieldwork-view="mysteries"]').click(); await mobile.locator('.investigation-workspace').waitFor();
+  await jump(mobile, 'fieldwork'); await mobile.locator('[data-fieldwork-view="mysteries"]').click(); await revealOptional(mobile.locator('.investigation-reading-desk')); await mobile.locator('.investigation-workspace').waitFor();
   await noOverflow(mobile, 'mobile investigation'); await disclosure(mobile.locator('.investigation-scene')); await mobile.locator('.investigation-desk-object').first().click();
   await mobile.locator('dialog.investigation-inspector[open]').waitFor(); await noOverflow(mobile, 'mobile document dialog');
   await mobile.screenshot({ path: path.join(artifacts, 'expanded-investigation-mobile.png'), fullPage: false });
   await mobile.locator('dialog.investigation-inspector').getByRole('button', { name: 'Close inspection', exact: true }).click();
-  await jump(mobile, 'crew'); await mobile.locator('#ux-coordination [data-coord-scope]').waitFor(); await noOverflow(mobile, 'mobile crew coordination');
+  await jump(mobile, 'crew'); await revealOptional(mobile.locator('#ux-coordination')); await mobile.locator('#ux-coordination [data-coord-scope]').waitFor(); await noOverflow(mobile, 'mobile crew coordination');
   await mobile.locator('#ux-coordination').evaluate(node => node.scrollIntoView({ block: 'start' }));
   await mobile.screenshot({ path: path.join(artifacts, 'expanded-coordination-mobile.png'), fullPage: false });
   assert.deepEqual(faults, [], 'the actual page has no runtime errors or unavailable UX module warnings');

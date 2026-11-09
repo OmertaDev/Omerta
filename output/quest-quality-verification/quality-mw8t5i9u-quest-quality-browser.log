@@ -1,0 +1,14 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+{"component":"player-command","phase":"request","correlationId":"3254d39c-7494-497a-8190-ebff385aa316"}
+{"component":"player-command","phase":"authorization","correlationId":"3254d39c-7494-497a-8190-ebff385aa316","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"3254d39c-7494-497a-8190-ebff385aa316","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"3254d39c-7494-497a-8190-ebff385aa316","statusCode":409,"elapsedMs":3}
+{"component":"player-command","phase":"request","correlationId":"d4fb6b47-c97e-4615-8742-92dbfaa7adc4"}
+{"component":"player-command","phase":"authorization","correlationId":"d4fb6b47-c97e-4615-8742-92dbfaa7adc4","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"d4fb6b47-c97e-4615-8742-92dbfaa7adc4","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"d4fb6b47-c97e-4615-8742-92dbfaa7adc4","statusCode":409,"elapsedMs":1}
+{"component":"player-command","phase":"request","correlationId":"fd7c3216-0cf8-4ec5-b2dd-0b050dd63fa8"}
+{"component":"player-command","phase":"authorization","correlationId":"fd7c3216-0cf8-4ec5-b2dd-0b050dd63fa8","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"fd7c3216-0cf8-4ec5-b2dd-0b050dd63fa8","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"fd7c3216-0cf8-4ec5-b2dd-0b050dd63fa8","statusCode":409,"elapsedMs":2}
+Quest quality production browser PASS: real pilot proof/conclusion/evidence, exact clauses, hidden-question boundary, private revision/reload/peer isolation, drafts/undo, motive, commitments, truthful AI study/24h refusal and eligible recall, opt-in debrief, actual fieldwork/disclosure, independent unsure/share, real cross-role volunteering, opaque mandate/pre-ack blocker/ack/withdraw/commit and390px. Artifacts: C:\Users\Jorge\AppData\Local\Temp\omerta-quality-aLpGYr

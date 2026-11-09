@@ -120,6 +120,7 @@ try {
 
   await openTab(page, 'port');
   const harbor = tactics(page, 'port');
+  if (!await harbor.evaluate(node => node.open)) await harbor.locator(':scope > summary').click();
   await harbor.locator('.ux-tactics-view table tbody tr').first().waitFor();
   assert.match(await harbor.locator('.ux-tactics-view').innerText(), /Clean proceeds/);
   const costWithoutEscort = await harbor.locator('.ux-tactics-view table tbody tr').first().locator('td').nth(0).innerText();
@@ -159,6 +160,7 @@ try {
     }
     // The onboarding landing can visit Home during reload, selecting the default
     // planning view. Reopen Trials before inspecting the persisted practice run.
+    if (!await table.evaluate(node => node.open)) await table.locator(':scope > summary').click();
     await table.locator('[data-tactics-view="trials"]').click();
     await page.waitForFunction(() => document.querySelectorAll('#tab-streets [data-ux-tactics] [data-trial-card]').length === 3);
   };

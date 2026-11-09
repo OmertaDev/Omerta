@@ -38,7 +38,31 @@ const generated = new Set([metadata, 'tools/enterprise-native-questing-inputs.js
   'output/questing-verification/quest-mw8vfj0s-content-api.log',
   'output/questing-verification/quest-mw8vfk8n-quest-saga-social.log',
   'output/questing-verification/quest-mw8vfoh3-content-casework.log',
-  'output/questing-verification/quest-mw8vfry3-quest-workshop.log']);
+  'output/questing-verification/quest-mw8vfry3-quest-workshop.log',
+  // Retained UI evidence is historical only; combined execution is verified afresh.
+  "output/quest-quality-verification/quality-mw8t5267-quest-quality-content.log",
+  "output/quest-quality-verification/quality-mw8t59jg-quest-quality-rules.log",
+  "output/quest-quality-verification/quality-mw8t59yz-quest-quality-studio.log",
+  "output/quest-quality-verification/quality-mw8t5b1g-quest-quality-runtime.log",
+  "output/quest-quality-verification/quality-mw8t5ewy-quest-quality-api.log",
+  "output/quest-quality-verification/quality-mw8t5i9u-quest-quality-browser.log",
+  "output/quest-quality-verification/quality-mw8t5xh4-quest-quality-postgres.log",
+  "output/quest-quality-verification/quality-mw8t63je-quest-quality-stateful.log",
+  "output/quest-quality-verification/quality-mw8t64dc-quest-quality-social.log",
+  "output/quest-quality-verification/quality-mw8t68am-quest-quality-spoilers.log",
+  "output/quest-quality-verification/quality-mw8t6bdw-quest-quality-study.log",
+  "output/questing-verification/quest-mw8t3sas-quest-saga.log",
+  "output/questing-verification/quest-mw8t3y65-content-narrative-security.log",
+  "output/questing-verification/quest-mw8t3z9b-quest-specialist.log",
+  "output/questing-verification/quest-mw8t44wz-clue-puzzles.log",
+  "output/questing-verification/quest-mw8t49lu-clue-puzzles-browser.log",
+  "output/questing-verification/quest-mw8t4gez-content-narrative.log",
+  "output/questing-verification/quest-mw8t4k51-quest-experience-browser.log",
+  "output/questing-verification/quest-mw8t4yze-content-api.log",
+  "output/questing-verification/quest-mw8t507p-quest-saga-social.log",
+  "output/questing-verification/quest-mw8t54fa-content-casework.log",
+  "output/questing-verification/quest-mw8t587k-quest-workshop.log",
+]);
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], {
   encoding: 'utf8', windowsHide: true, maxBuffer: 64 * 1024 * 1024,
 });

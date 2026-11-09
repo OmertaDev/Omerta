@@ -689,6 +689,10 @@ export async function buildServer() {
     .header('cache-control', 'no-cache').send(uiCss));
   // City scenes are optional local assets; gameplay remains authoritative through the API.
   for (const [file, type] of [
+    ['noir-ui.css', 'text/css'], ['noir-landing.css', 'text/css'], ['noir-shell.js', 'application/javascript'],
+    ['strategy-command.css', 'text/css'], ['strategy-command.js', 'application/javascript'],
+    ['vendor/strategy-city-renderer.js', 'application/javascript'], ['vendor/strategy-city-renderer.js.LEGAL.txt', 'text/plain'],
+    ['vendor/strategy-city-renderer.LICENSE.txt', 'text/plain'],
     ['site-analytics.js', 'application/javascript'],
     ['city-scene.js', 'application/javascript'], ['city-scene.css', 'text/css'], ['city-world-layout.js', 'application/javascript'],
     ['city-world-ui.js', 'application/javascript'], ['city-world-ui.css', 'text/css'],

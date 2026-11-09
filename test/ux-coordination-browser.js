@@ -4,6 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { chromium } from 'playwright-core';
 import { buildServer } from './server-fixture.js';
+import { revealOptional } from './lib/ux-disclosure-browser.js';
 
 if (process.env.DATABASE_URL) throw new Error('Crew planning browser tests require disposable pg-mem.');
 const executablePath = process.env.CHROMIUM_PATH || ['C:/Program Files/Google/Chrome/Application/chrome.exe', 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe', '/usr/bin/chromium', '/usr/bin/google-chrome'].find((p) => fs.existsSync(p));
@@ -17,7 +18,7 @@ const openCrew = async (page, member = true) => {
   const refreshed = member ? page.waitForResponse((response) => new URL(response.url()).pathname === '/v1/crew/chat' && response.request().method() === 'GET') : null;
   await page.locator('#btn-jump').click(); await page.locator('#jump-q').fill('crew'); await page.locator('#jump-list [data-jump="crew"]').click();
   if (refreshed) await (await refreshed).finished();
-  await page.locator(member ? '#crew-room' : '#crew-form').waitFor(); await page.locator(member ? '#ux-coordination [data-coord-scope]' : '#ux-coordination [data-coord-join]').waitFor();
+  await page.locator(member ? '#crew-room' : '#crew-form').waitFor(); await revealOptional(page.locator('#ux-coordination')); await page.locator(member ? '#ux-coordination [data-coord-scope]' : '#ux-coordination [data-coord-join]').waitFor();
 };
 const ready = (page) => page.waitForFunction(() => !document.querySelector('#operation-desk[aria-busy=true]'));
 const submit = async (page, type, values) => {

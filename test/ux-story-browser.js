@@ -5,6 +5,7 @@ import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { chromium } from 'playwright-core';
 import { buildServer } from './server-fixture.js';
+import { revealOptional } from './lib/ux-disclosure-browser.js';
 
 assert(!process.env.DATABASE_URL, 'Story browser proof uses disposable pg-mem.');
 process.env.INVITE_MODE = 'off'; process.env.RATE_LIMIT = 'off';
@@ -58,14 +59,14 @@ try {
   page.on('request', request => { if (request.url().startsWith(base + '/v1/') && !['GET', 'HEAD'].includes(request.method()) && !request.url().endsWith('/v1/ux/workspace')) writes.push(new URL(request.url()).pathname); });
   assert.equal(await page.evaluate(() => typeof createOmertaStory), 'function');
   await jump(page, 'fieldwork'); await page.locator('[data-fieldwork-view="mysteries"]').click();
-  await page.locator('[data-fieldwork-mystery="property-investigation"]').click(); await page.locator('[data-ux-story="case"] .story-cold-open').waitFor();
+  await page.locator('[data-fieldwork-mystery="property-investigation"]').click(); await revealOptional(page.locator('[data-ux-story="case"]')); await page.locator('[data-ux-story="case"] .story-cold-open').waitFor();
   const story = page.locator('[data-ux-story="case"]');
   assert.match(await story.innerText(), /An address on an old cover/);
   await story.getByRole('button', { name: 'Skip this opening', exact: true }).click();
   await story.getByRole('button', { name: 'Reread the opening vignette', exact: true }).waitFor();
-  assert.equal(await story.getByText('An address on an old cover', { exact: true }).count(), 0);
+  assert.equal(await story.getByRole('heading', { name: 'An address on an old cover', exact: true }).count(), 0);
   await story.getByRole('button', { name: 'Reread the opening vignette', exact: true }).click();
-  await story.getByText('An address on an old cover', { exact: true }).waitFor();
+  await story.getByRole('heading', { name: 'An address on an old cover', exact: true }).waitFor();
   await disclosure(story.locator('[data-story-section="cast"]'));
   await story.locator('.story-cast-node').filter({ hasText: 'Irene Bell' }).click();
   await page.locator('dialog.story-dialog[open]').waitFor(); assert.match(await page.locator('dialog.story-dialog').innerText(), /AUTHORED RESIDENT SCENE · NPC/);
@@ -99,7 +100,7 @@ try {
   assert.match(await dialog.locator('.story-annotation-note').first().innerText(), /Compare the dates/);
   await page.screenshot({ path: path.join(artifacts, 'story-documents-desktop.png'), fullPage: false });
   await page.getByRole('button', { name: 'Close story reading', exact: true }).click();
-  await jump(page, 'profile'); const overview = page.locator('#tab-profile [data-ux-story="overview"]'); await overview.waitFor();
+  await jump(page, 'profile'); const overview = page.locator('#tab-profile [data-ux-story="overview"]'); await revealOptional(overview);
   await disclosure(overview.locator('[data-story-section="crossover"]'));
   assert.match(await overview.locator('[data-story-section="crossover"]').innerText(), /Two files on one newsroom table/);
   await disclosure(overview.locator('[data-story-section="letters"]')); await disclosure(overview.locator('.story-letter').first());
@@ -111,7 +112,7 @@ try {
   assert.deepEqual(writes, [], 'story scenes, reading, variants, letters, highlights and zoom perform no gameplay write');
   await page.screenshot({ path: path.join(artifacts, 'story-epilogues-desktop.png'), fullPage: false });
   const mobile = await open(alice, true); await jump(mobile, 'fieldwork'); await mobile.locator('[data-fieldwork-view="mysteries"]').click();
-  await mobile.locator('[data-fieldwork-mystery="property-investigation"]').click(); const mobileStory = mobile.locator('[data-ux-story="case"]'); await mobileStory.waitFor();
+  await mobile.locator('[data-fieldwork-mystery="property-investigation"]').click(); const mobileStory = mobile.locator('[data-ux-story="case"]'); await revealOptional(mobileStory);
   await disclosure(mobileStory.locator('[data-story-section="documents"]'));
   await mobileStory.getByRole('button', { name: 'Compare two found documents', exact: true }).click(); const mobileDialog = mobile.locator('dialog.story-dialog[open]');
   await mobileDialog.locator('.story-private-highlight').first().waitFor();
@@ -121,7 +122,7 @@ try {
   const dialogRect = await mobileDialog.boundingBox(); assert.ok(dialogRect.x >= 0 && dialogRect.x + dialogRect.width <= 391);
   await noOverflow(mobile); await mobile.screenshot({ path: path.join(artifacts, 'story-documents-mobile.png'), fullPage: false });
   await mobile.getByRole('button', { name: 'Close story reading', exact: true }).click();
-  const other = await open(bob); await jump(other, 'profile'); const otherOverview = other.locator('#tab-profile [data-ux-story="overview"]'); await otherOverview.waitFor();
+  const other = await open(bob); await jump(other, 'profile'); const otherOverview = other.locator('#tab-profile [data-ux-story="overview"]'); await revealOptional(otherOverview);
   assert.equal(await otherOverview.locator('.story-letter,.story-cast-node,[data-story-section="crossover"]').count(), 0, 'another account has no prior resident cast, milestone letters or crossover');
   assert.ok(!(await otherOverview.innerText()).includes('Compare the dates'));
 

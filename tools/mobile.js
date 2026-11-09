@@ -413,7 +413,8 @@ for (const vp of VIEWPORTS) {
     await page.fill('#jump-q', 'garage');
     await page.locator('#jump-list [data-jump="garage"]').click();
     await page.locator('#tab-garage.on').waitFor({ state: 'visible' });
-    await page.locator('#coach').waitFor({ state: 'visible' });
+    // The generic ready coach is optional chrome; its mounted renderer still gates tour setup.
+    await page.locator('#coach').waitFor({ state: 'attached' });
     await clickDisclosureControl(page, '#btn-help', true);
     await page.click('#glossary-tour');
   }
