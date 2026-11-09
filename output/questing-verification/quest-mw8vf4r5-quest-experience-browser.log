@@ -1,0 +1,14 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+{"component":"player-command","phase":"request","correlationId":"f093f5c9-7a60-45d5-9556-b8acb89154be"}
+{"component":"player-command","phase":"authorization","correlationId":"f093f5c9-7a60-45d5-9556-b8acb89154be","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"f093f5c9-7a60-45d5-9556-b8acb89154be","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"f093f5c9-7a60-45d5-9556-b8acb89154be","statusCode":409,"elapsedMs":3}
+{"component":"player-command","phase":"request","correlationId":"7e46312d-5f93-4e2f-ad27-8ccbf352df85"}
+{"component":"player-command","phase":"authorization","correlationId":"7e46312d-5f93-4e2f-ad27-8ccbf352df85","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"7e46312d-5f93-4e2f-ad27-8ccbf352df85","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"7e46312d-5f93-4e2f-ad27-8ccbf352df85","statusCode":409,"elapsedMs":2}
+{"component":"player-command","phase":"request","correlationId":"42119362-3717-4eec-acdc-03f47f873617"}
+{"component":"player-command","phase":"authorization","correlationId":"42119362-3717-4eec-acdc-03f47f873617","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"42119362-3717-4eec-acdc-03f47f873617","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"42119362-3717-4eec-acdc-03f47f873617","statusCode":409,"elapsedMs":1}
+Quest browser verification passed: real case open/start, seven structured interactions, hints, wrong-answer refusal, ordered/mapping controls, checkpoints, private notes, claim, account isolation, community author/publish/solve/rate, private agendas, shared handoffs, active role replacement, rival invitation consent, history, personal district aftermath/public/quiet/epilogue/revisit, production shell/assets/actions, full reload with synced theory, and 390px layout. Screenshots: C:\Users\Jorge\AppData\Local\Temp\omerta-quests-Rc3gVa

@@ -85,7 +85,6 @@ const PUBLIC = {
   'GET /v1/deeds/plate/:tokenId': 'STREET DEEDS — the on-chain deed\'s block-plate SVG, the ERC-721 tokenURI image a marketplace/crawler fetches with no token; the untrusted street name is escaped (the /v1/art precedent)',
   'POST /v1/auth/guest': 'an auth entry point — there is no token to present yet',
   'POST /v1/auth/agent': 'permanent agent admission issues the first bearer without a human age check',
-  'POST /v1/age-check': 'checks eligibility without saving a birth date before account creation',
   'POST /v1/access/redeem': 'launch admission authenticates an unused invite and a durable bootstrap credential before creating or recovering an account',
   'POST /v1/access/logout': 'clears only the caller browser view cookie and grants no account or gameplay authority',
   'POST /v1/auth/privy': 'an auth entry point — there is no token to present yet',

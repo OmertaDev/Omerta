@@ -1311,6 +1311,9 @@
 <link rel="stylesheet" href="/ux-tactics.css?v=20261024-2">
 <link rel="stylesheet" href="/ux-investigation.css?v=20261024-2">
 <link rel="stylesheet" href="/ux-coordination.css?v=20261024-2">
+<link rel="stylesheet" href="/noir-ui.css?v=20261108-1">
+<link rel="stylesheet" href="/noir-landing.css?v=20261108-1">
+<link rel="stylesheet" href="/strategy-command.css?v=20261108-1">
 </head>
 <body>
 <svg style="display:none" aria-hidden="true"><defs>
@@ -1626,7 +1629,7 @@
   <div id="status-strips"><div id="vitals" aria-label="Current resources"></div></div>
   <div id="layout">
     <aside id="city-sidebar" aria-label="City navigation and character">
-      <details id="city-directory" open>
+      <details id="city-directory">
         <summary>Explore the city</summary>
         <div class="city-directory-body">
           <div class="city-nav-label">THE CITY</div>
@@ -1660,10 +1663,9 @@
       <div id="tabart" class="hidden"><span></span></div>
       <div id="coachwrap"></div>
       <details id="ux-screen-tools" class="ux-screen-tools"><summary>Screen tools <span>Shortcuts, reading &amp; workspace</span></summary><div id="screen-tool-content" class="ux-screen-tools-body"><nav id="action-readiness" class="hidden" aria-label="Activity timers and options"></nav></div></details>
-      <!-- #introwrap lives INSIDE #tabbodies (first child) but OUTSIDE the per-tab divs: the
-           first-visit card counts as the screen's own content (it explains the screen you just
-           tapped), while renderers — which rewrite only their #tab-<id> — can never resurrect a
-           dismissed card mid-visit. -->
+      <!-- #introwrap stays INSIDE #tabbodies but OUTSIDE the per-tab divs. The shell places
+           first-visit reference below the playable content; screen renderers cannot resurrect
+           a dismissed introduction when they refresh their own #tab-<id>. -->
       <div id="tabbodies"><div id="introwrap"></div></div>
     </div>
 
@@ -1794,6 +1796,8 @@
 <script src="/ux-tactics.js?v=20261105-noir-release"></script>
 <script src="/ux-investigation.js?v=20261024-2"></script>
 <script src="/ux-coordination.js?v=20261024-2"></script>
+<script src="/noir-shell.js?v=20261108-1"></script>
+<script src="/strategy-command.js?v=20261108-1"></script>
 <script>
 (() => {
   // Optional guidance must not stop core play if its separate script cannot load.
@@ -6358,7 +6362,6 @@
     if (h.get('token') || h.get('claimed') || h.get('autherr')) history.replaceState(null, '', location.pathname);
   })();
   const startXOAuth = async () => {
-    if (!token && !await verifyAge()) return;
     const inviteCode = $('#invite-code')?.value?.trim();
     const r = await api('POST', '/v1/auth/x/start', inviteCode ? { inviteCode } : {});
     if (r.body?.url) location.href = r.body.url;
@@ -6435,39 +6438,6 @@
     else toast(r.body?.message || r.body?.error || 'no dice', true);
     return false;
   };
-  let ageChecked = 0;
-  async function verifyAge() {
-    if (ageChecked > Date.now()) return true;
-    if (sessionStorage.getItem('omerta_age_blocked')) {
-      toast('Account creation is unavailable. See the privacy page for help.', true);
-      return false;
-    }
-    return new Promise((resolve) => {
-      const dialog = document.createElement('dialog');
-      dialog.className = 'modal';
-      dialog.setAttribute('aria-labelledby', 'age-title');
-      dialog.innerHTML = `<h2 id="age-title">Your birth date</h2><p>Enter your complete birth date to continue. We check it without saving it.</p><form><label for="age-date">Birth date</label><input id="age-date" name="birthDate" type="date" required min="${new Date().getFullYear() - 120}-01-01" max="${new Date().toISOString().slice(0, 10)}"><p id="age-error" role="alert"></p><p><a href="/privacy">Privacy policy and help</a></p><button class="act" type="submit">Continue</button><button class="act" type="button" id="age-cancel">Cancel</button></form>`;
-      document.body.append(dialog);
-      const finish = (ok) => { dialog.close(); dialog.remove(); resolve(ok); };
-      dialog.addEventListener('cancel', (event) => { event.preventDefault(); finish(false); });
-      dialog.querySelector('#age-cancel').onclick = () => finish(false);
-      dialog.querySelector('form').onsubmit = async (event) => {
-        event.preventDefault();
-        const input = dialog.querySelector('input');
-        const birthDate = input.value;
-        input.value = '';
-        const result = await api('POST', '/v1/age-check', { birthDate });
-        if (result.code < 400) { ageChecked = Date.now() + 14 * 60 * 1000; finish(true); }
-        else if (result.body?.error === 'age_ineligible') {
-          sessionStorage.setItem('omerta_age_blocked', '1');
-          dialog.querySelector('form').innerHTML = '<p role="alert">Account creation is unavailable. No birth date was saved.</p><p><a href="/privacy">Privacy policy and help</a></p><button type="button" class="act">Close</button>';
-          dialog.querySelector('button').onclick = () => finish(false);
-        } else dialog.querySelector('#age-error').textContent = result.body?.message || 'Please try again.';
-      };
-      dialog.showModal();
-      dialog.querySelector('input').focus();
-    });
-  }
   let guestPending = false;
   const enterAsGhost = async () => {
     if (guestPending) return;
@@ -6475,11 +6445,9 @@
     const controls = ['#btn-guest', '#btn-guest2'].map(selector => $(selector)).filter(Boolean);
     const labels = controls.map(button => button.textContent);
     const status = $('#guest-status');
-    status.hidden = false; status.textContent = 'Checking eligibility…';
+    status.hidden = false; status.textContent = 'Opening your street…';
     controls.forEach(button => { button.disabled = true; button.setAttribute('aria-busy', 'true'); button.textContent = 'Entering the city…'; });
     try {
-      if (!await verifyAge()) { status.textContent = ''; status.hidden = true; return; }
-      status.textContent = 'Opening your street…';
       const inviteCode = undefined;
       const result = await api('POST', '/v1/auth/guest', inviteCode ? { inviteCode } : {});
       globalThis.OmertaSiteAnalytics?.signupResult?.(result);
@@ -6548,7 +6516,6 @@
   $('#btn-provider').onclick = async () => {
     const provider = $('#auth-provider').value, tok = $('#auth-token').value.trim();
     if (!tok) return toast('paste a provider token first', true);
-    if (!await verifyAge()) return;
     const inviteCode = undefined;
     landToken(await api(`POST`, `/v1/auth/${provider}`, { token: tok, ...(inviteCode ? { inviteCode } : {}) }));
   };
@@ -10503,7 +10470,9 @@ async function renderStart() {
     // but draws law heat + a harder bust. Same cash EV — the choice is your risk appetite.
     const crimeCard = (c) => {
       const { terms, choices } = coreCrimeMarkup(c);
-      return `<div class="card">${aart('crime', c.id)}<span class="t">${esc(c.name)}</span>${terms}<div class="verbrow">${choices}</div></div>`;
+      return `<article class="card noir-job-card">${aart('crime', c.id)}<div class="noir-job-content">
+        <div class="noir-job-eyebrow">Street job · Level ${c.lvl}</div><span class="t">${esc(c.name)}</span>
+        ${terms}<div class="verbrow">${choices}</div></div></article>`;
     };
     const allCrimes = [...(rules?.crimes || [])].sort((a, b) => a.lvl - b.lvl);
     const lvl = me?.level || 1;
@@ -10658,10 +10627,10 @@ async function renderStart() {
     // jobs + the bank/map lead the screen; everything else is a labeled drawer that stays how you
     // left it. One glance = act; the depth is a click away, not a scroll away.
     t.innerHTML = `
-      <h2 style="margin-top:14px">Crimes <span class="d" style="color:var(--dim);font-size:12.5px">— your best jobs at level ${lvl}</span></h2>
+      <div class="noir-jobs-heading"><h2>Find your next score</h2><span>${best.length} available · Level ${lvl}</span></div>
       ${streetActionClock()}
-      <div class="grid">${crimes || restCrimes && '<span class="d" style="color:var(--dim)">no jobs at your level yet — open the full book below</span>' || ''}</div>
-      ${rest.length ? sect('crimes-all', 'The Full Book', `every job in the city (${allCrimes.length})`, `<div class="grid">${restCrimes}</div>`) : ''}
+      <div class="grid noir-job-grid">${crimes || restCrimes && '<span class="d" style="color:var(--dim)">no jobs at your level yet — open the full book below</span>' || ''}</div>
+      ${rest.length ? sect('crimes-all', 'The Full Book', `every job in the city (${allCrimes.length})`, `<div class="grid noir-job-grid">${restCrimes}</div>`) : ''}
 
 ${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [`Pocket: ${guideMoney(b.pocket)}. Bank total: ${guideMoney(b.total)}.`, `Cleared: ${guideMoney(b.cleared)}. In transit: ${guideMoney(b.transit)}. Clearing: ${b.seconds == null ? 'unknown' : minsTxt(b.seconds)}.`, 'A killer can loot pocket cash and deposits in transit. Cleared cash avoids that cut. All bank cash is lost on death.'];})())}
       <div class="card" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
@@ -14641,7 +14610,7 @@ ${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [
   if (workspaceUX) uxModules.push(workspaceUX);
   for (const factory of [window.createOmertaFeedback, window.createOmertaProgression, window.createOmertaSocial, window.createOmertaNavigation,
     window.createOmertaTactics, window.createOmertaInvestigation, window.createOmertaCoordination,
-    window.createOmertaFeel, window.createOmertaTools, window.createOmertaIdentity, window.createOmertaStory, window.createOmertaQuests, window.createOmertaCommunity, window.createOmertaWorld]) {
+    window.createOmertaFeel, window.createOmertaTools, window.createOmertaIdentity, window.createOmertaStory, window.createOmertaQuests, window.createOmertaCommunity, window.createOmertaWorld, window.createOmertaNoirShell, window.createOmertaStrategyCommand]) {
     if (!factory) continue;
     try { const module = factory(uxContext); uxModules.push(module); if (factory === window.createOmertaFeedback) feedbackUX = module; }
     catch (error) { console.warn('UI enhancement unavailable', error); }
@@ -14649,7 +14618,7 @@ ${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [
   // The shell reveals optional controls without replacing their original action handlers.
   const gameMenu = $('#game-menu'), cityDirectory = $('#city-directory');
   const wideNavigation = matchMedia('(min-width: 1001px)');
-  const syncDirectory = () => { cityDirectory.open = wideNavigation.matches; };
+  const syncDirectory = () => { cityDirectory.open = false; };
   syncDirectory(); wideNavigation.addEventListener('change', syncDirectory);
   function closeGameMenu(focus = false) {
     if (!gameMenu.open) return;

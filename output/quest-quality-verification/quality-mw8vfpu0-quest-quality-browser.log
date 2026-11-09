@@ -1,0 +1,14 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+{"component":"player-command","phase":"request","correlationId":"00122b06-1737-4b36-9f62-762bad887767"}
+{"component":"player-command","phase":"authorization","correlationId":"00122b06-1737-4b36-9f62-762bad887767","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"00122b06-1737-4b36-9f62-762bad887767","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"00122b06-1737-4b36-9f62-762bad887767","statusCode":409,"elapsedMs":3}
+{"component":"player-command","phase":"request","correlationId":"e55ea940-12c4-4afb-a107-285ce52167ba"}
+{"component":"player-command","phase":"authorization","correlationId":"e55ea940-12c4-4afb-a107-285ce52167ba","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"e55ea940-12c4-4afb-a107-285ce52167ba","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"e55ea940-12c4-4afb-a107-285ce52167ba","statusCode":409,"elapsedMs":2}
+{"component":"player-command","phase":"request","correlationId":"0bc53cfe-4cb2-404d-b247-5e614eb58389"}
+{"component":"player-command","phase":"authorization","correlationId":"0bc53cfe-4cb2-404d-b247-5e614eb58389","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"0bc53cfe-4cb2-404d-b247-5e614eb58389","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"0bc53cfe-4cb2-404d-b247-5e614eb58389","statusCode":409,"elapsedMs":1}
+Quest quality production browser PASS: real pilot proof/conclusion/evidence, exact clauses, hidden-question boundary, private revision/reload/peer isolation, drafts/undo, motive, commitments, truthful AI study/24h refusal and eligible recall, opt-in debrief, actual fieldwork/disclosure, independent unsure/share, real cross-role volunteering, opaque mandate/pre-ack blocker/ack/withdraw/commit and390px. Artifacts: C:\Users\Jorge\AppData\Local\Temp\omerta-quality-xG24mG

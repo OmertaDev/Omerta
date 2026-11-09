@@ -1,0 +1,14 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+{"component":"player-command","phase":"request","correlationId":"ff4bce4e-c8cf-4fc1-b598-4c0ca6bdaa56"}
+{"component":"player-command","phase":"authorization","correlationId":"ff4bce4e-c8cf-4fc1-b598-4c0ca6bdaa56","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"ff4bce4e-c8cf-4fc1-b598-4c0ca6bdaa56","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"ff4bce4e-c8cf-4fc1-b598-4c0ca6bdaa56","statusCode":409,"elapsedMs":3}
+{"component":"player-command","phase":"request","correlationId":"29907b0a-3875-4b0a-823b-e0f5a07b115e"}
+{"component":"player-command","phase":"authorization","correlationId":"29907b0a-3875-4b0a-823b-e0f5a07b115e","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"29907b0a-3875-4b0a-823b-e0f5a07b115e","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"29907b0a-3875-4b0a-823b-e0f5a07b115e","statusCode":409,"elapsedMs":2}
+{"component":"player-command","phase":"request","correlationId":"f9498934-3a2d-4cd3-8881-0b4e7c86643d"}
+{"component":"player-command","phase":"authorization","correlationId":"f9498934-3a2d-4cd3-8881-0b4e7c86643d","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"f9498934-3a2d-4cd3-8881-0b4e7c86643d","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"f9498934-3a2d-4cd3-8881-0b4e7c86643d","statusCode":409,"elapsedMs":1}
+Quest quality production browser PASS: real pilot proof/conclusion/evidence, exact clauses, hidden-question boundary, private revision/reload/peer isolation, drafts/undo, motive, commitments, truthful AI study/24h refusal and eligible recall, opt-in debrief, actual fieldwork/disclosure, independent unsure/share, real cross-role volunteering, opaque mandate/pre-ack blocker/ack/withdraw/commit and390px. Artifacts: C:\Users\Jorge\AppData\Local\Temp\omerta-quality-wS2Hzw

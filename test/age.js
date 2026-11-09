@@ -1,66 +1,71 @@
 import assert from 'node:assert/strict';
-import { MINIMUM_AGE, eligibleBirthDate } from '../src/age.js';
 import { buildServer } from '../src/server.js';
 
-const now = new Date('2026-10-31T12:00:00Z');
-assert.equal(MINIMUM_AGE, 21);
-assert.equal(eligibleBirthDate('2005-10-31', now), true);
-assert.equal(eligibleBirthDate('2005-11-01', now), false);
-assert.throws(() => eligibleBirthDate('2005-02-30', now));
-assert.equal(eligibleBirthDate('2006-01-01', now), false, 'a 20-year-old is ineligible');
-assert.equal(eligibleBirthDate('2007-03-01', new Date('2028-02-29T12:00:00Z')), false, 'leap day does not admit a birthday early');
-assert.equal(eligibleBirthDate('2004-02-29', new Date('2025-02-28T12:00:00Z')), false);
-assert.equal(eligibleBirthDate('2004-02-29', new Date('2025-03-01T12:00:00Z')), true);
-assert.throws(() => eligibleBirthDate('2027-01-01', now));
+if (process.env.DATABASE_URL) throw new Error('Account admission checks require a disposable database.');
+const keys = ['PRIVY_APP_ID', 'X_CLIENT_ID', 'PUBLIC_URL', 'X_TRUST_USER_TOKEN'];
+const previous = Object.fromEntries(keys.map(key => [key, process.env[key]]));
+const oldFetch = global.fetch;
 const app = await buildServer();
 try {
   const count = async () => Number((await app.pool.query('SELECT count(*) AS n FROM accounts')).rows[0].n);
+  const call = (url, payload = {}, headers = {}) => app.inject({ method: 'POST', url, payload, headers });
   const before = await count();
-  for (const birthDate of [undefined, '2020-01-01', '2007-01-01']) {
-    const response = await app.inject({ method: 'POST', url: '/v1/auth/guest', payload: birthDate ? { birthDate } : {} });
-    assert.ok(response.statusCode >= 400);
-  }
-  let fetched = false;
-  const oldFetch = global.fetch;
-  global.fetch = async () => { fetched = true; throw new Error('must not reach provider'); };
-  try {
-    const response = await app.inject({ method: 'POST', url: '/v1/auth/privy', payload: { token: 'hostile', birthDate: '2020-01-01' } });
-    assert.equal(response.json().error, 'age_ineligible');
-    assert.equal(fetched, false);
-  } finally { global.fetch = oldFetch; }
-  assert.equal(await count(), before, 'denied ages create no account or account IP');
-  const denied = await app.inject({ method: 'POST', url: '/v1/age-check', payload: { birthDate: '2020-01-01' } });
-  assert.equal(denied.statusCode, 403);
-  const blockedCookie = denied.headers['set-cookie'].split(';')[0];
-  const retry = await app.inject({ method: 'POST', url: '/v1/age-check', headers: { cookie: blockedCookie }, payload: { birthDate: '1990-01-01' } });
-  assert.equal(retry.statusCode, 403, 'denial cannot be corrected immediately using the same browser cookie');
-  const approved = await app.inject({ method: 'POST', url: '/v1/age-check', payload: { birthDate: '1990-01-01' } });
-  assert.equal(approved.statusCode, 200);
-  const token = approved.headers['set-cookie'].split(';')[0].slice('omerta_age='.length);
-  assert.equal(app.jwt.verify(token).purpose, 'age-check');
-  assert.equal(app.jwt.verify(token).minimumAge, 21);
-  for (const claim of [{ purpose: 'age-check', eligible: true }, { purpose: 'age-check', eligible: true, minimumAge: 13 }]) {
-    const old = app.jwt.sign(claim, { expiresIn: '15m' });
-    const denied = await app.inject({ method: 'POST', url: '/v1/auth/guest', headers: { cookie: 'omerta_age=' + old }, payload: {} });
-    assert.equal(denied.json().error, 'age_required', 'a proof from the earlier policy cannot authorize new signup');
-  }
-  assert.equal(JSON.stringify(app.jwt.verify(token)).includes('1990'), false);
-  const explicitChild = await app.inject({ method: 'POST', url: '/v1/auth/guest',
-    headers: { cookie: approved.headers['set-cookie'].split(';')[0] }, payload: { birthDate: '2020-01-01' } });
-  assert.equal(explicitChild.json().error, 'age_ineligible', 'earlier eligibility cannot override an explicit child birth date');
-  assert.equal(await count(), before);
-  const created = await app.inject({ method: 'POST', url: '/v1/auth/guest', headers: { cookie: approved.headers['set-cookie'].split(';')[0] }, payload: {} });
-  assert.equal(created.statusCode, 200, 'eligible cookie admits account creation');
+  const guest = await call('/v1/auth/guest');
+  assert.equal(guest.statusCode, 200, guest.body);
+  assert.equal(guest.headers['set-cookie'], undefined, 'guest signup sets no age cookie');
+  assert.equal(await count(), before + 1, 'guest signup needs no birth date');
+
+  const deniedCookie = `omerta_age=${app.jwt.sign({ purpose: 'age-check', minimumAge: 21, eligible: false }, { expiresIn: '15m' })}`;
+  const headers = { cookie: deniedCookie };
   const secret = Buffer.alloc(32, 7).toString('base64url');
-  const first = await app.inject({ method: 'POST', url: '/v1/auth/guest', payload: { bootstrapSecret: secret, birthDate: '1990-01-01' } });
-  assert.equal(first.statusCode, 200);
-  const recovered = await app.inject({ method: 'POST', url: '/v1/auth/guest', payload: { bootstrapSecret: secret } });
-  assert.equal(recovered.statusCode, 200, 'existing bootstrap recovery does not require birth date again');
+  const first = await call('/v1/auth/guest', { bootstrapSecret: secret }, headers);
+  assert.equal(first.statusCode, 200, 'a legacy denial cookie no longer blocks signup');
+  const recovered = await call('/v1/auth/guest', { bootstrapSecret: secret }, headers);
+  assert.equal(recovered.statusCode, 200, 'bootstrap recovery needs no age confirmation');
   assert.equal(app.jwt.verify(first.json().token).sub, app.jwt.verify(recovered.json().token).sub);
-  const blockedRecovery = await app.inject({ method: 'POST', url: '/v1/auth/guest',
-    headers: { cookie: blockedCookie }, payload: { bootstrapSecret: secret } });
-  assert.equal(blockedRecovery.json().error, 'age_ineligible', 'recovery does not bypass known-ineligible browser status');
-  const ageBearer = await app.inject({ url: '/v1/session', headers: { authorization: `Bearer ${token}` } });
-  assert.ok(ageBearer.statusCode >= 400, 'age eligibility token cannot authorize a player session');
-  console.log('Age gate: boundary, invalid dates, creation rejection, provider isolation, cookie denial and DOB minimization passed.');
-} finally { await app.close(); }
+  const redeemed = await call('/v1/access/redeem', {
+    bootstrapSecret: Buffer.alloc(32, 8).toString('base64url'),
+  }, headers);
+  assert.equal(redeemed.statusCode, 200, redeemed.body);
+  assert(redeemed.headers['set-cookie'].startsWith('omerta_access='), 'browser admission still issues its access cookie');
+
+  process.env.PRIVY_APP_ID = 'admission-test-app';
+  const privy = await call('/v1/auth/privy', { token: 'malformed' }, headers);
+  assert.equal(privy.json().error, 'auth_failed', 'provider verification runs without age confirmation');
+
+  process.env.X_CLIENT_ID = 'admission-test-client';
+  process.env.PUBLIC_URL = 'https://omerta.example';
+  process.env.X_TRUST_USER_TOKEN = 'on';
+  global.fetch = async url => {
+    if (String(url) === 'https://api.x.com/2/oauth2/token')
+      return { ok: true, status: 200, json: async () => ({ access_token: 'test-provider-token' }) };
+    if (String(url) === 'https://api.x.com/2/users/me')
+      return { ok: true, status: 200, json: async () => ({ data: { id: 'admission-test-user' } }) };
+    throw new Error(`Unexpected provider request: ${url}`);
+  };
+  const provider = await call('/v1/auth/x', { token: 'test-provider-token' }, headers);
+  assert.equal(provider.statusCode, 200, provider.body);
+  const oauth = await call('/v1/auth/x/start', {}, headers);
+  assert.equal(oauth.statusCode, 200, oauth.body);
+  const state = new URL(oauth.json().url).searchParams.get('state');
+  const callback = await app.inject({
+    url: `/v1/auth/x/callback?code=test-code&state=${encodeURIComponent(state)}`,
+    headers: { cookie: `${deniedCookie}; ${oauth.headers['set-cookie'].split(';')[0]}` },
+  });
+  assert.equal(callback.statusCode, 302, callback.body);
+  assert(callback.headers.location.startsWith('/#token='), 'OAuth callback completes without age confirmation');
+  const oauthToken = decodeURIComponent(callback.headers.location.slice('/#token='.length));
+  assert.equal(app.jwt.verify(oauthToken).sub, app.jwt.verify(provider.json().token).sub);
+
+  assert.equal((await call('/v1/age-check', { birthDate: '1990-01-01' })).statusCode, 404, 'the age-check endpoint is removed');
+  const spec = (await app.inject('/openapi.json')).json();
+  assert.equal(spec.paths['/v1/age-check'], undefined);
+  assert.equal(spec.paths['/v1/access/redeem'].post.requestBody.content['application/json'].schema.properties.birthDate, undefined);
+  console.log('Account admission: guest signup, recovery, browser admission, provider login and OAuth work without age verification.');
+} finally {
+  global.fetch = oldFetch;
+  for (const [key, value] of Object.entries(previous)) {
+    if (value === undefined) delete process.env[key]; else process.env[key] = value;
+  }
+  await app.close();
+}

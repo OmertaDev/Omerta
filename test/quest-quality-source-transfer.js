@@ -5,6 +5,7 @@ import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { QUEST_QUALITY_SOURCE as source, qualifyQuestQualitySource,
   questQualityHistoricalInput, questQualityHistoricalEntry, questQualitySourceDataBytes } from '../tools/quest-quality-source-transfer.js';
+import { ageRemovalHistoricalRecord } from '../tools/age-removal-source-transfer.js';
 
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { encoding: 'utf8', windowsHide: true, maxBuffer: 64 * 1024 * 1024 });
 const sha = text => createHash('sha256').update(text).digest('hex');
@@ -22,14 +23,23 @@ assert.deepEqual(Object.keys(source.files), changed('M'));
 assert.deepEqual(Object.keys(source.additions), changed('A').filter(file => /\.(?:js|json|html|css|sql)$/.test(file)));
 assert.equal(fs.readFileSync(new URL('../tools/quest-quality-source-data.js', import.meta.url), 'utf8').replaceAll('\r\n', '\n'), questQualitySourceDataBytes(source));
 function actual(file, pin) {
-  const text = git('show', 'HEAD:' + file), authored = git('show', source.revision + ':' + file);
-  assert.equal(text, authored, 'Whole reviewed source remains the actual committed source: ' + file);
-  const stat = fs.lstatSync(file), raw = fs.readFileSync(file); assert(stat.isFile() && !stat.isSymbolicLink());
-  assert(raw.equals(Buffer.from(text)) || raw.equals(Buffer.from(text.replaceAll('\n', '\r\n'))));
+  const committed = git('show', 'HEAD:' + file), authored = git('show', source.revision + ':' + file);
+  const stat = fs.lstatSync(file), physical = fs.readFileSync(file); assert(stat.isFile() && !stat.isSymbolicLink());
+  const actualEntry = git('ls-tree', 'HEAD', '--', file).trim();
+  const match = actualEntry.match(/^(100644|100755) blob ([a-f0-9]{40})\t(.+)$/);
+  assert(match && match[3] === file, 'Actual regular Git source qualifies first');
+  assert.equal(blob(committed), match[2], 'Complete actual source bytes equal the raw HEAD blob');
+  const index = git('ls-files', '--stage', '--', file).trim();
+  assert.equal(index, match[1] + ' ' + match[2] + ' 0\t' + file);
+  assert(physical.equals(Buffer.from(committed)) || physical.equals(Buffer.from(committed.replaceAll('\n', '\r\n'))));
+  const historical = ageRemovalHistoricalRecord(file, { head: { mode: match[1], blob: match[2] }, index,
+    committed: Buffer.from(committed), physical, regular: stat.isFile(), symbolic: stat.isSymbolicLink() });
+  const text = historical.committed.toString('utf8'), raw = historical.physical;
+  assert.equal(text, authored, 'Independently admitted current source reconstructs the unchanged quality source: ' + file);
   assert.equal(sha(text), pin.sha256); assert.equal(blob(text), pin.blob); assert.equal(Buffer.byteLength(text), pin.bytes);
   const entry = pin.mode + ' blob ' + pin.blob + '\t' + file;
-  assert.equal(git('ls-tree', 'HEAD', '--', file).trim(), entry);
-  assert.equal(git('ls-files', '--stage', '--', file).trim(), pin.mode + ' ' + pin.blob + ' 0\t' + file);
+  assert.deepEqual(historical.head, { mode: pin.mode, blob: pin.blob });
+  assert.equal(historical.index, pin.mode + ' ' + pin.blob + ' 0\t' + file);
   return { text, raw, entry };
 }
 let positives = 0, refusals = 0, inverseControls = 0;

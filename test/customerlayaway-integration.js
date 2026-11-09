@@ -3,7 +3,6 @@ import {fixture} from './customerlayaway-fixture.js';
 import {runEstate} from '../src/social/estate.js';
 import {runLedgerInvariants} from '../src/invariants.js';
 import {canonicalDatabaseSnapshot} from '../tools/rc1-native-proof.js';
-import {adultAuthFixture} from './auth-fixture.js';
 const f=await fixture(true),{app,pool,tx,I,L,G,native,tool,terms,ref,pay,invoke,state}=f;
 const tokens=Object.fromEntries(['seller','buyer','other','third','fourth','fifth'].map(a=>[a,app.jwt.sign({sub:a,tv:0,agent:true})]));let serial=0;
 const call=(a,url,body,key='shared-'+(++serial))=>app.inject({method:'POST',url,payload:body,headers:{authorization:'Bearer '+tokens[a],'idempotency-key':key}});
@@ -11,7 +10,7 @@ const ok=async(...args)=>{const r=await call(...args);assert.equal(r.statusCode,
 const offer=async(a='seller',b='buyer')=>invoke('offerCustomerLayaway',a,{...terms(await tool(a),b),lifetimeSeconds:600},'shared-offer-'+(++serial));
 const books=async()=>{assert.deepEqual(await L.collectCustomerLayawayIssues(pool),[]);const r=await runLedgerInvariants(pool,{alert:false});assert.deepEqual(r.checks.filter(x=>!x.ok),[]);};
 try{
- let r=await app.inject({method:'POST',url:'/v1/auth/guest',payload:{}});assert.equal(r.statusCode,400,r.body);assert.equal(r.json().error,'age_required');r=await app.inject({method:'POST',url:'/v1/auth/guest',payload:adultAuthFixture('POST','/v1/auth/guest',{})});assert.equal(r.statusCode,200,r.body);assert(r.json().token);console.log('actual adult fixture guest admission and missing-age refusal PASS');
+ const guest=await app.inject({method:'POST',url:'/v1/auth/guest',payload:{}});assert.equal(guest.statusCode,200,guest.body);assert(guest.json().token);console.log('actual guest admission without a birth date PASS');
  if(native){const quote=await offer('fourth','fifth');let signal,resume,paused=false,entered=false,committed;const observed=new Promise(r=>signal=r),release=new Promise(r=>resume=r);
  const instrumented=new Proxy(pool,{get(t,k){if(k==='connect')return async()=>{const c=await t.connect();return new Proxy(c,{get(target,key){if(key==='query')return async(...args)=>{const result=await target.query(...args);if(!paused&&args[0]==="SELECT seller_character,buyer_character FROM customer_layaways WHERE status='active' AND (seller_character=$1 OR buyer_character=$1) ORDER BY id LIMIT 5"&&args[1]?.[0]==='fifth-actor'){paused=true;signal();await release;}return result;};const v=target[key];return typeof v==='function'?v.bind(target):v;}});};const v=t[k];return typeof v==='function'?v.bind(t):v;}});
  const pending=G.withTwoCharacters(instrumented,'other','fifth-actor',async()=>{entered=true;},{meet:false}),rejected=assert.rejects(pending,e=>e.code==='contention'&&/counterpart/i.test(e.message));await Promise.race([observed,new Promise((_,reject)=>setTimeout(()=>reject(Error('layaway preactor discovery not observed')),5000))]);try{await ok('fifth','/v1/customer/layaway/pay',pay(quote,1),'new-counterpart-pay');committed=await state();}finally{resume();}await rejected;assert(!entered);assert.deepEqual(await state(),committed);await ok('fifth','/v1/customer/layaway/cancel',ref(quote));console.log('native first installment introduces real new counterpart: complete preactor union recheck refuses before gameplay, unchanged committed source/cash/custody PASS');}

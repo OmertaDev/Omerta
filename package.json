@@ -283,6 +283,7 @@
     "test:gateway:postgres": "node test/gateway-postgres.js",
     "test:gateway:browser": "node test/consigliere-recovery-browser.js",
     "build:walletconnect": "node tools/build-walletconnect.mjs",
+    "build:strategy-city": "node tools/build-strategy-city.mjs",
     "test:legal-security": "node test/age.js && node test/db-rls.js && node test/legal-security.js && node test/payment-receipts.js",
     "release:media": "node tools/release-media.mjs unpack",
     "postinstall": "node tools/release-media.mjs unpack",
@@ -309,7 +310,7 @@
     "test:city:layout": "node test/city-world-layout.js && node test/continuous-city-source-compatibility.js",
     "test:decision-guide": "node test/decision-guide.js && node test/decision-guide-client.js && node test/decision-guide-api.js",
     "test:ux": "npm run test:ux:source && node test/ux-feedback.js && node test/circle-highlights.js && node test/ux-workspace.js && node test/ux-tactics.js && node test/ux-investigation-api.js && node test/ux-coordination.js && node test/ux-identity.js && node test/ux-story.js && node test/ux-community.js && node test/ux-tools.js",
-    "test:ux:browser": "node test/ux-shell-browser.js && node test/ux-progression-browser.js && node test/ux-navigation-browser.js && node test/ux-social-browser.js && node test/ux-experience-browser.js && node test/ux-workspace-browser.js && node test/ux-tactics-browser.js && node test/ux-investigation-browser.js && node test/ux-coordination-browser.js && node test/ux-expanded-browser.js && node test/ux-feel-browser.js && node test/ux-tools-browser.js && node test/ux-identity-browser.js && node test/ux-story-browser.js && node test/ux-community-browser.js && node test/ux-personality-browser.js && npm run test:site && npm run test:site:browser",
+    "test:ux:browser": "node test/strategy-command-browser.js && node test/noir-shell-browser.js && node test/ux-shell-browser.js && node test/ux-progression-browser.js && node test/ux-navigation-browser.js && node test/ux-social-browser.js && node test/ux-experience-browser.js && node test/ux-workspace-browser.js && node test/ux-tactics-browser.js && node test/ux-investigation-browser.js && node test/ux-coordination-browser.js && node test/ux-expanded-browser.js && node test/ux-feel-browser.js && node test/ux-tools-browser.js && node test/ux-identity-browser.js && node test/ux-story-browser.js && node test/ux-community-browser.js && node test/ux-personality-browser.js && npm run test:site && npm run test:site:browser",
     "test:ux:postgres": "node test/ux-postgres.js && node test/ux-postgres-rls.js",
     "test:ux:source": "node test/noir-ui-source-compatibility.js && node test/sale-source-compatibility.js && node test/ux-source-compatibility.js",
     "test:economy-ux-source": "node test/contract-release-source-compatibility.js && node test/businessdesk-combined-source-compatibility.js && node test/businessdesk-combined-native-provenance.js && node test/economy-deed-merge-source-compatibility.js && node test/businessdesk-noir-source-compatibility.js && node test/businessdesk-source-compatibility.js && node test/deed-allocation-source-compatibility.js && node test/deed-benefit-native-catalog.js && node test/economy-ux-merge-source-compatibility.js",
@@ -345,6 +346,7 @@
     "acorn": "8.18.0",
     "playwright-core": "^1.62.0",
     "solhint": "6.2.4",
-    "esbuild": "0.25.12"
+    "esbuild": "0.25.12",
+    "three": "0.187.0"
   }
 }

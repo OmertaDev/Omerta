@@ -451,9 +451,6 @@ try {
   reportStage('Guest onboarding and operation receipts');
   await mobile.goto(BASE, { waitUntil: 'networkidle' });
   await mobile.click('#btn-guest');
-  await mobile.waitForSelector('#age-date');
-  await mobile.fill('#age-date', '1990-01-01');
-  await mobile.locator('#age-date').evaluate((input) => input.form.requestSubmit());
   await mobile.waitForSelector('#screen-create:not(.hidden)');
   await mobile.fill('#new-name', 'Intent ' + Math.random().toString(36).slice(2, 8));
   await mobile.click('#btn-create');

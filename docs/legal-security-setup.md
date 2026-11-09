@@ -21,10 +21,8 @@ review copyright notices/counter-notices, and implement the published repeat-inf
 policy. Code cannot perform Copyright Office registration or verify a physical address.
 Audience assessment and applicable jurisdictional obligations still need operator review.
 
-New human/operator account creation requires a neutral birth-date check; REST and MCP
-signup instructions are in `omerta-mcp/README.md`. Dates are checked transiently, never
-saved in account records. Visitors under 21, including children, are refused before account creation; the
-privacy contact provides the path to investigate existing child data.
+Signup does not request or require a birth date. The age-check prompt, API and
+cookie checks have been removed. The privacy contact provides the path to investigate existing child data.
 
 RLS is enabled on every game-schema table during the PostgreSQL migration, with a
 restrictive deny policy for direct database clients, including clients with explicit

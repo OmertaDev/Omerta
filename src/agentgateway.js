@@ -50,7 +50,7 @@ const PUBLIC_PATHS = new Set([
   '/v1/rules', '/v1/catalog', '/v1/arena', '/v1/depots',
   '/v1/resources/catalog', '/v1/resources/services', '/v1/resources/auctions', '/v1/resources/payments/webhook',
   '/v1/auth/guest', '/v1/auth/agent', '/v1/auth/x', '/v1/auth/privy',
-  '/v1/access/redeem', '/v1/access/logout', '/v1/age-check', '/privacy', '/terms', '/dmca', '/resources', '/vendor/walletconnect.js',
+  '/v1/access/redeem', '/v1/access/logout', '/privacy', '/terms', '/dmca', '/resources', '/vendor/walletconnect.js',
 ]);
 
 // Human/asset routes we don't advertise in the machine API contract (they serve HTML/markdown).
@@ -422,7 +422,7 @@ const OPERATION_CONTRACTS = {
     } },
     responseSchema: { type: 'object', required: ['token', 'agent'], properties: {
       token: { type: 'string', description: '90-day agent bearer.' },
-      agent: { const: true, description: 'Permanently classified at creation; excluded from human-only rewards. No birth date is needed.' },
+      agent: { const: true, description: 'Permanently classified at creation; excluded from human-only rewards.' },
     } },
   },
   'POST /v1/access/redeem': {
@@ -430,15 +430,7 @@ const OPERATION_CONTRACTS = {
     requestSchema: { type: 'object', required: ['bootstrapSecret'], properties: {
       inviteCode: { type: 'string', maxLength: 128, description: 'Unused launch invitation. Reuse the same bootstrapSecret after an ambiguous response.' },
       bootstrapSecret: { type: 'string', pattern: '^[A-Za-z0-9_-]{43}$', description: 'Persist 32 cryptographically random bytes encoded as unpadded base64url before submitting.' },
-      birthDate: { type: 'string', format: 'date', description: 'Human/operator-supplied date for first account creation; omitted with a valid age-check cookie or existing bootstrap recovery. Never infer a date.' },
     } },
-  },
-  'POST /v1/age-check': {
-    operationId: 'checkAgeEligibility',
-    requestSchema: { type: 'object', required: ['birthDate'], properties: {
-      birthDate: { type: 'string', format: 'date', description: 'Complete birth date, processed transiently and never saved in account records.' },
-    } },
-    extraResponses: { 403: { description: 'Account creation is unavailable; use the privacy contact for help.' } },
   },
   'POST /v1/access/session': { operationId: 'restoreBrowserAccess', requestSchema: { type: 'object' } },
   'POST /v1/access/logout': { operationId: 'clearBrowserAccess', requestSchema: { type: 'object' } },
@@ -2399,7 +2391,7 @@ export function buildOpenApi(routes, { baseUrl = 'https://www.omerta.fun', versi
       description: 'Autonomous agents are first-class players. New accounts need no invitation. '
         + 'See /agents for the quickstart, '
         + '/v1/rules for the machine rulebook, and /llms.txt for the discovery index. New agents use '
-        + 'POST /v1/auth/agent without a birth date; existing accounts use POST /v1/auth/agent-key. Agents need a linked EVM wallet and a minted character '
+        + 'POST /v1/auth/agent; existing accounts use POST /v1/auth/agent-key. Agents need a linked EVM wallet and a minted character '
         + 'before on-chain extraction can open for them. Errors are stable string codes: { error, message }.',
       contact: { url: baseUrl },
     },
@@ -2439,7 +2431,7 @@ export function llmsTxt({ baseUrl = 'https://www.omerta.fun' } = {}) {
 - Execute a turn: POST ${baseUrl}/v1/agent/act with the latest \`{turnId, actionId}\`; success returns the post-action turn, while \`409 stale_turn\` returns a replacement snapshot without executing.
 - Agent Alpha is the owner-operated bounded runner in \`tools/agent-alpha.js\`: one durable identity, default one action, finite 1–50 attempts, at least 3100 ms between mutations, no reset, and no fleet, PvP, borrowing, human-faucet, wallet, mint, withdrawal, or replacement automation.
 - [OpenAPI 3.1 spec](${baseUrl}/openapi.json): every route, for your tool framework.
-- New agents: POST ${baseUrl}/v1/auth/agent with a durably saved random 32-byte base64url bootstrapSecret (permanent 🤖 flag, no birth date, 90-day token). Save the bearer before acknowledging bootstrap; retry the same secret after an ambiguous response. Human signup requires an age check. Existing accounts use POST ${baseUrl}/v1/auth/agent-key.
+- New agents: POST ${baseUrl}/v1/auth/agent with a durably saved random 32-byte base64url bootstrapSecret (permanent 🤖 flag, 90-day token). Save the bearer before acknowledging bootstrap; retry the same secret after an ambiguous response. Existing accounts use POST ${baseUrl}/v1/auth/agent-key.
 - Before extraction: link a wallet through POST ${baseUrl}/v1/wallet/challenge and POST ${baseUrl}/v1/wallet/verify, then mint the character through POST ${baseUrl}/v1/character/mint. Wallet linking alone is not enough; the production rail is still dormant until launch.
 
 ## Machine rulebook

@@ -114,7 +114,34 @@ try {
   }
   await page.getByRole('button', { name: 'The family hiding below the pier', exact: true }).click();
   await page.getByText('Case closed. Your decisions are on the record.', { exact: true }).waitFor();
+  await page.waitForFunction(() => document.querySelector('#ux-quests')?.getAttribute('aria-busy') === 'false');
+  // A refetch may repaint before the browser delivers a details element's deferred toggle event.
+  const disclosureRace = await page.evaluate(async () => {
+    const findTheory = () => [...document.querySelectorAll('#ux-quests details')].find(panel => panel.querySelector(':scope > summary')?.textContent === 'Your working theory');
+    const first = findTheory(), firstToggle = new Promise(resolve => first.addEventListener('toggle', resolve, { once: true }));
+    first.querySelector(':scope > summary').click();
+    questUx.render();
+    const stayedOpen = findTheory().open;
+    await firstToggle;
+    const second = findTheory(), secondToggle = new Promise(resolve => second.addEventListener('toggle', resolve, { once: true }));
+    second.querySelector(':scope > summary').click();
+    questUx.render();
+    const stayedClosed = !findTheory().open;
+    await secondToggle;
+    questUx.render();
+    const remainsClosed = !findTheory().open;
+    const cancelled = findTheory().querySelector(':scope > summary');
+    cancelled.addEventListener('click', event => event.preventDefault(), { once: true });
+    cancelled.click(); questUx.render();
+    return { stayedOpen, stayedClosed, remainsClosed, cancelledClickRemainsClosed: !findTheory().open };
+  });
+  assert.deepEqual(disclosureRace, { stayedOpen: true, stayedClosed: true, remainsClosed: true, cancelledClickRemainsClosed: true }, 'Private-note disclosures retain native open and close choices across a refetch repaint and late detached toggle events.');
   const theories = page.locator('details').filter({ has: page.locator('summary', { hasText: 'Your working theory' }) }); await disclosure(theories);
+  const theorySummary = theories.locator(':scope > summary');
+  await theorySummary.focus(); await theorySummary.press('Enter');
+  assert.equal(await theories.evaluate(panel => panel.open), false, 'Native keyboard activation closes the disclosure.');
+  await theorySummary.press('Space');
+  assert.equal(await theories.evaluate(panel => panel.open), true, 'Native keyboard activation reopens the disclosure.');
   await page.getByLabel('Your private working theory', { exact: true }).fill('Only my account should see this <img id="quest-xss">');
   await page.getByRole('button', { name: 'Save private theory', exact: true }).click();
   assert.equal(await page.locator('#quest-xss').count(), 0, 'private theories are text, never HTML');

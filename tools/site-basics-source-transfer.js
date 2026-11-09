@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { SITE_BASICS_SOURCE, SITE_BASICS_SOURCE_SHA256 } from './site-basics-source-data.js';
+import { ageRemovalHistoricalInput, ageRemovalHistoricalEntry } from './age-removal-source-transfer.js';
 
 export { SITE_BASICS_SOURCE };
 const sha = text => createHash('sha256').update(text).digest('hex');
@@ -34,6 +35,7 @@ function fingerprint(text, pin) {
 }
 export function qualifySiteBasicsSource(file, input) {
   assert.equal(arguments.length, 2, 'Only the exact file and whole source are accepted');
+  input = ageRemovalHistoricalInput(file, input);
   definition(); assert(known(file), 'Only explicitly sealed website comparison domains');
   const current = canonical(input); assert(current, 'Complete uniform LF/CRLF source required');
   const row = SITE_BASICS_SOURCE.files[file]; fingerprint(current.lf, row.current);
@@ -54,6 +56,7 @@ export function qualifySiteBasicsSource(file, input) {
 }
 // Unknown or partial changes remain untouched so immutable downstream qualifiers reject them.
 export function siteBasicsHistoricalInput(file, input) {
+  input = ageRemovalHistoricalInput(file, input);
   if (!known(file)) return input;
   const current = canonical(input), row = SITE_BASICS_SOURCE.files[file];
   if (!current || sha(current.lf) !== row.current.sha256) return input;
@@ -62,6 +65,7 @@ export function siteBasicsHistoricalInput(file, input) {
 }
 export function siteBasicsHistoricalEntry(file, entry, kind) {
   assert(kind === 'tree' || kind === 'index');
+  entry = ageRemovalHistoricalEntry(file, entry, kind);
   if (!known(file)) return entry;
   const row = SITE_BASICS_SOURCE.files[file];
   const format = pin => kind === 'tree' ? pin.mode + ' blob ' + pin.blob + '\t' + file

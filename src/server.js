@@ -14,7 +14,6 @@ import websocket from '@fastify/websocket';
 import crypto from 'node:crypto';
 import { rescueQuote } from './rescue-quote.js';
 import { clientIpContextForRequest } from './client-ip.js';
-import { MINIMUM_AGE, eligibleBirthDate, ageCookie, ageStatus, requireAge } from './age.js';
 import zlib from 'node:zlib';
 import { makeDb } from './db.js';
 import { createCityActivityRegistry, readCityActivityActor, cityOwnerActivityCategory } from './city-activity.js';
@@ -690,6 +689,10 @@ export async function buildServer() {
     .header('cache-control', 'no-cache').send(uiCss));
   // City scenes are optional local assets; gameplay remains authoritative through the API.
   for (const [file, type] of [
+    ['noir-ui.css', 'text/css'], ['noir-landing.css', 'text/css'], ['noir-shell.js', 'application/javascript'],
+    ['strategy-command.css', 'text/css'], ['strategy-command.js', 'application/javascript'],
+    ['vendor/strategy-city-renderer.js', 'application/javascript'], ['vendor/strategy-city-renderer.js.LEGAL.txt', 'text/plain'],
+    ['vendor/strategy-city-renderer.LICENSE.txt', 'text/plain'],
     ['site-analytics.js', 'application/javascript'],
     ['city-scene.js', 'application/javascript'], ['city-scene.css', 'text/css'], ['city-world-layout.js', 'application/javascript'],
     ['city-world-ui.js', 'application/javascript'], ['city-world-ui.css', 'text/css'],
@@ -1588,33 +1591,20 @@ export async function buildServer() {
     return { ok: true };
   });
 
-  app.post('/v1/age-check', async (req, reply) => {
-    reply.header('Cache-Control', 'no-store');
-    const eligible = ageStatus(app, req) === false ? false : eligibleBirthDate(req.body?.birthDate);
-    const cookie = app.jwt.sign({ purpose: 'age-check', minimumAge: MINIMUM_AGE, eligible }, { expiresIn: '15m' });
-    reply.header('Set-Cookie', ageCookie(cookie));
-    if (!eligible) return reply.code(403).send({ error: 'age_ineligible', message: 'Account creation is unavailable. See /privacy for help.' });
-    return { ok: true };
-  });
   const guestLogin = async (req) => {
-    // Recovery authority does not override a known-ineligible browser or an
-    // explicitly supplied birth date. Existing eligible recovery needs no DOB.
-    if (ageStatus(app, req) === false || req.body?.birthDate !== undefined) requireAge(app, req);
     if (req.body && typeof req.body === 'object' && !Array.isArray(req.body) &&
         Object.prototype.hasOwnProperty.call(req.body, 'bootstrapSecret')) {
       const { accountId, tokenVersion } = await A.accountForGuestBootstrap(
-        pool, req.body.bootstrapSecret, req.clientIp, req.body.inviteCode, () => requireAge(app, req),
+        pool, req.body.bootstrapSecret, req.clientIp, req.body.inviteCode,
         req.clientIpAuthority,
       );
       return { token: await signFor(accountId, {}, '30d', tokenVersion) };
     }
-    requireAge(app, req);
     const id = await A.createGuestAccount(pool, req.clientIp, req.body?.inviteCode, req.clientIpAuthority);
     return { token: await signFor(id, {}, '30d', 0) };
   };
   app.post('/v1/auth/guest', guestLogin);
   app.post('/v1/auth/agent', async (req) => {
-    requireAge(app, req, { agent: true });
     const { accountId, tokenVersion } = await A.accountForAgentBootstrap(
       pool, req.body?.bootstrapSecret, req.clientIp, req.body?.inviteCode, req.clientIpAuthority,
     );
@@ -1644,7 +1634,6 @@ export async function buildServer() {
   app.post('/v1/auth/guest/bootstrap/ack', { preHandler: auth }, async (req) =>
     A.acknowledgeGuestBootstrap(pool, req.user.sub));
   const providerLogin = (verify) => async (req) => {
-    requireAge(app, req);
     const identity = await verify(req.body?.token);
     // (B2) the invite is consumed ATOMICALLY inside accountForIdentity's create txn — one invite per
     // new account, gate held even under a concurrent same-identity race (no separate pre-consume).
@@ -1687,7 +1676,6 @@ export async function buildServer() {
       const revoked = req.user.tv !== undefined && Number(req.user.tv) !== Number(a?.token_version);
       if (!a || a.status === 'banned' || revoked) accountId = null;
     }
-    if (!accountId) requireAge(app, req);
     const { url, state } = await A.xOAuthStart(pool, { accountId, invite: req.body?.inviteCode });
     // BROWSER-BIND the state (anti account-linking CSRF): the callback must present the same cookie,
     // so an attacker who leaks their authorize URL can't have a victim's X identity bound to the
@@ -1711,7 +1699,6 @@ export async function buildServer() {
         return reply.redirect('/#claimed=x');
       }
       // (B2) invite consumed atomically inside accountForIdentity's create txn — gate held under races
-      requireAge(app, req);
       const { accountId } = await A.accountForIdentity(
         pool, r.identity, req.clientIp, r.invite, req.clientIpAuthority,
       );

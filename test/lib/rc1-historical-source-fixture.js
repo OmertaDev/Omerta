@@ -29,6 +29,7 @@ import { marketOverDeedSourceBaseline } from '../../tools/deed-market-source-com
 import { economyHardeningSourceBaseline } from '../../tools/economy-hardening-source-transfer.js';
 import { QUESTING_SOURCE, qualifyQuestingSource } from '../../tools/questing-source-transfer.js';
 import { SITE_BASICS_SOURCE, qualifySiteBasicsSource } from '../../tools/site-basics-source-transfer.js';
+import { ageRemovalHistoricalRecord } from '../../tools/age-removal-source-transfer.js';
 
 export const HISTORICAL_SOURCE_FIXTURE_REVISION = 'fe4a75a8b21fc41fd3d3bc75cf7720612c581463';
 const releaseRevision = 'b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16';
@@ -264,6 +265,7 @@ function currentCombinedSiteRecord(file) {
 }
 function qualifyCurrentCombinedSite(file, actual) {
   assert.equal(arguments.length, 2); assert(combinedSiteComparisonFiles.includes(file), 'Only the four declared current combined comparisons');
+  actual = ageRemovalHistoricalRecord(file, actual);
   assert(Object.hasOwn(SITE_BASICS_SOURCE.files, file), 'Exact site comparison domain required');
   assert.deepEqual(Object.keys(actual).sort(), ['head', 'index', 'committed', 'physical', 'regular', 'symbolic'].sort());
   const pin = SITE_BASICS_SOURCE.files[file].current;
@@ -294,6 +296,7 @@ function qualifyCurrentWebsiteHelper(file, actual) {
   return qualifyCurrentHistoricalHelper(file, actual, SITE_BASICS_SOURCE.files[file].current, qualifySiteBasicsSource);
 }
 function qualifyCurrentHistoricalHelper(file, actual, pin, qualify) {
+  actual = ageRemovalHistoricalRecord(file, actual);
   assert.deepEqual(Object.keys(actual).sort(), ['head', 'index', 'committed', 'physical', 'regular', 'symbolic'].sort());
   assert.deepEqual(actual.head, { mode: pin.mode, blob: pin.blob }, 'Actual helper HEAD equals its current source pin');
   assert.equal(actual.index, pin.mode + ' ' + pin.blob + ' 0\t' + file, 'Actual helper index equals its complete HEAD identity');

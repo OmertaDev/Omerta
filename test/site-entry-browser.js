@@ -45,6 +45,11 @@ try {
   }
 
   const page = await browser.newPage({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
+  await page.addInitScript(() => sessionStorage.setItem('omerta_age_blocked', '1'));
+  await page.context().addCookies([{
+    name: 'omerta_age', value: app.jwt.sign({ purpose: 'age-check', eligible: false }),
+    url: base, httpOnly: true, sameSite: 'Lax',
+  }]);
   const faults = [];
   page.on('pageerror', error => faults.push(error.message));
   let guestRequests = 0, releaseRequest;
@@ -57,17 +62,7 @@ try {
   await page.goto(base, { waitUntil: 'domcontentloaded' });
   const primary = page.locator('#btn-guest');
   await primary.click();
-  await page.locator('#age-date').waitFor();
-  assert.equal(await primary.isDisabled(), true, 'Eligibility checking shares the signup pending state.');
-  await page.evaluate(() => document.querySelector('#btn-guest2').dispatchEvent(new MouseEvent('click', { bubbles: true })));
-  assert.equal(await page.locator('dialog[open] #age-date').count(), 1, 'Repeated activations do not open duplicate eligibility dialogs.');
-  await page.locator('#age-cancel').click();
-  await page.waitForFunction(() => !document.querySelector('#btn-guest').disabled);
-  assert.equal(guestRequests, 0, 'Cancelling eligibility never attempts account creation.');
-  assert.equal(await page.locator('#guest-status').isHidden(), true, 'Cancelling eligibility clears progress feedback.');
-  await primary.click();
-  await page.locator('#age-date').fill('1990-01-01');
-  await page.locator('dialog[open] button[type="submit"]').click();
+  assert.equal(await page.locator('#age-date, input[name="birthDate"]').count(), 0, 'Signup has no age-verification prompt.');
   await page.waitForFunction(() => document.querySelector('#guest-status').textContent.includes('Opening your street'));
   assert.equal(await primary.isDisabled(), true, 'The primary signup action stays disabled while waiting.');
   assert.equal(await page.locator('#btn-guest2').isDisabled(), true, 'The secondary signup action shares the pending state.');
@@ -85,8 +80,8 @@ try {
   await page.locator('#screen-create:not(.hidden)').waitFor();
   await page.waitForFunction(() => !document.querySelector('#btn-guest').disabled);
   assert.equal(await page.locator('#guest-status').isHidden(), true, 'A successful signup clears progress feedback.');
-  assert.ok(await page.evaluate(() => localStorage.getItem('omerta_token')), 'Signup preserves the session before opening character creation.');
+  assert.ok(await page.evaluate(() => localStorage.getItem('omerta_token')), 'Signup ignores legacy age-denial state and preserves the session before character creation.');
   assert.deepEqual(faults, [], 'Signup produces no browser exceptions.');
   await page.close();
-  console.log('Site entry: desktop/mobile CTA visibility, image labels, eligibility cancellation, signup progress, duplicate prevention, failure recovery and successful signup passed.');
+  console.log('Site entry: desktop/mobile CTA visibility, image labels, direct signup, progress, duplicate prevention, failure recovery and successful signup passed.');
 } finally { await browser?.close(); await app.close(); }
