@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const AGE_REMOVAL_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_AGE_REMOVAL_SOURCE_COMPARISON_ONLY",
-  "revision": "858949e455cda97ee8f476bce4a7878674b2ab89",
-  "tree": "885c2602332f96b5a0ca525edf82874c69bc1914",
+  "revision": "226a1f62306431c198cfd355c93d0267a94c1aee",
+  "tree": "9bbff68a118d1c1c55089f09731d1493dedfc0c5",
   "predecessor": "35913ec1b448275b227019ede2a2ef8047be55aa",
   "predecessorTree": "c74c606d97ee2f8ebb6c5201a4ddd2c2781d5db0",
   "files": {
@@ -446,9 +446,9 @@ export const AGE_REMOVAL_SOURCE = freeze({
     "test/genesis-fee-readiness-source-transfer.js": {
       "current": {
         "mode": "100644",
-        "blob": "ab9a9a9bd80f5b1917ee5ec4bb5bafb2334e1c5c",
-        "sha256": "8f3f6d412f9bc679dd8998a837f6231eeba550d52a427d19402b2f117ebf762c",
-        "bytes": 25941
+        "blob": "43e565a31a2233a0143876f733d58b7a8e04e93c",
+        "sha256": "001f238a5dd826b9962448e7779f950864c49415956956a60286870475cb79f8",
+        "bytes": 25966
       },
       "baseline": {
         "mode": "100644",
@@ -464,16 +464,16 @@ export const AGE_REMOVAL_SOURCE = freeze({
         },
         {
           "at": 12912,
-          "current": "  assert(Buffer.from(physical).equals(raw), 'Lossless actual fixture UTF-8 required');\n  assert(physical === head || physical === head.replaceAll('\\n', '\\r\\n'),\n    'Whole actual fixture LF/CRLF bytes qualify before projection');\n  const historical = ageRemovalHistoricalRecord(fixture, { head: { mode: actual[1], blob: actual[2] }, index: actualIndex,\n    committed: Buffer.from(head), physical: raw, regular: stat.isFile(), symbolic: stat.isSymbolicLink() });\n  assert.deepEqual({ mode: historical.head.mode, blob: historical.head.blob, sha256: sha(historical.committed), bytes: historical.committed.length },\n    SITE_BASICS_SOURCE.files[fixture].current, 'Independently admitted current fixture reconstructs its unchanged site pin');\n  function fixtureComparison(file, input, tree, index) {\n    assert.equal(arguments.length, 4, 'Only the closed fixture byte/tree/index comparison is accepted');\n    assert.equal(file, fixture, 'Only the exact Genesis historical fixture comparison');\n    assert(Buffer.isBuffer(input), 'Complete physical fixture Buffer required');\n    const actualTree = typeof tree === 'string' && tree.match(/^(100644|100755) blob ([a-f0-9]{40})\\t(.+)$/);\n    assert(actualTree && actualTree[0] === tree && actualTree[3] === file, 'Complete current fixture tree identity required');\n    const historical = ageRemovalHistoricalRecord(file, { head: { mode: actualTree[1], blob: actualTree[2] }, index,\n      committed: Buffer.from(lf(input.toString('utf8'))), physical: input, regular: true, symbolic: false });\n    tree = historical.head.mode + ' blob ' + historical.head.blob + '\\t' + file;\n    index = historical.index;\n    const currentPin = SITE_BASICS_SOURCE.files[file].current;\n    assert.equal(tree, currentPin.mode + ' blob ' + currentPin.blob + '\\t' + file, 'Only the exact current site tree is admitted');\n    assert.equal(index, currentPin.mode + ' ' + currentPin.blob + ' 0\\t' + file, 'Only the exact current site index is admitted');\n    const siteProof = qualifySiteBasicsSource(file, historical.committed);\n    assert.deepEqual([siteProof.sourceOnly, siteProof.runtime, siteProof.native, siteProof.financial, siteProof.activation,\n      siteProof.deployment, siteProof.priorResultsTransferred], [true, false, false, false, false, false, false]);\n    const siteText = siteProof.baselineText;\n",
+          "current": "  assert(Buffer.from(physical).equals(raw), 'Lossless actual fixture UTF-8 required');\n  assert(physical === head || physical === head.replaceAll('\\n', '\\r\\n'),\n    'Whole actual fixture LF/CRLF bytes qualify before projection');\n  const historical = ageRemovalHistoricalRecord(fixture, { head: { mode: actual[1], blob: actual[2] }, index: actualIndex,\n    committed: Buffer.from(head), physical: raw, regular: stat.isFile(), symbolic: stat.isSymbolicLink() });\n  assert.deepEqual({ mode: historical.head.mode, blob: historical.head.blob, sha256: sha(historical.committed), bytes: historical.committed.length },\n    SITE_BASICS_SOURCE.files[fixture].current, 'Independently admitted current fixture reconstructs its unchanged site pin');\n  function fixtureComparison(file, input, tree, index) {\n    assert.equal(arguments.length, 4, 'Only the closed fixture byte/tree/index comparison is accepted');\n    assert.equal(file, fixture, 'Only the exact Genesis historical fixture comparison');\n    assert(Buffer.isBuffer(input), 'Complete physical fixture Buffer required');\n    const actualTree = typeof tree === 'string' && tree.match(/^(100644|100755) blob ([a-f0-9]{40})\\t(.+)$/);\n    assert(actualTree && actualTree[0] === tree && actualTree[3] === file, 'Complete current fixture tree identity required');\n    const historical = ageRemovalHistoricalRecord(file, { head: { mode: actualTree[1], blob: actualTree[2] }, index,\n      committed: Buffer.from(lf(input.toString('utf8'))), physical: input, regular: stat.isFile(), symbolic: stat.isSymbolicLink() });\n    tree = historical.head.mode + ' blob ' + historical.head.blob + '\\t' + file;\n    index = historical.index;\n    const currentPin = SITE_BASICS_SOURCE.files[file].current;\n    assert.equal(tree, currentPin.mode + ' blob ' + currentPin.blob + '\\t' + file, 'Only the exact current site tree is admitted');\n    assert.equal(index, currentPin.mode + ' ' + currentPin.blob + ' 0\\t' + file, 'Only the exact current site index is admitted');\n    const siteProof = qualifySiteBasicsSource(file, historical.committed);\n    assert.deepEqual([siteProof.sourceOnly, siteProof.runtime, siteProof.native, siteProof.financial, siteProof.activation,\n      siteProof.deployment, siteProof.priorResultsTransferred], [true, false, false, false, false, false, false]);\n    const siteText = siteProof.baselineText;\n",
           "baseline": "  assert(Buffer.from(physical).equals(raw), 'Lossless actual fixture UTF-8 required');\n  assert(physical === head || physical === head.replaceAll('\\n', '\\r\\n'),\n    'Whole actual fixture LF/CRLF bytes qualify before projection');\n  assert.deepEqual({ mode: actual[1], blob: actual[2], sha256: sha(head), bytes: Buffer.byteLength(head) },\n    SITE_BASICS_SOURCE.files[fixture].current, 'The real current fixture independently matches its exact site pin');\n  function fixtureComparison(file, input, tree, index) {\n    assert.equal(arguments.length, 4, 'Only the closed fixture byte/tree/index comparison is accepted');\n    assert.equal(file, fixture, 'Only the exact Genesis historical fixture comparison');\n    assert(Buffer.isBuffer(input), 'Complete physical fixture Buffer required');\n    const currentPin = SITE_BASICS_SOURCE.files[file].current;\n    assert.equal(tree, currentPin.mode + ' blob ' + currentPin.blob + '\\t' + file, 'Only the exact current site tree is admitted');\n    assert.equal(index, currentPin.mode + ' ' + currentPin.blob + ' 0\\t' + file, 'Only the exact current site index is admitted');\n    const siteProof = qualifySiteBasicsSource(file, input);\n    assert.deepEqual([siteProof.sourceOnly, siteProof.runtime, siteProof.native, siteProof.financial, siteProof.activation,\n      siteProof.deployment, siteProof.priorResultsTransferred], [true, false, false, false, false, false, false]);\n    const siteText = siteProof.baselineText;\n"
         },
         {
-          "at": 22759,
+          "at": 22784,
           "current": "  for (const supplied of [Buffer.from(head + '\\n// unrelated fixture edit\\n'), Buffer.from(head.slice(1)),\n    Buffer.from('\\ufeff' + head), Buffer.from(head + '\\0'), Buffer.from(head.replace('\\n', '\\r\\n')),\n    Buffer.from(head.replace('\\n', '\\r')), Buffer.from(head.replace(/\\S/, '?')), Buffer.from([255]),\n    comparison.source, historical.committed, head, null]) {\n    assert.throws(() => fixtureComparison(fixture, supplied, actualEntry, actualIndex)); currentRefusals++;\n  }\n  for (const kind of ['tree', 'index']) {\n",
           "baseline": "  for (const supplied of [Buffer.from(head + '\\n// unrelated fixture edit\\n'), Buffer.from(head.slice(1)),\n    Buffer.from('\\ufeff' + head), Buffer.from(head + '\\0'), Buffer.from(head.replace('\\n', '\\r\\n')),\n    Buffer.from(head.replace('\\n', '\\r')), Buffer.from(head.replace(/\\S/, '?')), Buffer.from([255]),\n    comparison.source, head, null]) {\n    assert.throws(() => fixtureComparison(fixture, supplied, actualEntry, actualIndex)); currentRefusals++;\n  }\n  for (const kind of ['tree', 'index']) {\n"
         },
         {
-          "at": 23974,
+          "at": 23999,
           "current": "  assert.throws(() => fixtureComparison(fixture, raw, actualEntry)); currentRefusals++;\n  assert.throws(() => fixtureComparison(fixture, raw, actualEntry, actualIndex, {})); currentRefusals++;\n  assert.throws(() => { comparison.proof.native = true; }, TypeError); currentRefusals++;\n  assert.equal(currentPositives, 2); assert.equal(currentRefusals, 31);\n  let siteRefusals = 0;\n  const questCurrent = QUESTING_SOURCE.files[fixture].current;\n  const oldTree = questCurrent.mode + ' blob ' + questCurrent.blob + '\\t' + fixture;\n",
           "baseline": "  assert.throws(() => fixtureComparison(fixture, raw, actualEntry)); currentRefusals++;\n  assert.throws(() => fixtureComparison(fixture, raw, actualEntry, actualIndex, {})); currentRefusals++;\n  assert.throws(() => { comparison.proof.native = true; }, TypeError); currentRefusals++;\n  assert.equal(currentPositives, 2); assert.equal(currentRefusals, 30);\n  let siteRefusals = 0;\n  const questCurrent = QUESTING_SOURCE.files[fixture].current;\n  const oldTree = questCurrent.mode + ' blob ' + questCurrent.blob + '\\t' + fixture;\n"
         }
@@ -595,6 +595,58 @@ export const AGE_REMOVAL_SOURCE = freeze({
           "at": 21342,
           "current": "  return qualifyCurrentHistoricalHelper(file, actual, SITE_BASICS_SOURCE.files[file].current, qualifySiteBasicsSource);\n}\nfunction qualifyCurrentHistoricalHelper(file, actual, pin, qualify) {\n  actual = ageRemovalHistoricalRecord(file, actual);\n  assert.deepEqual(Object.keys(actual).sort(), ['head', 'index', 'committed', 'physical', 'regular', 'symbolic'].sort());\n  assert.deepEqual(actual.head, { mode: pin.mode, blob: pin.blob }, 'Actual helper HEAD equals its current source pin');\n  assert.equal(actual.index, pin.mode + ' ' + pin.blob + ' 0\\t' + file, 'Actual helper index equals its complete HEAD identity');\n",
           "baseline": "  return qualifyCurrentHistoricalHelper(file, actual, SITE_BASICS_SOURCE.files[file].current, qualifySiteBasicsSource);\n}\nfunction qualifyCurrentHistoricalHelper(file, actual, pin, qualify) {\n  assert.deepEqual(Object.keys(actual).sort(), ['head', 'index', 'committed', 'physical', 'regular', 'symbolic'].sort());\n  assert.deepEqual(actual.head, { mode: pin.mode, blob: pin.blob }, 'Actual helper HEAD equals its current source pin');\n  assert.equal(actual.index, pin.mode + ' ' + pin.blob + ' 0\\t' + file, 'Actual helper index equals its complete HEAD identity');\n"
+        }
+      ]
+    },
+    "test/lib/ux-journeys.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "a226be9421c511b03c7a62b8264e14bb0d640f26",
+        "sha256": "4df40879cee8d1e4317170688e737407d2c6f3ad9c7a6085cf03caf973426e37",
+        "bytes": 23252
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "d519371d05ae1075ae8e9ceafbad7262b2e0da77",
+        "sha256": "f4edfb0d836f75fc688af169d938ebb577a5bd3606696f3902c7d84c7e6bfd88",
+        "bytes": 22566
+      },
+      "inverses": [
+        {
+          "at": 98,
+          "current": "import { QUESTING_SOURCE, questingHistoricalInput, questingHistoricalEntry } from '../../tools/questing-source-transfer.js';\nimport { QUEST_QUALITY_SOURCE, qualifyQuestQualitySource } from '../../tools/quest-quality-source-transfer.js';\nimport { SITE_BASICS_SOURCE, qualifySiteBasicsSource } from '../../tools/site-basics-source-transfer.js';\nimport { ageRemovalHistoricalRecord } from '../../tools/age-removal-source-transfer.js';\nimport { BUSINESS_DESK_COMBINED_SOURCE, assertBusinessDeskCombinedSourceTransfer } from '../../tools/businessdesk-combined-source-transfer.js';\nimport assert from 'node:assert/strict';\nimport { readFileSync, lstatSync } from 'node:fs';\n",
+          "baseline": "import { QUESTING_SOURCE, questingHistoricalInput, questingHistoricalEntry } from '../../tools/questing-source-transfer.js';\nimport { QUEST_QUALITY_SOURCE, qualifyQuestQualitySource } from '../../tools/quest-quality-source-transfer.js';\nimport { SITE_BASICS_SOURCE, qualifySiteBasicsSource } from '../../tools/site-basics-source-transfer.js';\nimport { BUSINESS_DESK_COMBINED_SOURCE, assertBusinessDeskCombinedSourceTransfer } from '../../tools/businessdesk-combined-source-transfer.js';\nimport assert from 'node:assert/strict';\nimport { readFileSync, lstatSync } from 'node:fs';\n"
+        },
+        {
+          "at": 7048,
+          "current": "  const rootSource = assertContractReleaseSourceDefinition();\n  const assertActualHeadInput = (file, raw, current, physical = current) => {\n    const original = pin.files.find(row => row.file === file); assert(original, 'Closed actual Afterword source subject');\n    assert.equal(typeof current, 'string'); assert.equal(typeof physical, 'string');\n    const actualIndex = git('ls-files', '--stage', '--', file).trim();\n    const actualStat = lstatSync(new URL('../../' + file, import.meta.url));\n    const historical = ageRemovalHistoricalRecord(file, { head: raw,\n      index: actualIndex, committed: Buffer.from(current), physical: Buffer.from(physical),\n      regular: actualStat.isFile(), symbolic: actualStat.isSymbolicLink() });\n    raw = historical.head; current = historical.committed.toString('utf8'); physical = historical.physical.toString('utf8');\n    const desk = rootSource.status === 'BOUND' && Object.hasOwn(rootSource.sourceViews, file)\n      && Object.hasOwn(rootSource.sourceViews[file].targets, 'desk') ? rootSource.sourceViews[file] : null;\n    const domain = Object.hasOwn(BUSINESS_DESK_DOMAINS, file) ? BUSINESS_DESK_DOMAINS[file] : original;\n",
+          "baseline": "  const rootSource = assertContractReleaseSourceDefinition();\n  const assertActualHeadInput = (file, raw, current, physical = current) => {\n    const original = pin.files.find(row => row.file === file); assert(original, 'Closed actual Afterword source subject');\n    const desk = rootSource.status === 'BOUND' && Object.hasOwn(rootSource.sourceViews, file)\n      && Object.hasOwn(rootSource.sourceViews[file].targets, 'desk') ? rootSource.sourceViews[file] : null;\n    const domain = Object.hasOwn(BUSINESS_DESK_DOMAINS, file) ? BUSINESS_DESK_DOMAINS[file] : original;\n"
+        }
+      ]
+    },
+    "test/quest-quality-source-transfer.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "096674aa0ae82eeea20a447c360fe5b4e87ce2d3",
+        "sha256": "509a9b85fc11bf8e2d93ccf0635e3ffd47384f7f79cfb646db558f32f21b5717",
+        "bytes": 6642
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "d58b2951c610f55eeb0581e3dc1e2d0d6aef1f2c",
+        "sha256": "4e9f41ce0178a814afb2698fa16b13603e44620403783c2ec2b4d4f6b2da54f5",
+        "bytes": 5773
+      },
+      "inverses": [
+        {
+          "at": 196,
+          "current": "import { execFileSync } from 'node:child_process';\nimport { QUEST_QUALITY_SOURCE as source, qualifyQuestQualitySource,\n  questQualityHistoricalInput, questQualityHistoricalEntry, questQualitySourceDataBytes } from '../tools/quest-quality-source-transfer.js';\nimport { ageRemovalHistoricalRecord } from '../tools/age-removal-source-transfer.js';\n\nconst git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { encoding: 'utf8', windowsHide: true, maxBuffer: 64 * 1024 * 1024 });\nconst sha = text => createHash('sha256').update(text).digest('hex');\n",
+          "baseline": "import { execFileSync } from 'node:child_process';\nimport { QUEST_QUALITY_SOURCE as source, qualifyQuestQualitySource,\n  questQualityHistoricalInput, questQualityHistoricalEntry, questQualitySourceDataBytes } from '../tools/quest-quality-source-transfer.js';\n\nconst git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { encoding: 'utf8', windowsHide: true, maxBuffer: 64 * 1024 * 1024 });\nconst sha = text => createHash('sha256').update(text).digest('hex');\n"
+        },
+        {
+          "at": 2110,
+          "current": "assert.deepEqual(Object.keys(source.additions), changed('A').filter(file => /\\.(?:js|json|html|css|sql)$/.test(file)));\nassert.equal(fs.readFileSync(new URL('../tools/quest-quality-source-data.js', import.meta.url), 'utf8').replaceAll('\\r\\n', '\\n'), questQualitySourceDataBytes(source));\nfunction actual(file, pin) {\n  const committed = git('show', 'HEAD:' + file), authored = git('show', source.revision + ':' + file);\n  const stat = fs.lstatSync(file), physical = fs.readFileSync(file); assert(stat.isFile() && !stat.isSymbolicLink());\n  const actualEntry = git('ls-tree', 'HEAD', '--', file).trim();\n  const match = actualEntry.match(/^(100644|100755) blob ([a-f0-9]{40})\\t(.+)$/);\n  assert(match && match[3] === file, 'Actual regular Git source qualifies first');\n  assert.equal(blob(committed), match[2], 'Complete actual source bytes equal the raw HEAD blob');\n  const index = git('ls-files', '--stage', '--', file).trim();\n  assert.equal(index, match[1] + ' ' + match[2] + ' 0\\t' + file);\n  assert(physical.equals(Buffer.from(committed)) || physical.equals(Buffer.from(committed.replaceAll('\\n', '\\r\\n'))));\n  const historical = ageRemovalHistoricalRecord(file, { head: { mode: match[1], blob: match[2] }, index,\n    committed: Buffer.from(committed), physical, regular: stat.isFile(), symbolic: stat.isSymbolicLink() });\n  const text = historical.committed.toString('utf8'), raw = historical.physical;\n  assert.equal(text, authored, 'Independently admitted current source reconstructs the unchanged quality source: ' + file);\n  assert.equal(sha(text), pin.sha256); assert.equal(blob(text), pin.blob); assert.equal(Buffer.byteLength(text), pin.bytes);\n  const entry = pin.mode + ' blob ' + pin.blob + '\\t' + file;\n  assert.deepEqual(historical.head, { mode: pin.mode, blob: pin.blob });\n  assert.equal(historical.index, pin.mode + ' ' + pin.blob + ' 0\\t' + file);\n  return { text, raw, entry };\n}\nlet positives = 0, refusals = 0, inverseControls = 0;\n",
+          "baseline": "assert.deepEqual(Object.keys(source.additions), changed('A').filter(file => /\\.(?:js|json|html|css|sql)$/.test(file)));\nassert.equal(fs.readFileSync(new URL('../tools/quest-quality-source-data.js', import.meta.url), 'utf8').replaceAll('\\r\\n', '\\n'), questQualitySourceDataBytes(source));\nfunction actual(file, pin) {\n  const text = git('show', 'HEAD:' + file), authored = git('show', source.revision + ':' + file);\n  assert.equal(text, authored, 'Whole reviewed source remains the actual committed source: ' + file);\n  const stat = fs.lstatSync(file), raw = fs.readFileSync(file); assert(stat.isFile() && !stat.isSymbolicLink());\n  assert(raw.equals(Buffer.from(text)) || raw.equals(Buffer.from(text.replaceAll('\\n', '\\r\\n'))));\n  assert.equal(sha(text), pin.sha256); assert.equal(blob(text), pin.blob); assert.equal(Buffer.byteLength(text), pin.bytes);\n  const entry = pin.mode + ' blob ' + pin.blob + '\\t' + file;\n  assert.equal(git('ls-tree', 'HEAD', '--', file).trim(), entry);\n  assert.equal(git('ls-files', '--stage', '--', file).trim(), pin.mode + ' ' + pin.blob + ' 0\\t' + file);\n  return { text, raw, entry };\n}\nlet positives = 0, refusals = 0, inverseControls = 0;\n"
         }
       ]
     },
@@ -836,6 +888,42 @@ export const AGE_REMOVAL_SOURCE = freeze({
         }
       ]
     },
+    "tools/quest-quality-source-transfer.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "feb72569e59b5d7b4716307a7fe876c4dd09d73f",
+        "sha256": "9c3b0784a18eb890f86fd3413037e026936e87c65a7c3b77987ac59f68fd3630",
+        "bytes": 4940
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "72908f02e65daf65309af20a79bb2b978a8d9ff1",
+        "sha256": "c056c3b8e2efe22e9ba465393c3a895bbca94929113ddd1ef0fbcad53f9f7fe9",
+        "bytes": 4679
+      },
+      "inverses": [
+        {
+          "at": 102,
+          "current": "import assert from 'node:assert/strict';\nimport { createHash } from 'node:crypto';\nimport { QUEST_QUALITY_SOURCE, QUEST_QUALITY_SOURCE_SHA256 } from './quest-quality-source-data.js';\nimport { ageRemovalHistoricalInput, ageRemovalHistoricalEntry } from './age-removal-source-transfer.js';\n\nexport { QUEST_QUALITY_SOURCE };\nconst sha = text => createHash('sha256').update(text).digest('hex');\n",
+          "baseline": "import assert from 'node:assert/strict';\nimport { createHash } from 'node:crypto';\nimport { QUEST_QUALITY_SOURCE, QUEST_QUALITY_SOURCE_SHA256 } from './quest-quality-source-data.js';\n\nexport { QUEST_QUALITY_SOURCE };\nconst sha = text => createHash('sha256').update(text).digest('hex');\n"
+        },
+        {
+          "at": 2384,
+          "current": "}\nexport function qualifyQuestQualitySource(file, input) {\n  assert.equal(arguments.length, 2, 'Only the exact file and whole source are accepted');\n  input = ageRemovalHistoricalInput(file, input);\n  definition(); assert(known(file), 'Only explicitly sealed quest quality comparison domains');\n  const current = canonical(input); assert(current, 'Complete uniform LF/CRLF source required');\n  const row = QUEST_QUALITY_SOURCE.files[file]; fingerprint(current.lf, row.current);\n",
+          "baseline": "}\nexport function qualifyQuestQualitySource(file, input) {\n  assert.equal(arguments.length, 2, 'Only the exact file and whole source are accepted');\n  definition(); assert(known(file), 'Only explicitly sealed quest quality comparison domains');\n  const current = canonical(input); assert(current, 'Complete uniform LF/CRLF source required');\n  const row = QUEST_QUALITY_SOURCE.files[file]; fingerprint(current.lf, row.current);\n"
+        },
+        {
+          "at": 3855,
+          "current": "}\n// Unknown or partial changes remain untouched so immutable downstream qualifiers reject them.\nexport function questQualityHistoricalInput(file, input) {\n  input = ageRemovalHistoricalInput(file, input);\n  if (!known(file)) return input;\n  const current = canonical(input), row = QUEST_QUALITY_SOURCE.files[file];\n  if (!current || sha(current.lf) !== row.current.sha256) return input;\n",
+          "baseline": "}\n// Unknown or partial changes remain untouched so immutable downstream qualifiers reject them.\nexport function questQualityHistoricalInput(file, input) {\n  if (!known(file)) return input;\n  const current = canonical(input), row = QUEST_QUALITY_SOURCE.files[file];\n  if (!current || sha(current.lf) !== row.current.sha256) return input;\n"
+        },
+        {
+          "at": 4375,
+          "current": "}\nexport function questQualityHistoricalEntry(file, entry, kind) {\n  assert(kind === 'tree' || kind === 'index');\n  entry = ageRemovalHistoricalEntry(file, entry, kind);\n  if (!known(file)) return entry;\n  const row = QUEST_QUALITY_SOURCE.files[file];\n  const format = pin => kind === 'tree' ? pin.mode + ' blob ' + pin.blob + '\\t' + file\n",
+          "baseline": "}\nexport function questQualityHistoricalEntry(file, entry, kind) {\n  assert(kind === 'tree' || kind === 'index');\n  if (!known(file)) return entry;\n  const row = QUEST_QUALITY_SOURCE.files[file];\n  const format = pin => kind === 'tree' ? pin.mode + ' blob ' + pin.blob + '\\t' + file\n"
+        }
+      ]
+    },
     "tools/rc1-mobile-journeys.js": {
       "current": {
         "mode": "100644",
@@ -897,15 +985,15 @@ export const AGE_REMOVAL_SOURCE = freeze({
   "additions": {
     "test/lib/age-removal-source-transfer-proof.js": {
       "mode": "100644",
-      "blob": "03da965b93879758b4a6d9f0747d2a2e23c83693",
-      "sha256": "4a8d21329b0fea6d20f2982c5f317b5d26e742153dafbc428bf0ee69a41bee84",
-      "bytes": 8093
+      "blob": "d789645053bcc0080a440d591f702a64c66332a9",
+      "sha256": "99602837579eaccf5bc6d0aa0f16bb1931d095329c852e25069694871cfb3f36",
+      "bytes": 9838
     },
     "tools/age-removal-source-seal.js": {
       "mode": "100644",
-      "blob": "7e3d4d358692eaa2d26c2350f8012d0cd2046b53",
-      "sha256": "6e38b61f3257c853feb7be87e5abbc45c57d9591a7c096c4beab242c68d45e6d",
-      "bytes": 5480
+      "blob": "5981189d7ca48d2360729f82deab1a76992df9a3",
+      "sha256": "43f29e66efbd6601fa2c445c04132bf13707ba8e20e8c4c98556f62afc2a42d2",
+      "bytes": 7337
     },
     "tools/age-removal-source-transfer.js": {
       "mode": "100644",
@@ -915,4 +1003,4 @@ export const AGE_REMOVAL_SOURCE = freeze({
     }
   }
 });
-export const AGE_REMOVAL_SOURCE_SHA256 = 'fbd65e19ffea5d700ebbd3a358f65de1125027d2cb167d1bf13f7e861eb163de';
+export const AGE_REMOVAL_SOURCE_SHA256 = 'bf975b5c1cc2f559d6da1c3977f2deb24a18f78d3a1d5b84e383d7c558d12774';
