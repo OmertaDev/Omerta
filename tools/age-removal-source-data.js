@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const AGE_REMOVAL_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_AGE_REMOVAL_SOURCE_COMPARISON_ONLY",
-  "revision": "e348f1b592609003d8565f755f282a36172dc441",
-  "tree": "43e35c116e489afcef032cce79ac394966b7a9bf",
+  "revision": "e1dff0914867c44c57b19614241972bda17b8f34",
+  "tree": "d81e65396c25309bdda6d001a520c7f383f67611",
   "predecessor": "35913ec1b448275b227019ede2a2ef8047be55aa",
   "predecessorTree": "c74c606d97ee2f8ebb6c5201a4ddd2c2781d5db0",
   "files": {
@@ -32,8 +32,8 @@ export const AGE_REMOVAL_SOURCE = freeze({
     "SPEC.md": {
       "current": {
         "mode": "100644",
-        "blob": "a4b60d4143e78c3aacaa9963027b00ddc3aa5629",
-        "sha256": "cca8e7546b210a3416b4f2432ab0928a4a2ca0ca71c559549f9466fdd5e72586",
+        "blob": "b3da8fc5a6ae7254d9833c3f60674d3de874276b",
+        "sha256": "027c2ef10f49088c8e18e3878f1e21fa26501f31c72bb4b55bbeffd77105eb5d",
         "bytes": 57294
       },
       "baseline": {
@@ -45,7 +45,7 @@ export const AGE_REMOVAL_SOURCE = freeze({
       "inverses": [
         {
           "at": 603,
-          "current": "| | |\n|---|---|\n| Backend modules | **618** files, **141073** lines (recursive source inventory) |\n| Test suites | **1033** files, **213491** lines (recursive source inventory) |\n| HTTP routes | **1386** registrations (**1386** unique; 1274 under `/v1`) |\n| Database tables | **585** (`schema.sql`, 9820 lines) |\n| Client | **14683** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n",
+          "current": "| | |\n|---|---|\n| Backend modules | **618** files, **141073** lines (recursive source inventory) |\n| Test suites | **1036** files, **213491** lines (recursive source inventory) |\n| HTTP routes | **1386** registrations (**1386** unique; 1274 under `/v1`) |\n| Database tables | **585** (`schema.sql`, 9820 lines) |\n| Client | **14683** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n",
           "baseline": "| | |\n|---|---|\n| Backend modules | **618** files, **141073** lines (recursive source inventory) |\n| Test suites | **1032** files, **213491** lines (recursive source inventory) |\n| HTTP routes | **1386** registrations (**1386** unique; 1274 under `/v1`) |\n| Database tables | **585** (`schema.sql`, 9820 lines) |\n| Client | **14683** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n"
         }
       ]
@@ -123,12 +123,69 @@ export const AGE_REMOVAL_SOURCE = freeze({
         }
       ]
     },
+    "package-lock.json": {
+      "current": {
+        "mode": "100644",
+        "blob": "056460af0e087109127061640cec1634fdc6e505",
+        "sha256": "74c07666cfd58d378d34ab348a683b78b7fdae42b12504a09837d5f23dbc20dc",
+        "bytes": 257391
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "cb692ac8e9381b05a920612cadb51dc2275b85f7",
+        "sha256": "20f8360cea8c6565ddf257e0e5846d009a672dd6fd2ef36df5ddff38fa3eaa7f",
+        "bytes": 257066
+      },
+      "inverses": [
+        {
+          "at": 571,
+          "current": "        \"acorn\": \"8.18.0\",\n        \"esbuild\": \"0.25.12\",\n        \"playwright-core\": \"^1.62.0\",\n        \"solhint\": \"6.2.4\",\n        \"three\": \"0.187.0\"\n      },\n      \"engines\": {\n        \"node\": \">=20\"\n",
+          "baseline": "        \"acorn\": \"8.18.0\",\n        \"esbuild\": \"0.25.12\",\n        \"playwright-core\": \"^1.62.0\",\n        \"solhint\": \"6.2.4\"\n      },\n      \"engines\": {\n        \"node\": \">=20\"\n"
+        },
+        {
+          "at": 243832,
+          "current": "      \"integrity\": \"sha512-P4nbQYQfePJxRSmY+v/KINxVucm4NF3p3s7pJveMTtom52FR4YGltUQLB8idDXwDDWW+eYrWDFbuzUnjoWHF7g==\",\n      \"license\": \"MIT\"\n    },\n    \"node_modules/three\": {\n      \"version\": \"0.187.0\",\n      \"resolved\": \"https://registry.npmjs.org/three/-/three-0.187.0.tgz\",\n      \"integrity\": \"sha512-Qiu7R+Cmh8CstZsY1uJOSWnVlfo7ZtNLV7mF8Jltk3LB3AtDu9cRZlcnRKkAk8Y4z6KKw35z7Y7Urd7jWY8etA==\",\n      \"dev\": true,\n      \"license\": \"MIT\"\n    },\n    \"node_modules/toad-cache\": {\n      \"version\": \"3.7.4\",\n      \"resolved\": \"https://registry.npmjs.org/toad-cache/-/toad-cache-3.7.4.tgz\",\n",
+          "baseline": "      \"integrity\": \"sha512-P4nbQYQfePJxRSmY+v/KINxVucm4NF3p3s7pJveMTtom52FR4YGltUQLB8idDXwDDWW+eYrWDFbuzUnjoWHF7g==\",\n      \"license\": \"MIT\"\n    },\n    \"node_modules/toad-cache\": {\n      \"version\": \"3.7.4\",\n      \"resolved\": \"https://registry.npmjs.org/toad-cache/-/toad-cache-3.7.4.tgz\",\n"
+        }
+      ]
+    },
+    "package.json": {
+      "current": {
+        "mode": "100644",
+        "blob": "e4a9a5a209c08b6aaec459cb83ba5b3fb7553f84",
+        "sha256": "89b79a5c581530f00bc3534d206bbb332eba8e47cbc237cf0980ee0d32ac9f7f",
+        "bytes": 64298
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "b4c01d90200efe8493d685c7ba56e4912ae7f36c",
+        "sha256": "a64159184378adbf9387773776427f49445b40b178d7f6b0a787b40b9f21675b",
+        "bytes": 64133
+      },
+      "inverses": [
+        {
+          "at": 51770,
+          "current": "    \"test:gateway:postgres\": \"node test/gateway-postgres.js\",\n    \"test:gateway:browser\": \"node test/consigliere-recovery-browser.js\",\n    \"build:walletconnect\": \"node tools/build-walletconnect.mjs\",\n    \"build:strategy-city\": \"node tools/build-strategy-city.mjs\",\n    \"test:legal-security\": \"node test/age.js && node test/db-rls.js && node test/legal-security.js && node test/payment-receipts.js\",\n    \"release:media\": \"node tools/release-media.mjs unpack\",\n    \"postinstall\": \"node tools/release-media.mjs unpack\",\n",
+          "baseline": "    \"test:gateway:postgres\": \"node test/gateway-postgres.js\",\n    \"test:gateway:browser\": \"node test/consigliere-recovery-browser.js\",\n    \"build:walletconnect\": \"node tools/build-walletconnect.mjs\",\n    \"test:legal-security\": \"node test/age.js && node test/db-rls.js && node test/legal-security.js && node test/payment-receipts.js\",\n    \"release:media\": \"node tools/release-media.mjs unpack\",\n    \"postinstall\": \"node tools/release-media.mjs unpack\",\n"
+        },
+        {
+          "at": 59816,
+          "current": "    \"test:city:layout\": \"node test/city-world-layout.js && node test/continuous-city-source-compatibility.js\",\n    \"test:decision-guide\": \"node test/decision-guide.js && node test/decision-guide-client.js && node test/decision-guide-api.js\",\n    \"test:ux\": \"npm run test:ux:source && node test/ux-feedback.js && node test/circle-highlights.js && node test/ux-workspace.js && node test/ux-tactics.js && node test/ux-investigation-api.js && node test/ux-coordination.js && node test/ux-identity.js && node test/ux-story.js && node test/ux-community.js && node test/ux-tools.js\",\n    \"test:ux:browser\": \"node test/strategy-command-browser.js && node test/noir-shell-browser.js && node test/ux-shell-browser.js && node test/ux-progression-browser.js && node test/ux-navigation-browser.js && node test/ux-social-browser.js && node test/ux-experience-browser.js && node test/ux-workspace-browser.js && node test/ux-tactics-browser.js && node test/ux-investigation-browser.js && node test/ux-coordination-browser.js && node test/ux-expanded-browser.js && node test/ux-feel-browser.js && node test/ux-tools-browser.js && node test/ux-identity-browser.js && node test/ux-story-browser.js && node test/ux-community-browser.js && node test/ux-personality-browser.js && npm run test:site && npm run test:site:browser\",\n    \"test:ux:postgres\": \"node test/ux-postgres.js && node test/ux-postgres-rls.js\",\n    \"test:ux:source\": \"node test/noir-ui-source-compatibility.js && node test/sale-source-compatibility.js && node test/ux-source-compatibility.js\",\n    \"test:economy-ux-source\": \"node test/contract-release-source-compatibility.js && node test/businessdesk-combined-source-compatibility.js && node test/businessdesk-combined-native-provenance.js && node test/economy-deed-merge-source-compatibility.js && node test/businessdesk-noir-source-compatibility.js && node test/businessdesk-source-compatibility.js && node test/deed-allocation-source-compatibility.js && node test/deed-benefit-native-catalog.js && node test/economy-ux-merge-source-compatibility.js\",\n",
+          "baseline": "    \"test:city:layout\": \"node test/city-world-layout.js && node test/continuous-city-source-compatibility.js\",\n    \"test:decision-guide\": \"node test/decision-guide.js && node test/decision-guide-client.js && node test/decision-guide-api.js\",\n    \"test:ux\": \"npm run test:ux:source && node test/ux-feedback.js && node test/circle-highlights.js && node test/ux-workspace.js && node test/ux-tactics.js && node test/ux-investigation-api.js && node test/ux-coordination.js && node test/ux-identity.js && node test/ux-story.js && node test/ux-community.js && node test/ux-tools.js\",\n    \"test:ux:browser\": \"node test/ux-shell-browser.js && node test/ux-progression-browser.js && node test/ux-navigation-browser.js && node test/ux-social-browser.js && node test/ux-experience-browser.js && node test/ux-workspace-browser.js && node test/ux-tactics-browser.js && node test/ux-investigation-browser.js && node test/ux-coordination-browser.js && node test/ux-expanded-browser.js && node test/ux-feel-browser.js && node test/ux-tools-browser.js && node test/ux-identity-browser.js && node test/ux-story-browser.js && node test/ux-community-browser.js && node test/ux-personality-browser.js && npm run test:site && npm run test:site:browser\",\n    \"test:ux:postgres\": \"node test/ux-postgres.js && node test/ux-postgres-rls.js\",\n    \"test:ux:source\": \"node test/noir-ui-source-compatibility.js && node test/sale-source-compatibility.js && node test/ux-source-compatibility.js\",\n    \"test:economy-ux-source\": \"node test/contract-release-source-compatibility.js && node test/businessdesk-combined-source-compatibility.js && node test/businessdesk-combined-native-provenance.js && node test/economy-deed-merge-source-compatibility.js && node test/businessdesk-noir-source-compatibility.js && node test/businessdesk-source-compatibility.js && node test/deed-allocation-source-compatibility.js && node test/deed-benefit-native-catalog.js && node test/economy-ux-merge-source-compatibility.js\",\n"
+        },
+        {
+          "at": 64162,
+          "current": "    \"acorn\": \"8.18.0\",\n    \"playwright-core\": \"^1.62.0\",\n    \"solhint\": \"6.2.4\",\n    \"esbuild\": \"0.25.12\",\n    \"three\": \"0.187.0\"\n  }\n}\n",
+          "baseline": "    \"acorn\": \"8.18.0\",\n    \"playwright-core\": \"^1.62.0\",\n    \"solhint\": \"6.2.4\",\n    \"esbuild\": \"0.25.12\"\n  }\n}\n"
+        }
+      ]
+    },
     "public/index.html": {
       "current": {
         "mode": "100644",
-        "blob": "35f4b4cb896a391577442eeb1c13b72d002b9b18",
-        "sha256": "4fbfdd47d960348528697d8dc4c51adddaa4c2d257044ddea17cde90056ca8cb",
-        "bytes": 1405992
+        "blob": "d031f03f8050e0d07b2a195bf7bdb6af93e7e79f",
+        "sha256": "3504a39e1a670166f093675e8c14e91ffec231eaea1cbcc95d60cd6b44268b3d",
+        "bytes": 1406414
       },
       "baseline": {
         "mode": "100644",
@@ -138,24 +195,64 @@ export const AGE_REMOVAL_SOURCE = freeze({
       },
       "inverses": [
         {
-          "at": 584226,
+          "at": 106946,
+          "current": "<link rel=\"stylesheet\" href=\"/ux-tactics.css?v=20261024-2\">\n<link rel=\"stylesheet\" href=\"/ux-investigation.css?v=20261024-2\">\n<link rel=\"stylesheet\" href=\"/ux-coordination.css?v=20261024-2\">\n<link rel=\"stylesheet\" href=\"/noir-ui.css?v=20261108-1\">\n<link rel=\"stylesheet\" href=\"/noir-landing.css?v=20261108-1\">\n<link rel=\"stylesheet\" href=\"/strategy-command.css?v=20261108-1\">\n</head>\n<body>\n<svg style=\"display:none\" aria-hidden=\"true\"><defs>\n",
+          "baseline": "<link rel=\"stylesheet\" href=\"/ux-tactics.css?v=20261024-2\">\n<link rel=\"stylesheet\" href=\"/ux-investigation.css?v=20261024-2\">\n<link rel=\"stylesheet\" href=\"/ux-coordination.css?v=20261024-2\">\n</head>\n<body>\n<svg style=\"display:none\" aria-hidden=\"true\"><defs>\n"
+        },
+        {
+          "at": 143203,
+          "current": "  <div id=\"status-strips\"><div id=\"vitals\" aria-label=\"Current resources\"></div></div>\n  <div id=\"layout\">\n    <aside id=\"city-sidebar\" aria-label=\"City navigation and character\">\n      <details id=\"city-directory\">\n        <summary>Explore the city</summary>\n        <div class=\"city-directory-body\">\n          <div class=\"city-nav-label\">THE CITY</div>\n",
+          "baseline": "  <div id=\"status-strips\"><div id=\"vitals\" aria-label=\"Current resources\"></div></div>\n  <div id=\"layout\">\n    <aside id=\"city-sidebar\" aria-label=\"City navigation and character\">\n      <details id=\"city-directory\" open>\n        <summary>Explore the city</summary>\n        <div class=\"city-directory-body\">\n          <div class=\"city-nav-label\">THE CITY</div>\n"
+        },
+        {
+          "at": 144774,
+          "current": "      <div id=\"tabart\" class=\"hidden\"><span></span></div>\n      <div id=\"coachwrap\"></div>\n      <details id=\"ux-screen-tools\" class=\"ux-screen-tools\"><summary>Screen tools <span>Shortcuts, reading &amp; workspace</span></summary><div id=\"screen-tool-content\" class=\"ux-screen-tools-body\"><nav id=\"action-readiness\" class=\"hidden\" aria-label=\"Activity timers and options\"></nav></div></details>\n      <!-- #introwrap stays INSIDE #tabbodies but OUTSIDE the per-tab divs. The shell places\n           first-visit reference below the playable content; screen renderers cannot resurrect\n           a dismissed introduction when they refresh their own #tab-<id>. -->\n      <div id=\"tabbodies\"><div id=\"introwrap\"></div></div>\n    </div>\n\n",
+          "baseline": "      <div id=\"tabart\" class=\"hidden\"><span></span></div>\n      <div id=\"coachwrap\"></div>\n      <details id=\"ux-screen-tools\" class=\"ux-screen-tools\"><summary>Screen tools <span>Shortcuts, reading &amp; workspace</span></summary><div id=\"screen-tool-content\" class=\"ux-screen-tools-body\"><nav id=\"action-readiness\" class=\"hidden\" aria-label=\"Activity timers and options\"></nav></div></details>\n      <!-- #introwrap lives INSIDE #tabbodies (first child) but OUTSIDE the per-tab divs: the\n           first-visit card counts as the screen's own content (it explains the screen you just\n           tapped), while renderers — which rewrite only their #tab-<id> — can never resurrect a\n           dismissed card mid-visit. -->\n      <div id=\"tabbodies\"><div id=\"introwrap\"></div></div>\n    </div>\n\n"
+        },
+        {
+          "at": 158121,
+          "current": "<script src=\"/ux-tactics.js?v=20261105-noir-release\"></script>\n<script src=\"/ux-investigation.js?v=20261024-2\"></script>\n<script src=\"/ux-coordination.js?v=20261024-2\"></script>\n<script src=\"/noir-shell.js?v=20261108-1\"></script>\n<script src=\"/strategy-command.js?v=20261108-1\"></script>\n<script>\n(() => {\n  // Optional guidance must not stop core play if its separate script cannot load.\n",
+          "baseline": "<script src=\"/ux-tactics.js?v=20261105-noir-release\"></script>\n<script src=\"/ux-investigation.js?v=20261024-2\"></script>\n<script src=\"/ux-coordination.js?v=20261024-2\"></script>\n<script>\n(() => {\n  // Optional guidance must not stop core play if its separate script cannot load.\n"
+        },
+        {
+          "at": 584455,
           "current": "    if (h.get('token') || h.get('claimed') || h.get('autherr')) history.replaceState(null, '', location.pathname);\n  })();\n  const startXOAuth = async () => {\n    const inviteCode = $('#invite-code')?.value?.trim();\n    const r = await api('POST', '/v1/auth/x/start', inviteCode ? { inviteCode } : {});\n    if (r.body?.url) location.href = r.body.url;\n",
           "baseline": "    if (h.get('token') || h.get('claimed') || h.get('autherr')) history.replaceState(null, '', location.pathname);\n  })();\n  const startXOAuth = async () => {\n    if (!token && !await verifyAge()) return;\n    const inviteCode = $('#invite-code')?.value?.trim();\n    const r = await api('POST', '/v1/auth/x/start', inviteCode ? { inviteCode } : {});\n    if (r.body?.url) location.href = r.body.url;\n"
         },
         {
-          "at": 589166,
+          "at": 589395,
           "current": "    else toast(r.body?.message || r.body?.error || 'no dice', true);\n    return false;\n  };\n  let guestPending = false;\n  const enterAsGhost = async () => {\n    if (guestPending) return;\n",
           "baseline": "    else toast(r.body?.message || r.body?.error || 'no dice', true);\n    return false;\n  };\n  let ageChecked = 0;\n  async function verifyAge() {\n    if (ageChecked > Date.now()) return true;\n    if (sessionStorage.getItem('omerta_age_blocked')) {\n      toast('Account creation is unavailable. See the privacy page for help.', true);\n      return false;\n    }\n    return new Promise((resolve) => {\n      const dialog = document.createElement('dialog');\n      dialog.className = 'modal';\n      dialog.setAttribute('aria-labelledby', 'age-title');\n      dialog.innerHTML = `<h2 id=\"age-title\">Your birth date</h2><p>Enter your complete birth date to continue. We check it without saving it.</p><form><label for=\"age-date\">Birth date</label><input id=\"age-date\" name=\"birthDate\" type=\"date\" required min=\"${new Date().getFullYear() - 120}-01-01\" max=\"${new Date().toISOString().slice(0, 10)}\"><p id=\"age-error\" role=\"alert\"></p><p><a href=\"/privacy\">Privacy policy and help</a></p><button class=\"act\" type=\"submit\">Continue</button><button class=\"act\" type=\"button\" id=\"age-cancel\">Cancel</button></form>`;\n      document.body.append(dialog);\n      const finish = (ok) => { dialog.close(); dialog.remove(); resolve(ok); };\n      dialog.addEventListener('cancel', (event) => { event.preventDefault(); finish(false); });\n      dialog.querySelector('#age-cancel').onclick = () => finish(false);\n      dialog.querySelector('form').onsubmit = async (event) => {\n        event.preventDefault();\n        const input = dialog.querySelector('input');\n        const birthDate = input.value;\n        input.value = '';\n        const result = await api('POST', '/v1/age-check', { birthDate });\n        if (result.code < 400) { ageChecked = Date.now() + 14 * 60 * 1000; finish(true); }\n        else if (result.body?.error === 'age_ineligible') {\n          sessionStorage.setItem('omerta_age_blocked', '1');\n          dialog.querySelector('form').innerHTML = '<p role=\"alert\">Account creation is unavailable. No birth date was saved.</p><p><a href=\"/privacy\">Privacy policy and help</a></p><button type=\"button\" class=\"act\">Close</button>';\n          dialog.querySelector('button').onclick = () => finish(false);\n        } else dialog.querySelector('#age-error').textContent = result.body?.message || 'Please try again.';\n      };\n      dialog.showModal();\n      dialog.querySelector('input').focus();\n    });\n  }\n  let guestPending = false;\n  const enterAsGhost = async () => {\n    if (guestPending) return;\n"
         },
         {
-          "at": 589378,
+          "at": 589607,
           "current": "    const controls = ['#btn-guest', '#btn-guest2'].map(selector => $(selector)).filter(Boolean);\n    const labels = controls.map(button => button.textContent);\n    const status = $('#guest-status');\n    status.hidden = false; status.textContent = 'Opening your street…';\n    controls.forEach(button => { button.disabled = true; button.setAttribute('aria-busy', 'true'); button.textContent = 'Entering the city…'; });\n    try {\n      const inviteCode = undefined;\n      const result = await api('POST', '/v1/auth/guest', inviteCode ? { inviteCode } : {});\n      globalThis.OmertaSiteAnalytics?.signupResult?.(result);\n",
           "baseline": "    const controls = ['#btn-guest', '#btn-guest2'].map(selector => $(selector)).filter(Boolean);\n    const labels = controls.map(button => button.textContent);\n    const status = $('#guest-status');\n    status.hidden = false; status.textContent = 'Checking eligibility…';\n    controls.forEach(button => { button.disabled = true; button.setAttribute('aria-busy', 'true'); button.textContent = 'Entering the city…'; });\n    try {\n      if (!await verifyAge()) { status.textContent = ''; status.hidden = true; return; }\n      status.textContent = 'Opening your street…';\n      const inviteCode = undefined;\n      const result = await api('POST', '/v1/auth/guest', inviteCode ? { inviteCode } : {});\n      globalThis.OmertaSiteAnalytics?.signupResult?.(result);\n"
         },
         {
-          "at": 593327,
+          "at": 593556,
           "current": "  $('#btn-provider').onclick = async () => {\n    const provider = $('#auth-provider').value, tok = $('#auth-token').value.trim();\n    if (!tok) return toast('paste a provider token first', true);\n    const inviteCode = undefined;\n    landToken(await api(`POST`, `/v1/auth/${provider}`, { token: tok, ...(inviteCode ? { inviteCode } : {}) }));\n  };\n",
           "baseline": "  $('#btn-provider').onclick = async () => {\n    const provider = $('#auth-provider').value, tok = $('#auth-token').value.trim();\n    if (!tok) return toast('paste a provider token first', true);\n    if (!await verifyAge()) return;\n    const inviteCode = undefined;\n    landToken(await api(`POST`, `/v1/auth/${provider}`, { token: tok, ...(inviteCode ? { inviteCode } : {}) }));\n  };\n"
+        },
+        {
+          "at": 958490,
+          "current": "    // but draws law heat + a harder bust. Same cash EV — the choice is your risk appetite.\n    const crimeCard = (c) => {\n      const { terms, choices } = coreCrimeMarkup(c);\n      return `<article class=\"card noir-job-card\">${aart('crime', c.id)}<div class=\"noir-job-content\">\n        <div class=\"noir-job-eyebrow\">Street job · Level ${c.lvl}</div><span class=\"t\">${esc(c.name)}</span>\n        ${terms}<div class=\"verbrow\">${choices}</div></div></article>`;\n    };\n    const allCrimes = [...(rules?.crimes || [])].sort((a, b) => a.lvl - b.lvl);\n    const lvl = me?.level || 1;\n",
+          "baseline": "    // but draws law heat + a harder bust. Same cash EV — the choice is your risk appetite.\n    const crimeCard = (c) => {\n      const { terms, choices } = coreCrimeMarkup(c);\n      return `<div class=\"card\">${aart('crime', c.id)}<span class=\"t\">${esc(c.name)}</span>${terms}<div class=\"verbrow\">${choices}</div></div>`;\n    };\n    const allCrimes = [...(rules?.crimes || [])].sort((a, b) => a.lvl - b.lvl);\n    const lvl = me?.level || 1;\n"
+        },
+        {
+          "at": 973694,
+          "current": "    // jobs + the bank/map lead the screen; everything else is a labeled drawer that stays how you\n    // left it. One glance = act; the depth is a click away, not a scroll away.\n    t.innerHTML = `\n      <div class=\"noir-jobs-heading\"><h2>Find your next score</h2><span>${best.length} available · Level ${lvl}</span></div>\n      ${streetActionClock()}\n      <div class=\"grid noir-job-grid\">${crimes || restCrimes && '<span class=\"d\" style=\"color:var(--dim)\">no jobs at your level yet — open the full book below</span>' || ''}</div>\n      ${rest.length ? sect('crimes-all', 'The Full Book', `every job in the city (${allCrimes.length})`, `<div class=\"grid noir-job-grid\">${restCrimes}</div>`) : ''}\n\n${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [`Pocket: ${guideMoney(b.pocket)}. Bank total: ${guideMoney(b.total)}.`, `Cleared: ${guideMoney(b.cleared)}. In transit: ${guideMoney(b.transit)}. Clearing: ${b.seconds == null ? 'unknown' : minsTxt(b.seconds)}.`, 'A killer can loot pocket cash and deposits in transit. Cleared cash avoids that cut. All bank cash is lost on death.'];})())}\n      <div class=\"card\" style=\"display:flex;flex-wrap:wrap;gap:8px;align-items:center\">\n",
+          "baseline": "    // jobs + the bank/map lead the screen; everything else is a labeled drawer that stays how you\n    // left it. One glance = act; the depth is a click away, not a scroll away.\n    t.innerHTML = `\n      <h2 style=\"margin-top:14px\">Crimes <span class=\"d\" style=\"color:var(--dim);font-size:12.5px\">— your best jobs at level ${lvl}</span></h2>\n      ${streetActionClock()}\n      <div class=\"grid\">${crimes || restCrimes && '<span class=\"d\" style=\"color:var(--dim)\">no jobs at your level yet — open the full book below</span>' || ''}</div>\n      ${rest.length ? sect('crimes-all', 'The Full Book', `every job in the city (${allCrimes.length})`, `<div class=\"grid\">${restCrimes}</div>`) : ''}\n\n${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [`Pocket: ${guideMoney(b.pocket)}. Bank total: ${guideMoney(b.total)}.`, `Cleared: ${guideMoney(b.cleared)}. In transit: ${guideMoney(b.transit)}. Clearing: ${b.seconds == null ? 'unknown' : minsTxt(b.seconds)}.`, 'A killer can loot pocket cash and deposits in transit. Cleared cash avoids that cut. All bank cash is lost on death.'];})())}\n      <div class=\"card\" style=\"display:flex;flex-wrap:wrap;gap:8px;align-items:center\">\n"
+        },
+        {
+          "at": 1389861,
+          "current": "  if (workspaceUX) uxModules.push(workspaceUX);\n  for (const factory of [window.createOmertaFeedback, window.createOmertaProgression, window.createOmertaSocial, window.createOmertaNavigation,\n    window.createOmertaTactics, window.createOmertaInvestigation, window.createOmertaCoordination,\n    window.createOmertaFeel, window.createOmertaTools, window.createOmertaIdentity, window.createOmertaStory, window.createOmertaQuests, window.createOmertaCommunity, window.createOmertaWorld, window.createOmertaNoirShell, window.createOmertaStrategyCommand]) {\n    if (!factory) continue;\n    try { const module = factory(uxContext); uxModules.push(module); if (factory === window.createOmertaFeedback) feedbackUX = module; }\n    catch (error) { console.warn('UI enhancement unavailable', error); }\n",
+          "baseline": "  if (workspaceUX) uxModules.push(workspaceUX);\n  for (const factory of [window.createOmertaFeedback, window.createOmertaProgression, window.createOmertaSocial, window.createOmertaNavigation,\n    window.createOmertaTactics, window.createOmertaInvestigation, window.createOmertaCoordination,\n    window.createOmertaFeel, window.createOmertaTools, window.createOmertaIdentity, window.createOmertaStory, window.createOmertaQuests, window.createOmertaCommunity, window.createOmertaWorld]) {\n    if (!factory) continue;\n    try { const module = factory(uxContext); uxModules.push(module); if (factory === window.createOmertaFeedback) feedbackUX = module; }\n    catch (error) { console.warn('UI enhancement unavailable', error); }\n"
+        },
+        {
+          "at": 1390656,
+          "current": "  // The shell reveals optional controls without replacing their original action handlers.\n  const gameMenu = $('#game-menu'), cityDirectory = $('#city-directory');\n  const wideNavigation = matchMedia('(min-width: 1001px)');\n  const syncDirectory = () => { cityDirectory.open = false; };\n  syncDirectory(); wideNavigation.addEventListener('change', syncDirectory);\n  function closeGameMenu(focus = false) {\n    if (!gameMenu.open) return;\n",
+          "baseline": "  // The shell reveals optional controls without replacing their original action handlers.\n  const gameMenu = $('#game-menu'), cityDirectory = $('#city-directory');\n  const wideNavigation = matchMedia('(min-width: 1001px)');\n  const syncDirectory = () => { cityDirectory.open = wideNavigation.matches; };\n  syncDirectory(); wideNavigation.addEventListener('change', syncDirectory);\n  function closeGameMenu(focus = false) {\n    if (!gameMenu.open) return;\n"
         }
       ]
     },
@@ -192,6 +289,32 @@ export const AGE_REMOVAL_SOURCE = freeze({
           "at": 9503,
           "current": "      try {\n        let token = document.querySelector('#account-token').value.trim();\n        const provider = document.querySelector('#token-kind').value;\n        if (provider !== 'omerta') token = (await request('/v1/auth/' + provider, { token })).token;\n        await request('/v1/access/session', {}, token); await enter(token);\n      }\n      catch (error) { message(error.message, true); }\n",
           "baseline": "      try {\n        let token = document.querySelector('#account-token').value.trim();\n        const provider = document.querySelector('#token-kind').value;\n        if (provider !== 'omerta') { await verifyAge(); token = (await request('/v1/auth/' + provider, { token })).token; }\n        await request('/v1/access/session', {}, token); await enter(token);\n      }\n      catch (error) { message(error.message, true); }\n"
+        }
+      ]
+    },
+    "public/sw.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "ce01893c73ab21a7f2186e0325246aa99993d916",
+        "sha256": "d1cf7d3bc7ed9433aaa27652d9a29327e6d26ce4aa646ebffe989150def25427",
+        "bytes": 4886
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "ebbe1d4dd9559ec29cce926863395d4901d146f5",
+        "sha256": "eb6cacd1a4de75600ee019a8c5f7ed7f7ae42a4d8abddae604104cbd611b504b",
+        "bytes": 4595
+      },
+      "inverses": [
+        {
+          "at": 365,
+          "current": "   (you always get the latest client online; cached pages are only offline fallbacks). The shared stylesheet\n   also follows the network so installed players receive visual fixes. Icons and art are cache-first.\n   The API (/v1/*, the websocket) is NEVER cached. */\nconst CACHE = 'omerta-shell-v8';\n// Never precache the private console: cache.addAll ignores its no-store response header.\nconst SHELL = ['/omerta-ui.css', '/noir-ui.css', '/noir-landing.css', '/noir-shell.js', '/strategy-command.css', '/strategy-command.js', '/manifest.json', '/icon-192.png', '/icon-512.png', '/apple-touch-icon.png'];\nconst cacheable = (res) => res && res.status === 200 && !res.redirected\n  && (res.type === 'basic' || res.type === 'default')\n  && !/(?:^|,)\\s*(?:no-store|private)(?:\\s|,|=|$)/i.test(res.headers.get('cache-control') || '');\n",
+          "baseline": "   (you always get the latest client online; cached pages are only offline fallbacks). The shared stylesheet\n   also follows the network so installed players receive visual fixes. Icons and art are cache-first.\n   The API (/v1/*, the websocket) is NEVER cached. */\nconst CACHE = 'omerta-shell-v7';\n// Never precache the private console: cache.addAll ignores its no-store response header.\nconst SHELL = ['/omerta-ui.css', '/manifest.json', '/icon-192.png', '/icon-512.png', '/apple-touch-icon.png'];\nconst cacheable = (res) => res && res.status === 200 && !res.redirected\n  && (res.type === 'basic' || res.type === 'default')\n  && !/(?:^|,)\\s*(?:no-store|private)(?:\\s|,|=|$)/i.test(res.headers.get('cache-control') || '');\n"
+        },
+        {
+          "at": 2150,
+          "current": "\n  const isNav = req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html');\n  if (isNav || url.pathname === '/omerta-ui.css'\n    || /^\\/noir-(?:ui|landing|shell)\\.(?:js|css)$/.test(url.pathname)\n    || /^\\/strategy-command\\.(?:js|css)$/.test(url.pathname) || url.pathname === '/vendor/strategy-city-renderer.js'\n    || /^\\/ux-(?:feedback|progression|social|navigation|workspace|world|tactics|investigation|coordination|feel|tools|identity|story|community)\\.(?:js|css)$/.test(url.pathname)\n    || ['/player-experience.js', '/city-scene.js', '/city-scene.css', '/world-fieldwork.js', '/world-fieldwork.css', '/vendor/phaser.js'].includes(url.pathname)) {\n    // NETWORK-FIRST: a Codex visit belongs to its own URL, never the root game's offline slot.\n",
+          "baseline": "\n  const isNav = req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html');\n  if (isNav || url.pathname === '/omerta-ui.css'\n    || /^\\/ux-(?:feedback|progression|social|navigation|workspace|world|tactics|investigation|coordination|feel|tools|identity|story|community)\\.(?:js|css)$/.test(url.pathname)\n    || ['/player-experience.js', '/city-scene.js', '/city-scene.css', '/world-fieldwork.js', '/world-fieldwork.css', '/vendor/phaser.js'].includes(url.pathname)) {\n    // NETWORK-FIRST: a Codex visit belongs to its own URL, never the root game's offline slot.\n"
         }
       ]
     },
@@ -262,6 +385,27 @@ export const AGE_REMOVAL_SOURCE = freeze({
         }
       ]
     },
+    "src/client-shell.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "5f093004fa2a0431bb019f593abbcbf10944aa42",
+        "sha256": "561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4",
+        "bytes": 4509
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "0248b3685944b46a23cdefedf39321acc7b0b47e",
+        "sha256": "48e9ffc844ae08867e0923743dd94d3fcb859d00cdacdf433f82a7323184817c",
+        "bytes": 4458
+      },
+      "inverses": [
+        {
+          "at": 756,
+          "current": "  const revision = version(html);\n  const scripts = [...html.matchAll(/<script src=\"([^\"]+)\"[^>]*><\\/script>/g)].map(match => match[1]);\n  const styles = [...html.matchAll(/<link rel=\"stylesheet\" href=\"([^\"]+)\"[^>]*>/g)]\n    .map(match => match[1]).filter(url => !['/omerta-ui.css', '/noir-ui.css', '/noir-landing.css'].includes(url.split('?')[0]));\n  if (!scripts.length || [...scripts, ...styles].some(url => !/^\\/[a-z0-9][a-z0-9_./?=&-]*$/i.test(url) || url.split(/[/?]/).includes('..')))\n    throw new Error('Game dependencies must remain explicit local assets.');\n  const languageStart = runtime.indexOf('  const I18N = {');\n",
+          "baseline": "  const revision = version(html);\n  const scripts = [...html.matchAll(/<script src=\"([^\"]+)\"[^>]*><\\/script>/g)].map(match => match[1]);\n  const styles = [...html.matchAll(/<link rel=\"stylesheet\" href=\"([^\"]+)\"[^>]*>/g)]\n    .map(match => match[1]).filter(url => !url.startsWith('/omerta-ui.css'));\n  if (!scripts.length || [...scripts, ...styles].some(url => !/^\\/[a-z0-9][a-z0-9_./?=&-]*$/i.test(url) || url.split(/[/?]/).includes('..')))\n    throw new Error('Game dependencies must remain explicit local assets.');\n  const languageStart = runtime.indexOf('  const I18N = {');\n"
+        }
+      ]
+    },
     "src/legal.js": {
       "current": {
         "mode": "100644",
@@ -291,9 +435,9 @@ export const AGE_REMOVAL_SOURCE = freeze({
     "src/server.js": {
       "current": {
         "mode": "100644",
-        "blob": "b0b56b02ca70ecb6a786e1aaa047a026e3fe1201",
-        "sha256": "a1b592caef89da5800f6f62d68b27e000de4c5fbe5fc44846c8a264b44e0eed4",
-        "bytes": 310774
+        "blob": "61e0b3528c278dda73efb796ff754756ed5256d9",
+        "sha256": "ed760c9f8ba6337491c9758745edf82db5b80a17a8a18d2a09e84c56197bacc6",
+        "bytes": 311174
       },
       "baseline": {
         "mode": "100644",
@@ -308,22 +452,27 @@ export const AGE_REMOVAL_SOURCE = freeze({
           "baseline": "import crypto from 'node:crypto';\nimport { rescueQuote } from './rescue-quote.js';\nimport { clientIpContextForRequest } from './client-ip.js';\nimport { MINIMUM_AGE, eligibleBirthDate, ageCookie, ageStatus, requireAge } from './age.js';\nimport zlib from 'node:zlib';\nimport { makeDb } from './db.js';\nimport { createCityActivityRegistry, readCityActivityActor, cityOwnerActivityCategory } from './city-activity.js';\n"
         },
         {
-          "at": 112441,
+          "at": 47917,
+          "current": "    .header('cache-control', 'no-cache').send(uiCss));\n  // City scenes are optional local assets; gameplay remains authoritative through the API.\n  for (const [file, type] of [\n    ['noir-ui.css', 'text/css'], ['noir-landing.css', 'text/css'], ['noir-shell.js', 'application/javascript'],\n    ['strategy-command.css', 'text/css'], ['strategy-command.js', 'application/javascript'],\n    ['vendor/strategy-city-renderer.js', 'application/javascript'], ['vendor/strategy-city-renderer.js.LEGAL.txt', 'text/plain'],\n    ['vendor/strategy-city-renderer.LICENSE.txt', 'text/plain'],\n    ['site-analytics.js', 'application/javascript'],\n    ['city-scene.js', 'application/javascript'], ['city-scene.css', 'text/css'], ['city-world-layout.js', 'application/javascript'],\n    ['city-world-ui.js', 'application/javascript'], ['city-world-ui.css', 'text/css'],\n",
+          "baseline": "    .header('cache-control', 'no-cache').send(uiCss));\n  // City scenes are optional local assets; gameplay remains authoritative through the API.\n  for (const [file, type] of [\n    ['site-analytics.js', 'application/javascript'],\n    ['city-scene.js', 'application/javascript'], ['city-scene.css', 'text/css'], ['city-world-layout.js', 'application/javascript'],\n    ['city-world-ui.js', 'application/javascript'], ['city-world-ui.css', 'text/css'],\n"
+        },
+        {
+          "at": 112841,
           "current": "    return { ok: true };\n  });\n\n  const guestLogin = async (req) => {\n    if (req.body && typeof req.body === 'object' && !Array.isArray(req.body) &&\n        Object.prototype.hasOwnProperty.call(req.body, 'bootstrapSecret')) {\n      const { accountId, tokenVersion } = await A.accountForGuestBootstrap(\n        pool, req.body.bootstrapSecret, req.clientIp, req.body.inviteCode,\n        req.clientIpAuthority,\n      );\n      return { token: await signFor(accountId, {}, '30d', tokenVersion) };\n    }\n    const id = await A.createGuestAccount(pool, req.clientIp, req.body?.inviteCode, req.clientIpAuthority);\n    return { token: await signFor(id, {}, '30d', 0) };\n  };\n  app.post('/v1/auth/guest', guestLogin);\n  app.post('/v1/auth/agent', async (req) => {\n    const { accountId, tokenVersion } = await A.accountForAgentBootstrap(\n      pool, req.body?.bootstrapSecret, req.clientIp, req.body?.inviteCode, req.clientIpAuthority,\n    );\n",
           "baseline": "    return { ok: true };\n  });\n\n  app.post('/v1/age-check', async (req, reply) => {\n    reply.header('Cache-Control', 'no-store');\n    const eligible = ageStatus(app, req) === false ? false : eligibleBirthDate(req.body?.birthDate);\n    const cookie = app.jwt.sign({ purpose: 'age-check', minimumAge: MINIMUM_AGE, eligible }, { expiresIn: '15m' });\n    reply.header('Set-Cookie', ageCookie(cookie));\n    if (!eligible) return reply.code(403).send({ error: 'age_ineligible', message: 'Account creation is unavailable. See /privacy for help.' });\n    return { ok: true };\n  });\n  const guestLogin = async (req) => {\n    // Recovery authority does not override a known-ineligible browser or an\n    // explicitly supplied birth date. Existing eligible recovery needs no DOB.\n    if (ageStatus(app, req) === false || req.body?.birthDate !== undefined) requireAge(app, req);\n    if (req.body && typeof req.body === 'object' && !Array.isArray(req.body) &&\n        Object.prototype.hasOwnProperty.call(req.body, 'bootstrapSecret')) {\n      const { accountId, tokenVersion } = await A.accountForGuestBootstrap(\n        pool, req.body.bootstrapSecret, req.clientIp, req.body.inviteCode, () => requireAge(app, req),\n        req.clientIpAuthority,\n      );\n      return { token: await signFor(accountId, {}, '30d', tokenVersion) };\n    }\n    requireAge(app, req);\n    const id = await A.createGuestAccount(pool, req.clientIp, req.body?.inviteCode, req.clientIpAuthority);\n    return { token: await signFor(id, {}, '30d', 0) };\n  };\n  app.post('/v1/auth/guest', guestLogin);\n  app.post('/v1/auth/agent', async (req) => {\n    requireAge(app, req, { agent: true });\n    const { accountId, tokenVersion } = await A.accountForAgentBootstrap(\n      pool, req.body?.bootstrapSecret, req.clientIp, req.body?.inviteCode, req.clientIpAuthority,\n    );\n"
         },
         {
-          "at": 114889,
+          "at": 115289,
           "current": "  app.post('/v1/auth/guest/bootstrap/ack', { preHandler: auth }, async (req) =>\n    A.acknowledgeGuestBootstrap(pool, req.user.sub));\n  const providerLogin = (verify) => async (req) => {\n    const identity = await verify(req.body?.token);\n    // (B2) the invite is consumed ATOMICALLY inside accountForIdentity's create txn — one invite per\n    // new account, gate held even under a concurrent same-identity race (no separate pre-consume).\n",
           "baseline": "  app.post('/v1/auth/guest/bootstrap/ack', { preHandler: auth }, async (req) =>\n    A.acknowledgeGuestBootstrap(pool, req.user.sub));\n  const providerLogin = (verify) => async (req) => {\n    requireAge(app, req);\n    const identity = await verify(req.body?.token);\n    // (B2) the invite is consumed ATOMICALLY inside accountForIdentity's create txn — one invite per\n    // new account, gate held even under a concurrent same-identity race (no separate pre-consume).\n"
         },
         {
-          "at": 118108,
+          "at": 118508,
           "current": "      const revoked = req.user.tv !== undefined && Number(req.user.tv) !== Number(a?.token_version);\n      if (!a || a.status === 'banned' || revoked) accountId = null;\n    }\n    const { url, state } = await A.xOAuthStart(pool, { accountId, invite: req.body?.inviteCode });\n    // BROWSER-BIND the state (anti account-linking CSRF): the callback must present the same cookie,\n    // so an attacker who leaks their authorize URL can't have a victim's X identity bound to the\n",
           "baseline": "      const revoked = req.user.tv !== undefined && Number(req.user.tv) !== Number(a?.token_version);\n      if (!a || a.status === 'banned' || revoked) accountId = null;\n    }\n    if (!accountId) requireAge(app, req);\n    const { url, state } = await A.xOAuthStart(pool, { accountId, invite: req.body?.inviteCode });\n    // BROWSER-BIND the state (anti account-linking CSRF): the callback must present the same cookie,\n    // so an attacker who leaks their authorize URL can't have a victim's X identity bound to the\n"
         },
         {
-          "at": 119717,
+          "at": 120117,
           "current": "        return reply.redirect('/#claimed=x');\n      }\n      // (B2) invite consumed atomically inside accountForIdentity's create txn — gate held under races\n      const { accountId } = await A.accountForIdentity(\n        pool, r.identity, req.clientIp, r.invite, req.clientIpAuthority,\n      );\n",
           "baseline": "        return reply.redirect('/#claimed=x');\n      }\n      // (B2) invite consumed atomically inside accountForIdentity's create txn — gate held under races\n      requireAge(app, req);\n      const { accountId } = await A.accountForIdentity(\n        pool, r.identity, req.clientIp, r.invite, req.clientIpAuthority,\n      );\n"
         }
@@ -614,6 +763,32 @@ export const AGE_REMOVAL_SOURCE = freeze({
         }
       ]
     },
+    "test/lib/city-afterword-browser.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "b4967b7b24a77e1f4a94ac04b0f61c6ee1b1daee",
+        "sha256": "f55b3b18a60815b91b7fd7a635e157636812d15a214ad9f87edb9370a5742c1f",
+        "bytes": 6132
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "70b6c9c3612738d9441586f067e2c59e46d0238d",
+        "sha256": "6a8e0fed01c44d65a56266ae9fe221b66b9cd2859326c0dff6190caa94b53d09",
+        "bytes": 6035
+      },
+      "inverses": [
+        {
+          "at": 134,
+          "current": "import fs from 'node:fs';\nimport { chromium } from 'playwright-core';\nimport { cityAfterwordFixture, afterwordGraph as graph, mysteryRoot } from './city-afterword-fixture.js';\nimport { revealOptional } from './ux-disclosure-browser.js';\n\nexport async function runCityAfterwordBrowserProof() {\n  const executablePath = [process.env.CHROMIUM_PATH, chromium.executablePath(),\n",
+          "baseline": "import fs from 'node:fs';\nimport { chromium } from 'playwright-core';\nimport { cityAfterwordFixture, afterwordGraph as graph, mysteryRoot } from './city-afterword-fixture.js';\n\nexport async function runCityAfterwordBrowserProof() {\n  const executablePath = [process.env.CHROMIUM_PATH, chromium.executablePath(),\n"
+        },
+        {
+          "at": 4798,
+          "current": "      assert.equal((await board(owner)).status, 'completed');\n      await detail.getByRole('heading', { name: 'Case closed', exact: true }).waitFor();\n      const ending = page.locator('[data-ux-story=\"case\"] [data-story-section^=\"epilogue:\"]');\n      await revealOptional(ending);\n      await ending.waitFor();\n      if (!await ending.evaluate(element => element.open)) await ending.locator(':scope > summary').click();\n      assert.match(await ending.innerText(), branch === 'live' ? /The neighborhood knows whom to call/ : /The archive remembers another name/);\n",
+          "baseline": "      assert.equal((await board(owner)).status, 'completed');\n      await detail.getByRole('heading', { name: 'Case closed', exact: true }).waitFor();\n      const ending = page.locator('[data-ux-story=\"case\"] [data-story-section^=\"epilogue:\"]');\n      await ending.waitFor();\n      if (!await ending.evaluate(element => element.open)) await ending.locator(':scope > summary').click();\n      assert.match(await ending.innerText(), branch === 'live' ? /The neighborhood knows whom to call/ : /The archive remembers another name/);\n"
+        }
+      ]
+    },
     "test/lib/rc1-historical-source-fixture.js": {
       "current": {
         "mode": "100644",
@@ -668,6 +843,58 @@ export const AGE_REMOVAL_SOURCE = freeze({
           "at": 7048,
           "current": "  const rootSource = assertContractReleaseSourceDefinition();\n  const assertActualHeadInput = (file, raw, current, physical = current) => {\n    const original = pin.files.find(row => row.file === file); assert(original, 'Closed actual Afterword source subject');\n    assert.equal(typeof current, 'string'); assert.equal(typeof physical, 'string');\n    const actualIndex = git('ls-files', '--stage', '--', file).trim();\n    const actualStat = lstatSync(new URL('../../' + file, import.meta.url));\n    const historical = ageRemovalHistoricalRecord(file, { head: raw,\n      index: actualIndex, committed: Buffer.from(current), physical: Buffer.from(physical),\n      regular: actualStat.isFile(), symbolic: actualStat.isSymbolicLink() });\n    raw = historical.head; current = historical.committed.toString('utf8'); physical = historical.physical.toString('utf8');\n    const desk = rootSource.status === 'BOUND' && Object.hasOwn(rootSource.sourceViews, file)\n      && Object.hasOwn(rootSource.sourceViews[file].targets, 'desk') ? rootSource.sourceViews[file] : null;\n    const domain = Object.hasOwn(BUSINESS_DESK_DOMAINS, file) ? BUSINESS_DESK_DOMAINS[file] : original;\n",
           "baseline": "  const rootSource = assertContractReleaseSourceDefinition();\n  const assertActualHeadInput = (file, raw, current, physical = current) => {\n    const original = pin.files.find(row => row.file === file); assert(original, 'Closed actual Afterword source subject');\n    const desk = rootSource.status === 'BOUND' && Object.hasOwn(rootSource.sourceViews, file)\n      && Object.hasOwn(rootSource.sourceViews[file].targets, 'desk') ? rootSource.sourceViews[file] : null;\n    const domain = Object.hasOwn(BUSINESS_DESK_DOMAINS, file) ? BUSINESS_DESK_DOMAINS[file] : original;\n"
+        }
+      ]
+    },
+    "test/lib/ux-opening-live-browser.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "0f2c29f2c9c397626be67407b4f66abdfb7a4489",
+        "sha256": "0397b2dbc14d0158be3794041570d42b585fc0c18feaf9f824c0c79a97db78a8",
+        "bytes": 13189
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "2373227d64c3d200d5d01fdc4e1704ff030dea1d",
+        "sha256": "cadbff7891ae7c8a7e7f322066aa03ef8565a6262a8cb5b89f145a94cc32ce55",
+        "bytes": 13039
+      },
+      "inverses": [
+        {
+          "at": 213,
+          "current": "import path from 'node:path';\nimport { chromium } from 'playwright-core';\nimport { buildServer } from '../server-fixture.js';\nimport { revealOptional } from './ux-disclosure-browser.js';\n\nexport async function runOpeningLiveBrowserProof() {\n  assert(!process.env.DATABASE_URL, 'Opening journey proof requires disposable pg-mem.');\n",
+          "baseline": "import path from 'node:path';\nimport { chromium } from 'playwright-core';\nimport { buildServer } from '../server-fixture.js';\n\nexport async function runOpeningLiveBrowserProof() {\n  assert(!process.env.DATABASE_URL, 'Opening journey proof requires disposable pg-mem.');\n"
+        },
+        {
+          "at": 1832,
+          "current": "    await page.locator(`#jump-list [data-jump=\"${tab}\"]`).first().click();\n    await page.locator(`#tab-${tab}.on`).waitFor();\n  };\n  const openDetails = async locator => {\n    await revealOptional(locator);\n    if (!await locator.evaluate(node => node.open)) await locator.locator(':scope > summary').click();\n  };\n  const opening = (page, tab) => page.locator(`#tab-${tab} [data-ux-progression=\"opening\"] .ux-opening`);\n  const economy = async id => ({\n    cash: Number((await pool.query('SELECT cash FROM characters WHERE id=$1', [id])).rows[0].cash),\n",
+          "baseline": "    await page.locator(`#jump-list [data-jump=\"${tab}\"]`).first().click();\n    await page.locator(`#tab-${tab}.on`).waitFor();\n  };\n  const openDetails = async locator => { if (!await locator.evaluate(node => node.open)) await locator.locator(':scope > summary').click(); };\n  const opening = (page, tab) => page.locator(`#tab-${tab} [data-ux-progression=\"opening\"] .ux-opening`);\n  const economy = async id => ({\n    cash: Number((await pool.query('SELECT cash FROM characters WHERE id=$1', [id])).rows[0].cash),\n"
+        },
+        {
+          "at": 8291,
+          "current": "    assert.match(await opening(page, 'empire').locator('.ux-opening-complete').innerText(), /Journey complete/);\n    assert.deepEqual(mutations, ['/v1/crimes/pick', '/v1/assets/beater/buy']);\n    assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 2), 'The real opening journey fits a 390px phone.');\n    await openDetails(opening(page, 'empire'));\n    await opening(page, 'empire').scrollIntoViewIfNeeded();\n    await page.screenshot({ path: path.join(artifacts, 'opening-complete-mobile.png'), fullPage: false });\n    await opening(page, 'empire').screenshot({ path: path.join(artifacts, 'opening-complete-panel.png') });\n",
+          "baseline": "    assert.match(await opening(page, 'empire').locator('.ux-opening-complete').innerText(), /Journey complete/);\n    assert.deepEqual(mutations, ['/v1/crimes/pick', '/v1/assets/beater/buy']);\n    assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 2), 'The real opening journey fits a 390px phone.');\n    await opening(page, 'empire').scrollIntoViewIfNeeded();\n    await page.screenshot({ path: path.join(artifacts, 'opening-complete-mobile.png'), fullPage: false });\n    await opening(page, 'empire').screenshot({ path: path.join(artifacts, 'opening-complete-panel.png') });\n"
+        }
+      ]
+    },
+    "test/player-intel-browser.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "655d4ed46e5b0ef101a4a1b0e9d3ef7d09adca9e",
+        "sha256": "24073ba6a79a28c148e84df670592db28916ae90066f28e635d1326fb7385f72",
+        "bytes": 8820
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "9f31fb5fccd1dc1a0bf099e073fc8e46793e99a2",
+        "sha256": "d2afc0551a651f27bc00aad376c62ad08d1b62bb25a25802c6fe5bcb45d87077",
+        "bytes": 8557
+      },
+      "inverses": [
+        {
+          "at": 3713,
+          "current": "  return page;\n};\nconst wetWork = async (page) => {\n  const directory = page.locator('#city-directory');\n  if (!await directory.evaluate(node => node.open)) await directory.locator(':scope > summary').click();\n  await page.locator('#grouprail [data-group=\"blood\"]').click();\n  if (!await directory.evaluate(node => node.open)) await directory.locator(':scope > summary').click();\n  await page.locator('#tabs [data-tab=\"pvp\"]').click();\n  await page.locator('#tab-pvp h2').filter({ hasText: 'People you know' }).waitFor();\n};\n",
+          "baseline": "  return page;\n};\nconst wetWork = async (page) => {\n  await page.locator('#grouprail [data-group=\"blood\"]').click();\n  await page.locator('#tabs [data-tab=\"pvp\"]').click();\n  await page.locator('#tab-pvp h2').filter({ hasText: 'People you know' }).waitFor();\n};\n"
         }
       ]
     },
@@ -817,6 +1044,319 @@ export const AGE_REMOVAL_SOURCE = freeze({
         }
       ]
     },
+    "test/ux-community-browser.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "bc9285451b8c3ca9cb6e5a5a6136b41c6c4b2966",
+        "sha256": "47a9419a3e51afc8ea8dedbb132ce8a200a32b02d4be5e89e8812ce8f6ce6674",
+        "bytes": 29656
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "d94ad5b89ae6f7ebc6857a8e07289d0cf5d73a59",
+        "sha256": "b116725c5683eb044a1b51cc0d2cd33ac72fc656d197c19699e91a4470d91db7",
+        "bytes": 29507
+      },
+      "inverses": [
+        {
+          "at": 93,
+          "current": "import path from 'node:path';\nimport { chromium } from 'playwright-core';\nimport { buildServer } from './server-fixture.js';\nimport { revealOptional } from './lib/ux-disclosure-browser.js';\nimport { MENTOR } from '../src/rules.js';\n\nif (process.env.DATABASE_URL) throw new Error('Community browser checks require disposable pg-mem.');\n",
+          "baseline": "import path from 'node:path';\nimport { chromium } from 'playwright-core';\nimport { buildServer } from './server-fixture.js';\nimport { MENTOR } from '../src/rules.js';\n\nif (process.env.DATABASE_URL) throw new Error('Community browser checks require disposable pg-mem.');\n"
+        },
+        {
+          "at": 1172,
+          "current": "const create = async (name) => { const { token } = await api('POST', '/v1/auth/guest'); await api('POST', '/v1/character', token, { name }); return { token, ch: (await pool.query('SELECT * FROM characters WHERE name=$1', [name])).rows[0] }; };\nconst ready = (page) => page.waitForFunction(() => !document.querySelector('#operation-desk[aria-busy=true]'));\nconst openTab = async (page, tab) => { await page.locator('#btn-jump').click(); await page.locator('#jump-q').fill(tab); await page.locator(`#jump-list [data-jump=\"${tab}\"]`).click(); await page.locator(`#tab-${tab}.on`).waitFor(); };\nconst openForm = async (page, type, subject = '') => { const f = page.locator(`form[data-community-form=\"${type}\"][data-subject=\"${subject}\"]`); await revealOptional(f); for (const parent of await f.locator('xpath=ancestor::details').all()) if (!await parent.evaluate((n) => n.open)) await parent.locator(':scope > summary').click(); return f; };\nconst submit = async (page, type, values, subject = '', expected = 200) => {\n const f = await openForm(page, type, subject);\n for (const [name, value] of Object.entries(values)) {\n",
+          "baseline": "const create = async (name) => { const { token } = await api('POST', '/v1/auth/guest'); await api('POST', '/v1/character', token, { name }); return { token, ch: (await pool.query('SELECT * FROM characters WHERE name=$1', [name])).rows[0] }; };\nconst ready = (page) => page.waitForFunction(() => !document.querySelector('#operation-desk[aria-busy=true]'));\nconst openTab = async (page, tab) => { await page.locator('#btn-jump').click(); await page.locator('#jump-q').fill(tab); await page.locator(`#jump-list [data-jump=\"${tab}\"]`).click(); await page.locator(`#tab-${tab}.on`).waitFor(); };\nconst openForm = async (page, type, subject = '') => { const f = page.locator(`form[data-community-form=\"${type}\"][data-subject=\"${subject}\"]`); for (const parent of await f.locator('xpath=ancestor::details').all()) if (!await parent.evaluate((n) => n.open)) await parent.locator(':scope > summary').click(); return f; };\nconst submit = async (page, type, values, subject = '', expected = 200) => {\n const f = await openForm(page, type, subject);\n for (const [name, value] of Object.entries(values)) {\n"
+        },
+        {
+          "at": 6359,
+          "current": "  const page = await ctx.newPage(); page.on('pageerror', (e) => errors.push(e.message)); page.on('console', (m) => { if (m.type() === 'warning' && /UI .*unavailable/.test(m.text())) errors.push(m.text()); });\n  await page.goto(base, { waitUntil: 'domcontentloaded' }); await page.locator('#screen-main:not(.hidden)').waitFor();\n  await page.evaluate(() => document.querySelectorAll('.modal-bg:not(.hidden)').forEach((n) => n.classList.add('hidden')));\n  await openTab(page, 'crew'); await revealOptional(page.locator('#ux-community')); if (noCrew) await page.locator('#ux-community [data-community-empty]').waitFor(); else await page.locator('#crew-room').waitFor(); await page.locator('#ux-community h3').waitFor(); return page;\n };\n const newcomer = await create('Culture Newcomer'), newcomerPage = await authenticate(newcomer, true);\n const newcomerRead = newcomerPage.waitForResponse((r) => r.url().endsWith(route) && r.request().method() === 'GET'); await newcomerPage.locator('[data-community-refresh]').click();\n",
+          "baseline": "  const page = await ctx.newPage(); page.on('pageerror', (e) => errors.push(e.message)); page.on('console', (m) => { if (m.type() === 'warning' && /UI .*unavailable/.test(m.text())) errors.push(m.text()); });\n  await page.goto(base, { waitUntil: 'domcontentloaded' }); await page.locator('#screen-main:not(.hidden)').waitFor();\n  await page.evaluate(() => document.querySelectorAll('.modal-bg:not(.hidden)').forEach((n) => n.classList.add('hidden')));\n  await openTab(page, 'crew'); if (noCrew) await page.locator('#ux-community [data-community-empty]').waitFor(); else await page.locator('#crew-room').waitFor(); await page.locator('#ux-community h3').waitFor(); return page;\n };\n const newcomer = await create('Culture Newcomer'), newcomerPage = await authenticate(newcomer, true);\n const newcomerRead = newcomerPage.waitForResponse((r) => r.url().endsWith(route) && r.request().method() === 'GET'); await newcomerPage.locator('[data-community-refresh]').click();\n"
+        },
+        {
+          "at": 14395,
+          "current": " await page.waitForFunction(() => document.querySelector('form[data-community-form=manual] [name=body0]')?.value === 'A newer revision from the crew.');\n await page.locator('#ux-community details').filter({ has: page.locator(':scope > summary', { hasText: 'Crew map planning pins' }) }).first().locator(':scope > summary').click();\n await submit(page, 'pin', { title: 'Meet by the public canal', destinationId: 'canal', note: 'A crew planning destination, not a player sighting.', spoiler: false });\n await page.locator('[data-community-map]').click(); await revealOptional(page.locator('#ux-community-pins'));\n assert.match(await page.locator('#ux-community-pins').innerText(), /Meet by the public canal/);\n await page.setViewportSize({ width: 390, height: 844 });\n assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 2));\n",
+          "baseline": " await page.waitForFunction(() => document.querySelector('form[data-community-form=manual] [name=body0]')?.value === 'A newer revision from the crew.');\n await page.locator('#ux-community details').filter({ has: page.locator(':scope > summary', { hasText: 'Crew map planning pins' }) }).first().locator(':scope > summary').click();\n await submit(page, 'pin', { title: 'Meet by the public canal', destinationId: 'canal', note: 'A crew planning destination, not a player sighting.', spoiler: false });\n await page.locator('[data-community-map]').click(); await page.locator('#ux-community-pins').waitFor();\n assert.match(await page.locator('#ux-community-pins').innerText(), /Meet by the public canal/);\n await page.setViewportSize({ width: 390, height: 844 });\n assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 2));\n"
+        }
+      ]
+    },
+    "test/ux-coordination-browser.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "6ddae0f717a85e3cf4db8745d0e97a7e9617f4ee",
+        "sha256": "eb79dd4c1a991b63423a14a240ac89e44d3a2480b476519015130cb3f0e2e428",
+        "bytes": 23285
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "4cdf1530f4ef5dd7871358ee44c490f91ef4c167",
+        "sha256": "dcd38c02c1f5e558acd11d09bea95f52ab0da7ee335fcbd7c3a06013261122d0",
+        "bytes": 23164
+      },
+      "inverses": [
+        {
+          "at": 93,
+          "current": "import path from 'node:path';\nimport { chromium } from 'playwright-core';\nimport { buildServer } from './server-fixture.js';\nimport { revealOptional } from './lib/ux-disclosure-browser.js';\n\nif (process.env.DATABASE_URL) throw new Error('Crew planning browser tests require disposable pg-mem.');\nconst executablePath = process.env.CHROMIUM_PATH || ['C:/Program Files/Google/Chrome/Application/chrome.exe', 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe', '/usr/bin/chromium', '/usr/bin/google-chrome'].find((p) => fs.existsSync(p));\n",
+          "baseline": "import path from 'node:path';\nimport { chromium } from 'playwright-core';\nimport { buildServer } from './server-fixture.js';\n\nif (process.env.DATABASE_URL) throw new Error('Crew planning browser tests require disposable pg-mem.');\nconst executablePath = process.env.CHROMIUM_PATH || ['C:/Program Files/Google/Chrome/Application/chrome.exe', 'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe', '/usr/bin/chromium', '/usr/bin/google-chrome'].find((p) => fs.existsSync(p));\n"
+        },
+        {
+          "at": 1502,
+          "current": "  const refreshed = member ? page.waitForResponse((response) => new URL(response.url()).pathname === '/v1/crew/chat' && response.request().method() === 'GET') : null;\n  await page.locator('#btn-jump').click(); await page.locator('#jump-q').fill('crew'); await page.locator('#jump-list [data-jump=\"crew\"]').click();\n  if (refreshed) await (await refreshed).finished();\n  await page.locator(member ? '#crew-room' : '#crew-form').waitFor(); await revealOptional(page.locator('#ux-coordination')); await page.locator(member ? '#ux-coordination [data-coord-scope]' : '#ux-coordination [data-coord-join]').waitFor();\n};\nconst ready = (page) => page.waitForFunction(() => !document.querySelector('#operation-desk[aria-busy=true]'));\nconst submit = async (page, type, values) => {\n",
+          "baseline": "  const refreshed = member ? page.waitForResponse((response) => new URL(response.url()).pathname === '/v1/crew/chat' && response.request().method() === 'GET') : null;\n  await page.locator('#btn-jump').click(); await page.locator('#jump-q').fill('crew'); await page.locator('#jump-list [data-jump=\"crew\"]').click();\n  if (refreshed) await (await refreshed).finished();\n  await page.locator(member ? '#crew-room' : '#crew-form').waitFor(); await page.locator(member ? '#ux-coordination [data-coord-scope]' : '#ux-coordination [data-coord-join]').waitFor();\n};\nconst ready = (page) => page.waitForFunction(() => !document.querySelector('#operation-desk[aria-busy=true]'));\nconst submit = async (page, type, values) => {\n"
+        }
+      ]
+    },
+    "test/ux-expanded-browser.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "1ca17c4caea63daee8c1817113f6ae87c6062491",
+        "sha256": "41a2d2899fe5bae4bc5663407c7f542fb51535fb190ec60c9e0be987ed3c2040",
+        "bytes": 24004
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "8b2a02b7724aacad6c073a6828c17444a875be0e",
+        "sha256": "89b2f4eca2d592e2c11349e5e331ca3d394913cada5d84f7d88fa077a81a8540",
+        "bytes": 23367
+      },
+      "inverses": [
+        {
+          "at": 218,
+          "current": "import { randomUUID } from 'node:crypto';\nimport { chromium } from 'playwright-core';\nimport { buildServer } from './server-fixture.js';\nimport { revealOptional } from './lib/ux-disclosure-browser.js';\nimport { MEGAPROJECT } from '../src/rules.js';\nimport { recordEventResult } from '../src/events.js';\nassert(!process.env.DATABASE_URL, 'Expanded UX browser checks require disposable pg-mem.');\n",
+          "baseline": "import { randomUUID } from 'node:crypto';\nimport { chromium } from 'playwright-core';\nimport { buildServer } from './server-fixture.js';\nimport { MEGAPROJECT } from '../src/rules.js';\nimport { recordEventResult } from '../src/events.js';\nassert(!process.env.DATABASE_URL, 'Expanded UX browser checks require disposable pg-mem.');\n"
+        },
+        {
+          "at": 8816,
+          "current": "\n  await jump(page, 'fieldwork'); await page.locator('.world-fieldwork').waitFor();\n  await page.locator('[data-fieldwork-view=\"mysteries\"]').click();\n  await revealOptional(page.locator('.investigation-reading-desk'));\n  await page.locator('.investigation-workspace').waitFor(); await page.locator('.investigation-speaker').first().waitFor();\n  await page.getByLabel('Pin a found clue', { exact: true }).selectOption('evidence:neighborhood-timing');\n  await page.locator('.investigation-pin').waitFor();\n",
+          "baseline": "\n  await jump(page, 'fieldwork'); await page.locator('.world-fieldwork').waitFor();\n  await page.locator('[data-fieldwork-view=\"mysteries\"]').click();\n  await page.locator('.investigation-workspace').waitFor(); await page.locator('.investigation-speaker').first().waitFor();\n  await page.getByLabel('Pin a found clue', { exact: true }).selectOption('evidence:neighborhood-timing');\n  await page.locator('.investigation-pin').waitFor();\n"
+        },
+        {
+          "at": 9637,
+          "current": "  await page.locator('dialog.investigation-inspector').getByRole('button', { name: 'Close inspection', exact: true }).click();\n  assert.deepEqual(gameWrites, [], 'opening and arranging the private case does not execute a game action');\n\n  await jump(page, 'crew'); await revealOptional(page.locator('#ux-coordination')); await page.locator('#ux-coordination [data-coord-scope]').waitFor();\n  assert.match(await page.locator('#ux-coordination').innerText(), /Expanded Planning Crew/);\n  const planForm = page.locator('#ux-coordination form[data-coord-form=\"plan\"]'); await disclosure(planForm.locator('..'));\n  await planForm.locator('[name=\"title\"]').fill('Expanded integration plan'); await planForm.locator('[name=\"nextStep\"]').fill('Review the journal together.');\n",
+          "baseline": "  await page.locator('dialog.investigation-inspector').getByRole('button', { name: 'Close inspection', exact: true }).click();\n  assert.deepEqual(gameWrites, [], 'opening and arranging the private case does not execute a game action');\n\n  await jump(page, 'crew'); await page.locator('#ux-coordination [data-coord-scope]').waitFor();\n  assert.match(await page.locator('#ux-coordination').innerText(), /Expanded Planning Crew/);\n  const planForm = page.locator('#ux-coordination form[data-coord-form=\"plan\"]'); await disclosure(planForm.locator('..'));\n  await planForm.locator('[name=\"title\"]').fill('Expanded integration plan'); await planForm.locator('[name=\"nextStep\"]').fill('Review the journal together.');\n"
+        },
+        {
+          "at": 10756,
+          "current": "  assert.equal((await api('GET', '/v1/ux/crew-workspace', mate.token)).notes.some(note => note.data.title === 'Expanded integration plan'), true, 'the actual teammate sees the saved planning note');\n\n  await jump(page, 'start'); await page.locator('#tab-start .ux-world-panel').waitFor();\n  await jump(page, 'city'); await revealOptional(page.locator('#tab-city .ux-world-panel')); await page.locator('#tab-city .ux-turf-sign').filter({ hasText: 'EXPD' }).waitFor();\n  const liveMap = await api('GET', '/v1/map', player.token), docks = liveMap.districts.find(district => district.id === 'docks');\n  assert.equal(docks.holder.tag, 'EXPD');\n  assert.match(await page.locator('#tab-city .ux-district-scene').filter({ hasText: 'Turf held by EXPD' }).innerText(), /EXPD/);\n",
+          "baseline": "  assert.equal((await api('GET', '/v1/ux/crew-workspace', mate.token)).notes.some(note => note.data.title === 'Expanded integration plan'), true, 'the actual teammate sees the saved planning note');\n\n  await jump(page, 'start'); await page.locator('#tab-start .ux-world-panel').waitFor();\n  await jump(page, 'city'); await page.locator('#tab-city .ux-turf-sign').filter({ hasText: 'EXPD' }).waitFor();\n  const liveMap = await api('GET', '/v1/map', player.token), docks = liveMap.districts.find(district => district.id === 'docks');\n  assert.equal(docks.holder.tag, 'EXPD');\n  assert.match(await page.locator('#tab-city .ux-district-scene').filter({ hasText: 'Turf held by EXPD' }).innerText(), /EXPD/);\n"
+        },
+        {
+          "at": 12483,
+          "current": "  await headline.locator('[data-world-go=\"boxing\"]').click(); await page.locator('#tab-boxing.on').waitFor();\n\n  await jump(page, 'life'); await page.locator('#tab-life [data-uwgift=\"doc\"]').waitFor();\n  await revealOptional(page.locator('#tab-life .ux-world-panel'));\n  const oldStanding = (await api('GET', '/v1/underworld', player.token)).npcs.find(npc => npc.id === 'doc').standing;\n  const giftResponse = page.waitForResponse(reply => reply.url().endsWith('/v1/underworld/doc/gift') && reply.request().method() === 'POST');\n  const giftBoardSettled = page.waitForResponse(reply => reply.url().endsWith('/v1/season/recap') && reply.status() === 200);\n",
+          "baseline": "  await headline.locator('[data-world-go=\"boxing\"]').click(); await page.locator('#tab-boxing.on').waitFor();\n\n  await jump(page, 'life'); await page.locator('#tab-life [data-uwgift=\"doc\"]').waitFor();\n  const oldStanding = (await api('GET', '/v1/underworld', player.token)).npcs.find(npc => npc.id === 'doc').standing;\n  const giftResponse = page.waitForResponse(reply => reply.url().endsWith('/v1/underworld/doc/gift') && reply.request().method() === 'POST');\n  const giftBoardSettled = page.waitForResponse(reply => reply.url().endsWith('/v1/season/recap') && reply.status() === 200);\n"
+        },
+        {
+          "at": 15703,
+          "current": "  }, comfortableSize);\n  const largeSize = await largeFont.jsonValue(); await largeFont.dispose();\n  assert.ok(largeSize > comfortableSize, 'large reading mode changes visible typography');\n  await disclosure(page.locator('#city-directory'));\n  await page.locator('[data-ux-focus]').click(); assert.equal(await page.locator('#leftcol').isVisible(), false, 'focus mode visibly removes the side column');\n  assert.match(await page.locator('#ux-focus-vitals').innerText(), /Health.*nerve/);\n  await page.locator('[data-ux-focus]').click(); assert.equal(await page.locator('#leftcol').isVisible(), true);\n",
+          "baseline": "  }, comfortableSize);\n  const largeSize = await largeFont.jsonValue(); await largeFont.dispose();\n  assert.ok(largeSize > comfortableSize, 'large reading mode changes visible typography');\n  await page.locator('[data-ux-focus]').click(); assert.equal(await page.locator('#leftcol').isVisible(), false, 'focus mode visibly removes the side column');\n  assert.match(await page.locator('#ux-focus-vitals').innerText(), /Health.*nerve/);\n  await page.locator('[data-ux-focus]').click(); assert.equal(await page.locator('#leftcol').isVisible(), true);\n"
+        },
+        {
+          "at": 17089,
+          "current": "  assert.notEqual(await page.evaluate(() => [...originalWorldParent.children].indexOf(originalWorldPanel)), await page.evaluate(() => worldIndex), 'keyboard Up visibly changes panel order');\n  await page.evaluate(() => { window.originalTacticsPanel = document.querySelector('#tab-life > [data-ux-tactics]'); window.originalGiftControl = document.querySelector('#tab-life [data-uwgift=\"doc\"]'); });\n  const orderOfPanels = () => page.evaluate(() => [...document.querySelector('#tab-life').children].filter(node => node.dataset.uxPanel).map(node => node.dataset.uxPanel));\n  await disclosure(page.locator('#tab-life > [data-ux-tactics]'));\n  const beforeDrag = await orderOfPanels();\n  const dragHandle = page.locator('#tab-life > .ux-world-panel > .ux-panel-handle'), targetHandle = page.locator('#tab-life > [data-ux-tactics] > .ux-panel-handle');\n  await dragHandle.dragTo(targetHandle);\n",
+          "baseline": "  assert.notEqual(await page.evaluate(() => [...originalWorldParent.children].indexOf(originalWorldPanel)), await page.evaluate(() => worldIndex), 'keyboard Up visibly changes panel order');\n  await page.evaluate(() => { window.originalTacticsPanel = document.querySelector('#tab-life > [data-ux-tactics]'); window.originalGiftControl = document.querySelector('#tab-life [data-uwgift=\"doc\"]'); });\n  const orderOfPanels = () => page.evaluate(() => [...document.querySelector('#tab-life').children].filter(node => node.dataset.uxPanel).map(node => node.dataset.uxPanel));\n  const beforeDrag = await orderOfPanels();\n  const dragHandle = page.locator('#tab-life > .ux-world-panel > .ux-panel-handle'), targetHandle = page.locator('#tab-life > [data-ux-tactics] > .ux-panel-handle');\n  await dragHandle.dragTo(targetHandle);\n"
+        },
+        {
+          "at": 21025,
+          "current": "    await fresh.screenshot({ path: path.join(artifacts, 'expanded-fresh-device-failure.png'), fullPage: false }); throw error;\n  }\n  assert.equal(await fresh.locator('select[data-ux-density]').inputValue(), 'large', 'the visible preference control matches the hydrated typography');\n  await jump(fresh, 'fieldwork'); await fresh.locator('[data-fieldwork-view=\"mysteries\"]').click(); await revealOptional(fresh.locator('.investigation-reading-desk')); await fresh.locator('.investigation-pin').waitFor();\n  assert.match(await fresh.locator('.investigation-pin').first().innerText(), /Stopped Workshop Clock/, 'private workspace pins hydrate on a fresh device');\n  const otherPage = await authenticate(other); assert.equal(await otherPage.locator('body').getAttribute('data-ux-density'), 'comfortable');\n  await jump(otherPage, 'crew'); await otherPage.locator('#tab-crew.on').waitFor();\n",
+          "baseline": "    await fresh.screenshot({ path: path.join(artifacts, 'expanded-fresh-device-failure.png'), fullPage: false }); throw error;\n  }\n  assert.equal(await fresh.locator('select[data-ux-density]').inputValue(), 'large', 'the visible preference control matches the hydrated typography');\n  await jump(fresh, 'fieldwork'); await fresh.locator('[data-fieldwork-view=\"mysteries\"]').click(); await fresh.locator('.investigation-pin').waitFor();\n  assert.match(await fresh.locator('.investigation-pin').first().innerText(), /Stopped Workshop Clock/, 'private workspace pins hydrate on a fresh device');\n  const otherPage = await authenticate(other); assert.equal(await otherPage.locator('body').getAttribute('data-ux-density'), 'comfortable');\n  await jump(otherPage, 'crew'); await otherPage.locator('#tab-crew.on').waitFor();\n"
+        },
+        {
+          "at": 22078,
+          "current": "  assert.equal((await api('GET', '/v1/ux/workspace', other.token)).values.investigation?.['neighborhood-initiation'], undefined, 'private deduction workspace is account-isolated');\n  const mobile = await authenticate(player, true); await mobile.waitForFunction(() => document.body.dataset.uxDensity === 'large');\n  assert.equal(await mobile.locator('select[data-ux-density]').inputValue(), 'large');\n  await jump(mobile, 'fieldwork'); await mobile.locator('[data-fieldwork-view=\"mysteries\"]').click(); await revealOptional(mobile.locator('.investigation-reading-desk')); await mobile.locator('.investigation-workspace').waitFor();\n  await noOverflow(mobile, 'mobile investigation'); await disclosure(mobile.locator('.investigation-scene')); await mobile.locator('.investigation-desk-object').first().click();\n  await mobile.locator('dialog.investigation-inspector[open]').waitFor(); await noOverflow(mobile, 'mobile document dialog');\n  await mobile.screenshot({ path: path.join(artifacts, 'expanded-investigation-mobile.png'), fullPage: false });\n  await mobile.locator('dialog.investigation-inspector').getByRole('button', { name: 'Close inspection', exact: true }).click();\n  await jump(mobile, 'crew'); await revealOptional(mobile.locator('#ux-coordination')); await mobile.locator('#ux-coordination [data-coord-scope]').waitFor(); await noOverflow(mobile, 'mobile crew coordination');\n  await mobile.locator('#ux-coordination').evaluate(node => node.scrollIntoView({ block: 'start' }));\n  await mobile.screenshot({ path: path.join(artifacts, 'expanded-coordination-mobile.png'), fullPage: false });\n  assert.deepEqual(faults, [], 'the actual page has no runtime errors or unavailable UX module warnings');\n",
+          "baseline": "  assert.equal((await api('GET', '/v1/ux/workspace', other.token)).values.investigation?.['neighborhood-initiation'], undefined, 'private deduction workspace is account-isolated');\n  const mobile = await authenticate(player, true); await mobile.waitForFunction(() => document.body.dataset.uxDensity === 'large');\n  assert.equal(await mobile.locator('select[data-ux-density]').inputValue(), 'large');\n  await jump(mobile, 'fieldwork'); await mobile.locator('[data-fieldwork-view=\"mysteries\"]').click(); await mobile.locator('.investigation-workspace').waitFor();\n  await noOverflow(mobile, 'mobile investigation'); await disclosure(mobile.locator('.investigation-scene')); await mobile.locator('.investigation-desk-object').first().click();\n  await mobile.locator('dialog.investigation-inspector[open]').waitFor(); await noOverflow(mobile, 'mobile document dialog');\n  await mobile.screenshot({ path: path.join(artifacts, 'expanded-investigation-mobile.png'), fullPage: false });\n  await mobile.locator('dialog.investigation-inspector').getByRole('button', { name: 'Close inspection', exact: true }).click();\n  await jump(mobile, 'crew'); await mobile.locator('#ux-coordination [data-coord-scope]').waitFor(); await noOverflow(mobile, 'mobile crew coordination');\n  await mobile.locator('#ux-coordination').evaluate(node => node.scrollIntoView({ block: 'start' }));\n  await mobile.screenshot({ path: path.join(artifacts, 'expanded-coordination-mobile.png'), fullPage: false });\n  assert.deepEqual(faults, [], 'the actual page has no runtime errors or unavailable UX module warnings');\n"
+        }
+      ]
+    },
+    "test/ux-experience-browser.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "9bbbb788912025a9ee869d2598f498633d7167ab",
+        "sha256": "c45f3029c5c0493a487aee925fb49c71b1b87fa5a4d48b7e7e3b4d140b67f884",
+        "bytes": 13205
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "2fe0ffd4e38a04ab6100f89fa0dd51e4faa94911",
+        "sha256": "b0d83eb587c4bed0f5e0d7b8d6c73657b3bec4ad37ceaa7555062798be6d0c5b",
+        "bytes": 12984
+      },
+      "inverses": [
+        {
+          "at": 163,
+          "current": "import path from 'node:path';\nimport { chromium } from 'playwright-core';\nimport { buildServer } from './server-fixture.js';\nimport { revealOptional } from './lib/ux-disclosure-browser.js';\nimport { masteryXpFor } from '../src/rules.js';\n\nif (process.env.DATABASE_URL) throw new Error('UX browser integration requires the disposable in-memory database.');\n",
+          "baseline": "import path from 'node:path';\nimport { chromium } from 'playwright-core';\nimport { buildServer } from './server-fixture.js';\nimport { masteryXpFor } from '../src/rules.js';\n\nif (process.env.DATABASE_URL) throw new Error('UX browser integration requires the disposable in-memory database.');\n"
+        },
+        {
+          "at": 5594,
+          "current": "  await page.locator('[data-ux-search]').waitFor();\n  assert.equal(await page.evaluate(() => ['createOmertaFeedback', 'createOmertaProgression', 'createOmertaSocial', 'createOmertaNavigation'].every((name) => typeof window[name] === 'function')), true);\n  await openTab(page, 'life');\n  await revealOptional(page.locator('#tab-life [data-ux-progression=\"life\"]'));\n  const goal = page.locator('#tab-life select[aria-label=\"Choose your next achievement\"]');\n  await goal.waitFor(); await goal.selectOption('trade:larceny');\n  await openDisclosure(page, '#city-directory');\n  await openDisclosure(page, '#character-sheet');\n  await page.locator('#sheet-body .ux-goal-card strong').filter({ hasText: 'Larceny' }).waitFor();\n  await openTab(page, 'streets');\n",
+          "baseline": "  await page.locator('[data-ux-search]').waitFor();\n  assert.equal(await page.evaluate(() => ['createOmertaFeedback', 'createOmertaProgression', 'createOmertaSocial', 'createOmertaNavigation'].every((name) => typeof window[name] === 'function')), true);\n  await openTab(page, 'life');\n  const goal = page.locator('#tab-life select[aria-label=\"Choose your next achievement\"]');\n  await goal.waitFor(); await goal.selectOption('trade:larceny');\n  await openDisclosure(page, '#character-sheet');\n  await page.locator('#sheet-body .ux-goal-card strong').filter({ hasText: 'Larceny' }).waitFor();\n  await openTab(page, 'streets');\n"
+        },
+        {
+          "at": 11324,
+          "current": "  });\n  const pocket = await pocketReady.jsonValue();\n  assert.equal(pocket.terms, 1); assert.equal(pocket.rows, 1); assert.equal(pocket.matchingTerms, 1, 'mobile reuses the original action and cost terms once');\n  assert.ok(pocket.bottom <= pocket.barTop + 2 && pocket.z < 20, `mobile action controls remain above bottom navigation and below dialogs: ${JSON.stringify(pocket)}`);\n  await noOverflow(page, 'mobile active operation');\n  await page.screenshot({ path: path.join(artifacts, 'ux-action-mobile.png'), fullPage: false });\n  // Change account in the same browser store: preferences keyed by account cannot carry over.\n",
+          "baseline": "  });\n  const pocket = await pocketReady.jsonValue();\n  assert.equal(pocket.terms, 1); assert.equal(pocket.rows, 1); assert.equal(pocket.matchingTerms, 1, 'mobile reuses the original action and cost terms once');\n  assert.ok(pocket.bottom <= pocket.barTop + 2 && pocket.z < 20, 'mobile action controls remain above bottom navigation and below dialogs');\n  await noOverflow(page, 'mobile active operation');\n  await page.screenshot({ path: path.join(artifacts, 'ux-action-mobile.png'), fullPage: false });\n  // Change account in the same browser store: preferences keyed by account cannot carry over.\n"
+        }
+      ]
+    },
+    "test/ux-personality-browser.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "7dd7bb0daa5a63b7f1526d46fecb9c2f3ef58b2a",
+        "sha256": "4cce1a78c1880457cd8fd05e22c5b7fa6696f8b4bfec9bf3f19072fff8a3e336",
+        "bytes": 24568
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "21c37d24456ec66e11e29586526004e4f491af04",
+        "sha256": "56b8971e26089ded94570a62923fe10d1ab824dceacd38e09fb555b027fb9850",
+        "bytes": 24266
+      },
+      "inverses": [
+        {
+          "at": 220,
+          "current": "import { randomUUID } from 'node:crypto';\nimport { chromium } from 'playwright-core';\nimport { buildServer } from './server-fixture.js';\nimport { revealOptional } from './lib/ux-disclosure-browser.js';\nimport { masteryXpFor } from '../src/rules.js';\nimport { grantStack, withItemTransaction } from '../src/items.js';\n\n",
+          "baseline": "import { randomUUID } from 'node:crypto';\nimport { chromium } from 'playwright-core';\nimport { buildServer } from './server-fixture.js';\nimport { masteryXpFor } from '../src/rules.js';\nimport { grantStack, withItemTransaction } from '../src/items.js';\n\n"
+        },
+        {
+          "at": 6930,
+          "current": "  page.on('request', request => { if (!request.url().startsWith(base + '/v1/')) return; const url = new URL(request.url()); if (request.method() === 'GET') reads.add(url.pathname); else if (url.pathname !== '/v1/ux/workspace') writes.push(url.pathname); });\n  assert.equal(await page.evaluate(() => ['Workspace', 'Feedback', 'Progression', 'Social', 'Navigation', 'Tactics', 'Investigation', 'Coordination', 'Feel', 'Tools', 'Identity', 'Story', 'Community', 'World'].every(name => typeof window['createOmerta' + name] === 'function')), true, 'all fourteen factories load on the actual page');\n\n  await jump(page, 'profile'); const identity = page.locator('#tab-profile .ux-identity'); await revealOptional(identity);\n  const office = identity.locator('[data-identity-section=\"office\"]'); await disclosure(office); await office.locator('[data-office-add]').selectOption('plant');\n  await office.locator('[data-office-position=\"plant\"]').selectOption('0'); assert.equal(await office.locator('.ux-office-prop').first().getAttribute('data-office-prop'), 'plant');\n  const wardrobe = identity.locator('[data-identity-section=\"wardrobe\"]'); await disclosure(wardrobe); await wardrobe.locator('[data-identity-setting=\"coat\"]').selectOption('wine');\n",
+          "baseline": "  page.on('request', request => { if (!request.url().startsWith(base + '/v1/')) return; const url = new URL(request.url()); if (request.method() === 'GET') reads.add(url.pathname); else if (url.pathname !== '/v1/ux/workspace') writes.push(url.pathname); });\n  assert.equal(await page.evaluate(() => ['Workspace', 'Feedback', 'Progression', 'Social', 'Navigation', 'Tactics', 'Investigation', 'Coordination', 'Feel', 'Tools', 'Identity', 'Story', 'Community', 'World'].every(name => typeof window['createOmerta' + name] === 'function')), true, 'all fourteen factories load on the actual page');\n\n  await jump(page, 'profile'); const identity = page.locator('#tab-profile .ux-identity'); await identity.waitFor();\n  const office = identity.locator('[data-identity-section=\"office\"]'); await disclosure(office); await office.locator('[data-office-add]').selectOption('plant');\n  await office.locator('[data-office-position=\"plant\"]').selectOption('0'); assert.equal(await office.locator('.ux-office-prop').first().getAttribute('data-office-prop'), 'plant');\n  const wardrobe = identity.locator('[data-identity-section=\"wardrobe\"]'); await disclosure(wardrobe); await wardrobe.locator('[data-identity-setting=\"coat\"]').selectOption('wine');\n"
+        },
+        {
+          "at": 14037,
+          "current": "  await eventuallySaved(alice, values => values.tools?.builds?.some(build => build.name === 'The Patient Reader') && values.tools?.tray?.length);\n\n  await jump(page, 'fieldwork'); await page.locator('[data-fieldwork-view=\"mysteries\"]').click(); await page.locator('[data-fieldwork-mystery=\"property-investigation\"]').click();\n  const story = page.locator('[data-ux-story=\"case\"]'); await revealOptional(story); await story.locator('.story-cold-open').waitFor();\n  assert.equal(await story.locator('[data-story-section^=\"epilogue:\"]').count(), 0, 'active case has no invented ending');\n  await disclosure(story.locator('[data-story-section=\"documents\"]'));\n  assert.equal(await story.locator('[data-story-transcript]').count(), 2, 'active case exposes exactly its two already revealed documents');\n",
+          "baseline": "  await eventuallySaved(alice, values => values.tools?.builds?.some(build => build.name === 'The Patient Reader') && values.tools?.tray?.length);\n\n  await jump(page, 'fieldwork'); await page.locator('[data-fieldwork-view=\"mysteries\"]').click(); await page.locator('[data-fieldwork-mystery=\"property-investigation\"]').click();\n  const story = page.locator('[data-ux-story=\"case\"]'); await story.locator('.story-cold-open').waitFor();\n  assert.equal(await story.locator('[data-story-section^=\"epilogue:\"]').count(), 0, 'active case has no invented ending');\n  await disclosure(story.locator('[data-story-section=\"documents\"]'));\n  assert.equal(await story.locator('[data-story-transcript]').count(), 2, 'active case exposes exactly its two already revealed documents');\n"
+        },
+        {
+          "at": 16865,
+          "current": "  assert.deepEqual(writes, [], 'identity, Room, inventory planning, builds, history and story annotation execute no gameplay write');\n  assert.deepEqual(await snapshot(alice), gameBefore, 'integrated presentation leaves actual currency, materials, owned car and gameplay stats unchanged');\n\n  await jump(page, 'crew'); const community = page.locator('#ux-community'); await revealOptional(community); await community.locator('h3').waitFor();\n  const threadForm = community.locator('form[data-community-form=\"thread\"]'); await disclosure(threadForm.locator('..'));\n  await threadForm.locator('[name=\"anchor\"]').selectOption('question'); await threadForm.locator('[name=\"title\"]').fill('Compare the corrected dates');\n  await threadForm.locator('[name=\"body\"]').fill('The witness account agrees with the corrected registry.'); await threadForm.locator('[name=\"spoiler\"]').check();\n",
+          "baseline": "  assert.deepEqual(writes, [], 'identity, Room, inventory planning, builds, history and story annotation execute no gameplay write');\n  assert.deepEqual(await snapshot(alice), gameBefore, 'integrated presentation leaves actual currency, materials, owned car and gameplay stats unchanged');\n\n  await jump(page, 'crew'); const community = page.locator('#ux-community'); await community.locator('h3').waitFor();\n  const threadForm = community.locator('form[data-community-form=\"thread\"]'); await disclosure(threadForm.locator('..'));\n  await threadForm.locator('[name=\"anchor\"]').selectOption('question'); await threadForm.locator('[name=\"title\"]').fill('Compare the corrected dates');\n  await threadForm.locator('[name=\"body\"]').fill('The witness account agrees with the corrected registry.'); await threadForm.locator('[name=\"spoiler\"]').check();\n"
+        },
+        {
+          "at": 18515,
+          "current": "  await pinForm.locator('[name=\"title\"]').fill('Read together by the canal'); await pinForm.locator('[name=\"destinationId\"]').selectOption('canal'); await pinForm.locator('[name=\"note\"]').fill('A public destination for later.');\n  const pinSaved = page.waitForResponse(reply => reply.url().endsWith('/v1/ux/community') && reply.request().method() === 'POST' && reply.status() === 200); await pinForm.locator('button[type=\"submit\"]').click(); await pinSaved;\n  const teammateBoard = await api('GET', '/v1/ux/community', mate); assert.ok(teammateBoard.entries.some(entry => entry.kind === 'thread' && entry.data.title === 'Compare the corrected dates'));\n  await jump(page, 'map'); await revealOptional(page.locator('#ux-community-pins')); assert.match(await page.locator('#ux-community-pins').innerText(), /Read together by the canal/);\n  assert.ok(writes.every(url => url === '/v1/ux/community'), 'only explicitly posted Crew writing leaves the private workspace');\n\n  const teammatePage = await open(mate); await jump(teammatePage, 'crew'); await revealOptional(teammatePage.locator('#ux-community')); const teammateThread = teammatePage.locator('.ux-community-thread').filter({ hasText: 'Compare the corrected dates' }); await teammateThread.waitFor();\n  assert.equal(await teammateThread.locator(':scope > .ux-community-spoiler').evaluate(element => element.open), false);\n  await teammateThread.locator(':scope > .ux-community-spoiler > summary').click(); assert.match(await teammateThread.innerText(), /witness account agrees/);\n\n  const mobile = await open(alice, true); await jump(mobile, 'profile'); const mobileIdentity = mobile.locator('#tab-profile .ux-identity'); await revealOptional(mobileIdentity);\n  const mobileOffice = mobileIdentity.locator('[data-identity-section=\"office\"]'); await disclosure(mobileOffice); await mobileOffice.locator('[data-office-position=\"plant\"]').waitFor();\n  assert.equal(await mobileOffice.locator('.ux-office-prop').first().getAttribute('data-office-prop'), 'plant', 'fresh device hydrates private office arrangement');\n  await disclosure(mobileIdentity.locator('[data-identity-section=\"wardrobe\"]')); assert.equal(await mobileIdentity.locator('[data-identity-setting=\"hat\"]').inputValue(), 'fedora');\n",
+          "baseline": "  await pinForm.locator('[name=\"title\"]').fill('Read together by the canal'); await pinForm.locator('[name=\"destinationId\"]').selectOption('canal'); await pinForm.locator('[name=\"note\"]').fill('A public destination for later.');\n  const pinSaved = page.waitForResponse(reply => reply.url().endsWith('/v1/ux/community') && reply.request().method() === 'POST' && reply.status() === 200); await pinForm.locator('button[type=\"submit\"]').click(); await pinSaved;\n  const teammateBoard = await api('GET', '/v1/ux/community', mate); assert.ok(teammateBoard.entries.some(entry => entry.kind === 'thread' && entry.data.title === 'Compare the corrected dates'));\n  await jump(page, 'map'); await page.locator('#ux-community-pins').waitFor(); assert.match(await page.locator('#ux-community-pins').innerText(), /Read together by the canal/);\n  assert.ok(writes.every(url => url === '/v1/ux/community'), 'only explicitly posted Crew writing leaves the private workspace');\n\n  const teammatePage = await open(mate); await jump(teammatePage, 'crew'); const teammateThread = teammatePage.locator('.ux-community-thread').filter({ hasText: 'Compare the corrected dates' }); await teammateThread.waitFor();\n  assert.equal(await teammateThread.locator(':scope > .ux-community-spoiler').evaluate(element => element.open), false);\n  await teammateThread.locator(':scope > .ux-community-spoiler > summary').click(); assert.match(await teammateThread.innerText(), /witness account agrees/);\n\n  const mobile = await open(alice, true); await jump(mobile, 'profile'); const mobileIdentity = mobile.locator('#tab-profile .ux-identity'); await mobileIdentity.waitFor();\n  const mobileOffice = mobileIdentity.locator('[data-identity-section=\"office\"]'); await disclosure(mobileOffice); await mobileOffice.locator('[data-office-position=\"plant\"]').waitFor();\n  assert.equal(await mobileOffice.locator('.ux-office-prop').first().getAttribute('data-office-prop'), 'plant', 'fresh device hydrates private office arrangement');\n  await disclosure(mobileIdentity.locator('[data-identity-section=\"wardrobe\"]')); assert.equal(await mobileIdentity.locator('[data-identity-setting=\"hat\"]').inputValue(), 'fedora');\n"
+        },
+        {
+          "at": 21575,
+          "current": "  await mobile.screenshot({ path: path.join(artifacts, 'personality-desk-mobile.png'), fullPage: false }); await mobileDesk.locator('[data-tools-close]').click();\n  await mobile.locator('.ux-screen-tools-close').click();\n  await jump(mobile, 'fieldwork'); await mobile.locator('[data-fieldwork-view=\"mysteries\"]').click(); await mobile.locator('[data-fieldwork-mystery=\"property-investigation\"]').click();\n  const mobileStory = mobile.locator('[data-ux-story=\"case\"]'); await revealOptional(mobileStory); await mobileStory.locator('.story-cold-open').waitFor(); await disclosure(mobileStory.locator('[data-story-section=\"documents\"]'));\n  assert.match(await mobileStory.innerText(), /My private cross-reference/, 'fresh-device story highlights hydrate beside the revealed passage');\n  await mobileStory.getByRole('button', { name: 'Compare two found documents', exact: true }).click(); await noOverflow(mobile, 'mobile story dialog');\n  await mobile.getByRole('button', { name: 'Close story reading', exact: true }).click();\n  await jump(mobile, 'crew'); await revealOptional(mobile.locator('#ux-community')); await mobile.locator('#ux-community h3').waitFor(); await noOverflow(mobile, 'mobile Crew writing');\n  await mobile.screenshot({ path: path.join(artifacts, 'personality-crew-mobile.png'), fullPage: false });\n\n  const stranger = await open(other); await jump(stranger, 'profile'); const strangerIdentity = stranger.locator('#tab-profile .ux-identity'); await revealOptional(strangerIdentity);\n  assert.ok(!(await strangerIdentity.innerText()).includes('The Quiet Reader')); assert.equal(await strangerIdentity.locator('[data-identity-setting=\"hat\"]').inputValue(), 'none');\n  assert.equal((await api('GET', '/v1/ux/workspace', other)).values.identity, undefined); assert.equal((await api('GET', '/v1/ux/workspace', other)).values.story, undefined);\n  await stranger.locator('[data-tools-open]').click(); const strangerDesk = stranger.locator('dialog.ux-tools-dialog[open]'); await strangerDesk.locator('[data-tools-view=\"builds\"]').click(); assert.ok(!(await strangerDesk.innerText()).includes('The Patient Reader')); await strangerDesk.locator('[data-tools-close]').click();\n",
+          "baseline": "  await mobile.screenshot({ path: path.join(artifacts, 'personality-desk-mobile.png'), fullPage: false }); await mobileDesk.locator('[data-tools-close]').click();\n  await mobile.locator('.ux-screen-tools-close').click();\n  await jump(mobile, 'fieldwork'); await mobile.locator('[data-fieldwork-view=\"mysteries\"]').click(); await mobile.locator('[data-fieldwork-mystery=\"property-investigation\"]').click();\n  const mobileStory = mobile.locator('[data-ux-story=\"case\"]'); await mobileStory.locator('.story-cold-open').waitFor(); await disclosure(mobileStory.locator('[data-story-section=\"documents\"]'));\n  assert.match(await mobileStory.innerText(), /My private cross-reference/, 'fresh-device story highlights hydrate beside the revealed passage');\n  await mobileStory.getByRole('button', { name: 'Compare two found documents', exact: true }).click(); await noOverflow(mobile, 'mobile story dialog');\n  await mobile.getByRole('button', { name: 'Close story reading', exact: true }).click();\n  await jump(mobile, 'crew'); await mobile.locator('#ux-community h3').waitFor(); await noOverflow(mobile, 'mobile Crew writing');\n  await mobile.screenshot({ path: path.join(artifacts, 'personality-crew-mobile.png'), fullPage: false });\n\n  const stranger = await open(other); await jump(stranger, 'profile'); const strangerIdentity = stranger.locator('#tab-profile .ux-identity'); await strangerIdentity.waitFor();\n  assert.ok(!(await strangerIdentity.innerText()).includes('The Quiet Reader')); assert.equal(await strangerIdentity.locator('[data-identity-setting=\"hat\"]').inputValue(), 'none');\n  assert.equal((await api('GET', '/v1/ux/workspace', other)).values.identity, undefined); assert.equal((await api('GET', '/v1/ux/workspace', other)).values.story, undefined);\n  await stranger.locator('[data-tools-open]').click(); const strangerDesk = stranger.locator('dialog.ux-tools-dialog[open]'); await strangerDesk.locator('[data-tools-view=\"builds\"]').click(); assert.ok(!(await strangerDesk.innerText()).includes('The Patient Reader')); await strangerDesk.locator('[data-tools-close]').click();\n"
+        }
+      ]
+    },
+    "test/ux-shell-browser.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "236d6c0b536bcb2d103775a0e0a74e38f4e7d37f",
+        "sha256": "408deccd8d2c6ccefd5589e2afcdc7b35ab3330303104f2b85a49d71f5255648",
+        "bytes": 13698
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "95f46d285a0f1ac69202ab7bb6f5f5db4395e8b9",
+        "sha256": "4c4bcf0990d2c200d974bb01d9ff4a7254d9cc548a375bd8ddd0aa0105e2177e",
+        "bytes": 13338
+      },
+      "inverses": [
+        {
+          "at": 1570,
+          "current": "  const size = await page.evaluate(() => ({ width: innerWidth, scroll: document.documentElement.scrollWidth }));\n  assert.ok(size.scroll <= size.width + 2, `${label} overflows: ${JSON.stringify(size)}`);\n}\nasync function openDirectory(page) {\n  if (await page.locator('#city-directory').getAttribute('open') === null)\n    await page.locator('#city-directory > summary').click();\n}\nasync function aboveFold(page, selector, label) {\n  const position = await page.locator(selector).evaluate(element => {\n    const rect = element.getBoundingClientRect();\n",
+          "baseline": "  const size = await page.evaluate(() => ({ width: innerWidth, scroll: document.documentElement.scrollWidth }));\n  assert.ok(size.scroll <= size.width + 2, `${label} overflows: ${JSON.stringify(size)}`);\n}\nasync function aboveFold(page, selector, label) {\n  const position = await page.locator(selector).evaluate(element => {\n    const rect = element.getBoundingClientRect();\n"
+        },
+        {
+          "at": 4033,
+          "current": "  assert.equal(await page.locator('#tabpanel #coachwrap').count(), 1, 'next action belongs beside the operation');\n  assert.equal(await page.locator('#game-menu[open]').count(), 0, 'secondary utilities start closed');\n  assert.equal(await page.locator('#ux-screen-tools[open]').count(), 0, 'workspace controls do not precede gameplay by default');\n  assert.equal(await page.locator('#city-directory[open]').count(), 0, 'the complete directory starts collapsed beside the five main destinations');\n  assert.equal(await page.locator('#game-menu #btn-logout').count(), 1, 'account controls remain available in the utility menu');\n  await aboveFold(page, '#tab-start .start-next-card .act', 'desktop first-week action');\n  const onboardingOrder = await page.evaluate(() => {\n",
+          "baseline": "  assert.equal(await page.locator('#tabpanel #coachwrap').count(), 1, 'next action belongs beside the operation');\n  assert.equal(await page.locator('#game-menu[open]').count(), 0, 'secondary utilities start closed');\n  assert.equal(await page.locator('#ux-screen-tools[open]').count(), 0, 'workspace controls do not precede gameplay by default');\n  assert.equal(await page.locator('#city-directory[open]').count(), 1, 'desktop navigation remains visible');\n  assert.equal(await page.locator('#game-menu #btn-logout').count(), 1, 'account controls remain available in the utility menu');\n  await aboveFold(page, '#tab-start .start-next-card .act', 'desktop first-week action');\n  const onboardingOrder = await page.evaluate(() => {\n"
+        },
+        {
+          "at": 5455,
+          "current": "  await noOverflow(page, 'desktop Start Here');\n  await page.screenshot({ path: path.join(artifacts, 'shell-desktop.png') });\n\n  await openDirectory(page);\n  await page.locator('#city-sidebar #tabs [data-tab=\"start\"]').focus();\n  await page.keyboard.press('ArrowDown');\n  await page.locator('#tab-streets.on').waitFor();\n",
+          "baseline": "  await noOverflow(page, 'desktop Start Here');\n  await page.screenshot({ path: path.join(artifacts, 'shell-desktop.png') });\n\n  await page.locator('#city-sidebar #tabs [data-tab=\"start\"]').focus();\n  await page.keyboard.press('ArrowDown');\n  await page.locator('#tab-streets.on').waitFor();\n"
+        },
+        {
+          "at": 5917,
+          "current": "    'vertical navigation follows ArrowDown and retains keyboard focus');\n  await openTab(page, 'start');\n  await page.locator('#tab-start .start-next-card').waitFor();\n  await page.locator('#city-directory > summary').click();\n\n  const menu = page.locator('#game-menu > summary');\n  await menu.click();\n",
+          "baseline": "    'vertical navigation follows ArrowDown and retains keyboard focus');\n  await openTab(page, 'start');\n  await page.locator('#tab-start .start-next-card').waitFor();\n\n  const menu = page.locator('#game-menu > summary');\n  await menu.click();\n"
+        },
+        {
+          "at": 7982,
+          "current": "  // Secondary onboarding remains useful after a live server refresh.\n  await page.locator('#tab-start details[data-sect=\"start-outreach\"] > summary').click();\n  await page.locator('#ref-claim-name').fill('Unsent referral draft');\n  await openDirectory(page);\n  await page.locator('#character-sheet > summary').click();\n  const sheetRefreshed = page.waitForResponse(response => [`${base}/v1/me`, `${base}/v1/projections/player`].includes(response.url()) && response.status() === 200);\n  await page.locator('#btn-refresh').click();\n",
+          "baseline": "  // Secondary onboarding remains useful after a live server refresh.\n  await page.locator('#tab-start details[data-sect=\"start-outreach\"] > summary').click();\n  await page.locator('#ref-claim-name').fill('Unsent referral draft');\n  await page.locator('#character-sheet > summary').click();\n  const sheetRefreshed = page.waitForResponse(response => [`${base}/v1/me`, `${base}/v1/projections/player`].includes(response.url()) && response.status() === 200);\n  await page.locator('#btn-refresh').click();\n"
+        },
+        {
+          "at": 9454,
+          "current": "  await aboveFold(page, `${standardCrime} >> nth=0`, 'desktop crime action');\n  await noOverflow(page, 'desktop Streets');\n  await page.screenshot({ path: path.join(artifacts, 'shell-streets-desktop.png') });\n  await openDirectory(page);\n  await page.locator('#tabs-more').click();\n  assert.ok(await page.locator('#grouprail [data-group]:visible').count() >= 8, 'the whole city exposes every navigation group');\n  await page.locator('#grouprail [data-group=\"earners\"]').click();\n",
+          "baseline": "  await aboveFold(page, `${standardCrime} >> nth=0`, 'desktop crime action');\n  await noOverflow(page, 'desktop Streets');\n  await page.screenshot({ path: path.join(artifacts, 'shell-streets-desktop.png') });\n  await page.locator('#tabs-more').click();\n  assert.ok(await page.locator('#grouprail [data-group]:visible').count() >= 8, 'the whole city exposes every navigation group');\n  await page.locator('#grouprail [data-group=\"earners\"]').click();\n"
+        }
+      ]
+    },
+    "test/ux-story-browser.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "c18a719544b330ca844201362117519e735d1a75",
+        "sha256": "324fcbf9702af066fddf01854385e4a962e2416da29d5610a4cd6c302222ff4e",
+        "bytes": 19014
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "9ec07b399d2f5751b6b8fcd5e5c8bce775f27af4",
+        "sha256": "713dd4e4196205c0c772a963d0919165165c43301672f0c8ec5c16a7469980d0",
+        "bytes": 18835
+      },
+      "inverses": [
+        {
+          "at": 123,
+          "current": "import { randomUUID } from 'node:crypto';\nimport { chromium } from 'playwright-core';\nimport { buildServer } from './server-fixture.js';\nimport { revealOptional } from './lib/ux-disclosure-browser.js';\n\nassert(!process.env.DATABASE_URL, 'Story browser proof uses disposable pg-mem.');\nprocess.env.INVITE_MODE = 'off'; process.env.RATE_LIMIT = 'off';\n",
+          "baseline": "import { randomUUID } from 'node:crypto';\nimport { chromium } from 'playwright-core';\nimport { buildServer } from './server-fixture.js';\n\nassert(!process.env.DATABASE_URL, 'Story browser proof uses disposable pg-mem.');\nprocess.env.INVITE_MODE = 'off'; process.env.RATE_LIMIT = 'off';\n"
+        },
+        {
+          "at": 6087,
+          "current": "  page.on('request', request => { if (request.url().startsWith(base + '/v1/') && !['GET', 'HEAD'].includes(request.method()) && !request.url().endsWith('/v1/ux/workspace')) writes.push(new URL(request.url()).pathname); });\n  assert.equal(await page.evaluate(() => typeof createOmertaStory), 'function');\n  await jump(page, 'fieldwork'); await page.locator('[data-fieldwork-view=\"mysteries\"]').click();\n  await page.locator('[data-fieldwork-mystery=\"property-investigation\"]').click(); await revealOptional(page.locator('[data-ux-story=\"case\"]')); await page.locator('[data-ux-story=\"case\"] .story-cold-open').waitFor();\n  const story = page.locator('[data-ux-story=\"case\"]');\n  assert.match(await story.innerText(), /An address on an old cover/);\n  await story.getByRole('button', { name: 'Skip this opening', exact: true }).click();\n  await story.getByRole('button', { name: 'Reread the opening vignette', exact: true }).waitFor();\n  assert.equal(await story.getByRole('heading', { name: 'An address on an old cover', exact: true }).count(), 0);\n  await story.getByRole('button', { name: 'Reread the opening vignette', exact: true }).click();\n  await story.getByRole('heading', { name: 'An address on an old cover', exact: true }).waitFor();\n  await disclosure(story.locator('[data-story-section=\"cast\"]'));\n  await story.locator('.story-cast-node').filter({ hasText: 'Irene Bell' }).click();\n  await page.locator('dialog.story-dialog[open]').waitFor(); assert.match(await page.locator('dialog.story-dialog').innerText(), /AUTHORED RESIDENT SCENE · NPC/);\n",
+          "baseline": "  page.on('request', request => { if (request.url().startsWith(base + '/v1/') && !['GET', 'HEAD'].includes(request.method()) && !request.url().endsWith('/v1/ux/workspace')) writes.push(new URL(request.url()).pathname); });\n  assert.equal(await page.evaluate(() => typeof createOmertaStory), 'function');\n  await jump(page, 'fieldwork'); await page.locator('[data-fieldwork-view=\"mysteries\"]').click();\n  await page.locator('[data-fieldwork-mystery=\"property-investigation\"]').click(); await page.locator('[data-ux-story=\"case\"] .story-cold-open').waitFor();\n  const story = page.locator('[data-ux-story=\"case\"]');\n  assert.match(await story.innerText(), /An address on an old cover/);\n  await story.getByRole('button', { name: 'Skip this opening', exact: true }).click();\n  await story.getByRole('button', { name: 'Reread the opening vignette', exact: true }).waitFor();\n  assert.equal(await story.getByText('An address on an old cover', { exact: true }).count(), 0);\n  await story.getByRole('button', { name: 'Reread the opening vignette', exact: true }).click();\n  await story.getByText('An address on an old cover', { exact: true }).waitFor();\n  await disclosure(story.locator('[data-story-section=\"cast\"]'));\n  await story.locator('.story-cast-node').filter({ hasText: 'Irene Bell' }).click();\n  await page.locator('dialog.story-dialog[open]').waitFor(); assert.match(await page.locator('dialog.story-dialog').innerText(), /AUTHORED RESIDENT SCENE · NPC/);\n"
+        },
+        {
+          "at": 10885,
+          "current": "  assert.match(await dialog.locator('.story-annotation-note').first().innerText(), /Compare the dates/);\n  await page.screenshot({ path: path.join(artifacts, 'story-documents-desktop.png'), fullPage: false });\n  await page.getByRole('button', { name: 'Close story reading', exact: true }).click();\n  await jump(page, 'profile'); const overview = page.locator('#tab-profile [data-ux-story=\"overview\"]'); await revealOptional(overview);\n  await disclosure(overview.locator('[data-story-section=\"crossover\"]'));\n  assert.match(await overview.locator('[data-story-section=\"crossover\"]').innerText(), /Two files on one newsroom table/);\n  await disclosure(overview.locator('[data-story-section=\"letters\"]')); await disclosure(overview.locator('.story-letter').first());\n",
+          "baseline": "  assert.match(await dialog.locator('.story-annotation-note').first().innerText(), /Compare the dates/);\n  await page.screenshot({ path: path.join(artifacts, 'story-documents-desktop.png'), fullPage: false });\n  await page.getByRole('button', { name: 'Close story reading', exact: true }).click();\n  await jump(page, 'profile'); const overview = page.locator('#tab-profile [data-ux-story=\"overview\"]'); await overview.waitFor();\n  await disclosure(overview.locator('[data-story-section=\"crossover\"]'));\n  assert.match(await overview.locator('[data-story-section=\"crossover\"]').innerText(), /Two files on one newsroom table/);\n  await disclosure(overview.locator('[data-story-section=\"letters\"]')); await disclosure(overview.locator('.story-letter').first());\n"
+        },
+        {
+          "at": 12167,
+          "current": "  assert.deepEqual(writes, [], 'story scenes, reading, variants, letters, highlights and zoom perform no gameplay write');\n  await page.screenshot({ path: path.join(artifacts, 'story-epilogues-desktop.png'), fullPage: false });\n  const mobile = await open(alice, true); await jump(mobile, 'fieldwork'); await mobile.locator('[data-fieldwork-view=\"mysteries\"]').click();\n  await mobile.locator('[data-fieldwork-mystery=\"property-investigation\"]').click(); const mobileStory = mobile.locator('[data-ux-story=\"case\"]'); await revealOptional(mobileStory);\n  await disclosure(mobileStory.locator('[data-story-section=\"documents\"]'));\n  await mobileStory.getByRole('button', { name: 'Compare two found documents', exact: true }).click(); const mobileDialog = mobile.locator('dialog.story-dialog[open]');\n  await mobileDialog.locator('.story-private-highlight').first().waitFor();\n",
+          "baseline": "  assert.deepEqual(writes, [], 'story scenes, reading, variants, letters, highlights and zoom perform no gameplay write');\n  await page.screenshot({ path: path.join(artifacts, 'story-epilogues-desktop.png'), fullPage: false });\n  const mobile = await open(alice, true); await jump(mobile, 'fieldwork'); await mobile.locator('[data-fieldwork-view=\"mysteries\"]').click();\n  await mobile.locator('[data-fieldwork-mystery=\"property-investigation\"]').click(); const mobileStory = mobile.locator('[data-ux-story=\"case\"]'); await mobileStory.waitFor();\n  await disclosure(mobileStory.locator('[data-story-section=\"documents\"]'));\n  await mobileStory.getByRole('button', { name: 'Compare two found documents', exact: true }).click(); const mobileDialog = mobile.locator('dialog.story-dialog[open]');\n  await mobileDialog.locator('.story-private-highlight').first().waitFor();\n"
+        },
+        {
+          "at": 13458,
+          "current": "  const dialogRect = await mobileDialog.boundingBox(); assert.ok(dialogRect.x >= 0 && dialogRect.x + dialogRect.width <= 391);\n  await noOverflow(mobile); await mobile.screenshot({ path: path.join(artifacts, 'story-documents-mobile.png'), fullPage: false });\n  await mobile.getByRole('button', { name: 'Close story reading', exact: true }).click();\n  const other = await open(bob); await jump(other, 'profile'); const otherOverview = other.locator('#tab-profile [data-ux-story=\"overview\"]'); await revealOptional(otherOverview);\n  assert.equal(await otherOverview.locator('.story-letter,.story-cast-node,[data-story-section=\"crossover\"]').count(), 0, 'another account has no prior resident cast, milestone letters or crossover');\n  assert.ok(!(await otherOverview.innerText()).includes('Compare the dates'));\n\n",
+          "baseline": "  const dialogRect = await mobileDialog.boundingBox(); assert.ok(dialogRect.x >= 0 && dialogRect.x + dialogRect.width <= 391);\n  await noOverflow(mobile); await mobile.screenshot({ path: path.join(artifacts, 'story-documents-mobile.png'), fullPage: false });\n  await mobile.getByRole('button', { name: 'Close story reading', exact: true }).click();\n  const other = await open(bob); await jump(other, 'profile'); const otherOverview = other.locator('#tab-profile [data-ux-story=\"overview\"]'); await otherOverview.waitFor();\n  assert.equal(await otherOverview.locator('.story-letter,.story-cast-node,[data-story-section=\"crossover\"]').count(), 0, 'another account has no prior resident cast, milestone letters or crossover');\n  assert.ok(!(await otherOverview.innerText()).includes('Compare the dates'));\n\n"
+        }
+      ]
+    },
+    "test/ux-tactics-browser.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "72794e2eccce4ac43f66d105ba63309009fe8c21",
+        "sha256": "85663c4f0dc02e4370d328a0ad5ba4a91e0b6ff668d51d0aa1d8c62241e15210",
+        "bytes": 18331
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "75b4d9f33e26a41dc42f1168678a558c0530d366",
+        "sha256": "634e327105dd093cf5f3e657a12106296877f55564d45e5e03c68bc40dc22e59",
+        "bytes": 18133
+      },
+      "inverses": [
+        {
+          "at": 10215,
+          "current": "\n  await openTab(page, 'port');\n  const harbor = tactics(page, 'port');\n  if (!await harbor.evaluate(node => node.open)) await harbor.locator(':scope > summary').click();\n  await harbor.locator('.ux-tactics-view table tbody tr').first().waitFor();\n  assert.match(await harbor.locator('.ux-tactics-view').innerText(), /Clean proceeds/);\n  const costWithoutEscort = await harbor.locator('.ux-tactics-view table tbody tr').first().locator('td').nth(0).innerText();\n",
+          "baseline": "\n  await openTab(page, 'port');\n  const harbor = tactics(page, 'port');\n  await harbor.locator('.ux-tactics-view table tbody tr').first().waitFor();\n  assert.match(await harbor.locator('.ux-tactics-view').innerText(), /Clean proceeds/);\n  const costWithoutEscort = await harbor.locator('.ux-tactics-view table tbody tr').first().locator('td').nth(0).innerText();\n"
+        },
+        {
+          "at": 12868,
+          "current": "    }\n    // The onboarding landing can visit Home during reload, selecting the default\n    // planning view. Reopen Trials before inspecting the persisted practice run.\n    if (!await table.evaluate(node => node.open)) await table.locator(':scope > summary').click();\n    await table.locator('[data-tactics-view=\"trials\"]').click();\n    await page.waitForFunction(() => document.querySelectorAll('#tab-streets [data-ux-tactics] [data-trial-card]').length === 3);\n  };\n",
+          "baseline": "    }\n    // The onboarding landing can visit Home during reload, selecting the default\n    // planning view. Reopen Trials before inspecting the persisted practice run.\n    await table.locator('[data-tactics-view=\"trials\"]').click();\n    await page.waitForFunction(() => document.querySelectorAll('#tab-streets [data-ux-tactics] [data-trial-card]').length === 3);\n  };\n"
+        }
+      ]
+    },
     "tools/agent-alpha.js": {
       "current": {
         "mode": "100644",
@@ -871,9 +1411,9 @@ export const AGE_REMOVAL_SOURCE = freeze({
     "tools/mobile.js": {
       "current": {
         "mode": "100644",
-        "blob": "0ab53dfeee2caf84cb736b2dd7d931e424bdeb59",
-        "sha256": "26cab4d9b8454acfaa2944714fec7fcc43cc1fc4cc62577b34ea6458b292377e",
-        "bytes": 81647
+        "blob": "68949ad778b3caeb60e446748077dda5e7047acb",
+        "sha256": "c4415f67194b74f14529f8ff3e82d389512e75b5e9e553d4e63d16b026d3dc06",
+        "bytes": 81744
       },
       "baseline": {
         "mode": "100644",
@@ -888,27 +1428,32 @@ export const AGE_REMOVAL_SOURCE = freeze({
           "baseline": "  await check(page, 'landing', vp);\n\n  await page.click('#btn-guest');\n  await page.waitForSelector('#age-date');\n  await page.fill('#age-date', '1990-01-01');\n  await page.locator('#age-date').evaluate((input) => input.form.requestSubmit());\n  await page.waitForSelector('#screen-create:not(.hidden)', { timeout: 15000 });\n  await check(page, 'create', vp);\n\n"
         },
         {
-          "at": 51756,
+          "at": 22282,
+          "current": "    await page.fill('#jump-q', 'garage');\n    await page.locator('#jump-list [data-jump=\"garage\"]').click();\n    await page.locator('#tab-garage.on').waitFor({ state: 'visible' });\n    // The generic ready coach is optional chrome; its mounted renderer still gates tour setup.\n    await page.locator('#coach').waitFor({ state: 'attached' });\n    await clickDisclosureControl(page, '#btn-help', true);\n    await page.click('#glossary-tour');\n  }\n",
+          "baseline": "    await page.fill('#jump-q', 'garage');\n    await page.locator('#jump-list [data-jump=\"garage\"]').click();\n    await page.locator('#tab-garage.on').waitFor({ state: 'visible' });\n    await page.locator('#coach').waitFor({ state: 'visible' });\n    await clickDisclosureControl(page, '#btn-help', true);\n    await page.click('#glossary-tour');\n  }\n"
+        },
+        {
+          "at": 51853,
           "current": "\n  await page.goto(BASE, { waitUntil: 'domcontentloaded' });\n  await page.click('#btn-guest');\n  await page.waitForSelector('#screen-create:not(.hidden)', { timeout: 20000 });\n  await page.fill('#new-name', 'Restart Probe');\n  await page.click('#btn-create');\n",
           "baseline": "\n  await page.goto(BASE, { waitUntil: 'domcontentloaded' });\n  await page.click('#btn-guest');\n  await page.waitForSelector('#age-date');\n  await page.fill('#age-date', '1990-01-01');\n  await page.locator('#age-date').evaluate((input) => input.form.requestSubmit());\n  await page.waitForSelector('#screen-create:not(.hidden)', { timeout: 20000 });\n  await page.fill('#new-name', 'Restart Probe');\n  await page.click('#btn-create');\n"
         },
         {
-          "at": 58831,
+          "at": 58928,
           "current": "  const vp = { w: 375, h: 667 };\n  await page.goto(BASE, { waitUntil: 'domcontentloaded' });\n  await page.click('#btn-guest');\n  await page.waitForSelector('#screen-create:not(.hidden)', { timeout: 20000 });\n  await page.fill('#new-name', 'Cooldown Probe');\n  await page.click('#btn-create');\n",
           "baseline": "  const vp = { w: 375, h: 667 };\n  await page.goto(BASE, { waitUntil: 'domcontentloaded' });\n  await page.click('#btn-guest');\n  await page.waitForSelector('#age-date');\n  await page.fill('#age-date', '1990-01-01');\n  await page.locator('#age-date').evaluate((input) => input.form.requestSubmit());\n  await page.waitForSelector('#screen-create:not(.hidden)', { timeout: 20000 });\n  await page.fill('#new-name', 'Cooldown Probe');\n  await page.click('#btn-create');\n"
         },
         {
-          "at": 65344,
+          "at": 65441,
           "current": "  });\n  await page.goto(BASE, { waitUntil: 'domcontentloaded' });\n  await page.click('#btn-guest');\n  await page.waitForSelector('#screen-create:not(.hidden)', { timeout: 20000 });\n  await page.fill('#new-name', 'Deep City Probe');\n  await page.click('#btn-create');\n",
           "baseline": "  });\n  await page.goto(BASE, { waitUntil: 'domcontentloaded' });\n  await page.click('#btn-guest');\n  await page.waitForSelector('#age-date');\n  await page.fill('#age-date', '1990-01-01');\n  await page.locator('#age-date').evaluate((input) => input.form.requestSubmit());\n  await page.waitForSelector('#screen-create:not(.hidden)', { timeout: 20000 });\n  await page.fill('#new-name', 'Deep City Probe');\n  await page.click('#btn-create');\n"
         },
         {
-          "at": 69440,
+          "at": 69537,
           "current": "  const vp = { w: 375, h: 667 };\n  await page.goto(BASE, { waitUntil: 'domcontentloaded' });\n  await page.click('#btn-guest');\n  await page.waitForSelector('#screen-create:not(.hidden)', { timeout: 20000 });\n  await page.fill('#new-name', 'Lockup Probe');\n  await page.click('#btn-create');\n",
           "baseline": "  const vp = { w: 375, h: 667 };\n  await page.goto(BASE, { waitUntil: 'domcontentloaded' });\n  await page.click('#btn-guest');\n  await page.waitForSelector('#age-date');\n  await page.fill('#age-date', '1990-01-01');\n  await page.locator('#age-date').evaluate((input) => input.form.requestSubmit());\n  await page.waitForSelector('#screen-create:not(.hidden)', { timeout: 20000 });\n  await page.fill('#new-name', 'Lockup Probe');\n  await page.click('#btn-create');\n"
         },
         {
-          "at": 74870,
+          "at": 74967,
           "current": "  page.on('pageerror', (e) => errs.push(String(e).split('\\n')[0]));\n  await page.goto(BASE, { waitUntil: 'domcontentloaded' });\n  await page.click('#btn-guest');\n  await page.waitForSelector('#screen-create:not(.hidden)', { timeout: 20000 });\n  await page.fill('#new-name', 'Xss Probe');\n  await page.click('#btn-create');\n",
           "baseline": "  page.on('pageerror', (e) => errs.push(String(e).split('\\n')[0]));\n  await page.goto(BASE, { waitUntil: 'domcontentloaded' });\n  await page.click('#btn-guest');\n  await page.waitForSelector('#age-date');\n  await page.fill('#age-date', '1990-01-01');\n  await page.locator('#age-date').evaluate((input) => input.form.requestSubmit());\n  await page.waitForSelector('#screen-create:not(.hidden)', { timeout: 20000 });\n  await page.fill('#new-name', 'Xss Probe');\n  await page.click('#btn-create');\n"
         }
@@ -1030,24 +1575,102 @@ export const AGE_REMOVAL_SOURCE = freeze({
     }
   },
   "additions": {
+    "public/noir-landing.css": {
+      "mode": "100644",
+      "blob": "fb53d550d414a89528ffb901763d30a38a450d6b",
+      "sha256": "36ed37fe7130a44f2695e03922a7dacd002582fb3a22e9caa985f4b74e00a5cd",
+      "bytes": 20340
+    },
+    "public/noir-shell.js": {
+      "mode": "100644",
+      "blob": "bdacc6bac1d3600a0b31848c419f74bfd86b3c16",
+      "sha256": "d4ec0e56299f9ec0bb0ebe8ffed33972ec01760a294bf50a3b1fe7bb31ed4920",
+      "bytes": 21281
+    },
+    "public/noir-ui.css": {
+      "mode": "100644",
+      "blob": "3c8dcde2e0131ce3fdb8c16a1d8bba28ce0d410d",
+      "sha256": "ae496d63542a71ea17dca2f2b316d8b90164b39947579b043e551c3e956d1d49",
+      "bytes": 27974
+    },
+    "public/strategy-command.css": {
+      "mode": "100644",
+      "blob": "23eb225a4b5d4da932e7ca2f0bd215589d932bde",
+      "sha256": "0bce7f13719a83a6a4a363a7ec16b6af089272ff277664a0543784d94fdeb0d4",
+      "bytes": 13723
+    },
+    "public/strategy-command.js": {
+      "mode": "100644",
+      "blob": "45361252ffe5ff884809979cfc6d98ed921ada6b",
+      "sha256": "c78e8e2cd8d5ee8e566efb0b26452624384b8d41c30f21a4354cdb822325c500",
+      "bytes": 17672
+    },
+    "public/vendor/strategy-city-renderer.LICENSE.txt": {
+      "mode": "100644",
+      "blob": "eb5f126d7a44f8b8851cda126679fcc8991421ce",
+      "sha256": "c5ad44f6298e4e1a4b11bbf05824f0925fcf4823e342ce3672fea5f7d1f3aba1",
+      "bytes": 1099
+    },
+    "public/vendor/strategy-city-renderer.js": {
+      "mode": "100644",
+      "blob": "88320ee1723b52e5e2040c69e9788a8ab416eb4d",
+      "sha256": "1ea0be67c40254d36d1c42822728d0c97419677532393485dee3812b21c3dc28",
+      "bytes": 594159
+    },
+    "public/vendor/strategy-city-renderer.js.LEGAL.txt": {
+      "mode": "100644",
+      "blob": "de8389ba82f9776c641fd271300a4f135396163f",
+      "sha256": "cc7cc7e2f53d5db0235ab2226e85fc6e91655161573b39813b41bb00e5919674",
+      "bytes": 188
+    },
     "test/lib/age-removal-source-transfer-proof.js": {
       "mode": "100644",
-      "blob": "d789645053bcc0080a440d591f702a64c66332a9",
-      "sha256": "99602837579eaccf5bc6d0aa0f16bb1931d095329c852e25069694871cfb3f36",
-      "bytes": 9838
+      "blob": "052a400eb8c897543909ff6764456a38ac810ef5",
+      "sha256": "6310449ebd6142ec199814fafe019561853f7b8e485491b40f44c3abda3053bb",
+      "bytes": 11597
+    },
+    "test/lib/ux-disclosure-browser.js": {
+      "mode": "100644",
+      "blob": "94b5798863ed248086e88370add10e5504f784cf",
+      "sha256": "cfb1d45427b37f5bb99bbf3defc6370c9feb1818885d72966286603cbf10a5d4",
+      "bytes": 768
+    },
+    "test/noir-shell-browser.js": {
+      "mode": "100644",
+      "blob": "841c94cc2dfc49367b64757e178f626ef8378c03",
+      "sha256": "626cdced36ba412e492237d97adcac5e1fe5c0eca08342700a233556a666f027",
+      "bytes": 8705
+    },
+    "test/strategy-command-browser.js": {
+      "mode": "100644",
+      "blob": "d7019399a540e555c73e970ebd5489bd618b23bc",
+      "sha256": "20628b023bc0ba02069c6e46cc685fc0d3497d54ee3f74c9b4400948ab88c7c7",
+      "bytes": 16507
     },
     "tools/age-removal-source-seal.js": {
       "mode": "100644",
-      "blob": "c6a7483d965d43104424ca8e0e9a3b33838ef136",
-      "sha256": "a1246e59898f829d1436d05df51399ba6f8b3e33e42cfa4399b69ccaa2df1bc3",
-      "bytes": 7389
+      "blob": "5b3d77765e5c1ef1a45d4a14d5a412f98f74ed2d",
+      "sha256": "abd99c4b608d5940e4862fd7996f35be7e803ab99b66d9ed9f3bcd97cbd98f0a",
+      "bytes": 10181
     },
     "tools/age-removal-source-transfer.js": {
       "mode": "100644",
       "blob": "ea8ecc58f2c9bab35e5c51285df405e89fbfb06c",
       "sha256": "c75fb314eb878ab06faf50e09029f233e6f6a0357f7f8d251bd3e0200f07acce",
       "bytes": 6002
+    },
+    "tools/build-strategy-city.mjs": {
+      "mode": "100644",
+      "blob": "1edca21fff85e8709cadb5d4213c37325d17a4bb",
+      "sha256": "094f0e1acc75b89f0137ac05cbed376d2da605e9176e43da0f77f62323325749",
+      "bytes": 1127
+    },
+    "tools/strategy-city-scene.mjs": {
+      "mode": "100644",
+      "blob": "00cefd5b28acbc9c06e174fcd456efe59034ab47",
+      "sha256": "11e31e905979ae7d3318c1c23129e729b9c72bd8e22444c5ec152f71492c7863",
+      "bytes": 27895
     }
   }
 });
-export const AGE_REMOVAL_SOURCE_SHA256 = '157db22096b3e867f452d1801c1979dc39b499f76cade5d365bf765fbdbab8a7';
+export const AGE_REMOVAL_SOURCE_SHA256 = '29dafabd39577c0132ea801736ccd607aa7851dc1f76e4ef2439460eb763fabf';
