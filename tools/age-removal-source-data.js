@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const AGE_REMOVAL_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_AGE_REMOVAL_SOURCE_COMPARISON_ONLY",
-  "revision": "9c11db8a179f1941894a61b4e48ad69a224db74e",
-  "tree": "a3d2f8bad8ebc51df890294ccfa8880c73848096",
+  "revision": "e348f1b592609003d8565f755f282a36172dc441",
+  "tree": "43e35c116e489afcef032cce79ac394966b7a9bf",
   "predecessor": "35913ec1b448275b227019ede2a2ef8047be55aa",
   "predecessorTree": "c74c606d97ee2f8ebb6c5201a4ddd2c2781d5db0",
   "files": {
@@ -26,6 +26,27 @@ export const AGE_REMOVAL_SOURCE = freeze({
           "at": 5197,
           "current": "1. **Create an agent identity.** New agents call `POST /v1/auth/agent` with a\n   securely persisted, random 32-byte unpadded-base64url `bootstrapSecret`.\n   The account is permanently marked as an agent before its first 90-day bearer\n   is issued. Retry the same secret after an ambiguous response; save the bearer\n   before acknowledging bootstrap. Existing authenticated accounts can become\n   permanent agents through `POST /v1/auth/agent-key`.\n2. **Bring and link an EVM wallet.** Agent auth does not create a custodial\n",
           "baseline": "1. **Create an agent identity.** New agents call `POST /v1/auth/agent` with a\n   securely persisted, random 32-byte unpadded-base64url `bootstrapSecret`.\n   The account is permanently marked as an agent before its first 90-day bearer\n   is issued, so no birth date is needed. Human signup still requires its age\n   check. Retry the same secret after an ambiguous response; save the bearer\n   before acknowledging bootstrap. Existing authenticated accounts can become\n   permanent agents through `POST /v1/auth/agent-key`.\n2. **Bring and link an EVM wallet.** Agent auth does not create a custodial\n"
+        }
+      ]
+    },
+    "SPEC.md": {
+      "current": {
+        "mode": "100644",
+        "blob": "a4b60d4143e78c3aacaa9963027b00ddc3aa5629",
+        "sha256": "cca8e7546b210a3416b4f2432ab0928a4a2ca0ca71c559549f9466fdd5e72586",
+        "bytes": 57294
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "d6ec9b96046c622b0fd6230e5f8acacffc901364",
+        "sha256": "2593831d2e445b5fef8e8a88128650af80dd3661339e726e3dd142d06394bbf4",
+        "bytes": 57294
+      },
+      "inverses": [
+        {
+          "at": 603,
+          "current": "| | |\n|---|---|\n| Backend modules | **618** files, **141073** lines (recursive source inventory) |\n| Test suites | **1033** files, **213491** lines (recursive source inventory) |\n| HTTP routes | **1386** registrations (**1386** unique; 1274 under `/v1`) |\n| Database tables | **585** (`schema.sql`, 9820 lines) |\n| Client | **14683** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n",
+          "baseline": "| | |\n|---|---|\n| Backend modules | **618** files, **141073** lines (recursive source inventory) |\n| Test suites | **1032** files, **213491** lines (recursive source inventory) |\n| HTTP routes | **1386** registrations (**1386** unique; 1274 under `/v1`) |\n| Database tables | **585** (`schema.sql`, 9820 lines) |\n| Client | **14683** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n"
         }
       ]
     },
@@ -1017,9 +1038,9 @@ export const AGE_REMOVAL_SOURCE = freeze({
     },
     "tools/age-removal-source-seal.js": {
       "mode": "100644",
-      "blob": "11a4129e5b5e972084c9b46cda47c058dd41cec2",
-      "sha256": "772eca4b23f860051895f6cc5b725b6fbeef89587e8bcd444e512334ef3ccdc0",
-      "bytes": 7378
+      "blob": "c6a7483d965d43104424ca8e0e9a3b33838ef136",
+      "sha256": "a1246e59898f829d1436d05df51399ba6f8b3e33e42cfa4399b69ccaa2df1bc3",
+      "bytes": 7389
     },
     "tools/age-removal-source-transfer.js": {
       "mode": "100644",
@@ -1029,4 +1050,4 @@ export const AGE_REMOVAL_SOURCE = freeze({
     }
   }
 });
-export const AGE_REMOVAL_SOURCE_SHA256 = 'eef593cd3ff6aa0448a23275b7bb6b248edacea041daa20542b5b8072bd1f8af';
+export const AGE_REMOVAL_SOURCE_SHA256 = '157db22096b3e867f452d1801c1979dc39b499f76cade5d365bf765fbdbab8a7';
