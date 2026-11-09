@@ -96,6 +96,12 @@ if (lpReaderReady()) __setLpReader(readLpPositions);
 
 const BUYBACK_PERIOD_MS = 12 * 3600 * 1000;
 
+// Scope the diagnostic without changing parity checks, latching or configuration.
+export const CHAIN_PARITY_NOTE = 'These checks cover configured legacy and account-service deployments, '
+  + 'not the current market manager. Compare the named values with the exact deployed contracts and '
+  + 'preserved obligations. Any fee or configuration change requires separate review; this alert '
+  + 'does not prescribe one.';
+
 // Returns null when nothing was due, else a summary of the executed buyback.
 // `opts.force` ignores the 12h timer (tests); `opts.now` overrides the clock.
 export async function runBuyback(pool, opts = {}) {
@@ -688,8 +694,7 @@ if (process.argv[1] && process.argv[1].endsWith('worker.js')) {
       console.error(`🚨 CHAIN PARITY — ${lines}. The chain and the backend disagree about a value the chain holds.`);
       await safe('chain parity alert', () => alertDrift(pool, [{
         name: 'chain parity', mismatches: sp.mismatches,
-        note: 'A value the chain holds and the backend restates disagree. The bond bps are IMMUTABLE, so the fix '
-          + 'is the ENV (fee-splits.env on BOTH api and worker) unless the deploy itself was wrong.',
+        note: CHAIN_PARITY_NOTE,
       }], 'split'));
     } else if (sp && sp.state === 'ok' && chainParityAlerted) {
       chainParityAlerted = false;

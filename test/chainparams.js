@@ -16,7 +16,50 @@
 import assert from 'node:assert';
 import fs from 'node:fs';
 import { CHAIN_PARAMS, readChainParams, buildParamTx } from '../src/chainparams.js';
-import { BONDS, SELL_TAX, MINT_TRANCHES } from '../src/rules.js';
+import { BONDS, MINT_TRANCHES } from '../src/rules.js';
+
+// Retire tuning and pair registration without removing practical fee-off recovery.
+// The legacy Safe may prepare only the exact all-zero base-tax call from this panel.
+{
+  const priorOmr = process.env.OMR_ADDRESS, priorHook = process.env.OMERTA_HOOK_ADDRESS;
+  try {
+    process.env.OMR_ADDRESS = '0x2222222222222222222222222222222222222222';
+    process.env.OMERTA_HOOK_ADDRESS = '0x3333333333333333333333333333333333333333';
+    const fields = ['bps', 'devBps', 'rwaBps', 'communityBps'];
+    const zeros = Object.fromEntries(fields.map(field => [field, '0']));
+    const { decodeFunctionData, toFunctionSelector } = await import('viem');
+    const abi = [{ type: 'function', name: 'setSellTax', stateMutability: 'nonpayable', outputs: [],
+      inputs: fields.map(name => ({ name, type: 'uint256' })) }];
+    for (const [key, env] of [['hook.sellTax', 'OMERTA_HOOK_ADDRESS'], ['omr.sellTax', 'OMR_ADDRESS']]) {
+      const tx = await buildParamTx(key, zeros);
+      assert.equal(tx.to, process.env[env]);
+      assert.equal(tx.value, '0');
+      assert.equal(tx.data.slice(0, 10), toFunctionSelector('setSellTax(uint256,uint256,uint256,uint256)'));
+      assert.deepEqual(decodeFunctionData({ abi, data: tx.data }).args, [0n, 0n, 0n, 0n]);
+      assert(tx.next.includes('Safe'));
+      const row = CHAIN_PARAMS.find(row => row.key === key);
+      assert.match(row.label, /Emergency.*legacy.*base tax/);
+      assert.match(row.wall, /all four.*zero/);
+      assert.match(row.why, /surge.*opening/);
+      assert.equal(row.mirror, undefined, 'No retired tax policy is presented as a current-market mirror');
+      assert.equal(row.relation, undefined);
+      delete process.env[env];
+      await assert.rejects(() => buildParamTx(key, zeros), /verify the existing deployment.*do not deploy/i);
+      process.env[env] = tx.to;
+      for (const field of fields)
+        await assert.rejects(() => buildParamTx(key, { ...zeros, [field]: 1 }), /only supports all-zero emergency/);
+      for (const values of [{}, { ...zeros, bps: -1 }, { ...zeros, bps: true },
+        { ...zeros, bps: '0x4444444444444444444444444444444444444444' }])
+        await assert.rejects(() => buildParamTx(key, values));
+    }
+    assert(!CHAIN_PARAMS.some(row => row.key === 'omr.pair'));
+    await assert.rejects(() => buildParamTx('omr.pair', { pair: process.env.OMR_ADDRESS, isPair: false }), /retired market parameter/);
+    await assert.rejects(() => buildParamTx('omr.pair', {}), /retired market parameter/);
+  } finally {
+    if (priorOmr === undefined) delete process.env.OMR_ADDRESS; else process.env.OMR_ADDRESS = priorOmr;
+    if (priorHook === undefined) delete process.env.OMERTA_HOOK_ADDRESS; else process.env.OMERTA_HOOK_ADDRESS = priorHook;
+  }
+}
 
 // ── IT CANNOT SIGN, AND IT MUST NOT BECOME ABLE TO ───────────────────────────────────────────────
 {
@@ -48,6 +91,12 @@ import { BONDS, SELL_TAX, MINT_TRANCHES } from '../src/rules.js';
 // write the contract — what it does, what breaks, what the contract itself refuses, and the setter.
 {
   assert(CHAIN_PARAMS.length >= 15, `the registry covers ${CHAIN_PARAMS.length} parameters — too few to be the control room`);
+  assert.deepEqual(CHAIN_PARAMS.map(row => row.key), [
+    'bond.dailyCap', 'bond.maxRate', 'bond.oracle', 'bond.recipients', 'bond.signer',
+    'genesis.price', 'hook.sellTax', 'omr.sellTax', 'omr.minter', 'fees.fees', 'fees.reroll', 'voucher.dailyCap',
+    'gear.cap', 'staking.apy', 'alchemist.ltv', 'alchemist.caps', 'transmuter.buffer',
+    'transmuter.caps', 'denari.minter',
+  ], 'Retain 17 deployed-service controls plus two zero-only emergency shortcuts');
   const seen = new Set();
   for (const p of CHAIN_PARAMS) {
     assert(!seen.has(p.key), `duplicate parameter key: ${p.key}`);
@@ -92,13 +141,8 @@ import { BONDS, SELL_TAX, MINT_TRANCHES } from '../src/rules.js';
   for (const w of MINT_TRANCHES.map((t) => t.eth))
     assert(fm.value.includes(String(w)), `the fee mirror must show published wave ${w} — the tranche boundary IS this transaction`);
 
-  // The bond-discount / sell-tax RELATION, surfaced as an alert rather than a number. At 800 vs 900
-  // an immediate flip returns 1.08 x 0.91 = 0.983 and loses money; let the discount reach the tax and
-  // bonding becomes a subsidy on selling, paid to the most motivated bypass-seeker OMR will have.
-  const hook = CHAIN_PARAMS.find((p) => p.key === 'hook.sellTax');
-  assert.equal(hook.relation(), null, 'at the shipped values a bond is a hold, so no alert fires');
-  const shipped = SELL_TAX.BPS;
-  assert(BONDS.DISCOUNT_BPS < shipped, `the discount (${BONDS.DISCOUNT_BPS}) must sit strictly below the tax (${shipped})`);
+  // The old bond/transfer-tax relation is not current-market policy. Its setters
+  // can only turn the legacy base tax off; retained service mirrors still read live levers.
 }
 
 // ── THE CALLDATA IS RIGHT, CHECKED AGAINST A SECOND ENCODER ──────────────────────────────────────
@@ -154,6 +198,8 @@ import { BONDS, SELL_TAX, MINT_TRANCHES } from '../src/rules.js';
   assert.equal(board.configured, false, 'with no RPC the board reports dormant rather than erroring');
   assert(board.why.includes('dormant'), 'and says why');
   assert(board.rows.length === CHAIN_PARAMS.length, 'every row is still listed — the walls and mirrors do not need a chain');
+  for (const key of ['omr.pair'])
+    assert(!board.rows.some(row => row.key === key), 'Retired controls must not be advertised on the admin board');
   assert(board.rows.every((r) => r.live === null), 'no row invents a value it could not read');
   const withGetter = board.rows.find((r) => r.key === 'bond.dailyCap');
   assert.equal(withGetter.hasGetter, true,
@@ -162,7 +208,7 @@ import { BONDS, SELL_TAX, MINT_TRANCHES } from '../src/rules.js';
   if (saved) process.env.CHAIN_RPC_URL = saved;
 }
 
-console.log('✅ THE CONTROL ROOM passed — the panel can read every on-chain parameter and prepare a '
+console.log('✅ THE CONTROL ROOM passed — the panel retains supported deployed-service parameters and can prepare a '
   + 'change, and is structurally incapable of executing one: no signing client, no key, no execute '
   + 'route, so a compromised admin session is still bounded by the Safe. The calldata is decoded back '
   + 'with an independent encoder because a human signs it believing the screen; the walls refuse a bad '
