@@ -433,6 +433,7 @@
 | [docs/consignments-security-review.md](../../docs/consignments-security-review.md) | documentation | 55 | 2026-10-15 |
 | [docs/contract-auction-receipt-repair-review.md](../../docs/contract-auction-receipt-repair-review.md) | documentation | 20 | 2026-10-13 |
 | [docs/contract-auctions-security-review.md](../../docs/contract-auctions-security-review.md) | documentation | 42 | 2026-10-13 |
+| [docs/contract-retirement-20261109.md](../../docs/contract-retirement-20261109.md) | documentation | 128 | 2026-11-09 |
 | [docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md](../../docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md) | documentation | 8 | 2026-09-14 |
 | [docs/coordination-engine/adr/ADR_002_EVENT_ARCHITECTURE.md](../../docs/coordination-engine/adr/ADR_002_EVENT_ARCHITECTURE.md) | documentation | 8 | 2026-09-14 |
 | [docs/coordination-engine/adr/ADR_003_KNOWLEDGE_IMMUTABILITY.md](../../docs/coordination-engine/adr/ADR_003_KNOWLEDGE_IMMUTABILITY.md) | documentation | 8 | 2026-09-14 |

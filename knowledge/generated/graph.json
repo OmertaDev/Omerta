@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "607eb240cd67c52528c98a4e3839f2f06a094cda",
+  "sourceRevision": "ea49d968a2b2c6ff40a36ef74c75c151dc23650e",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,44 +43,44 @@
     ]
   },
   "census": {
-    "nodes": 19047,
-    "edges": 75844,
+    "nodes": 19106,
+    "edges": 76037,
     "byNodeType": {
-      "Artifact": 7736,
+      "Artifact": 7767,
       "Command": 321,
-      "Commit": 5775,
+      "Commit": 5794,
       "Contract": 156,
-      "Document": 975,
+      "Document": 976,
       "Domain": 13,
       "ExternalDependency": 40,
       "HistoricalArtifact": 437,
-      "Module": 618,
+      "Module": 620,
       "PullRequest": 126,
       "Repository": 1,
       "Route": 1076,
       "Subsystem": 8,
       "Table": 585,
-      "TestSuite": 1172,
+      "TestSuite": 1178,
       "Workflow": 8
     },
     "byEdgeType": {
-      "BELONGS_TO": 5997,
-      "CHANGED": 29623,
-      "CONTAINS": 7757,
+      "BELONGS_TO": 6005,
+      "CHANGED": 29697,
+      "CONTAINS": 7788,
       "DECLARES": 321,
       "DEFINED_IN": 1817,
       "DEPENDS_ON": 69,
-      "EXECUTES": 1272,
+      "EXECUTES": 1277,
       "HANDLED_BY": 951,
-      "HAS_COMMIT": 5775,
+      "HAS_COMMIT": 5794,
       "IMPLEMENTS": 124,
-      "IMPORTS": 9317,
+      "IMPORTS": 9348,
       "INHERITS": 47,
-      "REFERENCES": 3978,
-      "REPRESENTS": 2773,
-      "TESTS": 2636,
+      "REFERENCES": 3980,
+      "REPRESENTS": 2782,
+      "TESTS": 2648,
       "TRACKS": 126,
-      "USES_TABLE": 3261
+      "USES_TABLE": 3263
     }
   },
   "nodes": [
@@ -36103,6 +36103,29 @@
       "lastChangedCommit": "0541f3440ec79e67d832dd7c81897175d6efacce"
     },
     {
+      "key": "Artifact:docs/contract-retirement-20261109.md",
+      "type": "Artifact",
+      "id": "docs/contract-retirement-20261109.md",
+      "label": "contract-retirement-20261109.md",
+      "path": "docs/contract-retirement-20261109.md",
+      "kind": "documentation",
+      "extension": ".md",
+      "bytes": 7848,
+      "lines": 128,
+      "version": "dfba631b09602d6e",
+      "text": true,
+      "provenance": [
+        {
+          "file": "docs/contract-retirement-20261109.md",
+          "line": 1,
+          "version": "dfba631b09602d6e"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T21:35:52.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "114ada9398c8055428371e3a902b029c173f6bf9"
+    },
+    {
       "key": "Artifact:docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md",
       "type": "Artifact",
       "id": "docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md",
@@ -41768,20 +41791,20 @@
       "path": "docs/quest-quality-workgraph.json",
       "kind": "artifact",
       "extension": ".json",
-      "bytes": 681001,
-      "lines": 8287,
-      "version": "9f05a6ea8c6946f5",
+      "bytes": 727001,
+      "lines": 8793,
+      "version": "6c64ad4a39b510bf",
       "text": true,
       "provenance": [
         {
           "file": "docs/quest-quality-workgraph.json",
           "line": 1,
-          "version": "9f05a6ea8c6946f5"
+          "version": "6c64ad4a39b510bf"
         }
       ],
-      "lastChangedAt": "2026-11-09T11:01:13.000Z",
+      "lastChangedAt": "2026-11-09T21:56:05.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "1fd0ff9fe3c7b81298f470e828a69c3269265930"
+      "lastChangedCommit": "1349c58430c33578e42458e8c255f3318aad15d9"
     },
     {
       "key": "Artifact:docs/questing-next-30.md",
@@ -41883,20 +41906,20 @@
       "path": "docs/questing-workgraph.json",
       "kind": "artifact",
       "extension": ".json",
-      "bytes": 1543424,
-      "lines": 18183,
-      "version": "209cd0a9d4a51812",
+      "bytes": 1598320,
+      "lines": 18799,
+      "version": "8d2d3755f58a52dc",
       "text": true,
       "provenance": [
         {
           "file": "docs/questing-workgraph.json",
           "line": 1,
-          "version": "209cd0a9d4a51812"
+          "version": "8d2d3755f58a52dc"
         }
       ],
-      "lastChangedAt": "2026-11-09T11:01:13.000Z",
+      "lastChangedAt": "2026-11-09T21:56:05.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "1fd0ff9fe3c7b81298f470e828a69c3269265930"
+      "lastChangedCommit": "1349c58430c33578e42458e8c255f3318aad15d9"
     },
     {
       "key": "Artifact:docs/rc1-alliance-continuation.md",
@@ -93180,6 +93203,259 @@
       "lastChangedCommit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
     },
     {
+      "key": "Artifact:output/quest-quality-verification/quality-mw9stgs3-quest-quality-content.log",
+      "type": "Artifact",
+      "id": "output/quest-quality-verification/quality-mw9stgs3-quest-quality-content.log",
+      "label": "quality-mw9stgs3-quest-quality-content.log",
+      "path": "output/quest-quality-verification/quality-mw9stgs3-quest-quality-content.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 402,
+      "lines": null,
+      "version": "a0f9bded0c0dba10",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/quest-quality-verification/quality-mw9stgs3-quest-quality-content.log",
+          "line": 1,
+          "version": "a0f9bded0c0dba10"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T21:56:05.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "1349c58430c33578e42458e8c255f3318aad15d9"
+    },
+    {
+      "key": "Artifact:output/quest-quality-verification/quality-mw9sto8i-quest-quality-rules.log",
+      "type": "Artifact",
+      "id": "output/quest-quality-verification/quality-mw9sto8i-quest-quality-rules.log",
+      "label": "quality-mw9sto8i-quest-quality-rules.log",
+      "path": "output/quest-quality-verification/quality-mw9sto8i-quest-quality-rules.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 224,
+      "lines": null,
+      "version": "88811fafc6080514",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/quest-quality-verification/quality-mw9sto8i-quest-quality-rules.log",
+          "line": 1,
+          "version": "88811fafc6080514"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T21:56:05.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "1349c58430c33578e42458e8c255f3318aad15d9"
+    },
+    {
+      "key": "Artifact:output/quest-quality-verification/quality-mw9ston5-quest-quality-studio.log",
+      "type": "Artifact",
+      "id": "output/quest-quality-verification/quality-mw9ston5-quest-quality-studio.log",
+      "label": "quality-mw9ston5-quest-quality-studio.log",
+      "path": "output/quest-quality-verification/quality-mw9ston5-quest-quality-studio.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 475,
+      "lines": null,
+      "version": "8a42ef7c6087d618",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/quest-quality-verification/quality-mw9ston5-quest-quality-studio.log",
+          "line": 1,
+          "version": "8a42ef7c6087d618"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T21:56:05.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "1349c58430c33578e42458e8c255f3318aad15d9"
+    },
+    {
+      "key": "Artifact:output/quest-quality-verification/quality-mw9stplb-quest-quality-runtime.log",
+      "type": "Artifact",
+      "id": "output/quest-quality-verification/quality-mw9stplb-quest-quality-runtime.log",
+      "label": "quality-mw9stplb-quest-quality-runtime.log",
+      "path": "output/quest-quality-verification/quality-mw9stplb-quest-quality-runtime.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 187,
+      "lines": null,
+      "version": "a363aa602a6835fb",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/quest-quality-verification/quality-mw9stplb-quest-quality-runtime.log",
+          "line": 1,
+          "version": "a363aa602a6835fb"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T21:56:05.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "1349c58430c33578e42458e8c255f3318aad15d9"
+    },
+    {
+      "key": "Artifact:output/quest-quality-verification/quality-mw9sttxa-quest-quality-api.log",
+      "type": "Artifact",
+      "id": "output/quest-quality-verification/quality-mw9sttxa-quest-quality-api.log",
+      "label": "quality-mw9sttxa-quest-quality-api.log",
+      "path": "output/quest-quality-verification/quality-mw9sttxa-quest-quality-api.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 209,
+      "lines": null,
+      "version": "985787db98e929e5",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/quest-quality-verification/quality-mw9sttxa-quest-quality-api.log",
+          "line": 1,
+          "version": "985787db98e929e5"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T21:56:05.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "1349c58430c33578e42458e8c255f3318aad15d9"
+    },
+    {
+      "key": "Artifact:output/quest-quality-verification/quality-mw9stxou-quest-quality-browser.log",
+      "type": "Artifact",
+      "id": "output/quest-quality-verification/quality-mw9stxou-quest-quality-browser.log",
+      "label": "quality-mw9stxou-quest-quality-browser.log",
+      "path": "output/quest-quality-verification/quality-mw9stxou-quest-quality-browser.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 2029,
+      "lines": null,
+      "version": "b043d204a50e387f",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/quest-quality-verification/quality-mw9stxou-quest-quality-browser.log",
+          "line": 1,
+          "version": "b043d204a50e387f"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T21:56:05.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "1349c58430c33578e42458e8c255f3318aad15d9"
+    },
+    {
+      "key": "Artifact:output/quest-quality-verification/quality-mw9suf1b-quest-quality-postgres.log",
+      "type": "Artifact",
+      "id": "output/quest-quality-verification/quality-mw9suf1b-quest-quality-postgres.log",
+      "label": "quality-mw9suf1b-quest-quality-postgres.log",
+      "path": "output/quest-quality-verification/quality-mw9suf1b-quest-quality-postgres.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 286,
+      "lines": null,
+      "version": "b624159b7e98771e",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/quest-quality-verification/quality-mw9suf1b-quest-quality-postgres.log",
+          "line": 1,
+          "version": "b624159b7e98771e"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T21:56:05.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "1349c58430c33578e42458e8c255f3318aad15d9"
+    },
+    {
+      "key": "Artifact:output/quest-quality-verification/quality-mw9sulou-quest-quality-stateful.log",
+      "type": "Artifact",
+      "id": "output/quest-quality-verification/quality-mw9sulou-quest-quality-stateful.log",
+      "label": "quality-mw9sulou-quest-quality-stateful.log",
+      "path": "output/quest-quality-verification/quality-mw9sulou-quest-quality-stateful.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 186,
+      "lines": null,
+      "version": "c42d213b405266e1",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/quest-quality-verification/quality-mw9sulou-quest-quality-stateful.log",
+          "line": 1,
+          "version": "c42d213b405266e1"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T21:56:05.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "1349c58430c33578e42458e8c255f3318aad15d9"
+    },
+    {
+      "key": "Artifact:output/quest-quality-verification/quality-mw9sumih-quest-quality-social.log",
+      "type": "Artifact",
+      "id": "output/quest-quality-verification/quality-mw9sumih-quest-quality-social.log",
+      "label": "quality-mw9sumih-quest-quality-social.log",
+      "path": "output/quest-quality-verification/quality-mw9sumih-quest-quality-social.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 221,
+      "lines": null,
+      "version": "57991e1c79099eaf",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/quest-quality-verification/quality-mw9sumih-quest-quality-social.log",
+          "line": 1,
+          "version": "57991e1c79099eaf"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T21:56:05.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "1349c58430c33578e42458e8c255f3318aad15d9"
+    },
+    {
+      "key": "Artifact:output/quest-quality-verification/quality-mw9suqdg-quest-quality-spoilers.log",
+      "type": "Artifact",
+      "id": "output/quest-quality-verification/quality-mw9suqdg-quest-quality-spoilers.log",
+      "label": "quality-mw9suqdg-quest-quality-spoilers.log",
+      "path": "output/quest-quality-verification/quality-mw9suqdg-quest-quality-spoilers.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 189,
+      "lines": null,
+      "version": "98af7a8ae248cf72",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/quest-quality-verification/quality-mw9suqdg-quest-quality-spoilers.log",
+          "line": 1,
+          "version": "98af7a8ae248cf72"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T21:56:05.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "1349c58430c33578e42458e8c255f3318aad15d9"
+    },
+    {
+      "key": "Artifact:output/quest-quality-verification/quality-mw9sutfa-quest-quality-study.log",
+      "type": "Artifact",
+      "id": "output/quest-quality-verification/quality-mw9sutfa-quest-quality-study.log",
+      "label": "quality-mw9sutfa-quest-quality-study.log",
+      "path": "output/quest-quality-verification/quality-mw9sutfa-quest-quality-study.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 119,
+      "lines": null,
+      "version": "6c0b311473da2bf2",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/quest-quality-verification/quality-mw9sutfa-quest-quality-study.log",
+          "line": 1,
+          "version": "6c0b311473da2bf2"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T21:56:05.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "1349c58430c33578e42458e8c255f3318aad15d9"
+    },
+    {
       "key": "Artifact:output/questing-verification/quest-mw7bvisg-quest-saga.log",
       "type": "Artifact",
       "id": "output/questing-verification/quest-mw7bvisg-quest-saga.log",
@@ -96998,6 +97274,259 @@
       "lastChangedCommit": "12436d6d31eab4427f2b93a35d4f7b740709774b"
     },
     {
+      "key": "Artifact:output/questing-verification/quest-mw9sswq1-quest-saga.log",
+      "type": "Artifact",
+      "id": "output/questing-verification/quest-mw9sswq1-quest-saga.log",
+      "label": "quest-mw9sswq1-quest-saga.log",
+      "path": "output/questing-verification/quest-mw9sswq1-quest-saga.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 247,
+      "lines": null,
+      "version": "38e9a8e9540aacac",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/questing-verification/quest-mw9sswq1-quest-saga.log",
+          "line": 1,
+          "version": "38e9a8e9540aacac"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T21:56:05.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "1349c58430c33578e42458e8c255f3318aad15d9"
+    },
+    {
+      "key": "Artifact:output/questing-verification/quest-mw9st2og-content-narrative-security.log",
+      "type": "Artifact",
+      "id": "output/questing-verification/quest-mw9st2og-content-narrative-security.log",
+      "label": "quest-mw9st2og-content-narrative-security.log",
+      "path": "output/questing-verification/quest-mw9st2og-content-narrative-security.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 143,
+      "lines": null,
+      "version": "9fd43ea7087d190a",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/questing-verification/quest-mw9st2og-content-narrative-security.log",
+          "line": 1,
+          "version": "9fd43ea7087d190a"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T21:56:05.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "1349c58430c33578e42458e8c255f3318aad15d9"
+    },
+    {
+      "key": "Artifact:output/questing-verification/quest-mw9st3ox-quest-specialist.log",
+      "type": "Artifact",
+      "id": "output/questing-verification/quest-mw9st3ox-quest-specialist.log",
+      "label": "quest-mw9st3ox-quest-specialist.log",
+      "path": "output/questing-verification/quest-mw9st3ox-quest-specialist.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 225,
+      "lines": null,
+      "version": "dc16d63834905afa",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/questing-verification/quest-mw9st3ox-quest-specialist.log",
+          "line": 1,
+          "version": "dc16d63834905afa"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T21:56:05.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "1349c58430c33578e42458e8c255f3318aad15d9"
+    },
+    {
+      "key": "Artifact:output/questing-verification/quest-mw9st98c-clue-puzzles.log",
+      "type": "Artifact",
+      "id": "output/questing-verification/quest-mw9st98c-clue-puzzles.log",
+      "label": "quest-mw9st98c-clue-puzzles.log",
+      "path": "output/questing-verification/quest-mw9st98c-clue-puzzles.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 235,
+      "lines": null,
+      "version": "e92c2a507abc6cfe",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/questing-verification/quest-mw9st98c-clue-puzzles.log",
+          "line": 1,
+          "version": "e92c2a507abc6cfe"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T21:56:05.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "1349c58430c33578e42458e8c255f3318aad15d9"
+    },
+    {
+      "key": "Artifact:output/questing-verification/quest-mw9steag-clue-puzzles-browser.log",
+      "type": "Artifact",
+      "id": "output/questing-verification/quest-mw9steag-clue-puzzles-browser.log",
+      "label": "quest-mw9steag-clue-puzzles-browser.log",
+      "path": "output/questing-verification/quest-mw9steag-clue-puzzles-browser.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 733,
+      "lines": null,
+      "version": "dcc3e65b1a19c70f",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/questing-verification/quest-mw9steag-clue-puzzles-browser.log",
+          "line": 1,
+          "version": "dcc3e65b1a19c70f"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T21:56:05.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "1349c58430c33578e42458e8c255f3318aad15d9"
+    },
+    {
+      "key": "Artifact:output/questing-verification/quest-mw9stlga-content-narrative.log",
+      "type": "Artifact",
+      "id": "output/questing-verification/quest-mw9stlga-content-narrative.log",
+      "label": "quest-mw9stlga-content-narrative.log",
+      "path": "output/questing-verification/quest-mw9stlga-content-narrative.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 199,
+      "lines": null,
+      "version": "968b7cbe4e321ee6",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/questing-verification/quest-mw9stlga-content-narrative.log",
+          "line": 1,
+          "version": "968b7cbe4e321ee6"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T21:56:05.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "1349c58430c33578e42458e8c255f3318aad15d9"
+    },
+    {
+      "key": "Artifact:output/questing-verification/quest-mw9stpf8-quest-experience-browser.log",
+      "type": "Artifact",
+      "id": "output/questing-verification/quest-mw9stpf8-quest-experience-browser.log",
+      "label": "quest-mw9stpf8-quest-experience-browser.log",
+      "path": "output/questing-verification/quest-mw9stpf8-quest-experience-browser.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 2095,
+      "lines": null,
+      "version": "7d431025daa498f9",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/questing-verification/quest-mw9stpf8-quest-experience-browser.log",
+          "line": 1,
+          "version": "7d431025daa498f9"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T21:56:05.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "1349c58430c33578e42458e8c255f3318aad15d9"
+    },
+    {
+      "key": "Artifact:output/questing-verification/quest-mw9su63t-content-api.log",
+      "type": "Artifact",
+      "id": "output/questing-verification/quest-mw9su63t-content-api.log",
+      "label": "quest-mw9su63t-content-api.log",
+      "path": "output/questing-verification/quest-mw9su63t-content-api.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 54,
+      "lines": null,
+      "version": "106619fa56b4a6f4",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/questing-verification/quest-mw9su63t-content-api.log",
+          "line": 1,
+          "version": "106619fa56b4a6f4"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T21:56:05.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "1349c58430c33578e42458e8c255f3318aad15d9"
+    },
+    {
+      "key": "Artifact:output/questing-verification/quest-mw9su7fm-quest-saga-social.log",
+      "type": "Artifact",
+      "id": "output/questing-verification/quest-mw9su7fm-quest-saga-social.log",
+      "label": "quest-mw9su7fm-quest-saga-social.log",
+      "path": "output/questing-verification/quest-mw9su7fm-quest-saga-social.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 222,
+      "lines": null,
+      "version": "bd1546dbdf6591df",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/questing-verification/quest-mw9su7fm-quest-saga-social.log",
+          "line": 1,
+          "version": "bd1546dbdf6591df"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T21:56:05.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "1349c58430c33578e42458e8c255f3318aad15d9"
+    },
+    {
+      "key": "Artifact:output/questing-verification/quest-mw9suc9b-content-casework.log",
+      "type": "Artifact",
+      "id": "output/questing-verification/quest-mw9suc9b-content-casework.log",
+      "label": "quest-mw9suc9b-content-casework.log",
+      "path": "output/questing-verification/quest-mw9suc9b-content-casework.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 234,
+      "lines": null,
+      "version": "b16cee8d6d1436db",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/questing-verification/quest-mw9suc9b-content-casework.log",
+          "line": 1,
+          "version": "b16cee8d6d1436db"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T21:56:05.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "1349c58430c33578e42458e8c255f3318aad15d9"
+    },
+    {
+      "key": "Artifact:output/questing-verification/quest-mw9sug3g-quest-workshop.log",
+      "type": "Artifact",
+      "id": "output/questing-verification/quest-mw9sug3g-quest-workshop.log",
+      "label": "quest-mw9sug3g-quest-workshop.log",
+      "path": "output/questing-verification/quest-mw9sug3g-quest-workshop.log",
+      "kind": "artifact",
+      "extension": ".log",
+      "bytes": 203,
+      "lines": null,
+      "version": "67c6217c57b09a8d",
+      "text": false,
+      "provenance": [
+        {
+          "file": "output/questing-verification/quest-mw9sug3g-quest-workshop.log",
+          "line": 1,
+          "version": "67c6217c57b09a8d"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T21:56:05.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "1349c58430c33578e42458e8c255f3318aad15d9"
+    },
+    {
       "key": "Artifact:package-lock.json",
       "type": "Artifact",
       "id": "package-lock.json",
@@ -97028,20 +97557,20 @@
       "path": "package.json",
       "kind": "package-config",
       "extension": ".json",
-      "bytes": 64298,
+      "bytes": 64497,
       "lines": 353,
-      "version": "89b79a5c581530f0",
+      "version": "af308fc3bb54eab6",
       "text": true,
       "provenance": [
         {
           "file": "package.json",
           "line": 1,
-          "version": "89b79a5c581530f0"
+          "version": "af308fc3bb54eab6"
         }
       ],
-      "lastChangedAt": "2026-11-09T04:45:42.000Z",
+      "lastChangedAt": "2026-11-09T21:15:00.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "63820f5408f2ac173b5048d92bfc0580e48171f6"
+      "lastChangedCommit": "072a3e9d41467c19222222af1a1af7475174a362"
     },
     {
       "key": "Artifact:Procfile",
@@ -127687,20 +128216,20 @@
       "path": "public/index.html",
       "kind": "web-surface",
       "extension": ".html",
-      "bytes": 1406414,
-      "lines": 14660,
-      "version": "3504a39e1a670166",
+      "bytes": 1407474,
+      "lines": 14683,
+      "version": "3aac63602e8e6f93",
       "text": true,
       "provenance": [
         {
           "file": "public/index.html",
           "line": 1,
-          "version": "3504a39e1a670166"
+          "version": "3aac63602e8e6f93"
         }
       ],
-      "lastChangedAt": "2026-11-09T05:53:22.000Z",
+      "lastChangedAt": "2026-11-09T21:08:11.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "8431c790ac824d75e4e9f1d5395ca43109d452d6"
+      "lastChangedCommit": "2bfb68964ec3c4044efb9f4532d8312ece93ba2c"
     },
     {
       "key": "Artifact:public/inventory-bond-client.js",
@@ -129067,20 +129596,20 @@
       "path": "public/world-fieldwork.js",
       "kind": "web-surface",
       "extension": ".js",
-      "bytes": 36025,
-      "lines": 417,
-      "version": "4819b12427fe4ada",
+      "bytes": 38168,
+      "lines": 435,
+      "version": "b74ed1a641683640",
       "text": true,
       "provenance": [
         {
           "file": "public/world-fieldwork.js",
           "line": 1,
-          "version": "4819b12427fe4ada"
+          "version": "b74ed1a641683640"
         }
       ],
-      "lastChangedAt": "2026-10-25T20:49:47.000Z",
+      "lastChangedAt": "2026-11-09T21:15:00.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "940df6a1efbe4ddcd8301cd138d5643dbe48a0bc"
+      "lastChangedCommit": "072a3e9d41467c19222222af1a1af7475174a362"
     },
     {
       "key": "Artifact:RC1_ACCEPTANCE_MATRIX.csv",
@@ -129251,20 +129780,20 @@
       "path": "SPEC.md",
       "kind": "documentation",
       "extension": ".md",
-      "bytes": 57292,
+      "bytes": 57344,
       "lines": 762,
-      "version": "805a0a9516951ca5",
+      "version": "0c07c31956222241",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "805a0a9516951ca5"
+          "version": "0c07c31956222241"
         }
       ],
-      "lastChangedAt": "2026-11-09T21:12:25.000Z",
+      "lastChangedAt": "2026-11-09T21:38:04.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "ff856ca7fbe474243eec4152c715ffd11af7494f"
+      "lastChangedCommit": "5e85a7f806c4829f43a49029dc8b0e9f092ee91b"
     },
     {
       "key": "Artifact:src/access.js",
@@ -129412,20 +129941,20 @@
       "path": "src/agentgateway.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 160952,
-      "lines": 2474,
-      "version": "1f17ee1bb1550ec6",
+      "bytes": 161818,
+      "lines": 2487,
+      "version": "1a3aaa0c6f87e76e",
       "text": true,
       "provenance": [
         {
           "file": "src/agentgateway.js",
           "line": 1,
-          "version": "1f17ee1bb1550ec6"
+          "version": "1a3aaa0c6f87e76e"
         }
       ],
-      "lastChangedAt": "2026-11-09T05:53:22.000Z",
+      "lastChangedAt": "2026-11-09T21:15:00.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "8431c790ac824d75e4e9f1d5395ca43109d452d6"
+      "lastChangedCommit": "072a3e9d41467c19222222af1a1af7475174a362"
     },
     {
       "key": "Artifact:src/agentoperatingmemory.js",
@@ -130401,20 +130930,20 @@
       "path": "src/chainparams.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 21541,
-      "lines": 354,
-      "version": "0a215feed9ffe1ec",
+      "bytes": 21336,
+      "lines": 352,
+      "version": "f5535d4c61569f75",
       "text": true,
       "provenance": [
         {
           "file": "src/chainparams.js",
           "line": 1,
-          "version": "0a215feed9ffe1ec"
+          "version": "f5535d4c61569f75"
         }
       ],
-      "lastChangedAt": "2026-08-17T20:54:47.000Z",
+      "lastChangedAt": "2026-11-09T21:35:52.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "8259956826c29cf70f4e87d445d758a915e6c836"
+      "lastChangedCommit": "114ada9398c8055428371e3a902b029c173f6bf9"
     },
     {
       "key": "Artifact:src/circle-highlights.js",
@@ -132241,20 +132770,20 @@
       "path": "src/content/city-quest-presentation.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 2565,
-      "lines": 43,
-      "version": "7abe9758e99a68dd",
+      "bytes": 2783,
+      "lines": 46,
+      "version": "da2b9f618e165cc5",
       "text": true,
       "provenance": [
         {
           "file": "src/content/city-quest-presentation.js",
           "line": 1,
-          "version": "7abe9758e99a68dd"
+          "version": "da2b9f618e165cc5"
         }
       ],
-      "lastChangedAt": "2026-10-31T03:06:32.000Z",
+      "lastChangedAt": "2026-11-09T21:15:00.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      "lastChangedCommit": "072a3e9d41467c19222222af1a1af7475174a362"
     },
     {
       "key": "Artifact:src/content/city-rumors.js",
@@ -132464,6 +132993,29 @@
       "lastChangedCommit": "979519c5640061f45584e926c56d8bc36cc4476f"
     },
     {
+      "key": "Artifact:src/content/crew-crosscurrent.js",
+      "type": "Artifact",
+      "id": "src/content/crew-crosscurrent.js",
+      "label": "crew-crosscurrent.js",
+      "path": "src/content/crew-crosscurrent.js",
+      "kind": "backend-module",
+      "extension": ".js",
+      "bytes": 7630,
+      "lines": 61,
+      "version": "e6cd8e7680a4d8e6",
+      "text": true,
+      "provenance": [
+        {
+          "file": "src/content/crew-crosscurrent.js",
+          "line": 1,
+          "version": "e6cd8e7680a4d8e6"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T21:15:00.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "072a3e9d41467c19222222af1a1af7475174a362"
+    },
+    {
       "key": "Artifact:src/content/definition-invariants.js",
       "type": "Artifact",
       "id": "src/content/definition-invariants.js",
@@ -132648,6 +133200,29 @@
       "lastChangedCommit": "b387389d69b7e0bb2ad8ae98d69c1884a83c85e5"
     },
     {
+      "key": "Artifact:src/content/first-errand-case.js",
+      "type": "Artifact",
+      "id": "src/content/first-errand-case.js",
+      "label": "first-errand-case.js",
+      "path": "src/content/first-errand-case.js",
+      "kind": "backend-module",
+      "extension": ".js",
+      "bytes": 7839,
+      "lines": 59,
+      "version": "9b608d75e3e08f17",
+      "text": true,
+      "provenance": [
+        {
+          "file": "src/content/first-errand-case.js",
+          "line": 1,
+          "version": "9b608d75e3e08f17"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T21:15:00.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "072a3e9d41467c19222222af1a1af7475174a362"
+    },
+    {
       "key": "Artifact:src/content/furnace-ledger.js",
       "type": "Artifact",
       "id": "src/content/furnace-ledger.js",
@@ -132816,20 +133391,20 @@
       "path": "src/content/phase1-policy.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 7852,
-      "lines": 169,
-      "version": "f5d2339a39d85655",
+      "bytes": 7902,
+      "lines": 170,
+      "version": "fcf7454fd98782ba",
       "text": true,
       "provenance": [
         {
           "file": "src/content/phase1-policy.js",
           "line": 1,
-          "version": "f5d2339a39d85655"
+          "version": "fcf7454fd98782ba"
         }
       ],
-      "lastChangedAt": "2026-10-31T03:06:32.000Z",
+      "lastChangedAt": "2026-11-09T21:15:00.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      "lastChangedCommit": "072a3e9d41467c19222222af1a1af7475174a362"
     },
     {
       "key": "Artifact:src/content/phase1-validation.js",
@@ -132862,20 +133437,20 @@
       "path": "src/content/phase1.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 1528,
-      "lines": 30,
-      "version": "6d8ca127ad60b3e1",
+      "bytes": 1722,
+      "lines": 34,
+      "version": "b75602cdbe447863",
       "text": true,
       "provenance": [
         {
           "file": "src/content/phase1.js",
           "line": 1,
-          "version": "6d8ca127ad60b3e1"
+          "version": "b75602cdbe447863"
         }
       ],
-      "lastChangedAt": "2026-10-31T03:06:32.000Z",
+      "lastChangedAt": "2026-11-09T21:15:00.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      "lastChangedCommit": "072a3e9d41467c19222222af1a1af7475174a362"
     },
     {
       "key": "Artifact:src/content/phase2-transactions.js",
@@ -137623,20 +138198,20 @@
       "path": "src/operations.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 85985,
-      "lines": 1803,
-      "version": "175882731792bfd2",
+      "bytes": 87648,
+      "lines": 1825,
+      "version": "ad90d8c92c7d9e0b",
       "text": true,
       "provenance": [
         {
           "file": "src/operations.js",
           "line": 1,
-          "version": "175882731792bfd2"
+          "version": "ad90d8c92c7d9e0b"
         }
       ],
-      "lastChangedAt": "2026-10-09T05:38:36.000Z",
+      "lastChangedAt": "2026-11-09T21:15:00.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3d12189ffc69b64fbb91130a6986d476bf2a20e8"
+      "lastChangedCommit": "072a3e9d41467c19222222af1a1af7475174a362"
     },
     {
       "key": "Artifact:src/opportunities.js",
@@ -141326,20 +141901,20 @@
       "path": "src/routes/worldgraph.js",
       "kind": "route-module",
       "extension": ".js",
-      "bytes": 30577,
-      "lines": 675,
-      "version": "762bd5300203925b",
+      "bytes": 31869,
+      "lines": 690,
+      "version": "a45be0380bc06f1b",
       "text": true,
       "provenance": [
         {
           "file": "src/routes/worldgraph.js",
           "line": 1,
-          "version": "762bd5300203925b"
+          "version": "a45be0380bc06f1b"
         }
       ],
-      "lastChangedAt": "2026-10-14T21:13:41.000Z",
+      "lastChangedAt": "2026-11-09T21:15:00.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b602dc0da8fd3922ae53b84d23e4e46b6e90439f"
+      "lastChangedCommit": "072a3e9d41467c19222222af1a1af7475174a362"
     },
     {
       "key": "Artifact:src/rules.generated.js",
@@ -143166,20 +143741,20 @@
       "path": "src/worker.js",
       "kind": "backend-module",
       "extension": ".js",
-      "bytes": 87569,
-      "lines": 1131,
-      "version": "0b4d4427841feb6d",
+      "bytes": 87807,
+      "lines": 1136,
+      "version": "3f11ab4d82329b2d",
       "text": true,
       "provenance": [
         {
           "file": "src/worker.js",
           "line": 1,
-          "version": "0b4d4427841feb6d"
+          "version": "3f11ab4d82329b2d"
         }
       ],
-      "lastChangedAt": "2026-11-07T23:26:53.000Z",
+      "lastChangedAt": "2026-11-09T21:12:32.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "d9fa64aca2f7e5c4cc0a5bca33037b6c69a31151"
+      "lastChangedCommit": "9fc442d1ae1a17cdca0b36ef549e5c916929dcdd"
     },
     {
       "key": "Artifact:src/workertraining.js",
@@ -143985,6 +144560,52 @@
       "lastChangedAt": "2026-10-14T21:13:41.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "b602dc0da8fd3922ae53b84d23e4e46b6e90439f"
+    },
+    {
+      "key": "Artifact:test/ambient-lifecycle-browser.js",
+      "type": "Artifact",
+      "id": "test/ambient-lifecycle-browser.js",
+      "label": "ambient-lifecycle-browser.js",
+      "path": "test/ambient-lifecycle-browser.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 7183,
+      "lines": 105,
+      "version": "f99409ec393916ec",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/ambient-lifecycle-browser.js",
+          "line": 1,
+          "version": "f99409ec393916ec"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T21:08:11.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "2bfb68964ec3c4044efb9f4532d8312ece93ba2c"
+    },
+    {
+      "key": "Artifact:test/ambient-lifecycle.js",
+      "type": "Artifact",
+      "id": "test/ambient-lifecycle.js",
+      "label": "ambient-lifecycle.js",
+      "path": "test/ambient-lifecycle.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 9667,
+      "lines": 151,
+      "version": "6559f61c2859bb11",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/ambient-lifecycle.js",
+          "line": 1,
+          "version": "6559f61c2859bb11"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T21:08:11.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "2bfb68964ec3c4044efb9f4532d8312ece93ba2c"
     },
     {
       "key": "Artifact:test/atomicbarter-integration.js",
@@ -145121,20 +145742,20 @@
       "path": "test/chainparams.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 11942,
-      "lines": 172,
-      "version": "081caefb2f939937",
+      "bytes": 14853,
+      "lines": 218,
+      "version": "870ec8d60e4337a8",
       "text": true,
       "provenance": [
         {
           "file": "test/chainparams.js",
           "line": 1,
-          "version": "081caefb2f939937"
+          "version": "870ec8d60e4337a8"
         }
       ],
-      "lastChangedAt": "2026-08-13T12:48:16.000Z",
+      "lastChangedAt": "2026-11-09T21:35:52.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "fcb5f634bf658a1e28b3dcea993321dfaa9b62f6"
+      "lastChangedCommit": "114ada9398c8055428371e3a902b029c173f6bf9"
     },
     {
       "key": "Artifact:test/character-mint-policy.js",
@@ -145298,6 +145919,29 @@
       "lastChangedCommit": "43ecc8e7faaebf60d0a0685b844a2ad556570c99"
     },
     {
+      "key": "Artifact:test/city-case-story-browser.js",
+      "type": "Artifact",
+      "id": "test/city-case-story-browser.js",
+      "label": "city-case-story-browser.js",
+      "path": "test/city-case-story-browser.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 14176,
+      "lines": 195,
+      "version": "6e79ca0372775c86",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/city-case-story-browser.js",
+          "line": 1,
+          "version": "6e79ca0372775c86"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T21:15:00.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "072a3e9d41467c19222222af1a1af7475174a362"
+    },
+    {
       "key": "Artifact:test/city-connected-scene-browser.js",
       "type": "Artifact",
       "id": "test/city-connected-scene-browser.js",
@@ -145319,6 +145963,29 @@
       "lastChangedAt": "2026-10-17T18:33:51.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "2811894850d38ee4c7d703953a9fb759756478a5"
+    },
+    {
+      "key": "Artifact:test/city-cooperative-content.js",
+      "type": "Artifact",
+      "id": "test/city-cooperative-content.js",
+      "label": "city-cooperative-content.js",
+      "path": "test/city-cooperative-content.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 1893,
+      "lines": 28,
+      "version": "37ed9deb520f19a8",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/city-cooperative-content.js",
+          "line": 1,
+          "version": "37ed9deb520f19a8"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T21:15:00.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "072a3e9d41467c19222222af1a1af7475174a362"
     },
     {
       "key": "Artifact:test/city-dashboard-host-browser.js",
@@ -145374,20 +146041,20 @@
       "path": "test/city-district-arcs.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 19144,
-      "lines": 251,
-      "version": "abb226226c451f2b",
+      "bytes": 19378,
+      "lines": 254,
+      "version": "06c9f6ed9e2252b5",
       "text": true,
       "provenance": [
         {
           "file": "test/city-district-arcs.js",
           "line": 1,
-          "version": "abb226226c451f2b"
+          "version": "06c9f6ed9e2252b5"
         }
       ],
-      "lastChangedAt": "2026-10-31T03:44:00.000Z",
+      "lastChangedAt": "2026-11-09T21:15:00.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "778990997b3cac6342a15d8027bfe110fd62d80d"
+      "lastChangedCommit": "072a3e9d41467c19222222af1a1af7475174a362"
     },
     {
       "key": "Artifact:test/city-encounters-native-proof.js",
@@ -145629,18 +146296,18 @@
       "extension": ".js",
       "bytes": 17775,
       "lines": 270,
-      "version": "04c61d8a9e8c0be7",
+      "version": "46d2433487382e7b",
       "text": true,
       "provenance": [
         {
           "file": "test/city-rpg.js",
           "line": 1,
-          "version": "04c61d8a9e8c0be7"
+          "version": "46d2433487382e7b"
         }
       ],
-      "lastChangedAt": "2026-10-31T03:06:32.000Z",
+      "lastChangedAt": "2026-11-09T21:15:00.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      "lastChangedCommit": "072a3e9d41467c19222222af1a1af7475174a362"
     },
     {
       "key": "Artifact:test/city-scene-browser.js",
@@ -153424,20 +154091,20 @@
       "path": "test/hardening.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 142355,
-      "lines": 1851,
-      "version": "cba4c8e4c4c5ab79",
+      "bytes": 143070,
+      "lines": 1861,
+      "version": "48fd1cd0d242e6ab",
       "text": true,
       "provenance": [
         {
           "file": "test/hardening.js",
           "line": 1,
-          "version": "cba4c8e4c4c5ab79"
+          "version": "48fd1cd0d242e6ab"
         }
       ],
-      "lastChangedAt": "2026-11-09T05:53:22.000Z",
+      "lastChangedAt": "2026-11-09T21:12:32.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "8431c790ac824d75e4e9f1d5395ca43109d452d6"
+      "lastChangedCommit": "9fc442d1ae1a17cdca0b36ef549e5c916929dcdd"
     },
     {
       "key": "Artifact:test/heists.js",
@@ -154358,6 +155025,29 @@
       "lastChangedAt": "2026-10-13T17:42:52.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "1a5ca2196b790980a289b31932eee19288a43a55"
+    },
+    {
+      "key": "Artifact:test/lib/first-errand-proof.js",
+      "type": "Artifact",
+      "id": "test/lib/first-errand-proof.js",
+      "label": "first-errand-proof.js",
+      "path": "test/lib/first-errand-proof.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 8288,
+      "lines": 97,
+      "version": "e4d295135d1b088b",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/lib/first-errand-proof.js",
+          "line": 1,
+          "version": "e4d295135d1b088b"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T21:15:00.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "072a3e9d41467c19222222af1a1af7475174a362"
     },
     {
       "key": "Artifact:test/lib/phase2-architecture-upgrade-catalog.json",
@@ -158222,6 +158912,29 @@
       "lastChangedAt": "2026-10-21T19:36:24.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "696cd9ff6e00872391d724edf327f7550d05cf2b"
+    },
+    {
+      "key": "Artifact:test/population-goods-postgres.js",
+      "type": "Artifact",
+      "id": "test/population-goods-postgres.js",
+      "label": "population-goods-postgres.js",
+      "path": "test/population-goods-postgres.js",
+      "kind": "test-suite",
+      "extension": ".js",
+      "bytes": 10935,
+      "lines": 187,
+      "version": "14c45eec4289119e",
+      "text": true,
+      "provenance": [
+        {
+          "file": "test/population-goods-postgres.js",
+          "line": 1,
+          "version": "14c45eec4289119e"
+        }
+      ],
+      "lastChangedAt": "2026-11-09T21:01:33.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "8f7793451139eb2eca43d69a172ca7a5344a287f"
     },
     {
       "key": "Artifact:test/population.js",
@@ -165361,20 +166074,20 @@
       "path": "test/staged-crew-missions-api.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 17619,
-      "lines": 215,
-      "version": "8a1df6bd7009aeba",
+      "bytes": 25710,
+      "lines": 301,
+      "version": "d9f009f371f4a512",
       "text": true,
       "provenance": [
         {
           "file": "test/staged-crew-missions-api.js",
           "line": 1,
-          "version": "8a1df6bd7009aeba"
+          "version": "d9f009f371f4a512"
         }
       ],
-      "lastChangedAt": "2026-10-14T21:13:41.000Z",
+      "lastChangedAt": "2026-11-09T21:15:00.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "b602dc0da8fd3922ae53b84d23e4e46b6e90439f"
+      "lastChangedCommit": "072a3e9d41467c19222222af1a1af7475174a362"
     },
     {
       "key": "Artifact:test/staged-crew-missions.js",
@@ -166258,20 +166971,20 @@
       "path": "test/ux-feedback.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 10391,
-      "lines": 127,
-      "version": "4258d965a394340c",
+      "bytes": 10727,
+      "lines": 129,
+      "version": "0b7f98eecc791775",
       "text": true,
       "provenance": [
         {
           "file": "test/ux-feedback.js",
           "line": 1,
-          "version": "4258d965a394340c"
+          "version": "0b7f98eecc791775"
         }
       ],
-      "lastChangedAt": "2026-10-31T04:54:55.000Z",
+      "lastChangedAt": "2026-11-09T21:01:24.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c8f8c230f0948695e468f6029b1879c1f63351e0"
+      "lastChangedCommit": "e1f79d90a47784aaa5e725a51e61e71282ef2cb0"
     },
     {
       "key": "Artifact:test/ux-feel-browser.js",
@@ -167270,20 +167983,20 @@
       "path": "test/world-fieldwork-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 40093,
-      "lines": 416,
-      "version": "dc53e82991aac9a7",
+      "bytes": 40283,
+      "lines": 418,
+      "version": "830c759348d713e7",
       "text": true,
       "provenance": [
         {
           "file": "test/world-fieldwork-browser.js",
           "line": 1,
-          "version": "dc53e82991aac9a7"
+          "version": "830c759348d713e7"
         }
       ],
-      "lastChangedAt": "2026-10-16T05:58:47.000Z",
+      "lastChangedAt": "2026-11-09T21:15:00.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "f8d9115e6dea608c1960d31b7365e69ebb0fbf1b"
+      "lastChangedCommit": "072a3e9d41467c19222222af1a1af7475174a362"
     },
     {
       "key": "Artifact:test/world-kernel-api.js",
@@ -167684,20 +168397,20 @@
       "path": "test/worldgraph-validation.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 82460,
-      "lines": 1908,
-      "version": "3c5db55fc8f1cb0f",
+      "bytes": 82632,
+      "lines": 1910,
+      "version": "0ca4110a6a87b8f2",
       "text": true,
       "provenance": [
         {
           "file": "test/worldgraph-validation.js",
           "line": 1,
-          "version": "3c5db55fc8f1cb0f"
+          "version": "0ca4110a6a87b8f2"
         }
       ],
-      "lastChangedAt": "2026-10-31T03:06:32.000Z",
+      "lastChangedAt": "2026-11-09T21:15:00.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "fc32848ba3cc52b9b0e7c880c7f0d69771a4364a"
+      "lastChangedCommit": "072a3e9d41467c19222222af1a1af7475174a362"
     },
     {
       "key": "Artifact:test/worldgraph.js",
@@ -167845,20 +168558,20 @@
       "path": "tools/age-removal-source-data.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 317659,
-      "lines": 1875,
-      "version": "637b3e79ca6f77f5",
+      "bytes": 416435,
+      "lines": 2414,
+      "version": "cb9d6f646654b2e9",
       "text": true,
       "provenance": [
         {
           "file": "tools/age-removal-source-data.js",
           "line": 1,
-          "version": "637b3e79ca6f77f5"
+          "version": "cb9d6f646654b2e9"
         }
       ],
-      "lastChangedAt": "2026-11-09T21:12:42.000Z",
+      "lastChangedAt": "2026-11-09T21:56:38.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "034338ae66535ca85c30dcbb790acafa1caf57a2"
+      "lastChangedCommit": "8c205cfdabfc1df775bb4108ede2088eb9de1832"
     },
     {
       "key": "Artifact:tools/age-removal-source-seal.js",
@@ -167868,20 +168581,20 @@
       "path": "tools/age-removal-source-seal.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 14134,
-      "lines": 211,
-      "version": "4e682a022010b23e",
+      "bytes": 16763,
+      "lines": 259,
+      "version": "ffba34dc4b438e8d",
       "text": true,
       "provenance": [
         {
           "file": "tools/age-removal-source-seal.js",
           "line": 1,
-          "version": "4e682a022010b23e"
+          "version": "ffba34dc4b438e8d"
         }
       ],
-      "lastChangedAt": "2026-11-09T21:04:45.000Z",
+      "lastChangedAt": "2026-11-09T21:56:05.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "7a1aad51dc03ce38f37e77d10dfa2555cf190eeb"
+      "lastChangedCommit": "1349c58430c33578e42458e8c255f3318aad15d9"
     },
     {
       "key": "Artifact:tools/age-removal-source-transfer.js",
@@ -170837,20 +171550,20 @@
       "path": "tools/enterprise-native-questing-inputs.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 486827,
-      "lines": 12960,
-      "version": "b058c66a8937b52f",
+      "bytes": 492059,
+      "lines": 13104,
+      "version": "0f18c5c3d7927821",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-questing-inputs.js",
           "line": 1,
-          "version": "b058c66a8937b52f"
+          "version": "0f18c5c3d7927821"
         }
       ],
-      "lastChangedAt": "2026-11-09T21:13:57.000Z",
+      "lastChangedAt": "2026-11-09T21:56:43.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "607eb240cd67c52528c98a4e3839f2f06a094cda"
+      "lastChangedCommit": "ea49d968a2b2c6ff40a36ef74c75c151dc23650e"
     },
     {
       "key": "Artifact:tools/enterprise-native-questing-seal.js",
@@ -179399,7 +180112,7 @@
       "type": "Command",
       "id": "npm:test:city-gameplay",
       "label": "npm run test:city-gameplay",
-      "command": "node test/city-district-arcs.js && node test/staged-crew-missions.js && node test/staged-crew-missions-api.js && node test/city-home-interiors-api.js && node test/city-encounters.js && node test/city-world-opportunities.js && node test/city-neighborhood-broadcast.js",
+      "command": "node test/city-cooperative-content.js && node test/city-district-arcs.js && node test/staged-crew-missions.js && node test/staged-crew-missions-api.js && node test/city-home-interiors-api.js && node test/city-encounters.js && node test/city-world-opportunities.js && node test/city-neighborhood-broadcast.js",
       "provenance": [
         {
           "file": "package.json",
@@ -179477,7 +180190,7 @@
       "type": "Command",
       "id": "npm:test:city:browser",
       "label": "npm run test:city:browser",
-      "command": "node test/classic-interface-browser.js && node test/world-fieldwork-browser.js",
+      "command": "node test/classic-interface-browser.js && node test/world-fieldwork-browser.js && node test/city-case-story-browser.js",
       "provenance": [
         {
           "file": "package.json",
@@ -180361,7 +181074,7 @@
       "type": "Command",
       "id": "npm:test:goods-market:postgres",
       "label": "npm run test:goods-market:postgres",
-      "command": "node test/goods-market-postgres.js",
+      "command": "node test/goods-market-postgres.js && node test/population-goods-postgres.js",
       "provenance": [
         {
           "file": "package.json",
@@ -181934,7 +182647,7 @@
       "type": "Command",
       "id": "npm:test:ux",
       "label": "npm run test:ux",
-      "command": "npm run test:ux:source && node test/ux-feedback.js && node test/circle-highlights.js && node test/ux-workspace.js && node test/ux-tactics.js && node test/ux-investigation-api.js && node test/ux-coordination.js && node test/ux-identity.js && node test/ux-story.js && node test/ux-community.js && node test/ux-tools.js",
+      "command": "npm run test:ux:source && node test/ambient-lifecycle.js && node test/ux-feedback.js && node test/circle-highlights.js && node test/ux-workspace.js && node test/ux-tactics.js && node test/ux-investigation-api.js && node test/ux-coordination.js && node test/ux-identity.js && node test/ux-story.js && node test/ux-community.js && node test/ux-tools.js",
       "provenance": [
         {
           "file": "package.json",
@@ -181947,7 +182660,7 @@
       "type": "Command",
       "id": "npm:test:ux:browser",
       "label": "npm run test:ux:browser",
-      "command": "node test/strategy-command-browser.js && node test/noir-shell-browser.js && node test/ux-shell-browser.js && node test/ux-progression-browser.js && node test/ux-navigation-browser.js && node test/ux-social-browser.js && node test/ux-experience-browser.js && node test/ux-workspace-browser.js && node test/ux-tactics-browser.js && node test/ux-investigation-browser.js && node test/ux-coordination-browser.js && node test/ux-expanded-browser.js && node test/ux-feel-browser.js && node test/ux-tools-browser.js && node test/ux-identity-browser.js && node test/ux-story-browser.js && node test/ux-community-browser.js && node test/ux-personality-browser.js && npm run test:site && npm run test:site:browser",
+      "command": "node test/ambient-lifecycle-browser.js && node test/strategy-command-browser.js && node test/noir-shell-browser.js && node test/ux-shell-browser.js && node test/ux-progression-browser.js && node test/ux-navigation-browser.js && node test/ux-social-browser.js && node test/ux-experience-browser.js && node test/ux-workspace-browser.js && node test/ux-tactics-browser.js && node test/ux-investigation-browser.js && node test/ux-coordination-browser.js && node test/ux-expanded-browser.js && node test/ux-feel-browser.js && node test/ux-tools-browser.js && node test/ux-identity-browser.js && node test/ux-story-browser.js && node test/ux-community-browser.js && node test/ux-personality-browser.js && npm run test:site && npm run test:site:browser",
       "provenance": [
         {
           "file": "package.json",
@@ -183014,6 +183727,22 @@
         {
           "commit": "01fb725049fb27151e202eb79aa69121b9f4b9c1",
           "url": "https://github.com/OmertaDev/Omerta/commit/01fb725049fb27151e202eb79aa69121b9f4b9c1"
+        }
+      ]
+    },
+    {
+      "key": "Commit:02099badf027f905238909f2f65d877514b2fd8c",
+      "type": "Commit",
+      "id": "02099badf027f905238909f2f65d877514b2fd8c",
+      "label": "Seal exact combined follow-up source comparison",
+      "title": "Seal exact combined follow-up source comparison",
+      "date": "2026-11-09T21:38:28.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/02099badf027f905238909f2f65d877514b2fd8c",
+      "provenance": [
+        {
+          "commit": "02099badf027f905238909f2f65d877514b2fd8c",
+          "url": "https://github.com/OmertaDev/Omerta/commit/02099badf027f905238909f2f65d877514b2fd8c"
         }
       ]
     },
@@ -184742,6 +185471,22 @@
         {
           "commit": "07242ba409c046453f245296bfb5ee6063ebbb77",
           "url": "https://github.com/OmertaDev/Omerta/commit/07242ba409c046453f245296bfb5ee6063ebbb77"
+        }
+      ]
+    },
+    {
+      "key": "Commit:072a3e9d41467c19222222af1a1af7475174a362",
+      "type": "Commit",
+      "id": "072a3e9d41467c19222222af1a1af7475174a362",
+      "label": "Port Parcel 47 and Crosscurrent into current Fieldwork",
+      "title": "Port Parcel 47 and Crosscurrent into current Fieldwork",
+      "date": "2026-11-09T21:15:00.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/072a3e9d41467c19222222af1a1af7475174a362",
+      "provenance": [
+        {
+          "commit": "072a3e9d41467c19222222af1a1af7475174a362",
+          "url": "https://github.com/OmertaDev/Omerta/commit/072a3e9d41467c19222222af1a1af7475174a362"
         }
       ]
     },
@@ -188138,6 +188883,22 @@
       ]
     },
     {
+      "key": "Commit:114ada9398c8055428371e3a902b029c173f6bf9",
+      "type": "Commit",
+      "id": "114ada9398c8055428371e3a902b029c173f6bf9",
+      "label": "Preserve zero-only legacy base-tax emergency recovery",
+      "title": "Preserve zero-only legacy base-tax emergency recovery",
+      "date": "2026-11-09T21:35:52.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/114ada9398c8055428371e3a902b029c173f6bf9",
+      "provenance": [
+        {
+          "commit": "114ada9398c8055428371e3a902b029c173f6bf9",
+          "url": "https://github.com/OmertaDev/Omerta/commit/114ada9398c8055428371e3a902b029c173f6bf9"
+        }
+      ]
+    },
+    {
       "key": "Commit:11531870b822283c3b674fcd33c34cad2663cb5b",
       "type": "Commit",
       "id": "11531870b822283c3b674fcd33c34cad2663cb5b",
@@ -188874,6 +189635,22 @@
       ]
     },
     {
+      "key": "Commit:1349c58430c33578e42458e8c255f3318aad15d9",
+      "type": "Commit",
+      "id": "1349c58430c33578e42458e8c255f3318aad15d9",
+      "label": "Record fresh quest evidence for follow-up release",
+      "title": "Record fresh quest evidence for follow-up release",
+      "date": "2026-11-09T21:56:05.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/1349c58430c33578e42458e8c255f3318aad15d9",
+      "provenance": [
+        {
+          "commit": "1349c58430c33578e42458e8c255f3318aad15d9",
+          "url": "https://github.com/OmertaDev/Omerta/commit/1349c58430c33578e42458e8c255f3318aad15d9"
+        }
+      ]
+    },
+    {
       "key": "Commit:134bba2d56e4fd350eb084dd7261e2311ebbafc5",
       "type": "Commit",
       "id": "134bba2d56e4fd350eb084dd7261e2311ebbafc5",
@@ -189046,6 +189823,22 @@
         {
           "commit": "13cab8ad26f28478fcff0186f882896253184312",
           "url": "https://github.com/OmertaDev/Omerta/commit/13cab8ad26f28478fcff0186f882896253184312"
+        }
+      ]
+    },
+    {
+      "key": "Commit:13e71581c6c444f2f78355abf6f0d9d273bd1730",
+      "type": "Commit",
+      "id": "13e71581c6c444f2f78355abf6f0d9d273bd1730",
+      "label": "Integrate reviewed audio runtime",
+      "title": "Integrate reviewed audio runtime",
+      "date": "2026-11-09T21:37:08.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/13e71581c6c444f2f78355abf6f0d9d273bd1730",
+      "provenance": [
+        {
+          "commit": "13e71581c6c444f2f78355abf6f0d9d273bd1730",
+          "url": "https://github.com/OmertaDev/Omerta/commit/13e71581c6c444f2f78355abf6f0d9d273bd1730"
         }
       ]
     },
@@ -190486,6 +191279,22 @@
         {
           "commit": "16f71f7ef90e5eb33465abba63860d4daed994b4",
           "url": "https://github.com/OmertaDev/Omerta/commit/16f71f7ef90e5eb33465abba63860d4daed994b4"
+        }
+      ]
+    },
+    {
+      "key": "Commit:1717ca4458d8e0f68d93e6ff295486cd0a9bb631",
+      "type": "Commit",
+      "id": "1717ca4458d8e0f68d93e6ff295486cd0a9bb631",
+      "label": "Retire superseded market setters from the admin control surface",
+      "title": "Retire superseded market setters from the admin control surface",
+      "date": "2026-11-09T21:07:11.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/1717ca4458d8e0f68d93e6ff295486cd0a9bb631",
+      "provenance": [
+        {
+          "commit": "1717ca4458d8e0f68d93e6ff295486cd0a9bb631",
+          "url": "https://github.com/OmertaDev/Omerta/commit/1717ca4458d8e0f68d93e6ff295486cd0a9bb631"
         }
       ]
     },
@@ -197770,6 +198579,22 @@
       ]
     },
     {
+      "key": "Commit:2bfb68964ec3c4044efb9f4532d8312ece93ba2c",
+      "type": "Commit",
+      "id": "2bfb68964ec3c4044efb9f4532d8312ece93ba2c",
+      "label": "fix(audio): react immediately to data saver changes",
+      "title": "fix(audio): react immediately to data saver changes",
+      "date": "2026-11-09T21:08:11.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/2bfb68964ec3c4044efb9f4532d8312ece93ba2c",
+      "provenance": [
+        {
+          "commit": "2bfb68964ec3c4044efb9f4532d8312ece93ba2c",
+          "url": "https://github.com/OmertaDev/Omerta/commit/2bfb68964ec3c4044efb9f4532d8312ece93ba2c"
+        }
+      ]
+    },
+    {
       "key": "Commit:2bff5d050258975d9e0ea11661818386056a45be",
       "type": "Commit",
       "id": "2bff5d050258975d9e0ea11661818386056a45be",
@@ -198902,6 +199727,22 @@
         {
           "commit": "2eb92ede8809bd9190774fd2564b0f74aeb34853",
           "url": "https://github.com/OmertaDev/Omerta/commit/2eb92ede8809bd9190774fd2564b0f74aeb34853"
+        }
+      ]
+    },
+    {
+      "key": "Commit:2ecf7ac37383ce7562a123c37cd184056d73fd44",
+      "type": "Commit",
+      "id": "2ecf7ac37383ce7562a123c37cd184056d73fd44",
+      "label": "Integrate reviewed continuous-city release",
+      "title": "Integrate reviewed continuous-city release",
+      "date": "2026-11-09T21:37:03.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/2ecf7ac37383ce7562a123c37cd184056d73fd44",
+      "provenance": [
+        {
+          "commit": "2ecf7ac37383ce7562a123c37cd184056d73fd44",
+          "url": "https://github.com/OmertaDev/Omerta/commit/2ecf7ac37383ce7562a123c37cd184056d73fd44"
         }
       ]
     },
@@ -207126,6 +207967,22 @@
         {
           "commit": "45082605e23e16f81959cc49b5e55d48e6088779",
           "url": "https://github.com/OmertaDev/Omerta/commit/45082605e23e16f81959cc49b5e55d48e6088779"
+        }
+      ]
+    },
+    {
+      "key": "Commit:4509f9248f237b7632bb34cdde313ca47e84ffc6",
+      "type": "Commit",
+      "id": "4509f9248f237b7632bb34cdde313ca47e84ffc6",
+      "label": "Refresh knowledge for qualified deadline planning",
+      "title": "Refresh knowledge for qualified deadline planning",
+      "date": "2026-11-09T21:46:52.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/4509f9248f237b7632bb34cdde313ca47e84ffc6",
+      "provenance": [
+        {
+          "commit": "4509f9248f237b7632bb34cdde313ca47e84ffc6",
+          "url": "https://github.com/OmertaDev/Omerta/commit/4509f9248f237b7632bb34cdde313ca47e84ffc6"
         }
       ]
     },
@@ -215926,6 +216783,22 @@
         {
           "commit": "5e7944ca7a8e39fcbddd4041f9afcb6fce6f3f93",
           "url": "https://github.com/OmertaDev/Omerta/commit/5e7944ca7a8e39fcbddd4041f9afcb6fce6f3f93"
+        }
+      ]
+    },
+    {
+      "key": "Commit:5e85a7f806c4829f43a49029dc8b0e9f092ee91b",
+      "type": "Commit",
+      "id": "5e85a7f806c4829f43a49029dc8b0e9f092ee91b",
+      "label": "Declare exact reviewed follow-up source scope and census",
+      "title": "Declare exact reviewed follow-up source scope and census",
+      "date": "2026-11-09T21:38:04.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/5e85a7f806c4829f43a49029dc8b0e9f092ee91b",
+      "provenance": [
+        {
+          "commit": "5e85a7f806c4829f43a49029dc8b0e9f092ee91b",
+          "url": "https://github.com/OmertaDev/Omerta/commit/5e85a7f806c4829f43a49029dc8b0e9f092ee91b"
         }
       ]
     },
@@ -233114,6 +233987,22 @@
       ]
     },
     {
+      "key": "Commit:8c205cfdabfc1df775bb4108ede2088eb9de1832",
+      "type": "Commit",
+      "id": "8c205cfdabfc1df775bb4108ede2088eb9de1832",
+      "label": "Seal refreshed follow-up source evidence",
+      "title": "Seal refreshed follow-up source evidence",
+      "date": "2026-11-09T21:56:38.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/8c205cfdabfc1df775bb4108ede2088eb9de1832",
+      "provenance": [
+        {
+          "commit": "8c205cfdabfc1df775bb4108ede2088eb9de1832",
+          "url": "https://github.com/OmertaDev/Omerta/commit/8c205cfdabfc1df775bb4108ede2088eb9de1832"
+        }
+      ]
+    },
+    {
       "key": "Commit:8c2197a3f67b6651f7e2da629bf3b87d85ad12ac",
       "type": "Commit",
       "id": "8c2197a3f67b6651f7e2da629bf3b87d85ad12ac",
@@ -234262,6 +235151,22 @@
         {
           "commit": "8f716e05269d079b98aa74f9a47a16e376d03873",
           "url": "https://github.com/OmertaDev/Omerta/commit/8f716e05269d079b98aa74f9a47a16e376d03873"
+        }
+      ]
+    },
+    {
+      "key": "Commit:8f7793451139eb2eca43d69a172ca7a5344a287f",
+      "type": "Commit",
+      "id": "8f7793451139eb2eca43d69a172ca7a5344a287f",
+      "label": "test(population): preserve native freight liquidity regressions",
+      "title": "test(population): preserve native freight liquidity regressions",
+      "date": "2026-11-09T21:01:33.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/8f7793451139eb2eca43d69a172ca7a5344a287f",
+      "provenance": [
+        {
+          "commit": "8f7793451139eb2eca43d69a172ca7a5344a287f",
+          "url": "https://github.com/OmertaDev/Omerta/commit/8f7793451139eb2eca43d69a172ca7a5344a287f"
         }
       ]
     },
@@ -240650,6 +241555,22 @@
       ]
     },
     {
+      "key": "Commit:9fc442d1ae1a17cdca0b36ef549e5c916929dcdd",
+      "type": "Commit",
+      "id": "9fc442d1ae1a17cdca0b36ef549e5c916929dcdd",
+      "label": "Scope parity alerts to retained legacy service deployments",
+      "title": "Scope parity alerts to retained legacy service deployments",
+      "date": "2026-11-09T21:12:32.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/9fc442d1ae1a17cdca0b36ef549e5c916929dcdd",
+      "provenance": [
+        {
+          "commit": "9fc442d1ae1a17cdca0b36ef549e5c916929dcdd",
+          "url": "https://github.com/OmertaDev/Omerta/commit/9fc442d1ae1a17cdca0b36ef549e5c916929dcdd"
+        }
+      ]
+    },
+    {
       "key": "Commit:9fcdc03111e80acc1e15b31b1a0c0ed31d587ae9",
       "type": "Commit",
       "id": "9fcdc03111e80acc1e15b31b1a0c0ed31d587ae9",
@@ -246250,6 +247171,22 @@
       ]
     },
     {
+      "key": "Commit:afe62c90a78465c87f2945cd5ebb26d49b5593c1",
+      "type": "Commit",
+      "id": "afe62c90a78465c87f2945cd5ebb26d49b5593c1",
+      "label": "Preserve qualified deadline planner lineage in follow-up candidate",
+      "title": "Preserve qualified deadline planner lineage in follow-up candidate",
+      "date": "2026-11-09T21:56:06.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/afe62c90a78465c87f2945cd5ebb26d49b5593c1",
+      "provenance": [
+        {
+          "commit": "afe62c90a78465c87f2945cd5ebb26d49b5593c1",
+          "url": "https://github.com/OmertaDev/Omerta/commit/afe62c90a78465c87f2945cd5ebb26d49b5593c1"
+        }
+      ]
+    },
+    {
       "key": "Commit:affccab56f7d94d3cdc2149d8d1a6d278af51652",
       "type": "Commit",
       "id": "affccab56f7d94d3cdc2149d8d1a6d278af51652",
@@ -246918,6 +247855,22 @@
         {
           "commit": "b191797081dcb031a076421d393c0a52609bd9d5",
           "url": "https://github.com/OmertaDev/Omerta/commit/b191797081dcb031a076421d393c0a52609bd9d5"
+        }
+      ]
+    },
+    {
+      "key": "Commit:b19548abe8a2d074fca2764de3371c9d73e774b1",
+      "type": "Commit",
+      "id": "b19548abe8a2d074fca2764de3371c9d73e774b1",
+      "label": "Seal actual-current follow-up native inputs",
+      "title": "Seal actual-current follow-up native inputs",
+      "date": "2026-11-09T21:38:34.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/b19548abe8a2d074fca2764de3371c9d73e774b1",
+      "provenance": [
+        {
+          "commit": "b19548abe8a2d074fca2764de3371c9d73e774b1",
+          "url": "https://github.com/OmertaDev/Omerta/commit/b19548abe8a2d074fca2764de3371c9d73e774b1"
         }
       ]
     },
@@ -248502,6 +249455,22 @@
         {
           "commit": "b61c31dc5299f8b995585aa1d183225d9fea33bb",
           "url": "https://github.com/OmertaDev/Omerta/commit/b61c31dc5299f8b995585aa1d183225d9fea33bb"
+        }
+      ]
+    },
+    {
+      "key": "Commit:b61cd7a79f06ffa660c00feb6e86344a9b062515",
+      "type": "Commit",
+      "id": "b61cd7a79f06ffa660c00feb6e86344a9b062515",
+      "label": "Integrate reviewed liquidity regression",
+      "title": "Integrate reviewed liquidity regression",
+      "date": "2026-11-09T21:37:09.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/b61cd7a79f06ffa660c00feb6e86344a9b062515",
+      "provenance": [
+        {
+          "commit": "b61cd7a79f06ffa660c00feb6e86344a9b062515",
+          "url": "https://github.com/OmertaDev/Omerta/commit/b61cd7a79f06ffa660c00feb6e86344a9b062515"
         }
       ]
     },
@@ -256778,6 +257747,22 @@
       ]
     },
     {
+      "key": "Commit:cd4637193bd61a2b57295065f018aa80e282afca",
+      "type": "Commit",
+      "id": "cd4637193bd61a2b57295065f018aa80e282afca",
+      "label": "Integrate reviewed legacy contract retirement",
+      "title": "Integrate reviewed legacy contract retirement",
+      "date": "2026-11-09T21:37:09.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/cd4637193bd61a2b57295065f018aa80e282afca",
+      "provenance": [
+        {
+          "commit": "cd4637193bd61a2b57295065f018aa80e282afca",
+          "url": "https://github.com/OmertaDev/Omerta/commit/cd4637193bd61a2b57295065f018aa80e282afca"
+        }
+      ]
+    },
+    {
       "key": "Commit:cd46f58912637112fa6b03e36cba6d0cec7b5979",
       "type": "Commit",
       "id": "cd46f58912637112fa6b03e36cba6d0cec7b5979",
@@ -263722,6 +264707,22 @@
       ]
     },
     {
+      "key": "Commit:e1f79d90a47784aaa5e725a51e61e71282ef2cb0",
+      "type": "Commit",
+      "id": "e1f79d90a47784aaa5e725a51e61e71282ef2cb0",
+      "label": "fix(audio): release ambient beds on mute and page teardown",
+      "title": "fix(audio): release ambient beds on mute and page teardown",
+      "date": "2026-11-09T21:01:24.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/e1f79d90a47784aaa5e725a51e61e71282ef2cb0",
+      "provenance": [
+        {
+          "commit": "e1f79d90a47784aaa5e725a51e61e71282ef2cb0",
+          "url": "https://github.com/OmertaDev/Omerta/commit/e1f79d90a47784aaa5e725a51e61e71282ef2cb0"
+        }
+      ]
+    },
+    {
       "key": "Commit:e2075a563e461b098c462c779c9eb83d57d6260c",
       "type": "Commit",
       "id": "e2075a563e461b098c462c779c9eb83d57d6260c",
@@ -266454,6 +267455,22 @@
         {
           "commit": "ea415b2ddac4e6d9743c71d208cadeec52414f4f",
           "url": "https://github.com/OmertaDev/Omerta/commit/ea415b2ddac4e6d9743c71d208cadeec52414f4f"
+        }
+      ]
+    },
+    {
+      "key": "Commit:ea49d968a2b2c6ff40a36ef74c75c151dc23650e",
+      "type": "Commit",
+      "id": "ea49d968a2b2c6ff40a36ef74c75c151dc23650e",
+      "label": "Seal refreshed actual-current native inputs",
+      "title": "Seal refreshed actual-current native inputs",
+      "date": "2026-11-09T21:56:43.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/ea49d968a2b2c6ff40a36ef74c75c151dc23650e",
+      "provenance": [
+        {
+          "commit": "ea49d968a2b2c6ff40a36ef74c75c151dc23650e",
+          "url": "https://github.com/OmertaDev/Omerta/commit/ea49d968a2b2c6ff40a36ef74c75c151dc23650e"
         }
       ]
     },
@@ -285122,6 +286139,22 @@
       ]
     },
     {
+      "key": "Document:docs/contract-retirement-20261109.md",
+      "type": "Document",
+      "id": "docs/contract-retirement-20261109.md",
+      "label": "docs/contract-retirement-20261109.md",
+      "documentType": "documentation",
+      "lines": 128,
+      "version": "dfba631b09602d6e",
+      "provenance": [
+        {
+          "file": "docs/contract-retirement-20261109.md",
+          "line": 1,
+          "version": "dfba631b09602d6e"
+        }
+      ]
+    },
+    {
       "key": "Document:docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md",
       "type": "Document",
       "id": "docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md",
@@ -292680,12 +293713,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 762,
-      "version": "805a0a9516951ca5",
+      "version": "0c07c31956222241",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "805a0a9516951ca5"
+          "version": "0c07c31956222241"
         }
       ]
     },
@@ -293486,7 +294519,7 @@
         },
         {
           "file": "test/city-district-arcs.js",
-          "line": 4
+          "line": 5
         },
         {
           "file": "test/city-encounters.js",
@@ -293639,6 +294672,14 @@
         {
           "file": "test/worldgraph-api.js",
           "line": 5
+        },
+        {
+          "file": "tools/age-removal-source-data.js",
+          "line": 1610
+        },
+        {
+          "file": "tools/age-removal-source-data.js",
+          "line": 1611
         }
       ]
     },
@@ -293662,7 +294703,7 @@
         },
         {
           "file": "test/city-district-arcs.js",
-          "line": 5
+          "line": 6
         },
         {
           "file": "test/city-social-api.js",
@@ -294170,7 +295211,7 @@
         },
         {
           "file": "test/city-district-arcs.js",
-          "line": 36
+          "line": 37
         },
         {
           "file": "test/city-encounters-native-proof.js",
@@ -294725,6 +295766,10 @@
           "line": 5
         },
         {
+          "file": "test/population-goods-postgres.js",
+          "line": 5
+        },
+        {
           "file": "test/productionslots-fixture.js",
           "line": 3
         },
@@ -294950,7 +295995,7 @@
         },
         {
           "file": "test/staged-crew-missions-api.js",
-          "line": 28
+          "line": 29
         },
         {
           "file": "test/stockcatalogv2.postgres.js",
@@ -295525,6 +296570,10 @@
       "label": "playwright-core",
       "provenance": [
         {
+          "file": "test/ambient-lifecycle-browser.js",
+          "line": 5
+        },
+        {
           "file": "test/business-control-desk-browser.js",
           "line": 6
         },
@@ -295535,6 +296584,10 @@
         {
           "file": "test/city-activity-browser.js",
           "line": 7
+        },
+        {
+          "file": "test/city-case-story-browser.js",
+          "line": 6
         },
         {
           "file": "test/city-connected-scene-browser.js",
@@ -295902,11 +296955,11 @@
         },
         {
           "file": "src/chainparams.js",
-          "line": 287
+          "line": 279
         },
         {
           "file": "src/chainparams.js",
-          "line": 309
+          "line": 303
         },
         {
           "file": "src/commission.js",
@@ -296102,7 +297155,11 @@
         },
         {
           "file": "test/chainparams.js",
-          "line": 113
+          "line": 157
+        },
+        {
+          "file": "test/chainparams.js",
+          "line": 30
         },
         {
           "file": "test/city-home-interiors-api.js",
@@ -296303,6 +297360,18 @@
         {
           "file": "test/watcher.js",
           "line": 250
+        },
+        {
+          "file": "tools/age-removal-source-data.js",
+          "line": 1003
+        },
+        {
+          "file": "tools/age-removal-source-data.js",
+          "line": 588
+        },
+        {
+          "file": "tools/age-removal-source-data.js",
+          "line": 589
         },
         {
           "file": "tools/chain-e2e.js",
@@ -301774,6 +302843,9 @@
           "commit": "44f48a743e549591bd125a1f678099b8382dd78f"
         },
         {
+          "commit": "4509f9248f237b7632bb34cdde313ca47e84ffc6"
+        },
+        {
           "commit": "45379c3e9bfa82ebd32a76259ae02192f5081b6c"
         },
         {
@@ -303515,6 +304587,9 @@
         },
         {
           "commit": "44f48a743e549591bd125a1f678099b8382dd78f"
+        },
+        {
+          "commit": "4509f9248f237b7632bb34cdde313ca47e84ffc6"
         },
         {
           "commit": "45379c3e9bfa82ebd32a76259ae02192f5081b6c"
@@ -306418,6 +307493,9 @@
           "commit": "44f48a743e549591bd125a1f678099b8382dd78f"
         },
         {
+          "commit": "4509f9248f237b7632bb34cdde313ca47e84ffc6"
+        },
+        {
           "commit": "45379c3e9bfa82ebd32a76259ae02192f5081b6c"
         },
         {
@@ -309317,6 +310395,9 @@
         },
         {
           "commit": "44f48a743e549591bd125a1f678099b8382dd78f"
+        },
+        {
+          "commit": "4509f9248f237b7632bb34cdde313ca47e84ffc6"
         },
         {
           "commit": "45379c3e9bfa82ebd32a76259ae02192f5081b6c"
@@ -313000,6 +314081,9 @@
           "commit": "44f48a743e549591bd125a1f678099b8382dd78f"
         },
         {
+          "commit": "4509f9248f237b7632bb34cdde313ca47e84ffc6"
+        },
+        {
           "commit": "45379c3e9bfa82ebd32a76259ae02192f5081b6c"
         },
         {
@@ -315326,6 +316410,9 @@
         },
         {
           "commit": "44f48a743e549591bd125a1f678099b8382dd78f"
+        },
+        {
+          "commit": "4509f9248f237b7632bb34cdde313ca47e84ffc6"
         },
         {
           "commit": "45a5bb46c8900a565e0d86419e4dc0672a063012"
@@ -317977,13 +319064,13 @@
       "type": "Module",
       "id": "src/agentgateway.js",
       "label": "src/agentgateway.js",
-      "lines": 2474,
-      "version": "1f17ee1bb1550ec6",
+      "lines": 2487,
+      "version": "1a3aaa0c6f87e76e",
       "provenance": [
         {
           "file": "src/agentgateway.js",
           "line": 1,
-          "version": "1f17ee1bb1550ec6"
+          "version": "1a3aaa0c6f87e76e"
         }
       ]
     },
@@ -318607,13 +319694,13 @@
       "type": "Module",
       "id": "src/chainparams.js",
       "label": "src/chainparams.js",
-      "lines": 354,
-      "version": "0a215feed9ffe1ec",
+      "lines": 352,
+      "version": "f5535d4c61569f75",
       "provenance": [
         {
           "file": "src/chainparams.js",
           "line": 1,
-          "version": "0a215feed9ffe1ec"
+          "version": "f5535d4c61569f75"
         }
       ]
     },
@@ -319807,13 +320894,13 @@
       "type": "Module",
       "id": "src/content/city-quest-presentation.js",
       "label": "src/content/city-quest-presentation.js",
-      "lines": 43,
-      "version": "7abe9758e99a68dd",
+      "lines": 46,
+      "version": "da2b9f618e165cc5",
       "provenance": [
         {
           "file": "src/content/city-quest-presentation.js",
           "line": 1,
-          "version": "7abe9758e99a68dd"
+          "version": "da2b9f618e165cc5"
         }
       ]
     },
@@ -319953,6 +321040,21 @@
       ]
     },
     {
+      "key": "Module:src/content/crew-crosscurrent.js",
+      "type": "Module",
+      "id": "src/content/crew-crosscurrent.js",
+      "label": "src/content/crew-crosscurrent.js",
+      "lines": 61,
+      "version": "e6cd8e7680a4d8e6",
+      "provenance": [
+        {
+          "file": "src/content/crew-crosscurrent.js",
+          "line": 1,
+          "version": "e6cd8e7680a4d8e6"
+        }
+      ]
+    },
+    {
       "key": "Module:src/content/definition-invariants.js",
       "type": "Module",
       "id": "src/content/definition-invariants.js",
@@ -320073,6 +321175,21 @@
       ]
     },
     {
+      "key": "Module:src/content/first-errand-case.js",
+      "type": "Module",
+      "id": "src/content/first-errand-case.js",
+      "label": "src/content/first-errand-case.js",
+      "lines": 59,
+      "version": "9b608d75e3e08f17",
+      "provenance": [
+        {
+          "file": "src/content/first-errand-case.js",
+          "line": 1,
+          "version": "9b608d75e3e08f17"
+        }
+      ]
+    },
+    {
       "key": "Module:src/content/furnace-ledger.js",
       "type": "Module",
       "id": "src/content/furnace-ledger.js",
@@ -320167,13 +321284,13 @@
       "type": "Module",
       "id": "src/content/phase1-policy.js",
       "label": "src/content/phase1-policy.js",
-      "lines": 169,
-      "version": "f5d2339a39d85655",
+      "lines": 170,
+      "version": "fcf7454fd98782ba",
       "provenance": [
         {
           "file": "src/content/phase1-policy.js",
           "line": 1,
-          "version": "f5d2339a39d85655"
+          "version": "fcf7454fd98782ba"
         }
       ]
     },
@@ -320197,13 +321314,13 @@
       "type": "Module",
       "id": "src/content/phase1.js",
       "label": "src/content/phase1.js",
-      "lines": 30,
-      "version": "6d8ca127ad60b3e1",
+      "lines": 34,
+      "version": "b75602cdbe447863",
       "provenance": [
         {
           "file": "src/content/phase1.js",
           "line": 1,
-          "version": "6d8ca127ad60b3e1"
+          "version": "b75602cdbe447863"
         }
       ]
     },
@@ -323272,13 +324389,13 @@
       "type": "Module",
       "id": "src/operations.js",
       "label": "src/operations.js",
-      "lines": 1803,
-      "version": "175882731792bfd2",
+      "lines": 1825,
+      "version": "ad90d8c92c7d9e0b",
       "provenance": [
         {
           "file": "src/operations.js",
           "line": 1,
-          "version": "175882731792bfd2"
+          "version": "ad90d8c92c7d9e0b"
         }
       ]
     },
@@ -325672,13 +326789,13 @@
       "type": "Module",
       "id": "src/routes/worldgraph.js",
       "label": "src/routes/worldgraph.js",
-      "lines": 675,
-      "version": "762bd5300203925b",
+      "lines": 690,
+      "version": "a45be0380bc06f1b",
       "provenance": [
         {
           "file": "src/routes/worldgraph.js",
           "line": 1,
-          "version": "762bd5300203925b"
+          "version": "a45be0380bc06f1b"
         }
       ]
     },
@@ -326872,13 +327989,13 @@
       "type": "Module",
       "id": "src/worker.js",
       "label": "src/worker.js",
-      "lines": 1131,
-      "version": "0b4d4427841feb6d",
+      "lines": 1136,
+      "version": "3f11ab4d82329b2d",
       "provenance": [
         {
           "file": "src/worker.js",
           "line": 1,
-          "version": "0b4d4427841feb6d"
+          "version": "3f11ab4d82329b2d"
         }
       ]
     },
@@ -330307,12 +331424,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "607eb240cd67c52528c98a4e3839f2f06a094cda",
-      "currentBranch": "reconcile/business-deadlines-20261109",
+      "revision": "ea49d968a2b2c6ff40a36ef74c75c151dc23650e",
+      "currentBranch": "reconcile/followup-release-20261109",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 7736,
+      "currentArtifactCount": 7767,
       "provenance": [
         {
           "file": "README.md",
@@ -340102,13 +341219,13 @@
       "definitions": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 632
+          "line": 647
         }
       ],
       "provenance": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 632
+          "line": 647
         }
       ]
     },
@@ -340126,13 +341243,13 @@
       "definitions": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 641
+          "line": 656
         }
       ],
       "provenance": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 641
+          "line": 656
         }
       ]
     },
@@ -355990,13 +357107,13 @@
       "definitions": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 621
+          "line": 636
         }
       ],
       "provenance": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 621
+          "line": 636
         }
       ]
     },
@@ -356014,13 +357131,13 @@
       "definitions": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 669
+          "line": 684
         }
       ],
       "provenance": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 669
+          "line": 684
         }
       ]
     },
@@ -356038,13 +357155,13 @@
       "definitions": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 663
+          "line": 678
         }
       ],
       "provenance": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 663
+          "line": 678
         }
       ]
     },
@@ -356062,13 +357179,13 @@
       "definitions": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 656
+          "line": 671
         }
       ],
       "provenance": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 656
+          "line": 671
         }
       ]
     },
@@ -356086,13 +357203,13 @@
       "definitions": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 650
+          "line": 665
         }
       ],
       "provenance": [
         {
           "file": "src/routes/worldgraph.js",
-          "line": 650
+          "line": 665
         }
       ]
     },
@@ -369074,6 +370191,36 @@
       ]
     },
     {
+      "key": "TestSuite:test/ambient-lifecycle-browser.js",
+      "type": "TestSuite",
+      "id": "test/ambient-lifecycle-browser.js",
+      "label": "test/ambient-lifecycle-browser.js",
+      "lines": 105,
+      "version": "f99409ec393916ec",
+      "provenance": [
+        {
+          "file": "test/ambient-lifecycle-browser.js",
+          "line": 1,
+          "version": "f99409ec393916ec"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/ambient-lifecycle.js",
+      "type": "TestSuite",
+      "id": "test/ambient-lifecycle.js",
+      "label": "test/ambient-lifecycle.js",
+      "lines": 151,
+      "version": "6559f61c2859bb11",
+      "provenance": [
+        {
+          "file": "test/ambient-lifecycle.js",
+          "line": 1,
+          "version": "6559f61c2859bb11"
+        }
+      ]
+    },
+    {
       "key": "TestSuite:test/atomicbarter-integration.js",
       "type": "TestSuite",
       "id": "test/atomicbarter-integration.js",
@@ -369813,13 +370960,13 @@
       "type": "TestSuite",
       "id": "test/chainparams.js",
       "label": "test/chainparams.js",
-      "lines": 172,
-      "version": "081caefb2f939937",
+      "lines": 218,
+      "version": "870ec8d60e4337a8",
       "provenance": [
         {
           "file": "test/chainparams.js",
           "line": 1,
-          "version": "081caefb2f939937"
+          "version": "870ec8d60e4337a8"
         }
       ]
     },
@@ -369929,6 +371076,21 @@
       ]
     },
     {
+      "key": "TestSuite:test/city-case-story-browser.js",
+      "type": "TestSuite",
+      "id": "test/city-case-story-browser.js",
+      "label": "test/city-case-story-browser.js",
+      "lines": 195,
+      "version": "6e79ca0372775c86",
+      "provenance": [
+        {
+          "file": "test/city-case-story-browser.js",
+          "line": 1,
+          "version": "6e79ca0372775c86"
+        }
+      ]
+    },
+    {
       "key": "TestSuite:test/city-connected-scene-browser.js",
       "type": "TestSuite",
       "id": "test/city-connected-scene-browser.js",
@@ -369940,6 +371102,21 @@
           "file": "test/city-connected-scene-browser.js",
           "line": 1,
           "version": "469e137f43bc113e"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/city-cooperative-content.js",
+      "type": "TestSuite",
+      "id": "test/city-cooperative-content.js",
+      "label": "test/city-cooperative-content.js",
+      "lines": 28,
+      "version": "37ed9deb520f19a8",
+      "provenance": [
+        {
+          "file": "test/city-cooperative-content.js",
+          "line": 1,
+          "version": "37ed9deb520f19a8"
         }
       ]
     },
@@ -369978,13 +371155,13 @@
       "type": "TestSuite",
       "id": "test/city-district-arcs.js",
       "label": "test/city-district-arcs.js",
-      "lines": 251,
-      "version": "abb226226c451f2b",
+      "lines": 254,
+      "version": "06c9f6ed9e2252b5",
       "provenance": [
         {
           "file": "test/city-district-arcs.js",
           "line": 1,
-          "version": "abb226226c451f2b"
+          "version": "06c9f6ed9e2252b5"
         }
       ]
     },
@@ -370144,12 +371321,12 @@
       "id": "test/city-rpg.js",
       "label": "test/city-rpg.js",
       "lines": 270,
-      "version": "04c61d8a9e8c0be7",
+      "version": "46d2433487382e7b",
       "provenance": [
         {
           "file": "test/city-rpg.js",
           "line": 1,
-          "version": "04c61d8a9e8c0be7"
+          "version": "46d2433487382e7b"
         }
       ]
     },
@@ -375048,13 +376225,13 @@
       "type": "TestSuite",
       "id": "test/hardening.js",
       "label": "test/hardening.js",
-      "lines": 1851,
-      "version": "cba4c8e4c4c5ab79",
+      "lines": 1861,
+      "version": "48fd1cd0d242e6ab",
       "provenance": [
         {
           "file": "test/hardening.js",
           "line": 1,
-          "version": "cba4c8e4c4c5ab79"
+          "version": "48fd1cd0d242e6ab"
         }
       ]
     },
@@ -375655,6 +376832,21 @@
           "file": "test/lib/equipment-economy-migration-catalog.js",
           "line": 1,
           "version": "62409e3320353649"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/lib/first-errand-proof.js",
+      "type": "TestSuite",
+      "id": "test/lib/first-errand-proof.js",
+      "label": "test/lib/first-errand-proof.js",
+      "lines": 97,
+      "version": "e4d295135d1b088b",
+      "provenance": [
+        {
+          "file": "test/lib/first-errand-proof.js",
+          "line": 1,
+          "version": "e4d295135d1b088b"
         }
       ]
     },
@@ -378160,6 +379352,21 @@
           "file": "test/population-goods-liquidity.js",
           "line": 1,
           "version": "10cbfaa7a17b2672"
+        }
+      ]
+    },
+    {
+      "key": "TestSuite:test/population-goods-postgres.js",
+      "type": "TestSuite",
+      "id": "test/population-goods-postgres.js",
+      "label": "test/population-goods-postgres.js",
+      "lines": 187,
+      "version": "14c45eec4289119e",
+      "provenance": [
+        {
+          "file": "test/population-goods-postgres.js",
+          "line": 1,
+          "version": "14c45eec4289119e"
         }
       ]
     },
@@ -382818,13 +384025,13 @@
       "type": "TestSuite",
       "id": "test/staged-crew-missions-api.js",
       "label": "test/staged-crew-missions-api.js",
-      "lines": 215,
-      "version": "8a1df6bd7009aeba",
+      "lines": 301,
+      "version": "d9f009f371f4a512",
       "provenance": [
         {
           "file": "test/staged-crew-missions-api.js",
           "line": 1,
-          "version": "8a1df6bd7009aeba"
+          "version": "d9f009f371f4a512"
         }
       ]
     },
@@ -383403,13 +384610,13 @@
       "type": "TestSuite",
       "id": "test/ux-feedback.js",
       "label": "test/ux-feedback.js",
-      "lines": 127,
-      "version": "4258d965a394340c",
+      "lines": 129,
+      "version": "0b7f98eecc791775",
       "provenance": [
         {
           "file": "test/ux-feedback.js",
           "line": 1,
-          "version": "4258d965a394340c"
+          "version": "0b7f98eecc791775"
         }
       ]
     },
@@ -384063,13 +385270,13 @@
       "type": "TestSuite",
       "id": "test/world-fieldwork-browser.js",
       "label": "test/world-fieldwork-browser.js",
-      "lines": 416,
-      "version": "dc53e82991aac9a7",
+      "lines": 418,
+      "version": "830c759348d713e7",
       "provenance": [
         {
           "file": "test/world-fieldwork-browser.js",
           "line": 1,
-          "version": "dc53e82991aac9a7"
+          "version": "830c759348d713e7"
         }
       ]
     },
@@ -384333,13 +385540,13 @@
       "type": "TestSuite",
       "id": "test/worldgraph-validation.js",
       "label": "test/worldgraph-validation.js",
-      "lines": 1908,
-      "version": "3c5db55fc8f1cb0f",
+      "lines": 1910,
+      "version": "0ca4110a6a87b8f2",
       "provenance": [
         {
           "file": "test/worldgraph-validation.js",
           "line": 1,
-          "version": "3c5db55fc8f1cb0f"
+          "version": "0ca4110a6a87b8f2"
         }
       ]
     },
@@ -410969,6 +412176,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:src/content/crew-crosscurrent.js",
+      "to": "Domain:platform-core",
+      "provenance": {
+        "file": "src/content/crew-crosscurrent.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:src/content/definition-invariants.js",
       "to": "Domain:platform-core",
       "provenance": {
@@ -411036,6 +412252,15 @@
       "to": "Domain:economy-ledger",
       "provenance": {
         "file": "src/content/exchange.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:src/content/first-errand-case.js",
+      "to": "Domain:platform-core",
+      "provenance": {
+        "file": "src/content/first-errand-case.js",
         "line": 1
       }
     },
@@ -415478,6 +416703,24 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:test/ambient-lifecycle-browser.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/ambient-lifecycle-browser.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/ambient-lifecycle.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/ambient-lifecycle.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:test/atomicbarter-integration.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -415991,10 +417234,28 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:test/city-case-story-browser.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/city-case-story-browser.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:test/city-connected-scene-browser.js",
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "test/city-connected-scene-browser.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/city-cooperative-content.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/city-cooperative-content.js",
         "line": 1
       }
     },
@@ -419537,6 +420798,15 @@
     },
     {
       "type": "BELONGS_TO",
+      "from": "Artifact:test/lib/first-errand-proof.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/lib/first-errand-proof.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
       "from": "Artifact:test/lib/phase2-architecture-upgrade-catalog.json",
       "to": "Domain:delivery-assurance",
       "provenance": {
@@ -421044,6 +422314,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": "test/population-goods-liquidity.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:test/population-goods-postgres.js",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": "test/population-goods-postgres.js",
         "line": 1
       }
     },
@@ -432438,7 +433717,7 @@
       "to": "Domain:world-graph",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 632
+        "line": 647
       }
     },
     {
@@ -432447,7 +433726,7 @@
       "to": "Domain:world-graph",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 641
+        "line": 656
       }
     },
     {
@@ -438396,7 +439675,7 @@
       "to": "Domain:world-graph",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 621
+        "line": 636
       }
     },
     {
@@ -438405,7 +439684,7 @@
       "to": "Domain:world-graph",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 669
+        "line": 684
       }
     },
     {
@@ -438414,7 +439693,7 @@
       "to": "Domain:world-graph",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 663
+        "line": 678
       }
     },
     {
@@ -438423,7 +439702,7 @@
       "to": "Domain:world-graph",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 656
+        "line": 671
       }
     },
     {
@@ -438432,7 +439711,7 @@
       "to": "Domain:world-graph",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 650
+        "line": 665
       }
     },
     {
@@ -439747,6 +441026,14 @@
       "to": "Artifact:test/equipmentinsurance.js",
       "provenance": {
         "commit": "01c0e18f5336602e74bfa639244a82cc82ee39a9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:02099badf027f905238909f2f65d877514b2fd8c",
+      "to": "Artifact:tools/age-removal-source-data.js",
+      "provenance": {
+        "commit": "02099badf027f905238909f2f65d877514b2fd8c"
       }
     },
     {
@@ -442979,6 +444266,150 @@
       "to": "Artifact:tools/rc1-world-lifecycle-resources.js",
       "provenance": {
         "commit": "07242ba409c046453f245296bfb5ee6063ebbb77"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:072a3e9d41467c19222222af1a1af7475174a362",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "072a3e9d41467c19222222af1a1af7475174a362"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:072a3e9d41467c19222222af1a1af7475174a362",
+      "to": "Artifact:public/world-fieldwork.js",
+      "provenance": {
+        "commit": "072a3e9d41467c19222222af1a1af7475174a362"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:072a3e9d41467c19222222af1a1af7475174a362",
+      "to": "Artifact:src/agentgateway.js",
+      "provenance": {
+        "commit": "072a3e9d41467c19222222af1a1af7475174a362"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:072a3e9d41467c19222222af1a1af7475174a362",
+      "to": "Artifact:src/content/city-quest-presentation.js",
+      "provenance": {
+        "commit": "072a3e9d41467c19222222af1a1af7475174a362"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:072a3e9d41467c19222222af1a1af7475174a362",
+      "to": "Artifact:src/content/crew-crosscurrent.js",
+      "provenance": {
+        "commit": "072a3e9d41467c19222222af1a1af7475174a362"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:072a3e9d41467c19222222af1a1af7475174a362",
+      "to": "Artifact:src/content/first-errand-case.js",
+      "provenance": {
+        "commit": "072a3e9d41467c19222222af1a1af7475174a362"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:072a3e9d41467c19222222af1a1af7475174a362",
+      "to": "Artifact:src/content/phase1-policy.js",
+      "provenance": {
+        "commit": "072a3e9d41467c19222222af1a1af7475174a362"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:072a3e9d41467c19222222af1a1af7475174a362",
+      "to": "Artifact:src/content/phase1.js",
+      "provenance": {
+        "commit": "072a3e9d41467c19222222af1a1af7475174a362"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:072a3e9d41467c19222222af1a1af7475174a362",
+      "to": "Artifact:src/operations.js",
+      "provenance": {
+        "commit": "072a3e9d41467c19222222af1a1af7475174a362"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:072a3e9d41467c19222222af1a1af7475174a362",
+      "to": "Artifact:src/routes/worldgraph.js",
+      "provenance": {
+        "commit": "072a3e9d41467c19222222af1a1af7475174a362"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:072a3e9d41467c19222222af1a1af7475174a362",
+      "to": "Artifact:test/city-case-story-browser.js",
+      "provenance": {
+        "commit": "072a3e9d41467c19222222af1a1af7475174a362"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:072a3e9d41467c19222222af1a1af7475174a362",
+      "to": "Artifact:test/city-cooperative-content.js",
+      "provenance": {
+        "commit": "072a3e9d41467c19222222af1a1af7475174a362"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:072a3e9d41467c19222222af1a1af7475174a362",
+      "to": "Artifact:test/city-district-arcs.js",
+      "provenance": {
+        "commit": "072a3e9d41467c19222222af1a1af7475174a362"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:072a3e9d41467c19222222af1a1af7475174a362",
+      "to": "Artifact:test/city-rpg.js",
+      "provenance": {
+        "commit": "072a3e9d41467c19222222af1a1af7475174a362"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:072a3e9d41467c19222222af1a1af7475174a362",
+      "to": "Artifact:test/lib/first-errand-proof.js",
+      "provenance": {
+        "commit": "072a3e9d41467c19222222af1a1af7475174a362"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:072a3e9d41467c19222222af1a1af7475174a362",
+      "to": "Artifact:test/staged-crew-missions-api.js",
+      "provenance": {
+        "commit": "072a3e9d41467c19222222af1a1af7475174a362"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:072a3e9d41467c19222222af1a1af7475174a362",
+      "to": "Artifact:test/world-fieldwork-browser.js",
+      "provenance": {
+        "commit": "072a3e9d41467c19222222af1a1af7475174a362"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:072a3e9d41467c19222222af1a1af7475174a362",
+      "to": "Artifact:test/worldgraph-validation.js",
+      "provenance": {
+        "commit": "072a3e9d41467c19222222af1a1af7475174a362"
       }
     },
     {
@@ -449415,6 +450846,30 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:114ada9398c8055428371e3a902b029c173f6bf9",
+      "to": "Artifact:docs/contract-retirement-20261109.md",
+      "provenance": {
+        "commit": "114ada9398c8055428371e3a902b029c173f6bf9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:114ada9398c8055428371e3a902b029c173f6bf9",
+      "to": "Artifact:src/chainparams.js",
+      "provenance": {
+        "commit": "114ada9398c8055428371e3a902b029c173f6bf9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:114ada9398c8055428371e3a902b029c173f6bf9",
+      "to": "Artifact:test/chainparams.js",
+      "provenance": {
+        "commit": "114ada9398c8055428371e3a902b029c173f6bf9"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:11531870b822283c3b674fcd33c34cad2663cb5b",
       "to": "Artifact:docs/release/readiness-work/world-family-npc-observer.md",
       "provenance": {
@@ -451155,6 +452610,206 @@
       "to": "Artifact:test/social.js",
       "provenance": {
         "commit": "133866bda60bf180b851efa836c33d7381cf07fc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1349c58430c33578e42458e8c255f3318aad15d9",
+      "to": "Artifact:docs/quest-quality-workgraph.json",
+      "provenance": {
+        "commit": "1349c58430c33578e42458e8c255f3318aad15d9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1349c58430c33578e42458e8c255f3318aad15d9",
+      "to": "Artifact:docs/questing-workgraph.json",
+      "provenance": {
+        "commit": "1349c58430c33578e42458e8c255f3318aad15d9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1349c58430c33578e42458e8c255f3318aad15d9",
+      "to": "Artifact:output/quest-quality-verification/quality-mw9stgs3-quest-quality-content.log",
+      "provenance": {
+        "commit": "1349c58430c33578e42458e8c255f3318aad15d9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1349c58430c33578e42458e8c255f3318aad15d9",
+      "to": "Artifact:output/quest-quality-verification/quality-mw9sto8i-quest-quality-rules.log",
+      "provenance": {
+        "commit": "1349c58430c33578e42458e8c255f3318aad15d9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1349c58430c33578e42458e8c255f3318aad15d9",
+      "to": "Artifact:output/quest-quality-verification/quality-mw9ston5-quest-quality-studio.log",
+      "provenance": {
+        "commit": "1349c58430c33578e42458e8c255f3318aad15d9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1349c58430c33578e42458e8c255f3318aad15d9",
+      "to": "Artifact:output/quest-quality-verification/quality-mw9stplb-quest-quality-runtime.log",
+      "provenance": {
+        "commit": "1349c58430c33578e42458e8c255f3318aad15d9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1349c58430c33578e42458e8c255f3318aad15d9",
+      "to": "Artifact:output/quest-quality-verification/quality-mw9sttxa-quest-quality-api.log",
+      "provenance": {
+        "commit": "1349c58430c33578e42458e8c255f3318aad15d9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1349c58430c33578e42458e8c255f3318aad15d9",
+      "to": "Artifact:output/quest-quality-verification/quality-mw9stxou-quest-quality-browser.log",
+      "provenance": {
+        "commit": "1349c58430c33578e42458e8c255f3318aad15d9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1349c58430c33578e42458e8c255f3318aad15d9",
+      "to": "Artifact:output/quest-quality-verification/quality-mw9suf1b-quest-quality-postgres.log",
+      "provenance": {
+        "commit": "1349c58430c33578e42458e8c255f3318aad15d9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1349c58430c33578e42458e8c255f3318aad15d9",
+      "to": "Artifact:output/quest-quality-verification/quality-mw9sulou-quest-quality-stateful.log",
+      "provenance": {
+        "commit": "1349c58430c33578e42458e8c255f3318aad15d9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1349c58430c33578e42458e8c255f3318aad15d9",
+      "to": "Artifact:output/quest-quality-verification/quality-mw9sumih-quest-quality-social.log",
+      "provenance": {
+        "commit": "1349c58430c33578e42458e8c255f3318aad15d9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1349c58430c33578e42458e8c255f3318aad15d9",
+      "to": "Artifact:output/quest-quality-verification/quality-mw9suqdg-quest-quality-spoilers.log",
+      "provenance": {
+        "commit": "1349c58430c33578e42458e8c255f3318aad15d9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1349c58430c33578e42458e8c255f3318aad15d9",
+      "to": "Artifact:output/quest-quality-verification/quality-mw9sutfa-quest-quality-study.log",
+      "provenance": {
+        "commit": "1349c58430c33578e42458e8c255f3318aad15d9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1349c58430c33578e42458e8c255f3318aad15d9",
+      "to": "Artifact:output/questing-verification/quest-mw9sswq1-quest-saga.log",
+      "provenance": {
+        "commit": "1349c58430c33578e42458e8c255f3318aad15d9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1349c58430c33578e42458e8c255f3318aad15d9",
+      "to": "Artifact:output/questing-verification/quest-mw9st2og-content-narrative-security.log",
+      "provenance": {
+        "commit": "1349c58430c33578e42458e8c255f3318aad15d9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1349c58430c33578e42458e8c255f3318aad15d9",
+      "to": "Artifact:output/questing-verification/quest-mw9st3ox-quest-specialist.log",
+      "provenance": {
+        "commit": "1349c58430c33578e42458e8c255f3318aad15d9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1349c58430c33578e42458e8c255f3318aad15d9",
+      "to": "Artifact:output/questing-verification/quest-mw9st98c-clue-puzzles.log",
+      "provenance": {
+        "commit": "1349c58430c33578e42458e8c255f3318aad15d9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1349c58430c33578e42458e8c255f3318aad15d9",
+      "to": "Artifact:output/questing-verification/quest-mw9steag-clue-puzzles-browser.log",
+      "provenance": {
+        "commit": "1349c58430c33578e42458e8c255f3318aad15d9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1349c58430c33578e42458e8c255f3318aad15d9",
+      "to": "Artifact:output/questing-verification/quest-mw9stlga-content-narrative.log",
+      "provenance": {
+        "commit": "1349c58430c33578e42458e8c255f3318aad15d9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1349c58430c33578e42458e8c255f3318aad15d9",
+      "to": "Artifact:output/questing-verification/quest-mw9stpf8-quest-experience-browser.log",
+      "provenance": {
+        "commit": "1349c58430c33578e42458e8c255f3318aad15d9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1349c58430c33578e42458e8c255f3318aad15d9",
+      "to": "Artifact:output/questing-verification/quest-mw9su63t-content-api.log",
+      "provenance": {
+        "commit": "1349c58430c33578e42458e8c255f3318aad15d9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1349c58430c33578e42458e8c255f3318aad15d9",
+      "to": "Artifact:output/questing-verification/quest-mw9su7fm-quest-saga-social.log",
+      "provenance": {
+        "commit": "1349c58430c33578e42458e8c255f3318aad15d9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1349c58430c33578e42458e8c255f3318aad15d9",
+      "to": "Artifact:output/questing-verification/quest-mw9suc9b-content-casework.log",
+      "provenance": {
+        "commit": "1349c58430c33578e42458e8c255f3318aad15d9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1349c58430c33578e42458e8c255f3318aad15d9",
+      "to": "Artifact:output/questing-verification/quest-mw9sug3g-quest-workshop.log",
+      "provenance": {
+        "commit": "1349c58430c33578e42458e8c255f3318aad15d9"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1349c58430c33578e42458e8c255f3318aad15d9",
+      "to": "Artifact:tools/age-removal-source-seal.js",
+      "provenance": {
+        "commit": "1349c58430c33578e42458e8c255f3318aad15d9"
       }
     },
     {
@@ -454163,6 +455818,30 @@
       "to": "Artifact:src/equipmentmaintenance.js",
       "provenance": {
         "commit": "16f71f7ef90e5eb33465abba63860d4daed994b4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1717ca4458d8e0f68d93e6ff295486cd0a9bb631",
+      "to": "Artifact:docs/contract-retirement-20261109.md",
+      "provenance": {
+        "commit": "1717ca4458d8e0f68d93e6ff295486cd0a9bb631"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1717ca4458d8e0f68d93e6ff295486cd0a9bb631",
+      "to": "Artifact:src/chainparams.js",
+      "provenance": {
+        "commit": "1717ca4458d8e0f68d93e6ff295486cd0a9bb631"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:1717ca4458d8e0f68d93e6ff295486cd0a9bb631",
+      "to": "Artifact:test/chainparams.js",
+      "provenance": {
+        "commit": "1717ca4458d8e0f68d93e6ff295486cd0a9bb631"
       }
     },
     {
@@ -472675,6 +474354,30 @@
       "to": "Artifact:omerta-contracts/test/Omerta.t.sol",
       "provenance": {
         "commit": "2bd8091b5469ebc5b36337b7dfcee04a4a6ecf8b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2bfb68964ec3c4044efb9f4532d8312ece93ba2c",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "2bfb68964ec3c4044efb9f4532d8312ece93ba2c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2bfb68964ec3c4044efb9f4532d8312ece93ba2c",
+      "to": "Artifact:test/ambient-lifecycle-browser.js",
+      "provenance": {
+        "commit": "2bfb68964ec3c4044efb9f4532d8312ece93ba2c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2bfb68964ec3c4044efb9f4532d8312ece93ba2c",
+      "to": "Artifact:test/ambient-lifecycle.js",
+      "provenance": {
+        "commit": "2bfb68964ec3c4044efb9f4532d8312ece93ba2c"
       }
     },
     {
@@ -496151,6 +497854,54 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:4509f9248f237b7632bb34cdde313ca47e84ffc6",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "4509f9248f237b7632bb34cdde313ca47e84ffc6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4509f9248f237b7632bb34cdde313ca47e84ffc6",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "4509f9248f237b7632bb34cdde313ca47e84ffc6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4509f9248f237b7632bb34cdde313ca47e84ffc6",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "4509f9248f237b7632bb34cdde313ca47e84ffc6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4509f9248f237b7632bb34cdde313ca47e84ffc6",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "4509f9248f237b7632bb34cdde313ca47e84ffc6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4509f9248f237b7632bb34cdde313ca47e84ffc6",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "4509f9248f237b7632bb34cdde313ca47e84ffc6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4509f9248f237b7632bb34cdde313ca47e84ffc6",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "4509f9248f237b7632bb34cdde313ca47e84ffc6"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:451b87348931157404307ddd391c48b2f0270a52",
       "to": "Artifact:schema.sql",
       "provenance": {
@@ -515091,6 +516842,22 @@
       "to": "HistoricalArtifact:knowledge/generated/modules.md",
       "provenance": {
         "commit": "5e7944ca7a8e39fcbddd4041f9afcb6fce6f3f93"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5e85a7f806c4829f43a49029dc8b0e9f092ee91b",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "5e85a7f806c4829f43a49029dc8b0e9f092ee91b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:5e85a7f806c4829f43a49029dc8b0e9f092ee91b",
+      "to": "Artifact:tools/age-removal-source-seal.js",
+      "provenance": {
+        "commit": "5e85a7f806c4829f43a49029dc8b0e9f092ee91b"
       }
     },
     {
@@ -556343,6 +558110,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:8c205cfdabfc1df775bb4108ede2088eb9de1832",
+      "to": "Artifact:tools/age-removal-source-data.js",
+      "provenance": {
+        "commit": "8c205cfdabfc1df775bb4108ede2088eb9de1832"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:8c2197a3f67b6651f7e2da629bf3b87d85ad12ac",
       "to": "HistoricalArtifact:knowledge/generated/documents.md",
       "provenance": {
@@ -558547,6 +560322,22 @@
       "to": "Artifact:tools/player-genesis-preflight.js",
       "provenance": {
         "commit": "8f716e05269d079b98aa74f9a47a16e376d03873"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8f7793451139eb2eca43d69a172ca7a5344a287f",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "8f7793451139eb2eca43d69a172ca7a5344a287f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8f7793451139eb2eca43d69a172ca7a5344a287f",
+      "to": "Artifact:test/population-goods-postgres.js",
+      "provenance": {
+        "commit": "8f7793451139eb2eca43d69a172ca7a5344a287f"
       }
     },
     {
@@ -573911,6 +575702,30 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:9fc442d1ae1a17cdca0b36ef549e5c916929dcdd",
+      "to": "Artifact:docs/contract-retirement-20261109.md",
+      "provenance": {
+        "commit": "9fc442d1ae1a17cdca0b36ef549e5c916929dcdd"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9fc442d1ae1a17cdca0b36ef549e5c916929dcdd",
+      "to": "Artifact:src/worker.js",
+      "provenance": {
+        "commit": "9fc442d1ae1a17cdca0b36ef549e5c916929dcdd"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9fc442d1ae1a17cdca0b36ef549e5c916929dcdd",
+      "to": "Artifact:test/hardening.js",
+      "provenance": {
+        "commit": "9fc442d1ae1a17cdca0b36ef549e5c916929dcdd"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:9fcdc03111e80acc1e15b31b1a0c0ed31d587ae9",
       "to": "Artifact:.github/workflows/ci.yml",
       "provenance": {
@@ -586915,6 +588730,14 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "commit": "b191797081dcb031a076421d393c0a52609bd9d5"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:b19548abe8a2d074fca2764de3371c9d73e774b1",
+      "to": "Artifact:tools/enterprise-native-questing-inputs.js",
+      "provenance": {
+        "commit": "b19548abe8a2d074fca2764de3371c9d73e774b1"
       }
     },
     {
@@ -645951,6 +647774,46 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:e1f79d90a47784aaa5e725a51e61e71282ef2cb0",
+      "to": "Artifact:package.json",
+      "provenance": {
+        "commit": "e1f79d90a47784aaa5e725a51e61e71282ef2cb0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e1f79d90a47784aaa5e725a51e61e71282ef2cb0",
+      "to": "Artifact:public/index.html",
+      "provenance": {
+        "commit": "e1f79d90a47784aaa5e725a51e61e71282ef2cb0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e1f79d90a47784aaa5e725a51e61e71282ef2cb0",
+      "to": "Artifact:test/ambient-lifecycle-browser.js",
+      "provenance": {
+        "commit": "e1f79d90a47784aaa5e725a51e61e71282ef2cb0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e1f79d90a47784aaa5e725a51e61e71282ef2cb0",
+      "to": "Artifact:test/ambient-lifecycle.js",
+      "provenance": {
+        "commit": "e1f79d90a47784aaa5e725a51e61e71282ef2cb0"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e1f79d90a47784aaa5e725a51e61e71282ef2cb0",
+      "to": "Artifact:test/ux-feedback.js",
+      "provenance": {
+        "commit": "e1f79d90a47784aaa5e725a51e61e71282ef2cb0"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:e2075a563e461b098c462c779c9eb83d57d6260c",
       "to": "HistoricalArtifact:knowledge/generated/github-history.md",
       "provenance": {
@@ -653099,6 +654962,14 @@
       "to": "Artifact:tools/commerce-enterprise-source-data.js",
       "provenance": {
         "commit": "ea415b2ddac4e6d9743c71d208cadeec52414f4f"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ea49d968a2b2c6ff40a36ef74c75c151dc23650e",
+      "to": "Artifact:tools/enterprise-native-questing-inputs.js",
+      "provenance": {
+        "commit": "ea49d968a2b2c6ff40a36ef74c75c151dc23650e"
       }
     },
     {
@@ -676763,6 +678634,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:backend",
+      "to": "Artifact:src/content/crew-crosscurrent.js",
+      "provenance": {
+        "file": "src/content/crew-crosscurrent.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:backend",
       "to": "Artifact:src/content/definition-invariants.js",
       "provenance": {
         "file": "src/content/definition-invariants.js",
@@ -676829,6 +678709,15 @@
       "to": "Artifact:src/content/exchange.js",
       "provenance": {
         "file": "src/content/exchange.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:backend",
+      "to": "Artifact:src/content/first-errand-case.js",
+      "provenance": {
+        "file": "src/content/first-errand-case.js",
         "line": 1
       }
     },
@@ -697621,6 +699510,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:docs/contract-retirement-20261109.md",
+      "provenance": {
+        "file": "docs/contract-retirement-20261109.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md",
       "provenance": {
         "file": "docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md",
@@ -708367,6 +710265,105 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:documentation",
+      "to": "Artifact:output/quest-quality-verification/quality-mw9stgs3-quest-quality-content.log",
+      "provenance": {
+        "file": "output/quest-quality-verification/quality-mw9stgs3-quest-quality-content.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/quest-quality-verification/quality-mw9sto8i-quest-quality-rules.log",
+      "provenance": {
+        "file": "output/quest-quality-verification/quality-mw9sto8i-quest-quality-rules.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/quest-quality-verification/quality-mw9ston5-quest-quality-studio.log",
+      "provenance": {
+        "file": "output/quest-quality-verification/quality-mw9ston5-quest-quality-studio.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/quest-quality-verification/quality-mw9stplb-quest-quality-runtime.log",
+      "provenance": {
+        "file": "output/quest-quality-verification/quality-mw9stplb-quest-quality-runtime.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/quest-quality-verification/quality-mw9sttxa-quest-quality-api.log",
+      "provenance": {
+        "file": "output/quest-quality-verification/quality-mw9sttxa-quest-quality-api.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/quest-quality-verification/quality-mw9stxou-quest-quality-browser.log",
+      "provenance": {
+        "file": "output/quest-quality-verification/quality-mw9stxou-quest-quality-browser.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/quest-quality-verification/quality-mw9suf1b-quest-quality-postgres.log",
+      "provenance": {
+        "file": "output/quest-quality-verification/quality-mw9suf1b-quest-quality-postgres.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/quest-quality-verification/quality-mw9sulou-quest-quality-stateful.log",
+      "provenance": {
+        "file": "output/quest-quality-verification/quality-mw9sulou-quest-quality-stateful.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/quest-quality-verification/quality-mw9sumih-quest-quality-social.log",
+      "provenance": {
+        "file": "output/quest-quality-verification/quality-mw9sumih-quest-quality-social.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/quest-quality-verification/quality-mw9suqdg-quest-quality-spoilers.log",
+      "provenance": {
+        "file": "output/quest-quality-verification/quality-mw9suqdg-quest-quality-spoilers.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/quest-quality-verification/quality-mw9sutfa-quest-quality-study.log",
+      "provenance": {
+        "file": "output/quest-quality-verification/quality-mw9sutfa-quest-quality-study.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
       "to": "Artifact:output/questing-verification/quest-mw7bvisg-quest-saga.log",
       "provenance": {
         "file": "output/questing-verification/quest-mw7bvisg-quest-saga.log",
@@ -709855,6 +711852,105 @@
       "to": "Artifact:output/questing-verification/quest-mw95hdcd-quest-workshop.log",
       "provenance": {
         "file": "output/questing-verification/quest-mw95hdcd-quest-workshop.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/questing-verification/quest-mw9sswq1-quest-saga.log",
+      "provenance": {
+        "file": "output/questing-verification/quest-mw9sswq1-quest-saga.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/questing-verification/quest-mw9st2og-content-narrative-security.log",
+      "provenance": {
+        "file": "output/questing-verification/quest-mw9st2og-content-narrative-security.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/questing-verification/quest-mw9st3ox-quest-specialist.log",
+      "provenance": {
+        "file": "output/questing-verification/quest-mw9st3ox-quest-specialist.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/questing-verification/quest-mw9st98c-clue-puzzles.log",
+      "provenance": {
+        "file": "output/questing-verification/quest-mw9st98c-clue-puzzles.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/questing-verification/quest-mw9steag-clue-puzzles-browser.log",
+      "provenance": {
+        "file": "output/questing-verification/quest-mw9steag-clue-puzzles-browser.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/questing-verification/quest-mw9stlga-content-narrative.log",
+      "provenance": {
+        "file": "output/questing-verification/quest-mw9stlga-content-narrative.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/questing-verification/quest-mw9stpf8-quest-experience-browser.log",
+      "provenance": {
+        "file": "output/questing-verification/quest-mw9stpf8-quest-experience-browser.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/questing-verification/quest-mw9su63t-content-api.log",
+      "provenance": {
+        "file": "output/questing-verification/quest-mw9su63t-content-api.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/questing-verification/quest-mw9su7fm-quest-saga-social.log",
+      "provenance": {
+        "file": "output/questing-verification/quest-mw9su7fm-quest-saga-social.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/questing-verification/quest-mw9suc9b-content-casework.log",
+      "provenance": {
+        "file": "output/questing-verification/quest-mw9suc9b-content-casework.log",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:documentation",
+      "to": "Artifact:output/questing-verification/quest-mw9sug3g-quest-workshop.log",
+      "provenance": {
+        "file": "output/questing-verification/quest-mw9sug3g-quest-workshop.log",
         "line": 1
       }
     },
@@ -711463,6 +713559,24 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/ambient-lifecycle-browser.js",
+      "provenance": {
+        "file": "test/ambient-lifecycle-browser.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/ambient-lifecycle.js",
+      "provenance": {
+        "file": "test/ambient-lifecycle.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/atomicbarter-integration.js",
       "provenance": {
         "file": "test/atomicbarter-integration.js",
@@ -711976,9 +714090,27 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/city-case-story-browser.js",
+      "provenance": {
+        "file": "test/city-case-story-browser.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/city-connected-scene-browser.js",
       "provenance": {
         "file": "test/city-connected-scene-browser.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/city-cooperative-content.js",
+      "provenance": {
+        "file": "test/city-cooperative-content.js",
         "line": 1
       }
     },
@@ -715414,6 +717546,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:quality",
+      "to": "Artifact:test/lib/first-errand-proof.js",
+      "provenance": {
+        "file": "test/lib/first-errand-proof.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
       "to": "Artifact:test/lib/phase2-definition-fixtures.js",
       "provenance": {
         "file": "test/lib/phase2-definition-fixtures.js",
@@ -716911,6 +719052,15 @@
       "to": "Artifact:test/population-goods-liquidity.js",
       "provenance": {
         "file": "test/population-goods-liquidity.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:quality",
+      "to": "Artifact:test/population-goods-postgres.js",
+      "provenance": {
+        "file": "test/population-goods-postgres.js",
         "line": 1
       }
     },
@@ -753128,7 +755278,7 @@
       "to": "Artifact:src/routes/worldgraph.js",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 632
+        "line": 647
       }
     },
     {
@@ -753137,7 +755287,7 @@
       "to": "Artifact:src/routes/worldgraph.js",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 641
+        "line": 656
       }
     },
     {
@@ -759086,7 +761236,7 @@
       "to": "Artifact:src/routes/worldgraph.js",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 621
+        "line": 636
       }
     },
     {
@@ -759095,7 +761245,7 @@
       "to": "Artifact:src/routes/worldgraph.js",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 669
+        "line": 684
       }
     },
     {
@@ -759104,7 +761254,7 @@
       "to": "Artifact:src/routes/worldgraph.js",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 663
+        "line": 678
       }
     },
     {
@@ -759113,7 +761263,7 @@
       "to": "Artifact:src/routes/worldgraph.js",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 656
+        "line": 671
       }
     },
     {
@@ -759122,7 +761272,7 @@
       "to": "Artifact:src/routes/worldgraph.js",
       "provenance": {
         "file": "src/routes/worldgraph.js",
-        "line": 650
+        "line": 665
       }
     },
     {
@@ -764460,7 +766610,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:economy-ledger",
-      "weight": 378
+      "weight": 380
     },
     {
       "type": "DEPENDS_ON",
@@ -764484,7 +766634,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 2017
+      "weight": 2026
     },
     {
       "type": "DEPENDS_ON",
@@ -764502,13 +766652,13 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:world-graph",
-      "weight": 261
+      "weight": 264
     },
     {
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:world-progression",
-      "weight": 56
+      "weight": 57
     },
     {
       "type": "DEPENDS_ON",
@@ -764778,7 +766928,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:world-graph",
       "to": "Domain:platform-core",
-      "weight": 54
+      "weight": 57
     },
     {
       "type": "DEPENDS_ON",
@@ -770639,6 +772789,15 @@
     {
       "type": "EXECUTES",
       "from": "Command:npm:test:city-gameplay",
+      "to": "Artifact:test/city-cooperative-content.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:city-gameplay",
       "to": "Artifact:test/city-district-arcs.js",
       "provenance": {
         "file": "package.json",
@@ -770838,6 +772997,15 @@
       "type": "EXECUTES",
       "from": "Command:npm:test:city",
       "to": "Artifact:test/worldgraph-validation.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:city:browser",
+      "to": "Artifact:test/city-case-story-browser.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -772989,6 +775157,15 @@
       "type": "EXECUTES",
       "from": "Command:npm:test:goods-market:postgres",
       "to": "Artifact:test/goods-market-postgres.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:goods-market:postgres",
+      "to": "Artifact:test/population-goods-postgres.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -775751,6 +777928,15 @@
     {
       "type": "EXECUTES",
       "from": "Command:npm:test:ux",
+      "to": "Artifact:test/ambient-lifecycle.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:ux",
       "to": "Artifact:test/circle-highlights.js",
       "provenance": {
         "file": "package.json",
@@ -775833,6 +778019,15 @@
       "type": "EXECUTES",
       "from": "Command:npm:test:ux",
       "to": "Artifact:test/ux-workspace.js",
+      "provenance": {
+        "file": "package.json",
+        "line": 1
+      }
+    },
+    {
+      "type": "EXECUTES",
+      "from": "Command:npm:test:ux:browser",
+      "to": "Artifact:test/ambient-lifecycle-browser.js",
       "provenance": {
         "file": "package.json",
         "line": 1
@@ -786223,6 +788418,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:02099badf027f905238909f2f65d877514b2fd8c",
+      "provenance": {
+        "commit": "02099badf027f905238909f2f65d877514b2fd8c"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:0212a0f97900108c94fdf4819f37aeb3687979f4",
       "provenance": {
         "commit": "0212a0f97900108c94fdf4819f37aeb3687979f4"
@@ -787082,6 +789285,14 @@
       "to": "Commit:07242ba409c046453f245296bfb5ee6063ebbb77",
       "provenance": {
         "commit": "07242ba409c046453f245296bfb5ee6063ebbb77"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:072a3e9d41467c19222222af1a1af7475174a362",
+      "provenance": {
+        "commit": "072a3e9d41467c19222222af1a1af7475174a362"
       }
     },
     {
@@ -788783,6 +790994,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:114ada9398c8055428371e3a902b029c173f6bf9",
+      "provenance": {
+        "commit": "114ada9398c8055428371e3a902b029c173f6bf9"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:11531870b822283c3b674fcd33c34cad2663cb5b",
       "provenance": {
         "commit": "11531870b822283c3b674fcd33c34cad2663cb5b"
@@ -789151,6 +791370,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:1349c58430c33578e42458e8c255f3318aad15d9",
+      "provenance": {
+        "commit": "1349c58430c33578e42458e8c255f3318aad15d9"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:134bba2d56e4fd350eb084dd7261e2311ebbafc5",
       "provenance": {
         "commit": "134bba2d56e4fd350eb084dd7261e2311ebbafc5"
@@ -789234,6 +791461,14 @@
       "to": "Commit:13cab8ad26f28478fcff0186f882896253184312",
       "provenance": {
         "commit": "13cab8ad26f28478fcff0186f882896253184312"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:13e71581c6c444f2f78355abf6f0d9d273bd1730",
+      "provenance": {
+        "commit": "13e71581c6c444f2f78355abf6f0d9d273bd1730"
       }
     },
     {
@@ -789954,6 +792189,14 @@
       "to": "Commit:16f71f7ef90e5eb33465abba63860d4daed994b4",
       "provenance": {
         "commit": "16f71f7ef90e5eb33465abba63860d4daed994b4"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:1717ca4458d8e0f68d93e6ff295486cd0a9bb631",
+      "provenance": {
+        "commit": "1717ca4458d8e0f68d93e6ff295486cd0a9bb631"
       }
     },
     {
@@ -793599,6 +795842,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:2bfb68964ec3c4044efb9f4532d8312ece93ba2c",
+      "provenance": {
+        "commit": "2bfb68964ec3c4044efb9f4532d8312ece93ba2c"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:2bff5d050258975d9e0ea11661818386056a45be",
       "provenance": {
         "commit": "2bff5d050258975d9e0ea11661818386056a45be"
@@ -794162,6 +796413,14 @@
       "to": "Commit:2eb92ede8809bd9190774fd2564b0f74aeb34853",
       "provenance": {
         "commit": "2eb92ede8809bd9190774fd2564b0f74aeb34853"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:2ecf7ac37383ce7562a123c37cd184056d73fd44",
+      "provenance": {
+        "commit": "2ecf7ac37383ce7562a123c37cd184056d73fd44"
       }
     },
     {
@@ -798274,6 +800533,14 @@
       "to": "Commit:45082605e23e16f81959cc49b5e55d48e6088779",
       "provenance": {
         "commit": "45082605e23e16f81959cc49b5e55d48e6088779"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:4509f9248f237b7632bb34cdde313ca47e84ffc6",
+      "provenance": {
+        "commit": "4509f9248f237b7632bb34cdde313ca47e84ffc6"
       }
     },
     {
@@ -802674,6 +804941,14 @@
       "to": "Commit:5e7944ca7a8e39fcbddd4041f9afcb6fce6f3f93",
       "provenance": {
         "commit": "5e7944ca7a8e39fcbddd4041f9afcb6fce6f3f93"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:5e85a7f806c4829f43a49029dc8b0e9f092ee91b",
+      "provenance": {
+        "commit": "5e85a7f806c4829f43a49029dc8b0e9f092ee91b"
       }
     },
     {
@@ -811271,6 +813546,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:8c205cfdabfc1df775bb4108ede2088eb9de1832",
+      "provenance": {
+        "commit": "8c205cfdabfc1df775bb4108ede2088eb9de1832"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:8c2197a3f67b6651f7e2da629bf3b87d85ad12ac",
       "provenance": {
         "commit": "8c2197a3f67b6651f7e2da629bf3b87d85ad12ac"
@@ -811842,6 +814125,14 @@
       "to": "Commit:8f716e05269d079b98aa74f9a47a16e376d03873",
       "provenance": {
         "commit": "8f716e05269d079b98aa74f9a47a16e376d03873"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:8f7793451139eb2eca43d69a172ca7a5344a287f",
+      "provenance": {
+        "commit": "8f7793451139eb2eca43d69a172ca7a5344a287f"
       }
     },
     {
@@ -815039,6 +817330,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:9fc442d1ae1a17cdca0b36ef549e5c916929dcdd",
+      "provenance": {
+        "commit": "9fc442d1ae1a17cdca0b36ef549e5c916929dcdd"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:9fcdc03111e80acc1e15b31b1a0c0ed31d587ae9",
       "provenance": {
         "commit": "9fcdc03111e80acc1e15b31b1a0c0ed31d587ae9"
@@ -817839,6 +820138,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:afe62c90a78465c87f2945cd5ebb26d49b5593c1",
+      "provenance": {
+        "commit": "afe62c90a78465c87f2945cd5ebb26d49b5593c1"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:affccab56f7d94d3cdc2149d8d1a6d278af51652",
       "provenance": {
         "commit": "affccab56f7d94d3cdc2149d8d1a6d278af51652"
@@ -818170,6 +820477,14 @@
       "to": "Commit:b191797081dcb031a076421d393c0a52609bd9d5",
       "provenance": {
         "commit": "b191797081dcb031a076421d393c0a52609bd9d5"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:b19548abe8a2d074fca2764de3371c9d73e774b1",
+      "provenance": {
+        "commit": "b19548abe8a2d074fca2764de3371c9d73e774b1"
       }
     },
     {
@@ -818962,6 +821277,14 @@
       "to": "Commit:b61c31dc5299f8b995585aa1d183225d9fea33bb",
       "provenance": {
         "commit": "b61c31dc5299f8b995585aa1d183225d9fea33bb"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:b61cd7a79f06ffa660c00feb6e86344a9b062515",
+      "provenance": {
+        "commit": "b61cd7a79f06ffa660c00feb6e86344a9b062515"
       }
     },
     {
@@ -823103,6 +825426,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:cd4637193bd61a2b57295065f018aa80e282afca",
+      "provenance": {
+        "commit": "cd4637193bd61a2b57295065f018aa80e282afca"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:cd46f58912637112fa6b03e36cba6d0cec7b5979",
       "provenance": {
         "commit": "cd46f58912637112fa6b03e36cba6d0cec7b5979"
@@ -826575,6 +828906,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:e1f79d90a47784aaa5e725a51e61e71282ef2cb0",
+      "provenance": {
+        "commit": "e1f79d90a47784aaa5e725a51e61e71282ef2cb0"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:e2075a563e461b098c462c779c9eb83d57d6260c",
       "provenance": {
         "commit": "e2075a563e461b098c462c779c9eb83d57d6260c"
@@ -827938,6 +830277,14 @@
       "to": "Commit:ea415b2ddac4e6d9743c71d208cadeec52414f4f",
       "provenance": {
         "commit": "ea415b2ddac4e6d9743c71d208cadeec52414f4f"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:ea49d968a2b2c6ff40a36ef74c75c151dc23650e",
+      "provenance": {
+        "commit": "ea49d968a2b2c6ff40a36ef74c75c151dc23650e"
       }
     },
     {
@@ -835426,7 +837773,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "src/chainparams.js",
-        "line": 37
+        "line": 40
       }
     },
     {
@@ -835435,7 +837782,7 @@
       "to": "ExternalDependency:viem",
       "provenance": {
         "file": "src/chainparams.js",
-        "line": 287
+        "line": 279
       }
     },
     {
@@ -835444,7 +837791,7 @@
       "to": "ExternalDependency:viem",
       "provenance": {
         "file": "src/chainparams.js",
-        "line": 309
+        "line": 303
       }
     },
     {
@@ -837496,6 +839843,15 @@
       "to": "Artifact:src/content/district-story-arcs.js",
       "provenance": {
         "file": "src/content/city-quest-presentation.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/content/city-quest-presentation.js",
+      "to": "Artifact:src/content/first-errand-case.js",
+      "provenance": {
+        "file": "src/content/city-quest-presentation.js",
         "line": 3
       }
     },
@@ -837514,7 +839870,7 @@
       "to": "Artifact:src/content/property-investigation.js",
       "provenance": {
         "file": "src/content/city-quest-presentation.js",
-        "line": 8
+        "line": 9
       }
     },
     {
@@ -837928,7 +840284,7 @@
       "to": "Artifact:src/content/automotive-salvage.js",
       "provenance": {
         "file": "src/content/phase1.js",
-        "line": 4
+        "line": 6
       }
     },
     {
@@ -837937,7 +840293,7 @@
       "to": "Artifact:src/content/belladonna.js",
       "provenance": {
         "file": "src/content/phase1.js",
-        "line": 5
+        "line": 7
       }
     },
     {
@@ -837946,7 +840302,7 @@
       "to": "Artifact:src/content/city-world-opportunities.js",
       "provenance": {
         "file": "src/content/phase1.js",
-        "line": 11
+        "line": 13
       }
     },
     {
@@ -837955,7 +840311,7 @@
       "to": "Artifact:src/content/company-production-quality.js",
       "provenance": {
         "file": "src/content/phase1.js",
-        "line": 8
+        "line": 10
       }
     },
     {
@@ -837964,7 +840320,16 @@
       "to": "Artifact:src/content/core-materials.js",
       "provenance": {
         "file": "src/content/phase1.js",
-        "line": 6
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/content/phase1.js",
+      "to": "Artifact:src/content/crew-crosscurrent.js",
+      "provenance": {
+        "file": "src/content/phase1.js",
+        "line": 4
       }
     },
     {
@@ -837973,13 +840338,22 @@
       "to": "Artifact:src/content/district-story-arcs.js",
       "provenance": {
         "file": "src/content/phase1.js",
-        "line": 9
+        "line": 11
       }
     },
     {
       "type": "IMPORTS",
       "from": "Artifact:src/content/phase1.js",
       "to": "Artifact:src/content/equipment-recovery.js",
+      "provenance": {
+        "file": "src/content/phase1.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/content/phase1.js",
+      "to": "Artifact:src/content/first-errand-case.js",
       "provenance": {
         "file": "src/content/phase1.js",
         "line": 3
@@ -837991,7 +840365,7 @@
       "to": "Artifact:src/content/neighborhood-afterword.js",
       "provenance": {
         "file": "src/content/phase1.js",
-        "line": 13
+        "line": 15
       }
     },
     {
@@ -838000,7 +840374,7 @@
       "to": "Artifact:src/content/neighborhood-broadcast.js",
       "provenance": {
         "file": "src/content/phase1.js",
-        "line": 12
+        "line": 14
       }
     },
     {
@@ -838009,7 +840383,7 @@
       "to": "Artifact:src/content/neighborhood-initiation.js",
       "provenance": {
         "file": "src/content/phase1.js",
-        "line": 7
+        "line": 9
       }
     },
     {
@@ -838018,7 +840392,7 @@
       "to": "Artifact:src/content/property-investigation.js",
       "provenance": {
         "file": "src/content/phase1.js",
-        "line": 14
+        "line": 16
       }
     },
     {
@@ -838027,7 +840401,7 @@
       "to": "Artifact:src/content/staged-crew-missions.js",
       "provenance": {
         "file": "src/content/phase1.js",
-        "line": 10
+        "line": 12
       }
     },
     {
@@ -844507,6 +846881,15 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "src/operations.js",
+        "line": 10
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:src/operations.js",
+      "to": "Artifact:src/playerintel.js",
+      "provenance": {
+        "file": "src/operations.js",
         "line": 9
       }
     },
@@ -844516,7 +846899,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "src/operations.js",
-        "line": 18
+        "line": 19
       }
     },
     {
@@ -844525,7 +846908,7 @@
       "to": "Artifact:src/worldgraph-validate.js",
       "provenance": {
         "file": "src/operations.js",
-        "line": 20
+        "line": 21
       }
     },
     {
@@ -844534,7 +846917,7 @@
       "to": "Artifact:src/worldgraph.js",
       "provenance": {
         "file": "src/operations.js",
-        "line": 19
+        "line": 20
       }
     },
     {
@@ -855870,6 +858253,24 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:test/ambient-lifecycle-browser.js",
+      "to": "Artifact:test/server-fixture.js",
+      "provenance": {
+        "file": "test/ambient-lifecycle-browser.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/ambient-lifecycle-browser.js",
+      "to": "ExternalDependency:playwright-core",
+      "provenance": {
+        "file": "test/ambient-lifecycle-browser.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:test/atomicbarter-integration.js",
       "to": "Artifact:src/atomic-barter-contracts.js",
       "provenance": {
@@ -858439,7 +860840,16 @@
       "to": "ExternalDependency:viem",
       "provenance": {
         "file": "test/chainparams.js",
-        "line": 113
+        "line": 157
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/chainparams.js",
+      "to": "ExternalDependency:viem",
+      "provenance": {
+        "file": "test/chainparams.js",
+        "line": 30
       }
     },
     {
@@ -858687,11 +861097,74 @@
     },
     {
       "type": "IMPORTS",
+      "from": "Artifact:test/city-case-story-browser.js",
+      "to": "Artifact:src/content/crew-crosscurrent.js",
+      "provenance": {
+        "file": "test/city-case-story-browser.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/city-case-story-browser.js",
+      "to": "Artifact:src/game.js",
+      "provenance": {
+        "file": "test/city-case-story-browser.js",
+        "line": 13
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/city-case-story-browser.js",
+      "to": "Artifact:test/server-fixture.js",
+      "provenance": {
+        "file": "test/city-case-story-browser.js",
+        "line": 12
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/city-case-story-browser.js",
+      "to": "ExternalDependency:playwright-core",
+      "provenance": {
+        "file": "test/city-case-story-browser.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
       "from": "Artifact:test/city-connected-scene-browser.js",
       "to": "ExternalDependency:playwright-core",
       "provenance": {
         "file": "test/city-connected-scene-browser.js",
         "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/city-cooperative-content.js",
+      "to": "Artifact:src/content/city-quest-presentation.js",
+      "provenance": {
+        "file": "test/city-cooperative-content.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/city-cooperative-content.js",
+      "to": "Artifact:src/content/phase1-validation.js",
+      "provenance": {
+        "file": "test/city-cooperative-content.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/city-cooperative-content.js",
+      "to": "Artifact:src/content/phase1.js",
+      "provenance": {
+        "file": "test/city-cooperative-content.js",
+        "line": 4
       }
     },
     {
@@ -858763,7 +861236,7 @@
       "to": "Artifact:src/content/city-quest-presentation.js",
       "provenance": {
         "file": "test/city-district-arcs.js",
-        "line": 7
+        "line": 8
       }
     },
     {
@@ -858772,7 +861245,7 @@
       "to": "Artifact:src/content/district-story-arcs.js",
       "provenance": {
         "file": "test/city-district-arcs.js",
-        "line": 6
+        "line": 7
       }
     },
     {
@@ -858781,7 +861254,7 @@
       "to": "Artifact:src/content/neighborhood-afterword.js",
       "provenance": {
         "file": "test/city-district-arcs.js",
-        "line": 8
+        "line": 9
       }
     },
     {
@@ -858790,7 +861263,7 @@
       "to": "Artifact:src/content/property-investigation.js",
       "provenance": {
         "file": "test/city-district-arcs.js",
-        "line": 9
+        "line": 10
       }
     },
     {
@@ -858799,7 +861272,16 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/city-district-arcs.js",
-        "line": 10
+        "line": 11
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/city-district-arcs.js",
+      "to": "Artifact:test/lib/first-errand-proof.js",
+      "provenance": {
+        "file": "test/city-district-arcs.js",
+        "line": 3
       }
     },
     {
@@ -858808,7 +861290,7 @@
       "to": "Artifact:test/server-fixture.js",
       "provenance": {
         "file": "test/city-district-arcs.js",
-        "line": 45
+        "line": 46
       }
     },
     {
@@ -858817,7 +861299,7 @@
       "to": "ExternalDependency:ajv-formats",
       "provenance": {
         "file": "test/city-district-arcs.js",
-        "line": 5
+        "line": 6
       }
     },
     {
@@ -858826,7 +861308,7 @@
       "to": "ExternalDependency:ajv",
       "provenance": {
         "file": "test/city-district-arcs.js",
-        "line": 4
+        "line": 5
       }
     },
     {
@@ -858835,7 +861317,7 @@
       "to": "ExternalDependency:pg",
       "provenance": {
         "file": "test/city-district-arcs.js",
-        "line": 36
+        "line": 37
       }
     },
     {
@@ -874621,7 +877103,7 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1745
+        "line": 1755
       }
     },
     {
@@ -874666,7 +877148,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1795
+        "line": 18
       }
     },
     {
@@ -874675,7 +877157,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 18
+        "line": 1805
       }
     },
     {
@@ -874720,7 +877202,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1724
+        "line": 1734
       }
     },
     {
@@ -874729,7 +877211,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1794
+        "line": 1804
       }
     },
     {
@@ -874747,7 +877229,16 @@
       "to": "Artifact:src/worker.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1759
+        "line": 1547
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/hardening.js",
+      "to": "Artifact:src/worker.js",
+      "provenance": {
+        "file": "test/hardening.js",
+        "line": 1769
       }
     },
     {
@@ -876377,6 +878868,15 @@
       "provenance": {
         "file": "test/lib/equipment-economy-migration-catalog.js",
         "line": 1
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/lib/first-errand-proof.js",
+      "to": "Artifact:src/content/phase1.js",
+      "provenance": {
+        "file": "test/lib/first-errand-proof.js",
+        "line": 3
       }
     },
     {
@@ -882704,6 +885204,51 @@
       "provenance": {
         "file": "test/population-goods-liquidity.js",
         "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/population-goods-postgres.js",
+      "to": "Artifact:src/goodsmarket.js",
+      "provenance": {
+        "file": "test/population-goods-postgres.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/population-goods-postgres.js",
+      "to": "Artifact:src/goodsquote.js",
+      "provenance": {
+        "file": "test/population-goods-postgres.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/population-goods-postgres.js",
+      "to": "Artifact:src/population.js",
+      "provenance": {
+        "file": "test/population-goods-postgres.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/population-goods-postgres.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/population-goods-postgres.js",
+        "line": 9
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/population-goods-postgres.js",
+      "to": "ExternalDependency:pg",
+      "provenance": {
+        "file": "test/population-goods-postgres.js",
+        "line": 5
       }
     },
     {
@@ -897289,6 +899834,15 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/staged-crew-missions-api.js",
+      "to": "Artifact:src/content/crew-crosscurrent.js",
+      "provenance": {
+        "file": "test/staged-crew-missions-api.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/staged-crew-missions-api.js",
       "to": "Artifact:src/content/staged-crew-missions.js",
       "provenance": {
         "file": "test/staged-crew-missions-api.js",
@@ -897301,7 +899855,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "test/staged-crew-missions-api.js",
-        "line": 34
+        "line": 35
       }
     },
     {
@@ -897310,7 +899864,7 @@
       "to": "Artifact:test/server-fixture.js",
       "provenance": {
         "file": "test/staged-crew-missions-api.js",
-        "line": 33
+        "line": 34
       }
     },
     {
@@ -897337,7 +899891,7 @@
       "to": "ExternalDependency:pg",
       "provenance": {
         "file": "test/staged-crew-missions-api.js",
-        "line": 28
+        "line": 29
       }
     },
     {
@@ -899128,7 +901682,7 @@
       "to": "Artifact:test/lib/ux-journeys.js",
       "provenance": {
         "file": "test/ux-feedback.js",
-        "line": 125
+        "line": 127
       }
     },
     {
@@ -902266,10 +904820,19 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:tools/age-removal-source-data.js",
-      "to": "Artifact:src/server.js",
+      "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "tools/age-removal-source-data.js",
-        "line": 1156
+        "line": 1235
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/age-removal-source-data.js",
+      "to": "Artifact:src/invariants.js",
+      "provenance": {
+        "file": "tools/age-removal-source-data.js",
+        "line": 1236
       }
     },
     {
@@ -902278,7 +904841,16 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "tools/age-removal-source-data.js",
-        "line": 1157
+        "line": 1532
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/age-removal-source-data.js",
+      "to": "Artifact:src/server.js",
+      "provenance": {
+        "file": "tools/age-removal-source-data.js",
+        "line": 1533
       }
     },
     {
@@ -902287,7 +904859,7 @@
       "to": "Artifact:src/social/estate.js",
       "provenance": {
         "file": "tools/age-removal-source-data.js",
-        "line": 761
+        "line": 1132
       }
     },
     {
@@ -902296,7 +904868,16 @@
       "to": "Artifact:src/social/estate.js",
       "provenance": {
         "file": "tools/age-removal-source-data.js",
-        "line": 762
+        "line": 1133
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/age-removal-source-data.js",
+      "to": "Artifact:src/worker.js",
+      "provenance": {
+        "file": "tools/age-removal-source-data.js",
+        "line": 1235
       }
     },
     {
@@ -902305,7 +904886,7 @@
       "to": "Artifact:tools/questing-source-transfer.js",
       "provenance": {
         "file": "tools/age-removal-source-data.js",
-        "line": 808
+        "line": 1179
       }
     },
     {
@@ -902314,7 +904895,52 @@
       "to": "Artifact:tools/questing-source-transfer.js",
       "provenance": {
         "file": "tools/age-removal-source-data.js",
-        "line": 809
+        "line": 1180
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/age-removal-source-data.js",
+      "to": "ExternalDependency:ajv",
+      "provenance": {
+        "file": "tools/age-removal-source-data.js",
+        "line": 1610
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/age-removal-source-data.js",
+      "to": "ExternalDependency:ajv",
+      "provenance": {
+        "file": "tools/age-removal-source-data.js",
+        "line": 1611
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/age-removal-source-data.js",
+      "to": "ExternalDependency:viem",
+      "provenance": {
+        "file": "tools/age-removal-source-data.js",
+        "line": 1003
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/age-removal-source-data.js",
+      "to": "ExternalDependency:viem",
+      "provenance": {
+        "file": "tools/age-removal-source-data.js",
+        "line": 588
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/age-removal-source-data.js",
+      "to": "ExternalDependency:viem",
+      "provenance": {
+        "file": "tools/age-removal-source-data.js",
+        "line": 589
       }
     },
     {
@@ -932289,6 +934915,24 @@
     },
     {
       "type": "REFERENCES",
+      "from": "Artifact:docs/contract-retirement-20261109.md",
+      "to": "Artifact:omerta-contracts/DEPLOYMENT.md",
+      "provenance": {
+        "file": "docs/contract-retirement-20261109.md",
+        "line": 59
+      }
+    },
+    {
+      "type": "REFERENCES",
+      "from": "Artifact:docs/contract-retirement-20261109.md",
+      "to": "Artifact:omerta-contracts/docs/market/RESTRICTED-BOOTSTRAP.md",
+      "provenance": {
+        "file": "docs/contract-retirement-20261109.md",
+        "line": 53
+      }
+    },
+    {
+      "type": "REFERENCES",
       "from": "Artifact:docs/coordination-engine/ARCHITECTURE.md",
       "to": "Artifact:docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md",
       "provenance": {
@@ -957552,6 +960196,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "Document:docs/contract-retirement-20261109.md",
+      "to": "Artifact:docs/contract-retirement-20261109.md",
+      "provenance": {
+        "file": "docs/contract-retirement-20261109.md",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "Document:docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md",
       "to": "Artifact:docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md",
       "provenance": {
@@ -963069,6 +965722,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "Module:src/content/crew-crosscurrent.js",
+      "to": "Artifact:src/content/crew-crosscurrent.js",
+      "provenance": {
+        "file": "src/content/crew-crosscurrent.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "Module:src/content/definition-invariants.js",
       "to": "Artifact:src/content/definition-invariants.js",
       "provenance": {
@@ -963136,6 +965798,15 @@
       "to": "Artifact:src/content/exchange.js",
       "provenance": {
         "file": "src/content/exchange.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Module:src/content/first-errand-case.js",
+      "to": "Artifact:src/content/first-errand-case.js",
+      "provenance": {
+        "file": "src/content/first-errand-case.js",
         "line": 1
       }
     },
@@ -968766,6 +971437,24 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "TestSuite:test/ambient-lifecycle-browser.js",
+      "to": "Artifact:test/ambient-lifecycle-browser.js",
+      "provenance": {
+        "file": "test/ambient-lifecycle-browser.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/ambient-lifecycle.js",
+      "to": "Artifact:test/ambient-lifecycle.js",
+      "provenance": {
+        "file": "test/ambient-lifecycle.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "TestSuite:test/atomicbarter-integration.js",
       "to": "Artifact:test/atomicbarter-integration.js",
       "provenance": {
@@ -969279,10 +971968,28 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "TestSuite:test/city-case-story-browser.js",
+      "to": "Artifact:test/city-case-story-browser.js",
+      "provenance": {
+        "file": "test/city-case-story-browser.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "TestSuite:test/city-connected-scene-browser.js",
       "to": "Artifact:test/city-connected-scene-browser.js",
       "provenance": {
         "file": "test/city-connected-scene-browser.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/city-cooperative-content.js",
+      "to": "Artifact:test/city-cooperative-content.js",
+      "provenance": {
+        "file": "test/city-cooperative-content.js",
         "line": 1
       }
     },
@@ -972717,6 +975424,15 @@
     },
     {
       "type": "REPRESENTS",
+      "from": "TestSuite:test/lib/first-errand-proof.js",
+      "to": "Artifact:test/lib/first-errand-proof.js",
+      "provenance": {
+        "file": "test/lib/first-errand-proof.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
       "from": "TestSuite:test/lib/phase2-definition-fixtures.js",
       "to": "Artifact:test/lib/phase2-definition-fixtures.js",
       "provenance": {
@@ -974215,6 +976931,15 @@
       "to": "Artifact:test/population-goods-liquidity.js",
       "provenance": {
         "file": "test/population-goods-liquidity.js",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "TestSuite:test/population-goods-postgres.js",
+      "to": "Artifact:test/population-goods-postgres.js",
+      "provenance": {
+        "file": "test/population-goods-postgres.js",
         "line": 1
       }
     },
@@ -979980,6 +982705,51 @@
     },
     {
       "type": "TESTS",
+      "from": "Artifact:test/city-case-story-browser.js",
+      "to": "Artifact:src/content/crew-crosscurrent.js",
+      "provenance": {
+        "file": "test/city-case-story-browser.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/city-case-story-browser.js",
+      "to": "Artifact:src/game.js",
+      "provenance": {
+        "file": "test/city-case-story-browser.js",
+        "line": 13
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/city-cooperative-content.js",
+      "to": "Artifact:src/content/city-quest-presentation.js",
+      "provenance": {
+        "file": "test/city-cooperative-content.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/city-cooperative-content.js",
+      "to": "Artifact:src/content/phase1-validation.js",
+      "provenance": {
+        "file": "test/city-cooperative-content.js",
+        "line": 5
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/city-cooperative-content.js",
+      "to": "Artifact:src/content/phase1.js",
+      "provenance": {
+        "file": "test/city-cooperative-content.js",
+        "line": 4
+      }
+    },
+    {
+      "type": "TESTS",
       "from": "Artifact:test/city-district-arcs-browser.js",
       "to": "Artifact:src/content/district-story-arcs.js",
       "provenance": {
@@ -980011,7 +982781,7 @@
       "to": "Artifact:src/content/city-quest-presentation.js",
       "provenance": {
         "file": "test/city-district-arcs.js",
-        "line": 7
+        "line": 8
       }
     },
     {
@@ -980020,7 +982790,7 @@
       "to": "Artifact:src/content/district-story-arcs.js",
       "provenance": {
         "file": "test/city-district-arcs.js",
-        "line": 6
+        "line": 7
       }
     },
     {
@@ -980029,7 +982799,7 @@
       "to": "Artifact:src/content/neighborhood-afterword.js",
       "provenance": {
         "file": "test/city-district-arcs.js",
-        "line": 8
+        "line": 9
       }
     },
     {
@@ -980038,7 +982808,7 @@
       "to": "Artifact:src/content/property-investigation.js",
       "provenance": {
         "file": "test/city-district-arcs.js",
-        "line": 9
+        "line": 10
       }
     },
     {
@@ -980047,7 +982817,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/city-district-arcs.js",
-        "line": 10
+        "line": 11
       }
     },
     {
@@ -989803,7 +992573,7 @@
       "to": "Artifact:src/db.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1745
+        "line": 1755
       }
     },
     {
@@ -989848,7 +992618,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1795
+        "line": 18
       }
     },
     {
@@ -989857,7 +992627,7 @@
       "to": "Artifact:src/invariants.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 18
+        "line": 1805
       }
     },
     {
@@ -989902,7 +992672,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1724
+        "line": 1734
       }
     },
     {
@@ -989911,7 +992681,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1794
+        "line": 1804
       }
     },
     {
@@ -989929,7 +992699,16 @@
       "to": "Artifact:src/worker.js",
       "provenance": {
         "file": "test/hardening.js",
-        "line": 1759
+        "line": 1547
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/hardening.js",
+      "to": "Artifact:src/worker.js",
+      "provenance": {
+        "file": "test/hardening.js",
+        "line": 1769
       }
     },
     {
@@ -990902,6 +993681,15 @@
       "provenance": {
         "file": "test/lib/director-support.js",
         "line": 13
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/lib/first-errand-proof.js",
+      "to": "Artifact:src/content/phase1.js",
+      "provenance": {
+        "file": "test/lib/first-errand-proof.js",
+        "line": 3
       }
     },
     {
@@ -994304,6 +997092,42 @@
       "provenance": {
         "file": "test/population-goods-liquidity.js",
         "line": 13
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/population-goods-postgres.js",
+      "to": "Artifact:src/goodsmarket.js",
+      "provenance": {
+        "file": "test/population-goods-postgres.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/population-goods-postgres.js",
+      "to": "Artifact:src/goodsquote.js",
+      "provenance": {
+        "file": "test/population-goods-postgres.js",
+        "line": 8
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/population-goods-postgres.js",
+      "to": "Artifact:src/population.js",
+      "provenance": {
+        "file": "test/population-goods-postgres.js",
+        "line": 6
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/population-goods-postgres.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/population-goods-postgres.js",
+        "line": 9
       }
     },
     {
@@ -998431,6 +1001255,15 @@
     {
       "type": "TESTS",
       "from": "Artifact:test/staged-crew-missions-api.js",
+      "to": "Artifact:src/content/crew-crosscurrent.js",
+      "provenance": {
+        "file": "test/staged-crew-missions-api.js",
+        "line": 7
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/staged-crew-missions-api.js",
       "to": "Artifact:src/content/staged-crew-missions.js",
       "provenance": {
         "file": "test/staged-crew-missions-api.js",
@@ -998443,7 +1001276,7 @@
       "to": "Artifact:src/game.js",
       "provenance": {
         "file": "test/staged-crew-missions-api.js",
-        "line": 34
+        "line": 35
       }
     },
     {
@@ -1002844,7 +1005677,7 @@
       "to": "Table:accounts",
       "provenance": {
         "file": "src/agentgateway.js",
-        "line": 2391
+        "line": 2404
       }
     },
     {
@@ -1002880,7 +1005713,7 @@
       "to": "Table:businesses",
       "provenance": {
         "file": "src/agentgateway.js",
-        "line": 2455
+        "line": 2468
       }
     },
     {
@@ -1002898,7 +1005731,7 @@
       "to": "Table:collection_log",
       "provenance": {
         "file": "src/agentgateway.js",
-        "line": 2448
+        "line": 2461
       }
     },
     {
@@ -1002952,7 +1005785,7 @@
       "to": "Table:item_events",
       "provenance": {
         "file": "src/agentgateway.js",
-        "line": 2448
+        "line": 2461
       }
     },
     {
@@ -1002961,7 +1005794,7 @@
       "to": "Table:item_instances",
       "provenance": {
         "file": "src/agentgateway.js",
-        "line": 2448
+        "line": 2461
       }
     },
     {
@@ -1002970,7 +1005803,7 @@
       "to": "Table:item_stacks",
       "provenance": {
         "file": "src/agentgateway.js",
-        "line": 2448
+        "line": 2461
       }
     },
     {
@@ -1003024,7 +1005857,7 @@
       "to": "Table:operation_escrow",
       "provenance": {
         "file": "src/agentgateway.js",
-        "line": 2448
+        "line": 2461
       }
     },
     {
@@ -1003033,7 +1005866,7 @@
       "to": "Table:transactions",
       "provenance": {
         "file": "src/agentgateway.js",
-        "line": 2420
+        "line": 2433
       }
     },
     {
@@ -1005139,7 +1007972,7 @@
       "to": "Table:bonds",
       "provenance": {
         "file": "src/chainparams.js",
-        "line": 37
+        "line": 40
       }
     },
     {
@@ -1020502,7 +1023335,7 @@
       "to": "Table:character_skills",
       "provenance": {
         "file": "src/operations.js",
-        "line": 736
+        "line": 737
       }
     },
     {
@@ -1020511,7 +1023344,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/operations.js",
-        "line": 67
+        "line": 68
       }
     },
     {
@@ -1020520,7 +1023353,7 @@
       "to": "Table:crew_members",
       "provenance": {
         "file": "src/operations.js",
-        "line": 752
+        "line": 753
       }
     },
     {
@@ -1020529,7 +1023362,7 @@
       "to": "Table:crews",
       "provenance": {
         "file": "src/operations.js",
-        "line": 756
+        "line": 757
       }
     },
     {
@@ -1020538,7 +1023371,7 @@
       "to": "Table:idempotency",
       "provenance": {
         "file": "src/operations.js",
-        "line": 728
+        "line": 729
       }
     },
     {
@@ -1020547,7 +1023380,7 @@
       "to": "Table:item_instances",
       "provenance": {
         "file": "src/operations.js",
-        "line": 1145
+        "line": 1146
       }
     },
     {
@@ -1020556,7 +1023389,7 @@
       "to": "Table:item_stacks",
       "provenance": {
         "file": "src/operations.js",
-        "line": 1159
+        "line": 1160
       }
     },
     {
@@ -1020565,7 +1023398,7 @@
       "to": "Table:mystery_instances",
       "provenance": {
         "file": "src/operations.js",
-        "line": 797
+        "line": 798
       }
     },
     {
@@ -1020574,7 +1023407,7 @@
       "to": "Table:mystery_node_state",
       "provenance": {
         "file": "src/operations.js",
-        "line": 812
+        "line": 813
       }
     },
     {
@@ -1020583,7 +1023416,7 @@
       "to": "Table:operation_escrow",
       "provenance": {
         "file": "src/operations.js",
-        "line": 1018
+        "line": 1019
       }
     },
     {
@@ -1020592,7 +1023425,7 @@
       "to": "Table:world_operation_contributions",
       "provenance": {
         "file": "src/operations.js",
-        "line": 1415
+        "line": 1416
       }
     },
     {
@@ -1020601,7 +1023434,7 @@
       "to": "Table:world_operation_node_state",
       "provenance": {
         "file": "src/operations.js",
-        "line": 955
+        "line": 956
       }
     },
     {
@@ -1020610,7 +1023443,7 @@
       "to": "Table:world_operation_roles",
       "provenance": {
         "file": "src/operations.js",
-        "line": 861
+        "line": 862
       }
     },
     {
@@ -1020619,7 +1023452,7 @@
       "to": "Table:world_operations",
       "provenance": {
         "file": "src/operations.js",
-        "line": 836
+        "line": 837
       }
     },
     {
@@ -1024967,6 +1027800,24 @@
       "provenance": {
         "file": "src/routes/worldgraph.js",
         "line": 288
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/routes/worldgraph.js",
+      "to": "Table:world_operation_node_state",
+      "provenance": {
+        "file": "src/routes/worldgraph.js",
+        "line": 625
+      }
+    },
+    {
+      "type": "USES_TABLE",
+      "from": "Artifact:src/routes/worldgraph.js",
+      "to": "Table:world_operation_roles",
+      "provenance": {
+        "file": "src/routes/worldgraph.js",
+        "line": 620
       }
     },
     {
@@ -1030807,7 +1033658,7 @@
       "to": "Table:account_persistent",
       "provenance": {
         "file": "src/worker.js",
-        "line": 259
+        "line": 265
       }
     },
     {
@@ -1030816,7 +1033667,7 @@
       "to": "Table:accounts",
       "provenance": {
         "file": "src/worker.js",
-        "line": 315
+        "line": 321
       }
     },
     {
@@ -1030834,7 +1033685,7 @@
       "to": "Table:characters",
       "provenance": {
         "file": "src/worker.js",
-        "line": 197
+        "line": 203
       }
     },
     {
@@ -1030843,7 +1033694,7 @@
       "to": "Table:chat_messages",
       "provenance": {
         "file": "src/worker.js",
-        "line": 436
+        "line": 442
       }
     },
     {
@@ -1030852,7 +1033703,7 @@
       "to": "Table:coalitions",
       "provenance": {
         "file": "src/worker.js",
-        "line": 480
+        "line": 486
       }
     },
     {
@@ -1030861,7 +1033712,7 @@
       "to": "Table:consignments",
       "provenance": {
         "file": "src/worker.js",
-        "line": 562
+        "line": 568
       }
     },
     {
@@ -1030879,7 +1033730,7 @@
       "to": "Table:districts",
       "provenance": {
         "file": "src/worker.js",
-        "line": 497
+        "line": 503
       }
     },
     {
@@ -1030888,7 +1033739,7 @@
       "to": "Table:dm_messages",
       "provenance": {
         "file": "src/worker.js",
-        "line": 438
+        "line": 444
       }
     },
     {
@@ -1030906,7 +1033757,7 @@
       "to": "Table:event_results",
       "provenance": {
         "file": "src/worker.js",
-        "line": 440
+        "line": 446
       }
     },
     {
@@ -1030915,7 +1033766,7 @@
       "to": "Table:exchange_pool",
       "provenance": {
         "file": "src/worker.js",
-        "line": 745
+        "line": 750
       }
     },
     {
@@ -1030924,7 +1033775,7 @@
       "to": "Table:family_aggro",
       "provenance": {
         "file": "src/worker.js",
-        "line": 530
+        "line": 536
       }
     },
     {
@@ -1030933,7 +1033784,7 @@
       "to": "Table:family_yield_pool",
       "provenance": {
         "file": "src/worker.js",
-        "line": 164
+        "line": 170
       }
     },
     {
@@ -1030951,7 +1033802,7 @@
       "to": "Table:gala_guests",
       "provenance": {
         "file": "src/worker.js",
-        "line": 444
+        "line": 450
       }
     },
     {
@@ -1030960,7 +1033811,7 @@
       "to": "Table:gangs",
       "provenance": {
         "file": "src/worker.js",
-        "line": 166
+        "line": 172
       }
     },
     {
@@ -1030969,7 +1033820,7 @@
       "to": "Table:idempotency",
       "provenance": {
         "file": "src/worker.js",
-        "line": 707
+        "line": 712
       }
     },
     {
@@ -1030987,7 +1033838,7 @@
       "to": "Table:notifications",
       "provenance": {
         "file": "src/worker.js",
-        "line": 260
+        "line": 266
       }
     },
     {
@@ -1030996,7 +1033847,7 @@
       "to": "Table:oauth_states",
       "provenance": {
         "file": "src/worker.js",
-        "line": 451
+        "line": 457
       }
     },
     {
@@ -1031005,7 +1033856,7 @@
       "to": "Table:portfolios",
       "provenance": {
         "file": "src/worker.js",
-        "line": 842
+        "line": 847
       }
     },
     {
@@ -1031014,7 +1033865,7 @@
       "to": "Table:rwa_dividend_pool",
       "provenance": {
         "file": "src/worker.js",
-        "line": 148
+        "line": 154
       }
     },
     {
@@ -1031023,7 +1033874,7 @@
       "to": "Table:season_recaps",
       "provenance": {
         "file": "src/worker.js",
-        "line": 254
+        "line": 260
       }
     },
     {
@@ -1031032,7 +1033883,7 @@
       "to": "Table:season_records",
       "provenance": {
         "file": "src/worker.js",
-        "line": 216
+        "line": 222
       }
     },
     {
@@ -1031050,7 +1033901,7 @@
       "to": "Table:stake_pool",
       "provenance": {
         "file": "src/worker.js",
-        "line": 135
+        "line": 141
       }
     },
     {
@@ -1031059,7 +1033910,7 @@
       "to": "Table:street_tax",
       "provenance": {
         "file": "src/worker.js",
-        "line": 108
+        "line": 114
       }
     },
     {
@@ -1031068,7 +1033919,7 @@
       "to": "Table:telemetry",
       "provenance": {
         "file": "src/worker.js",
-        "line": 179
+        "line": 185
       }
     },
     {
@@ -1031077,7 +1033928,7 @@
       "to": "Table:transactions",
       "provenance": {
         "file": "src/worker.js",
-        "line": 798
+        "line": 803
       }
     },
     {
@@ -1031086,7 +1033937,7 @@
       "to": "Table:vendettas",
       "provenance": {
         "file": "src/worker.js",
-        "line": 434
+        "line": 440
       }
     },
     {
@@ -1031095,7 +1033946,7 @@
       "to": "Table:vouchers",
       "provenance": {
         "file": "src/worker.js",
-        "line": 608
+        "line": 614
       }
     },
     {
@@ -1031104,7 +1033955,7 @@
       "to": "Table:wiretaps",
       "provenance": {
         "file": "src/worker.js",
-        "line": 590
+        "line": 596
       }
     },
     {
@@ -1031113,7 +1033964,7 @@
       "to": "Table:worker_heartbeat",
       "provenance": {
         "file": "src/worker.js",
-        "line": 368
+        "line": 374
       }
     },
     {
