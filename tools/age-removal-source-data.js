@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const AGE_REMOVAL_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_AGE_REMOVAL_SOURCE_COMPARISON_ONLY",
-  "revision": "9389bc9c2f73b612cd7b3f8a3646a5f2465259e4",
-  "tree": "bb2f545e368c7a762b50d758cd54ef2542975e32",
+  "revision": "858949e455cda97ee8f476bce4a7878674b2ab89",
+  "tree": "885c2602332f96b5a0ca525edf82874c69bc1914",
   "predecessor": "35913ec1b448275b227019ede2a2ef8047be55aa",
   "predecessorTree": "c74c606d97ee2f8ebb6c5201a4ddd2c2781d5db0",
   "files": {
@@ -443,6 +443,42 @@ export const AGE_REMOVAL_SOURCE = freeze({
         }
       ]
     },
+    "test/genesis-fee-readiness-source-transfer.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "ab9a9a9bd80f5b1917ee5ec4bb5bafb2334e1c5c",
+        "sha256": "8f3f6d412f9bc679dd8998a837f6231eeba550d52a427d19402b2f117ebf762c",
+        "bytes": 25941
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "2a03ab84b77650bf3ae59189fb6c8a604dd5a035",
+        "sha256": "ecc3ffff4d2921da88d9326a133beff3b1bd6dfdca70ea0a189d3289adcf7945",
+        "bytes": 24960
+      },
+      "inverses": [
+        {
+          "at": 412,
+          "current": "import { QUESTING_SOURCE, qualifyQuestingSource, questingHistoricalInput,\n  questingHistoricalEntry } from '../tools/questing-source-transfer.js';\nimport { SITE_BASICS_SOURCE, qualifySiteBasicsSource } from '../tools/site-basics-source-transfer.js';\nimport { ageRemovalHistoricalRecord } from '../tools/age-removal-source-transfer.js';\nimport {\n  GENESIS_FEE_READINESS_BASE_REVISION, GENESIS_FEE_READINESS_REVIEWED_REVISION,\n  GENESIS_FEE_READINESS_DOMAINS, GENESIS_FEE_READINESS_SOURCE_TRANSFER,\n",
+          "baseline": "import { QUESTING_SOURCE, qualifyQuestingSource, questingHistoricalInput,\n  questingHistoricalEntry } from '../tools/questing-source-transfer.js';\nimport { SITE_BASICS_SOURCE, qualifySiteBasicsSource } from '../tools/site-basics-source-transfer.js';\nimport {\n  GENESIS_FEE_READINESS_BASE_REVISION, GENESIS_FEE_READINESS_REVIEWED_REVISION,\n  GENESIS_FEE_READINESS_DOMAINS, GENESIS_FEE_READINESS_SOURCE_TRANSFER,\n"
+        },
+        {
+          "at": 12912,
+          "current": "  assert(Buffer.from(physical).equals(raw), 'Lossless actual fixture UTF-8 required');\n  assert(physical === head || physical === head.replaceAll('\\n', '\\r\\n'),\n    'Whole actual fixture LF/CRLF bytes qualify before projection');\n  const historical = ageRemovalHistoricalRecord(fixture, { head: { mode: actual[1], blob: actual[2] }, index: actualIndex,\n    committed: Buffer.from(head), physical: raw, regular: stat.isFile(), symbolic: stat.isSymbolicLink() });\n  assert.deepEqual({ mode: historical.head.mode, blob: historical.head.blob, sha256: sha(historical.committed), bytes: historical.committed.length },\n    SITE_BASICS_SOURCE.files[fixture].current, 'Independently admitted current fixture reconstructs its unchanged site pin');\n  function fixtureComparison(file, input, tree, index) {\n    assert.equal(arguments.length, 4, 'Only the closed fixture byte/tree/index comparison is accepted');\n    assert.equal(file, fixture, 'Only the exact Genesis historical fixture comparison');\n    assert(Buffer.isBuffer(input), 'Complete physical fixture Buffer required');\n    const actualTree = typeof tree === 'string' && tree.match(/^(100644|100755) blob ([a-f0-9]{40})\\t(.+)$/);\n    assert(actualTree && actualTree[0] === tree && actualTree[3] === file, 'Complete current fixture tree identity required');\n    const historical = ageRemovalHistoricalRecord(file, { head: { mode: actualTree[1], blob: actualTree[2] }, index,\n      committed: Buffer.from(lf(input.toString('utf8'))), physical: input, regular: true, symbolic: false });\n    tree = historical.head.mode + ' blob ' + historical.head.blob + '\\t' + file;\n    index = historical.index;\n    const currentPin = SITE_BASICS_SOURCE.files[file].current;\n    assert.equal(tree, currentPin.mode + ' blob ' + currentPin.blob + '\\t' + file, 'Only the exact current site tree is admitted');\n    assert.equal(index, currentPin.mode + ' ' + currentPin.blob + ' 0\\t' + file, 'Only the exact current site index is admitted');\n    const siteProof = qualifySiteBasicsSource(file, historical.committed);\n    assert.deepEqual([siteProof.sourceOnly, siteProof.runtime, siteProof.native, siteProof.financial, siteProof.activation,\n      siteProof.deployment, siteProof.priorResultsTransferred], [true, false, false, false, false, false, false]);\n    const siteText = siteProof.baselineText;\n",
+          "baseline": "  assert(Buffer.from(physical).equals(raw), 'Lossless actual fixture UTF-8 required');\n  assert(physical === head || physical === head.replaceAll('\\n', '\\r\\n'),\n    'Whole actual fixture LF/CRLF bytes qualify before projection');\n  assert.deepEqual({ mode: actual[1], blob: actual[2], sha256: sha(head), bytes: Buffer.byteLength(head) },\n    SITE_BASICS_SOURCE.files[fixture].current, 'The real current fixture independently matches its exact site pin');\n  function fixtureComparison(file, input, tree, index) {\n    assert.equal(arguments.length, 4, 'Only the closed fixture byte/tree/index comparison is accepted');\n    assert.equal(file, fixture, 'Only the exact Genesis historical fixture comparison');\n    assert(Buffer.isBuffer(input), 'Complete physical fixture Buffer required');\n    const currentPin = SITE_BASICS_SOURCE.files[file].current;\n    assert.equal(tree, currentPin.mode + ' blob ' + currentPin.blob + '\\t' + file, 'Only the exact current site tree is admitted');\n    assert.equal(index, currentPin.mode + ' ' + currentPin.blob + ' 0\\t' + file, 'Only the exact current site index is admitted');\n    const siteProof = qualifySiteBasicsSource(file, input);\n    assert.deepEqual([siteProof.sourceOnly, siteProof.runtime, siteProof.native, siteProof.financial, siteProof.activation,\n      siteProof.deployment, siteProof.priorResultsTransferred], [true, false, false, false, false, false, false]);\n    const siteText = siteProof.baselineText;\n"
+        },
+        {
+          "at": 22759,
+          "current": "  for (const supplied of [Buffer.from(head + '\\n// unrelated fixture edit\\n'), Buffer.from(head.slice(1)),\n    Buffer.from('\\ufeff' + head), Buffer.from(head + '\\0'), Buffer.from(head.replace('\\n', '\\r\\n')),\n    Buffer.from(head.replace('\\n', '\\r')), Buffer.from(head.replace(/\\S/, '?')), Buffer.from([255]),\n    comparison.source, historical.committed, head, null]) {\n    assert.throws(() => fixtureComparison(fixture, supplied, actualEntry, actualIndex)); currentRefusals++;\n  }\n  for (const kind of ['tree', 'index']) {\n",
+          "baseline": "  for (const supplied of [Buffer.from(head + '\\n// unrelated fixture edit\\n'), Buffer.from(head.slice(1)),\n    Buffer.from('\\ufeff' + head), Buffer.from(head + '\\0'), Buffer.from(head.replace('\\n', '\\r\\n')),\n    Buffer.from(head.replace('\\n', '\\r')), Buffer.from(head.replace(/\\S/, '?')), Buffer.from([255]),\n    comparison.source, head, null]) {\n    assert.throws(() => fixtureComparison(fixture, supplied, actualEntry, actualIndex)); currentRefusals++;\n  }\n  for (const kind of ['tree', 'index']) {\n"
+        },
+        {
+          "at": 23974,
+          "current": "  assert.throws(() => fixtureComparison(fixture, raw, actualEntry)); currentRefusals++;\n  assert.throws(() => fixtureComparison(fixture, raw, actualEntry, actualIndex, {})); currentRefusals++;\n  assert.throws(() => { comparison.proof.native = true; }, TypeError); currentRefusals++;\n  assert.equal(currentPositives, 2); assert.equal(currentRefusals, 31);\n  let siteRefusals = 0;\n  const questCurrent = QUESTING_SOURCE.files[fixture].current;\n  const oldTree = questCurrent.mode + ' blob ' + questCurrent.blob + '\\t' + fixture;\n",
+          "baseline": "  assert.throws(() => fixtureComparison(fixture, raw, actualEntry)); currentRefusals++;\n  assert.throws(() => fixtureComparison(fixture, raw, actualEntry, actualIndex, {})); currentRefusals++;\n  assert.throws(() => { comparison.proof.native = true; }, TypeError); currentRefusals++;\n  assert.equal(currentPositives, 2); assert.equal(currentRefusals, 30);\n  let siteRefusals = 0;\n  const questCurrent = QUESTING_SOURCE.files[fixture].current;\n  const oldTree = questCurrent.mode + ' blob ' + questCurrent.blob + '\\t' + fixture;\n"
+        }
+      ]
+    },
     "test/hardening.js": {
       "current": {
         "mode": "100644",
@@ -861,15 +897,15 @@ export const AGE_REMOVAL_SOURCE = freeze({
   "additions": {
     "test/lib/age-removal-source-transfer-proof.js": {
       "mode": "100644",
-      "blob": "3d176bc83cba85a7db640131b4a6bb330ad03ff6",
-      "sha256": "e3714b14188fee764747c868152798985c4083e15f5e919866c7067c5f6cacaa",
-      "bytes": 7390
+      "blob": "03da965b93879758b4a6d9f0747d2a2e23c83693",
+      "sha256": "4a8d21329b0fea6d20f2982c5f317b5d26e742153dafbc428bf0ee69a41bee84",
+      "bytes": 8093
     },
     "tools/age-removal-source-seal.js": {
       "mode": "100644",
-      "blob": "90397b15f94d0855550c0bb660cf02842542dcfe",
-      "sha256": "b1e51a444d3dbff66c0b71265021383888cc91e54a9c455accbeeb4114fa3ae3",
-      "bytes": 4883
+      "blob": "7e3d4d358692eaa2d26c2350f8012d0cd2046b53",
+      "sha256": "6e38b61f3257c853feb7be87e5abbc45c57d9591a7c096c4beab242c68d45e6d",
+      "bytes": 5480
     },
     "tools/age-removal-source-transfer.js": {
       "mode": "100644",
@@ -879,4 +915,4 @@ export const AGE_REMOVAL_SOURCE = freeze({
     }
   }
 });
-export const AGE_REMOVAL_SOURCE_SHA256 = 'f16ca7c20a323884e6604b85dc34e5c9a30c73807a101412d6d9842d3b0ce6aa';
+export const AGE_REMOVAL_SOURCE_SHA256 = 'fbd65e19ffea5d700ebbd3a358f65de1125027d2cb167d1bf13f7e861eb163de';
