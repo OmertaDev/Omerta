@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const AGE_REMOVAL_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_AGE_REMOVAL_SOURCE_COMPARISON_ONLY",
-  "revision": "ff856ca7fbe474243eec4152c715ffd11af7494f",
-  "tree": "cd7a19db7d94a29d6a2f0cfe90d0da68f809c863",
+  "revision": "5e85a7f806c4829f43a49029dc8b0e9f092ee91b",
+  "tree": "ef2a96787672f7669a9d2ee0b21dbbfc06602230",
   "predecessor": "35913ec1b448275b227019ede2a2ef8047be55aa",
   "predecessorTree": "c74c606d97ee2f8ebb6c5201a4ddd2c2781d5db0",
   "files": {
@@ -32,9 +32,9 @@ export const AGE_REMOVAL_SOURCE = freeze({
     "SPEC.md": {
       "current": {
         "mode": "100644",
-        "blob": "39a912bb6d5f802586b90a8f02f705c0df80a498",
-        "sha256": "805a0a9516951ca587877590fd50dcd9b24ef014c3aaafcdb7eedb1e3a7683d8",
-        "bytes": 57292
+        "blob": "6295c7ca167c67c46baaa97cce7ab46b4af89605",
+        "sha256": "0c07c31956222241720705b92a1f6c295cab22fd2beac018bc94f83d24dcd369",
+        "bytes": 57344
       },
       "baseline": {
         "mode": "100644",
@@ -44,9 +44,9 @@ export const AGE_REMOVAL_SOURCE = freeze({
       },
       "inverses": [
         {
-          "at": 603,
-          "current": "| | |\n|---|---|\n| Backend modules | **618** files, **141073** lines (recursive source inventory) |\n| Test suites | **1036** files, **213491** lines (recursive source inventory) |\n| HTTP routes | **1386** registrations (**1386** unique; 1274 under `/v1`) |\n| Database tables | **585** (`schema.sql`, 9820 lines) |\n| Client | **14683** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n| Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |\n| Smart contracts | **41** top-level Solidity files, **11590** lines, **1125** declared top-level Foundry test functions; the release gate re-measures the passing suite |\n| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |\n| Design + audit docs | **988** markdown files, **158083** lines - dated security evidence is indexed in `docs/AUDITS.md` |\n| Ledger invariants | **133** checks — **127** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |\n\nRoughly **369,000 lines** of backend code, tests, schema and top-level contracts.\n",
-          "baseline": "| | |\n|---|---|\n| Backend modules | **618** files, **141073** lines (recursive source inventory) |\n| Test suites | **1032** files, **213491** lines (recursive source inventory) |\n| HTTP routes | **1386** registrations (**1386** unique; 1274 under `/v1`) |\n| Database tables | **585** (`schema.sql`, 9820 lines) |\n| Client | **14683** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n| Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |\n| Smart contracts | **41** top-level Solidity files, **11590** lines, **1125** declared top-level Foundry test functions; the release gate re-measures the passing suite |\n| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |\n| Design + audit docs | **987** markdown files, **158083** lines — dated security evidence is indexed in `docs/AUDITS.md` |\n| Ledger invariants | **133** checks — **127** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |\n\nRoughly **369,000 lines** of backend code, tests, schema and top-level contracts.\n"
+          "at": 318,
+          "current": "\nCounts were measured for the combined release source on 2026-11-07, before generated release records; they do not identify a deployed revision.\n\nBackend, test, and documentation counts include the reviewed city, audio, liquidity-regression, and retirement additions measured on 2026-11-09. Other totals retain the 2026-11-07 snapshot.\n\n| | |\n|---|---|\n| Backend modules | **620** files, **142261** lines (recursive source inventory) |\n| Test suites | **1042** files, **218365** lines (recursive source inventory) |\n| HTTP routes | **1386** registrations (**1386** unique; 1274 under `/v1`) |\n| Database tables | **585** (`schema.sql`, 9820 lines) |\n| Client | **14683** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n| Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |\n| Smart contracts | **41** top-level Solidity files, **11590** lines, **1125** declared top-level Foundry test functions; the release gate re-measures the passing suite |\n| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |\n| Design + audit docs | **989** markdown files, **158690** lines - dated security evidence is indexed in `docs/AUDITS.md` |\n| Ledger invariants | **133** checks — **127** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |\n\nRoughly **369,000 lines** of backend code, tests, schema and top-level contracts.\n",
+          "baseline": "\nCounts were measured for the combined release source on 2026-11-07, before generated release records; they do not identify a deployed revision.\n\nFile counts include the combined playtest fixes and quest-quality additions as of 2026-11-08. Line totals retain the 2026-11-07 snapshot.\n\n| | |\n|---|---|\n| Backend modules | **618** files, **141073** lines (recursive source inventory) |\n| Test suites | **1032** files, **213491** lines (recursive source inventory) |\n| HTTP routes | **1386** registrations (**1386** unique; 1274 under `/v1`) |\n| Database tables | **585** (`schema.sql`, 9820 lines) |\n| Client | **14683** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n| Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |\n| Smart contracts | **41** top-level Solidity files, **11590** lines, **1125** declared top-level Foundry test functions; the release gate re-measures the passing suite |\n| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |\n| Design + audit docs | **987** markdown files, **158083** lines — dated security evidence is indexed in `docs/AUDITS.md` |\n| Ledger invariants | **133** checks — **127** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |\n\nRoughly **369,000 lines** of backend code, tests, schema and top-level contracts.\n"
         }
       ]
     },
@@ -173,9 +173,9 @@ export const AGE_REMOVAL_SOURCE = freeze({
     "package.json": {
       "current": {
         "mode": "100644",
-        "blob": "e4a9a5a209c08b6aaec459cb83ba5b3fb7553f84",
-        "sha256": "89b79a5c581530f00bc3534d206bbb332eba8e47cbc237cf0980ee0d32ac9f7f",
-        "bytes": 64298
+        "blob": "2ea69139a099f0bb68331278b65288f01091bd7f",
+        "sha256": "af308fc3bb54eab6a21ec78236829df05c3d02c51871dee9d27ab8493696f9e8",
+        "bytes": 64497
       },
       "baseline": {
         "mode": "100644",
@@ -185,17 +185,32 @@ export const AGE_REMOVAL_SOURCE = freeze({
       },
       "inverses": [
         {
-          "at": 51770,
+          "at": 41111,
+          "current": "    \"test:depot\": \"node test/depot.js\",\n    \"test:depot:postgres\": \"node test/depot.js --postgres\",\n    \"test:restock\": \"node test/restock.js && node test/restock-api.js\",\n    \"test:goods-market:postgres\": \"node test/goods-market-postgres.js && node test/population-goods-postgres.js\",\n    \"worker:resources\": \"node tools/resource-worker.js\",\n    \"agent:business\": \"node tools/business-agent.js\",\n    \"observe:resource:outcomes\": \"node tools/resource-outcome-observer.js\",\n",
+          "baseline": "    \"test:depot\": \"node test/depot.js\",\n    \"test:depot:postgres\": \"node test/depot.js --postgres\",\n    \"test:restock\": \"node test/restock.js && node test/restock-api.js\",\n    \"test:goods-market:postgres\": \"node test/goods-market-postgres.js\",\n    \"worker:resources\": \"node tools/resource-worker.js\",\n    \"agent:business\": \"node tools/business-agent.js\",\n    \"observe:resource:outcomes\": \"node tools/resource-outcome-observer.js\",\n"
+        },
+        {
+          "at": 44018,
+          "current": "    \"pilot:resources\": \"node tools/resource-economy-pilot.js\",\n    \"pilot:resources:postgres\": \"node tools/resource-economy-pilot.js --postgres\",\n    \"test:city\": \"node test/city-rpg.js && node test/worldgraph-api.js && node test/worldgraph-validation.js && node test/operations.js && node test/pwa.js && node test/citymap.js && node test/city-presence.js && node test/city-presence-api.js && node test/city-activity.js && node test/city-social-api.js && node test/city-homes-api.js && npm run test:city:layout && npm run test:city-gameplay\",\n    \"test:city:browser\": \"node test/classic-interface-browser.js && node test/world-fieldwork-browser.js && node test/city-case-story-browser.js\",\n    \"test:city:postgres\": \"node test/city-rpg.js --postgres && node test/city-presence.js --postgres && node test/city-social-api.js --postgres && node test/city-homes-api.js --postgres && npm run test:city-gameplay:postgres && npm run test:player-intel:postgres\",\n    \"experiment:compute\": \"node tools/compute-experiment.js\",\n    \"route:compute:shadow\": \"node tools/compute-router.js\",\n",
+          "baseline": "    \"pilot:resources\": \"node tools/resource-economy-pilot.js\",\n    \"pilot:resources:postgres\": \"node tools/resource-economy-pilot.js --postgres\",\n    \"test:city\": \"node test/city-rpg.js && node test/worldgraph-api.js && node test/worldgraph-validation.js && node test/operations.js && node test/pwa.js && node test/citymap.js && node test/city-presence.js && node test/city-presence-api.js && node test/city-activity.js && node test/city-social-api.js && node test/city-homes-api.js && npm run test:city:layout && npm run test:city-gameplay\",\n    \"test:city:browser\": \"node test/classic-interface-browser.js && node test/world-fieldwork-browser.js\",\n    \"test:city:postgres\": \"node test/city-rpg.js --postgres && node test/city-presence.js --postgres && node test/city-social-api.js --postgres && node test/city-homes-api.js --postgres && npm run test:city-gameplay:postgres && npm run test:player-intel:postgres\",\n    \"experiment:compute\": \"node tools/compute-experiment.js\",\n    \"route:compute:shadow\": \"node tools/compute-router.js\",\n"
+        },
+        {
+          "at": 47598,
+          "current": "    \"test:company-opportunities:postgres\": \"node test/companyopportunities.js --postgres && node test/companyopportunity-integration.js --postgres\",\n    \"test:commercial-reputation:postgres\": \"node test/commercialreputation.js --postgres && node test/commercialreputation-integration.js --postgres\",\n    \"test:business-seasons:postgres\": \"node test/businessseasons.js --postgres && node test/businessseason-integration.js --postgres\",\n    \"test:city-gameplay\": \"node test/city-cooperative-content.js && node test/city-district-arcs.js && node test/staged-crew-missions.js && node test/staged-crew-missions-api.js && node test/city-home-interiors-api.js && node test/city-encounters.js && node test/city-world-opportunities.js && node test/city-neighborhood-broadcast.js\",\n    \"test:city-gameplay:postgres\": \"node tools/city-gameplay-native.js\",\n    \"test:player-intel:postgres\": \"node tools/player-intel-native.js\",\n    \"test:business-desk\": \"node test/businessdesk.js && node test/businessdesk-api.js && node test/business-control-desk-loop.js\",\n",
+          "baseline": "    \"test:company-opportunities:postgres\": \"node test/companyopportunities.js --postgres && node test/companyopportunity-integration.js --postgres\",\n    \"test:commercial-reputation:postgres\": \"node test/commercialreputation.js --postgres && node test/commercialreputation-integration.js --postgres\",\n    \"test:business-seasons:postgres\": \"node test/businessseasons.js --postgres && node test/businessseason-integration.js --postgres\",\n    \"test:city-gameplay\": \"node test/city-district-arcs.js && node test/staged-crew-missions.js && node test/staged-crew-missions-api.js && node test/city-home-interiors-api.js && node test/city-encounters.js && node test/city-world-opportunities.js && node test/city-neighborhood-broadcast.js\",\n    \"test:city-gameplay:postgres\": \"node tools/city-gameplay-native.js\",\n    \"test:player-intel:postgres\": \"node tools/player-intel-native.js\",\n    \"test:business-desk\": \"node test/businessdesk.js && node test/businessdesk-api.js && node test/business-control-desk-loop.js\",\n"
+        },
+        {
+          "at": 51893,
           "current": "    \"test:gateway:postgres\": \"node test/gateway-postgres.js\",\n    \"test:gateway:browser\": \"node test/consigliere-recovery-browser.js\",\n    \"build:walletconnect\": \"node tools/build-walletconnect.mjs\",\n    \"build:strategy-city\": \"node tools/build-strategy-city.mjs\",\n    \"test:legal-security\": \"node test/age.js && node test/db-rls.js && node test/legal-security.js && node test/payment-receipts.js\",\n    \"release:media\": \"node tools/release-media.mjs unpack\",\n    \"postinstall\": \"node tools/release-media.mjs unpack\",\n",
           "baseline": "    \"test:gateway:postgres\": \"node test/gateway-postgres.js\",\n    \"test:gateway:browser\": \"node test/consigliere-recovery-browser.js\",\n    \"build:walletconnect\": \"node tools/build-walletconnect.mjs\",\n    \"test:legal-security\": \"node test/age.js && node test/db-rls.js && node test/legal-security.js && node test/payment-receipts.js\",\n    \"release:media\": \"node tools/release-media.mjs unpack\",\n    \"postinstall\": \"node tools/release-media.mjs unpack\",\n"
         },
         {
-          "at": 59816,
-          "current": "    \"test:city:layout\": \"node test/city-world-layout.js && node test/continuous-city-source-compatibility.js\",\n    \"test:decision-guide\": \"node test/decision-guide.js && node test/decision-guide-client.js && node test/decision-guide-api.js\",\n    \"test:ux\": \"npm run test:ux:source && node test/ux-feedback.js && node test/circle-highlights.js && node test/ux-workspace.js && node test/ux-tactics.js && node test/ux-investigation-api.js && node test/ux-coordination.js && node test/ux-identity.js && node test/ux-story.js && node test/ux-community.js && node test/ux-tools.js\",\n    \"test:ux:browser\": \"node test/strategy-command-browser.js && node test/noir-shell-browser.js && node test/ux-shell-browser.js && node test/ux-progression-browser.js && node test/ux-navigation-browser.js && node test/ux-social-browser.js && node test/ux-experience-browser.js && node test/ux-workspace-browser.js && node test/ux-tactics-browser.js && node test/ux-investigation-browser.js && node test/ux-coordination-browser.js && node test/ux-expanded-browser.js && node test/ux-feel-browser.js && node test/ux-tools-browser.js && node test/ux-identity-browser.js && node test/ux-story-browser.js && node test/ux-community-browser.js && node test/ux-personality-browser.js && npm run test:site && npm run test:site:browser\",\n    \"test:ux:postgres\": \"node test/ux-postgres.js && node test/ux-postgres-rls.js\",\n    \"test:ux:source\": \"node test/noir-ui-source-compatibility.js && node test/sale-source-compatibility.js && node test/ux-source-compatibility.js\",\n    \"test:economy-ux-source\": \"node test/contract-release-source-compatibility.js && node test/businessdesk-combined-source-compatibility.js && node test/businessdesk-combined-native-provenance.js && node test/economy-deed-merge-source-compatibility.js && node test/businessdesk-noir-source-compatibility.js && node test/businessdesk-source-compatibility.js && node test/deed-allocation-source-compatibility.js && node test/deed-benefit-native-catalog.js && node test/economy-ux-merge-source-compatibility.js\",\n",
-          "baseline": "    \"test:city:layout\": \"node test/city-world-layout.js && node test/continuous-city-source-compatibility.js\",\n    \"test:decision-guide\": \"node test/decision-guide.js && node test/decision-guide-client.js && node test/decision-guide-api.js\",\n    \"test:ux\": \"npm run test:ux:source && node test/ux-feedback.js && node test/circle-highlights.js && node test/ux-workspace.js && node test/ux-tactics.js && node test/ux-investigation-api.js && node test/ux-coordination.js && node test/ux-identity.js && node test/ux-story.js && node test/ux-community.js && node test/ux-tools.js\",\n    \"test:ux:browser\": \"node test/ux-shell-browser.js && node test/ux-progression-browser.js && node test/ux-navigation-browser.js && node test/ux-social-browser.js && node test/ux-experience-browser.js && node test/ux-workspace-browser.js && node test/ux-tactics-browser.js && node test/ux-investigation-browser.js && node test/ux-coordination-browser.js && node test/ux-expanded-browser.js && node test/ux-feel-browser.js && node test/ux-tools-browser.js && node test/ux-identity-browser.js && node test/ux-story-browser.js && node test/ux-community-browser.js && node test/ux-personality-browser.js && npm run test:site && npm run test:site:browser\",\n    \"test:ux:postgres\": \"node test/ux-postgres.js && node test/ux-postgres-rls.js\",\n    \"test:ux:source\": \"node test/noir-ui-source-compatibility.js && node test/sale-source-compatibility.js && node test/ux-source-compatibility.js\",\n    \"test:economy-ux-source\": \"node test/contract-release-source-compatibility.js && node test/businessdesk-combined-source-compatibility.js && node test/businessdesk-combined-native-provenance.js && node test/economy-deed-merge-source-compatibility.js && node test/businessdesk-noir-source-compatibility.js && node test/businessdesk-source-compatibility.js && node test/deed-allocation-source-compatibility.js && node test/deed-benefit-native-catalog.js && node test/economy-ux-merge-source-compatibility.js\",\n"
+          "at": 59840,
+          "current": "    \"test:agent-economy-enterprise:questing:postgres\": \"node tools/enterprise-native-questing.js\",\n    \"test:city:layout\": \"node test/city-world-layout.js && node test/continuous-city-source-compatibility.js\",\n    \"test:decision-guide\": \"node test/decision-guide.js && node test/decision-guide-client.js && node test/decision-guide-api.js\",\n    \"test:ux\": \"npm run test:ux:source && node test/ambient-lifecycle.js && node test/ux-feedback.js && node test/circle-highlights.js && node test/ux-workspace.js && node test/ux-tactics.js && node test/ux-investigation-api.js && node test/ux-coordination.js && node test/ux-identity.js && node test/ux-story.js && node test/ux-community.js && node test/ux-tools.js\",\n    \"test:ux:browser\": \"node test/ambient-lifecycle-browser.js && node test/strategy-command-browser.js && node test/noir-shell-browser.js && node test/ux-shell-browser.js && node test/ux-progression-browser.js && node test/ux-navigation-browser.js && node test/ux-social-browser.js && node test/ux-experience-browser.js && node test/ux-workspace-browser.js && node test/ux-tactics-browser.js && node test/ux-investigation-browser.js && node test/ux-coordination-browser.js && node test/ux-expanded-browser.js && node test/ux-feel-browser.js && node test/ux-tools-browser.js && node test/ux-identity-browser.js && node test/ux-story-browser.js && node test/ux-community-browser.js && node test/ux-personality-browser.js && npm run test:site && npm run test:site:browser\",\n    \"test:ux:postgres\": \"node test/ux-postgres.js && node test/ux-postgres-rls.js\",\n    \"test:ux:source\": \"node test/noir-ui-source-compatibility.js && node test/sale-source-compatibility.js && node test/ux-source-compatibility.js\",\n    \"test:economy-ux-source\": \"node test/contract-release-source-compatibility.js && node test/businessdesk-combined-source-compatibility.js && node test/businessdesk-combined-native-provenance.js && node test/economy-deed-merge-source-compatibility.js && node test/businessdesk-noir-source-compatibility.js && node test/businessdesk-source-compatibility.js && node test/deed-allocation-source-compatibility.js && node test/deed-benefit-native-catalog.js && node test/economy-ux-merge-source-compatibility.js\",\n",
+          "baseline": "    \"test:agent-economy-enterprise:questing:postgres\": \"node tools/enterprise-native-questing.js\",\n    \"test:city:layout\": \"node test/city-world-layout.js && node test/continuous-city-source-compatibility.js\",\n    \"test:decision-guide\": \"node test/decision-guide.js && node test/decision-guide-client.js && node test/decision-guide-api.js\",\n    \"test:ux\": \"npm run test:ux:source && node test/ux-feedback.js && node test/circle-highlights.js && node test/ux-workspace.js && node test/ux-tactics.js && node test/ux-investigation-api.js && node test/ux-coordination.js && node test/ux-identity.js && node test/ux-story.js && node test/ux-community.js && node test/ux-tools.js\",\n    \"test:ux:browser\": \"node test/ux-shell-browser.js && node test/ux-progression-browser.js && node test/ux-navigation-browser.js && node test/ux-social-browser.js && node test/ux-experience-browser.js && node test/ux-workspace-browser.js && node test/ux-tactics-browser.js && node test/ux-investigation-browser.js && node test/ux-coordination-browser.js && node test/ux-expanded-browser.js && node test/ux-feel-browser.js && node test/ux-tools-browser.js && node test/ux-identity-browser.js && node test/ux-story-browser.js && node test/ux-community-browser.js && node test/ux-personality-browser.js && npm run test:site && npm run test:site:browser\",\n    \"test:ux:postgres\": \"node test/ux-postgres.js && node test/ux-postgres-rls.js\",\n    \"test:ux:source\": \"node test/noir-ui-source-compatibility.js && node test/sale-source-compatibility.js && node test/ux-source-compatibility.js\",\n    \"test:economy-ux-source\": \"node test/contract-release-source-compatibility.js && node test/businessdesk-combined-source-compatibility.js && node test/businessdesk-combined-native-provenance.js && node test/economy-deed-merge-source-compatibility.js && node test/businessdesk-noir-source-compatibility.js && node test/businessdesk-source-compatibility.js && node test/deed-allocation-source-compatibility.js && node test/deed-benefit-native-catalog.js && node test/economy-ux-merge-source-compatibility.js\",\n"
         },
         {
-          "at": 64162,
+          "at": 64361,
           "current": "    \"acorn\": \"8.18.0\",\n    \"playwright-core\": \"^1.62.0\",\n    \"solhint\": \"6.2.4\",\n    \"esbuild\": \"0.25.12\",\n    \"three\": \"0.187.0\"\n  }\n}\n",
           "baseline": "    \"acorn\": \"8.18.0\",\n    \"playwright-core\": \"^1.62.0\",\n    \"solhint\": \"6.2.4\",\n    \"esbuild\": \"0.25.12\"\n  }\n}\n"
         }
@@ -204,9 +219,9 @@ export const AGE_REMOVAL_SOURCE = freeze({
     "public/index.html": {
       "current": {
         "mode": "100644",
-        "blob": "d031f03f8050e0d07b2a195bf7bdb6af93e7e79f",
-        "sha256": "3504a39e1a670166f093675e8c14e91ffec231eaea1cbcc95d60cd6b44268b3d",
-        "bytes": 1406414
+        "blob": "c71b7ff43c8d0f712225ed96deb8c678cf631cfd",
+        "sha256": "3aac63602e8e6f93f1a017b3857715be5f10979d3c9afcef8adedc42b5204881",
+        "bytes": 1407474
       },
       "baseline": {
         "mode": "100644",
@@ -236,42 +251,57 @@ export const AGE_REMOVAL_SOURCE = freeze({
           "baseline": "<script src=\"/ux-tactics.js?v=20261105-noir-release\"></script>\n<script src=\"/ux-investigation.js?v=20261024-2\"></script>\n<script src=\"/ux-coordination.js?v=20261024-2\"></script>\n<script>\n(() => {\n  // Optional guidance must not stop core play if its separate script cannot load.\n"
         },
         {
-          "at": 584455,
+          "at": 196647,
+          "current": "    const GROUP_BED = { streets: 'bed-streets', earners: 'bed-streets', city: 'bed-streets', start: 'bed-streets',\n      vice: 'bed-den', blood: 'bed-law', family: 'bed-family', legit: 'bed-legit' };\n    let cur = null, curKey = null, wantKey = null, gestured = false, customBed = null;\n    const bedFades = new Map(), bedKills = new Map(), retiringBeds = new Set();\n    // A fade is cosmetic: retiring audio has an independent stop deadline, and mute/lifecycle\n    // cleanup releases every element immediately even if volume writes or timers are throttled.\n    const halt = (a) => {\n      if (!a) return;\n      clearInterval(bedFades.get(a)); bedFades.delete(a);\n      clearTimeout(bedKills.get(a)); bedKills.delete(a); retiringBeds.delete(a);\n      try { a.pause(); } catch {}\n      // An empty src resolves to the current page URL. Remove it and release the media resource.\n      try { a.removeAttribute('src'); a.load?.(); } catch {}\n    };\n    const silence = () => { halt(cur); for (const bed of retiringBeds) halt(bed); cur = null; curKey = null; };\n    const VOL = 0.11;\n    const fadeTo = (a, target, ms, done) => {\n      clearInterval(bedFades.get(a)); bedFades.delete(a);\n",
+          "baseline": "    const GROUP_BED = { streets: 'bed-streets', earners: 'bed-streets', city: 'bed-streets', start: 'bed-streets',\n      vice: 'bed-den', blood: 'bed-law', family: 'bed-family', legit: 'bed-legit' };\n    let cur = null, curKey = null, wantKey = null, gestured = false, customBed = null;\n    const bedFades = new Map(), retiringBeds = new Set();\n    const VOL = 0.11;\n    const fadeTo = (a, target, ms, done) => {\n      clearInterval(bedFades.get(a)); bedFades.delete(a);\n"
+        },
+        {
+          "at": 198266,
+          "current": "        }\n      }, 60); bedFades.set(a, timer);\n    };\n    const stop = () => {\n      if (!cur) return;\n      const dying = cur; cur = null; curKey = null; retiringBeds.add(dying);\n      bedKills.set(dying, setTimeout(() => halt(dying), 1200));\n      fadeTo(dying, 0, 500, () => halt(dying));\n    };\n    const start = (key) => {\n      const a = new Audio(`/art/hype/${key}.m4a`);\n      a.loop = true; a.preload = 'auto'; a.volume = 0;\n",
+          "baseline": "        }\n      }, 60); bedFades.set(a, timer);\n    };\n    const stop = () => { if (cur) { const dying = cur; retiringBeds.add(dying); fadeTo(dying, 0, 500, () => { dying.pause(); dying.src = ''; retiringBeds.delete(dying); }); cur = null; curKey = null; } };\n    const start = (key) => {\n      const a = new Audio(`/art/hype/${key}.m4a`);\n      a.loop = true; a.preload = 'auto'; a.volume = 0;\n"
+        },
+        {
+          "at": 198929,
+          "current": "    };\n    const sync = () => {\n      const ok = SFX.enabled() && feedbackPreferences().ambience && !navigator.connection?.saveData && !document.hidden && gestured;\n      if (!ok) { silence(); return; }\n      const wanted = customBed?.key || wantKey;\n      const key = wanted && MOTION.beds.has(wanted) ? wanted : null;\n      if (key === curKey) { if (cur && cur.paused && key) cur.play?.()?.catch?.(() => {}); if (cur) fadeTo(cur, VOL * (customBed?.volume ?? 100) / 100, 200); return; }\n      stop(); if (key) start(key);\n    };\n    document.addEventListener('pointerdown', () => { if (!gestured) { gestured = true; sync(); } }, { capture: true, passive: true });\n    navigator.connection?.addEventListener?.('change', sync);\n    document.addEventListener('visibilitychange', () => { if (document.hidden) silence(); else sync(); });\n    addEventListener('pagehide', silence);\n    addEventListener('pageshow', sync);\n    // Page Lifecycle freeze/resume are document events and do not bubble to window.\n    document.addEventListener('freeze', silence);\n    document.addEventListener('resume', sync);\n    return { set(tabId, grp) { wantKey = TAB_BED[tabId] || GROUP_BED[grp] || null; sync(); }, sync,\n      soundscape(settings = {}) {\n        if (settings.enabled && !MOTION.beds.has(settings.key)) return false;\n",
+          "baseline": "    };\n    const sync = () => {\n      const ok = SFX.enabled() && feedbackPreferences().ambience && !navigator.connection?.saveData && !document.hidden && gestured;\n      const wanted = customBed?.key || wantKey;\n      const key = ok && wanted && MOTION.beds.has(wanted) ? wanted : null;\n      if (key === curKey) { if (cur && cur.paused && key) cur.play?.()?.catch?.(() => {}); if (cur) fadeTo(cur, VOL * (customBed?.volume ?? 100) / 100, 200); return; }\n      stop(); if (key) start(key);\n    };\n    document.addEventListener('pointerdown', () => { if (!gestured) { gestured = true; sync(); } }, { capture: true, passive: true });\n    document.addEventListener('visibilitychange', () => { if (document.hidden) { cur?.pause(); for (const bed of retiringBeds) bed.pause(); } else sync(); });\n    return { set(tabId, grp) { wantKey = TAB_BED[tabId] || GROUP_BED[grp] || null; sync(); }, sync,\n      soundscape(settings = {}) {\n        if (settings.enabled && !MOTION.beds.has(settings.key)) return false;\n"
+        },
+        {
+          "at": 585515,
           "current": "    if (h.get('token') || h.get('claimed') || h.get('autherr')) history.replaceState(null, '', location.pathname);\n  })();\n  const startXOAuth = async () => {\n    const inviteCode = $('#invite-code')?.value?.trim();\n    const r = await api('POST', '/v1/auth/x/start', inviteCode ? { inviteCode } : {});\n    if (r.body?.url) location.href = r.body.url;\n",
           "baseline": "    if (h.get('token') || h.get('claimed') || h.get('autherr')) history.replaceState(null, '', location.pathname);\n  })();\n  const startXOAuth = async () => {\n    if (!token && !await verifyAge()) return;\n    const inviteCode = $('#invite-code')?.value?.trim();\n    const r = await api('POST', '/v1/auth/x/start', inviteCode ? { inviteCode } : {});\n    if (r.body?.url) location.href = r.body.url;\n"
         },
         {
-          "at": 589395,
+          "at": 590455,
           "current": "    else toast(r.body?.message || r.body?.error || 'no dice', true);\n    return false;\n  };\n  let guestPending = false;\n  const enterAsGhost = async () => {\n    if (guestPending) return;\n",
           "baseline": "    else toast(r.body?.message || r.body?.error || 'no dice', true);\n    return false;\n  };\n  let ageChecked = 0;\n  async function verifyAge() {\n    if (ageChecked > Date.now()) return true;\n    if (sessionStorage.getItem('omerta_age_blocked')) {\n      toast('Account creation is unavailable. See the privacy page for help.', true);\n      return false;\n    }\n    return new Promise((resolve) => {\n      const dialog = document.createElement('dialog');\n      dialog.className = 'modal';\n      dialog.setAttribute('aria-labelledby', 'age-title');\n      dialog.innerHTML = `<h2 id=\"age-title\">Your birth date</h2><p>Enter your complete birth date to continue. We check it without saving it.</p><form><label for=\"age-date\">Birth date</label><input id=\"age-date\" name=\"birthDate\" type=\"date\" required min=\"${new Date().getFullYear() - 120}-01-01\" max=\"${new Date().toISOString().slice(0, 10)}\"><p id=\"age-error\" role=\"alert\"></p><p><a href=\"/privacy\">Privacy policy and help</a></p><button class=\"act\" type=\"submit\">Continue</button><button class=\"act\" type=\"button\" id=\"age-cancel\">Cancel</button></form>`;\n      document.body.append(dialog);\n      const finish = (ok) => { dialog.close(); dialog.remove(); resolve(ok); };\n      dialog.addEventListener('cancel', (event) => { event.preventDefault(); finish(false); });\n      dialog.querySelector('#age-cancel').onclick = () => finish(false);\n      dialog.querySelector('form').onsubmit = async (event) => {\n        event.preventDefault();\n        const input = dialog.querySelector('input');\n        const birthDate = input.value;\n        input.value = '';\n        const result = await api('POST', '/v1/age-check', { birthDate });\n        if (result.code < 400) { ageChecked = Date.now() + 14 * 60 * 1000; finish(true); }\n        else if (result.body?.error === 'age_ineligible') {\n          sessionStorage.setItem('omerta_age_blocked', '1');\n          dialog.querySelector('form').innerHTML = '<p role=\"alert\">Account creation is unavailable. No birth date was saved.</p><p><a href=\"/privacy\">Privacy policy and help</a></p><button type=\"button\" class=\"act\">Close</button>';\n          dialog.querySelector('button').onclick = () => finish(false);\n        } else dialog.querySelector('#age-error').textContent = result.body?.message || 'Please try again.';\n      };\n      dialog.showModal();\n      dialog.querySelector('input').focus();\n    });\n  }\n  let guestPending = false;\n  const enterAsGhost = async () => {\n    if (guestPending) return;\n"
         },
         {
-          "at": 589607,
+          "at": 590667,
           "current": "    const controls = ['#btn-guest', '#btn-guest2'].map(selector => $(selector)).filter(Boolean);\n    const labels = controls.map(button => button.textContent);\n    const status = $('#guest-status');\n    status.hidden = false; status.textContent = 'Opening your street…';\n    controls.forEach(button => { button.disabled = true; button.setAttribute('aria-busy', 'true'); button.textContent = 'Entering the city…'; });\n    try {\n      const inviteCode = undefined;\n      const result = await api('POST', '/v1/auth/guest', inviteCode ? { inviteCode } : {});\n      globalThis.OmertaSiteAnalytics?.signupResult?.(result);\n",
           "baseline": "    const controls = ['#btn-guest', '#btn-guest2'].map(selector => $(selector)).filter(Boolean);\n    const labels = controls.map(button => button.textContent);\n    const status = $('#guest-status');\n    status.hidden = false; status.textContent = 'Checking eligibility…';\n    controls.forEach(button => { button.disabled = true; button.setAttribute('aria-busy', 'true'); button.textContent = 'Entering the city…'; });\n    try {\n      if (!await verifyAge()) { status.textContent = ''; status.hidden = true; return; }\n      status.textContent = 'Opening your street…';\n      const inviteCode = undefined;\n      const result = await api('POST', '/v1/auth/guest', inviteCode ? { inviteCode } : {});\n      globalThis.OmertaSiteAnalytics?.signupResult?.(result);\n"
         },
         {
-          "at": 593556,
+          "at": 594616,
           "current": "  $('#btn-provider').onclick = async () => {\n    const provider = $('#auth-provider').value, tok = $('#auth-token').value.trim();\n    if (!tok) return toast('paste a provider token first', true);\n    const inviteCode = undefined;\n    landToken(await api(`POST`, `/v1/auth/${provider}`, { token: tok, ...(inviteCode ? { inviteCode } : {}) }));\n  };\n",
           "baseline": "  $('#btn-provider').onclick = async () => {\n    const provider = $('#auth-provider').value, tok = $('#auth-token').value.trim();\n    if (!tok) return toast('paste a provider token first', true);\n    if (!await verifyAge()) return;\n    const inviteCode = undefined;\n    landToken(await api(`POST`, `/v1/auth/${provider}`, { token: tok, ...(inviteCode ? { inviteCode } : {}) }));\n  };\n"
         },
         {
-          "at": 958490,
+          "at": 959550,
           "current": "    // but draws law heat + a harder bust. Same cash EV — the choice is your risk appetite.\n    const crimeCard = (c) => {\n      const { terms, choices } = coreCrimeMarkup(c);\n      return `<article class=\"card noir-job-card\">${aart('crime', c.id)}<div class=\"noir-job-content\">\n        <div class=\"noir-job-eyebrow\">Street job · Level ${c.lvl}</div><span class=\"t\">${esc(c.name)}</span>\n        ${terms}<div class=\"verbrow\">${choices}</div></div></article>`;\n    };\n    const allCrimes = [...(rules?.crimes || [])].sort((a, b) => a.lvl - b.lvl);\n    const lvl = me?.level || 1;\n",
           "baseline": "    // but draws law heat + a harder bust. Same cash EV — the choice is your risk appetite.\n    const crimeCard = (c) => {\n      const { terms, choices } = coreCrimeMarkup(c);\n      return `<div class=\"card\">${aart('crime', c.id)}<span class=\"t\">${esc(c.name)}</span>${terms}<div class=\"verbrow\">${choices}</div></div>`;\n    };\n    const allCrimes = [...(rules?.crimes || [])].sort((a, b) => a.lvl - b.lvl);\n    const lvl = me?.level || 1;\n"
         },
         {
-          "at": 973694,
+          "at": 974754,
           "current": "    // jobs + the bank/map lead the screen; everything else is a labeled drawer that stays how you\n    // left it. One glance = act; the depth is a click away, not a scroll away.\n    t.innerHTML = `\n      <div class=\"noir-jobs-heading\"><h2>Find your next score</h2><span>${best.length} available · Level ${lvl}</span></div>\n      ${streetActionClock()}\n      <div class=\"grid noir-job-grid\">${crimes || restCrimes && '<span class=\"d\" style=\"color:var(--dim)\">no jobs at your level yet — open the full book below</span>' || ''}</div>\n      ${rest.length ? sect('crimes-all', 'The Full Book', `every job in the city (${allCrimes.length})`, `<div class=\"grid noir-job-grid\">${restCrimes}</div>`) : ''}\n\n${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [`Pocket: ${guideMoney(b.pocket)}. Bank total: ${guideMoney(b.total)}.`, `Cleared: ${guideMoney(b.cleared)}. In transit: ${guideMoney(b.transit)}. Clearing: ${b.seconds == null ? 'unknown' : minsTxt(b.seconds)}.`, 'A killer can loot pocket cash and deposits in transit. Cleared cash avoids that cut. All bank cash is lost on death.'];})())}\n      <div class=\"card\" style=\"display:flex;flex-wrap:wrap;gap:8px;align-items:center\">\n",
           "baseline": "    // jobs + the bank/map lead the screen; everything else is a labeled drawer that stays how you\n    // left it. One glance = act; the depth is a click away, not a scroll away.\n    t.innerHTML = `\n      <h2 style=\"margin-top:14px\">Crimes <span class=\"d\" style=\"color:var(--dim);font-size:12.5px\">— your best jobs at level ${lvl}</span></h2>\n      ${streetActionClock()}\n      <div class=\"grid\">${crimes || restCrimes && '<span class=\"d\" style=\"color:var(--dim)\">no jobs at your level yet — open the full book below</span>' || ''}</div>\n      ${rest.length ? sect('crimes-all', 'The Full Book', `every job in the city (${allCrimes.length})`, `<div class=\"grid\">${restCrimes}</div>`) : ''}\n\n${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [`Pocket: ${guideMoney(b.pocket)}. Bank total: ${guideMoney(b.total)}.`, `Cleared: ${guideMoney(b.cleared)}. In transit: ${guideMoney(b.transit)}. Clearing: ${b.seconds == null ? 'unknown' : minsTxt(b.seconds)}.`, 'A killer can loot pocket cash and deposits in transit. Cleared cash avoids that cut. All bank cash is lost on death.'];})())}\n      <div class=\"card\" style=\"display:flex;flex-wrap:wrap;gap:8px;align-items:center\">\n"
         },
         {
-          "at": 1389861,
+          "at": 1390921,
           "current": "  if (workspaceUX) uxModules.push(workspaceUX);\n  for (const factory of [window.createOmertaFeedback, window.createOmertaProgression, window.createOmertaSocial, window.createOmertaNavigation,\n    window.createOmertaTactics, window.createOmertaInvestigation, window.createOmertaCoordination,\n    window.createOmertaFeel, window.createOmertaTools, window.createOmertaIdentity, window.createOmertaStory, window.createOmertaQuests, window.createOmertaCommunity, window.createOmertaWorld, window.createOmertaNoirShell, window.createOmertaStrategyCommand]) {\n    if (!factory) continue;\n    try { const module = factory(uxContext); uxModules.push(module); if (factory === window.createOmertaFeedback) feedbackUX = module; }\n    catch (error) { console.warn('UI enhancement unavailable', error); }\n",
           "baseline": "  if (workspaceUX) uxModules.push(workspaceUX);\n  for (const factory of [window.createOmertaFeedback, window.createOmertaProgression, window.createOmertaSocial, window.createOmertaNavigation,\n    window.createOmertaTactics, window.createOmertaInvestigation, window.createOmertaCoordination,\n    window.createOmertaFeel, window.createOmertaTools, window.createOmertaIdentity, window.createOmertaStory, window.createOmertaQuests, window.createOmertaCommunity, window.createOmertaWorld]) {\n    if (!factory) continue;\n    try { const module = factory(uxContext); uxModules.push(module); if (factory === window.createOmertaFeedback) feedbackUX = module; }\n    catch (error) { console.warn('UI enhancement unavailable', error); }\n"
         },
         {
-          "at": 1390656,
+          "at": 1391716,
           "current": "  // The shell reveals optional controls without replacing their original action handlers.\n  const gameMenu = $('#game-menu'), cityDirectory = $('#city-directory');\n  const wideNavigation = matchMedia('(min-width: 1001px)');\n  const syncDirectory = () => { cityDirectory.open = false; };\n  syncDirectory(); wideNavigation.addEventListener('change', syncDirectory);\n  function closeGameMenu(focus = false) {\n    if (!gameMenu.open) return;\n",
           "baseline": "  // The shell reveals optional controls without replacing their original action handlers.\n  const gameMenu = $('#game-menu'), cityDirectory = $('#city-directory');\n  const wideNavigation = matchMedia('(min-width: 1001px)');\n  const syncDirectory = () => { cityDirectory.open = wideNavigation.matches; };\n  syncDirectory(); wideNavigation.addEventListener('change', syncDirectory);\n  function closeGameMenu(focus = false) {\n    if (!gameMenu.open) return;\n"
         }
@@ -370,12 +400,38 @@ export const AGE_REMOVAL_SOURCE = freeze({
         }
       ]
     },
+    "public/world-fieldwork.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "ab4450fccda1be889a80919bba82710ddde5edc7",
+        "sha256": "b74ed1a641683640914d423b6e6cc44e606c4111b8e82e929e036875be809f85",
+        "bytes": 38168
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "067b1420b4c1f8390c96775b9f1cf360cc9722a4",
+        "sha256": "4819b12427fe4adac7b35a2aeb859369aa861356795e7e56ecddb881fde24e9f",
+        "bytes": 36025
+      },
+      "inverses": [
+        {
+          "at": 12535,
+          "current": "        + dialogue(item) + (item.instanceId ? '<button type=\"button\" data-fieldwork-mystery=\"' + escape(item.graphId) + '\">Read this journal</button>' : '')\n        + actionButtons(item, item.title || 'Investigation') + '</article>').join('');\n      const detail = mysteryDetail ? '<section class=\"fieldwork-case\"><div class=\"fieldwork-case__heading\"><h2>' + escape(cases.find(item => item.graphId === selectedMystery)?.title || 'Investigation') + '</h2>' + stamp(mysteryDetail.status) + '</div>'\n        + dialogue(mysteryDetail) + progress(mysteryDetail) + nextLead(mysteryDetail) + list(mysteryDetail.nodes).filter(node => node.status !== 'excluded').map(node => nodeCard(node)).join('') + actionButtons(mysteryDetail, 'Investigation') + '</section>' : '';\n      const historical = list(board.historicalInstances).map(instance => '<article class=\"fieldwork-card\"><header><h3>' + escape(instance.title || words(instance.graphId)) + '</h3>' + stamp(instance.status) + '</header><p>Recorded work from a previous character. Custody and escrow stay attached to that history.</p>' + actionButtons(instance, 'Historical investigation') + '</article>').join('');\n      return '<div class=\"fieldwork-intro\"><h2>Your journal</h2><p>Follow a lead, make your choice, and see where the story takes you. Your progress is saved as you go.</p></div>' + detail\n        + (detail ? '<h2 class=\"fieldwork-section-title\">Your stories</h2>' : '') + '<div class=\"fieldwork-grid\">' + (index || empty('Meet The Fixer in your neighborhood to find your first lead.')) + '</div>'\n",
+          "baseline": "        + dialogue(item) + (item.instanceId ? '<button type=\"button\" data-fieldwork-mystery=\"' + escape(item.graphId) + '\">Read this journal</button>' : '')\n        + actionButtons(item, item.title || 'Investigation') + '</article>').join('');\n      const detail = mysteryDetail ? '<section class=\"fieldwork-case\"><div class=\"fieldwork-case__heading\"><h2>' + escape(cases.find(item => item.graphId === selectedMystery)?.title || 'Investigation') + '</h2>' + stamp(mysteryDetail.status) + '</div>'\n        + dialogue(mysteryDetail) + progress(mysteryDetail) + nextLead(mysteryDetail) + list(mysteryDetail.nodes).map(node => nodeCard(node)).join('') + actionButtons(mysteryDetail, 'Investigation') + '</section>' : '';\n      const historical = list(board.historicalInstances).map(instance => '<article class=\"fieldwork-card\"><header><h3>' + escape(instance.title || words(instance.graphId)) + '</h3>' + stamp(instance.status) + '</header><p>Recorded work from a previous character. Custody and escrow stay attached to that history.</p>' + actionButtons(instance, 'Historical investigation') + '</article>').join('');\n      return '<div class=\"fieldwork-intro\"><h2>Your journal</h2><p>Follow a lead, make your choice, and see where the story takes you. Your progress is saved as you go.</p></div>' + detail\n        + (detail ? '<h2 class=\"fieldwork-section-title\">Your stories</h2>' : '') + '<div class=\"fieldwork-grid\">' + (index || empty('Meet The Fixer in your neighborhood to find your first lead.')) + '</div>'\n"
+        },
+        {
+          "at": 14794,
+          "current": "      return next ? '<aside class=\"fieldwork-next-lead\"><div><h3>Your next lead</h3><p>' + escape(title(next)) + '</p><button type=\"button\" data-fieldwork-lead=\"' + escape(next.id) + '\">Review this step ↓</button></div></aside>' : '';\n    }\n\n    function accomplishments() {\n      const records = list(boards.operations?.completedOperations);\n      if (!records.length) return '';\n      return '<section class=\"fieldwork-accomplishments\"><h2 class=\"fieldwork-section-title\">Your accomplishments</h2><p>Your completed Crew work. These records do not create a reward.</p><div class=\"fieldwork-grid\">'\n        + records.map(item => '<article class=\"fieldwork-card\"><h3>' + escape(item.title) + '</h3><p>Completed as ' + escape(item.roleTitle)\n          + (item.completedAt ? ' · ' + escape(new Date(item.completedAt).toLocaleDateString()) : '') + '</p>'\n          + (list(item.milestones).length ? '<ul>' + list(item.milestones).map(milestone => '<li>' + escape(milestone) + '</li>').join('') + '</ul>' : '')\n          + '</article>').join('') + '</div></section>';\n    }\n\n    function operationsView() {\n      const board = boards.operations || {}, operations = list(board.operations);\n      const index = operations.map(item => '<article class=\"fieldwork-card\"><header><h3>' + escape(item.title || words(item.operationNodeId)) + '</h3>' + stamp(item.status || (item.available ? 'ready' : 'requirements')) + '</header>'\n        + '<p>' + count(item.minimumDistinctAccounts) + ' distinct Crew members required.</p>' + blockers(item.blockedBy)\n        + (item.operationId ? '<button type=\"button\" data-fieldwork-operation=\"' + escape(item.operationId) + '\">Open operation board</button>' : '')\n        + actionButtons(item, item.title || 'Crew operation', true) + '</article>').join('');\n      const turnRoles = list(operationDetail?.roles).filter(role => role.turn);\n      const turn = operationDetail?.status === 'completed' ? 'Run complete. Your contributions are recorded.'\n        : operationDetail?.status === 'forming' ? 'Waiting for the remaining members to take their own roles.'\n        : turnRoles.length ? turnRoles.map(role => role.occupant?.self ? 'Your turn: ' + role.title : role.title + ' is up next').join(' · ')\n        : operationDetail?.status === 'active' ? 'All contributions are in. Use the issued completion action to close the run.' : '';\n      const detail = operationDetail ? '<section class=\"fieldwork-case\"><div class=\"fieldwork-case__heading\"><h2>' + escape(operations.find(item => item.operationId === selectedOperation)?.title || 'Crew operation') + '</h2>' + stamp(operationDetail.status) + '</div>'\n        + '<p class=\"fieldwork-handoff\" role=\"status\">' + escape(turn) + '</p><p>Refresh to check for contributions from your Crew. Each member takes their own role.</p>'\n        + '<p>' + count(operationDetail.filledRoleCount) + ' / ' + count(operationDetail.requiredRoleCount) + ' roles filled</p>'\n        + '<div class=\"fieldwork-grid\">' + list(operationDetail.roles).map(role => '<article class=\"fieldwork-card\" data-fieldwork-role=\"' + escape(role.roleId) + '\"><header><h3>' + escape(role.title || words(role.roleId)) + '</h3>' + stamp(role.filled ? 'filled' : 'open') + '</header><p>' + escape(role.occupant?.self ? 'You' : role.occupant?.name || (role.filled ? 'Crew member · name not learned' : 'Unclaimed')) + '</p>'\n          + (role.occupant?.name ? '<small>Name from your notebook' + (role.occupant.observedAt ? ' · ' + escape(new Date(role.occupant.observedAt).toLocaleDateString()) : '') + '</small>' : '')\n          + '<p>' + count(role.contributions) + ' confirmed contributions</p>' + actionButtons(role, role.title || 'Crew role') + '</article>').join('') + '</div>'\n        + progress(operationDetail) + list(operationDetail.nodes).map(node => nodeCard(node, false)).join('')\n        + (roleDetail ? '<div class=\"fieldwork-role\"><h2>Your role</h2><p>Only your assigned role receives these clues and contribution actions.</p>' + list(roleDetail.nodes).filter(node => node.status !== 'excluded' && (list(node.uiActions || node.actions).length || node.privateEvidence)).map(node => nodeCard(node)).join('') + '</div>' : '')\n        + actionButtons(operationDetail, 'Crew operation') + '</section>' : '';\n      const currentIds = new Set(operations.map(item => item.operationId).filter(Boolean));\n      const recovery = list(board.recoverableOperations).filter(item => !currentIds.has(item.operationId))\n        .map(item => '<article class=\"fieldwork-card\"><header><h3>' + escape(item.title || 'Recorded Crew operation') + '</h3>' + stamp(item.status) + '</header><p>Work you opened with an earlier Crew. Closing it returns held items to their recorded depositors.</p>' + actionButtons(item, 'Recorded Crew operation') + '</article>').join('');\n      return '<div class=\"fieldwork-intro\"><h2>The shared job</h2><p>Take an issued role, follow its clues and contribute your part. Private evidence stays with the assigned player.</p></div><div class=\"fieldwork-grid\">' + (index || empty('No shared operations are currently issued.')) + '</div>' + detail\n        + (recovery ? '<h2 class=\"fieldwork-section-title\">Recover earlier work</h2><div class=\"fieldwork-grid\">' + recovery + '</div>' : '') + accomplishments();\n    }\n\n    function draw() {\n",
+          "baseline": "      return next ? '<aside class=\"fieldwork-next-lead\"><div><h3>Your next lead</h3><p>' + escape(title(next)) + '</p><button type=\"button\" data-fieldwork-lead=\"' + escape(next.id) + '\">Review this step ↓</button></div></aside>' : '';\n    }\n\n    function operationsView() {\n      const board = boards.operations || {}, operations = list(board.operations);\n      const index = operations.map(item => '<article class=\"fieldwork-card\"><header><h3>' + escape(item.title || words(item.operationNodeId)) + '</h3>' + stamp(item.status || (item.available ? 'ready' : 'requirements')) + '</header>'\n        + '<p>' + count(item.minimumDistinctAccounts) + ' distinct Crew members required.</p>' + blockers(item.blockedBy)\n        + (item.operationId ? '<button type=\"button\" data-fieldwork-operation=\"' + escape(item.operationId) + '\">Open operation board</button>' : '')\n        + actionButtons(item, item.title || 'Crew operation', true) + '</article>').join('');\n      const detail = operationDetail ? '<section class=\"fieldwork-case\"><div class=\"fieldwork-case__heading\"><h2>Crew operation</h2>' + stamp(operationDetail.status) + '</div>'\n        + '<p>' + count(operationDetail.filledRoleCount) + ' / ' + count(operationDetail.requiredRoleCount) + ' roles filled</p>'\n        + '<div class=\"fieldwork-grid\">' + list(operationDetail.roles).map(role => '<article class=\"fieldwork-card\" data-fieldwork-role=\"' + escape(role.roleId) + '\"><header><h3>' + escape(role.title || words(role.roleId)) + '</h3>' + stamp(role.filled ? 'filled' : 'open') + '</header><p>' + count(role.contributions) + ' contributions</p>' + actionButtons(role, role.title || 'Crew role') + '</article>').join('') + '</div>'\n        + progress(operationDetail) + list(operationDetail.nodes).map(node => nodeCard(node, false)).join('')\n        + (roleDetail ? '<div class=\"fieldwork-role\"><h2>Your role</h2><p>Only your assigned role receives these clues and contribution actions.</p>' + list(roleDetail.nodes).filter(node => list(node.actions).length || node.privateEvidence).map(node => nodeCard(node)).join('') + '</div>' : '')\n        + actionButtons(operationDetail, 'Crew operation') + '</section>' : '';\n      const currentIds = new Set(operations.map(item => item.operationId).filter(Boolean));\n      const recovery = list(board.recoverableOperations).filter(item => !currentIds.has(item.operationId))\n        .map(item => '<article class=\"fieldwork-card\"><header><h3>' + escape(item.title || 'Recorded Crew operation') + '</h3>' + stamp(item.status) + '</header><p>Work you opened with an earlier Crew. Closing it returns held items to their recorded depositors.</p>' + actionButtons(item, 'Recorded Crew operation') + '</article>').join('');\n      return '<div class=\"fieldwork-intro\"><h2>The shared job</h2><p>Take an issued role, follow its clues and contribute your part. Private evidence stays with the assigned player.</p></div><div class=\"fieldwork-grid\">' + (index || empty('No shared operations are currently issued.')) + '</div>' + detail\n        + (recovery ? '<h2 class=\"fieldwork-section-title\">Recover earlier work</h2><div class=\"fieldwork-grid\">' + recovery + '</div>' : '');\n    }\n\n    function draw() {\n"
+        }
+      ]
+    },
     "src/agentgateway.js": {
       "current": {
         "mode": "100644",
-        "blob": "b453f64df26b4a4a42adaf8352e4a1e2a00556b3",
-        "sha256": "1f17ee1bb1550ec60a0d862df77b029c5966d3a4447638dfe89a7e83bf461d50",
-        "bytes": 160952
+        "blob": "7d80c83c5578cc60bd8d837f2aa4b7a9cf3943db",
+        "sha256": "1a3aaa0c6f87e76eb4714c4d2c5e6c2fd081224303105dbe6fd3490614bbf613",
+        "bytes": 161818
       },
       "baseline": {
         "mode": "100644",
@@ -400,12 +456,27 @@ export const AGE_REMOVAL_SOURCE = freeze({
           "baseline": "    requestSchema: { type: 'object', required: ['bootstrapSecret'], properties: {\n      inviteCode: { type: 'string', maxLength: 128, description: 'Unused launch invitation. Reuse the same bootstrapSecret after an ambiguous response.' },\n      bootstrapSecret: { type: 'string', pattern: '^[A-Za-z0-9_-]{43}$', description: 'Persist 32 cryptographically random bytes encoded as unpadded base64url before submitting.' },\n      birthDate: { type: 'string', format: 'date', description: 'Human/operator-supplied date for first account creation; omitted with a valid age-check cookie or existing bootstrap recovery. Never infer a date.' },\n    } },\n  },\n  'POST /v1/age-check': {\n    operationId: 'checkAgeEligibility',\n    requestSchema: { type: 'object', required: ['birthDate'], properties: {\n      birthDate: { type: 'string', format: 'date', description: 'Complete birth date, processed transiently and never saved in account records.' },\n    } },\n    extraResponses: { 403: { description: 'Account creation is unavailable; use the privacy contact for help.' } },\n  },\n  'POST /v1/access/session': { operationId: 'restoreBrowserAccess', requestSchema: { type: 'object' } },\n  'POST /v1/access/logout': { operationId: 'clearBrowserAccess', requestSchema: { type: 'object' } },\n  'GET /v1/invites': { operationId: 'getLaunchInvites' },\n"
         },
         {
-          "at": 152578,
+          "at": 133123,
+          "current": "    properties: {\n      operations: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphOperationSummary' } },\n      recoverableOperations: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphRecoverableOperation' } },\n      completedOperations: { type: 'array', maxItems: 20, items: { type: 'object', additionalProperties: false,\n        required: ['operationId', 'title', 'roleTitle', 'completedAt', 'milestones'], properties: {\n          operationId: { type: 'string' }, title: { type: 'string' }, roleTitle: { type: 'string' },\n          completedAt: { type: 'string', format: 'date-time' },\n          milestones: { type: 'array', maxItems: 16, items: { type: 'string' } },\n        } } },\n    },\n  },\n  WorldGraphOperationNode: {\n",
+          "baseline": "    properties: {\n      operations: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphOperationSummary' } },\n      recoverableOperations: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphRecoverableOperation' } },\n    },\n  },\n  WorldGraphOperationNode: {\n"
+        },
+        {
+          "at": 133930,
+          "current": "    required: ['id', 'type', 'title', 'status', 'completedAt'],\n    properties: {\n      id: { type: 'string' }, type: { type: 'string' }, title: { type: 'string' },\n      description: { type: 'string' },\n      status: { type: 'string' }, completedAt: { type: ['string', 'null'], format: 'date-time' },\n      privateEvidence: { type: 'string' },\n      actions: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphIssuedAction' } },\n",
+          "baseline": "    required: ['id', 'type', 'title', 'status', 'completedAt'],\n    properties: {\n      id: { type: 'string' }, type: { type: 'string' }, title: { type: 'string' },\n      status: { type: 'string' }, completedAt: { type: ['string', 'null'], format: 'date-time' },\n      privateEvidence: { type: 'string' },\n      actions: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphIssuedAction' } },\n"
+        },
+        {
+          "at": 135757,
+          "current": "        required: ['roleId', 'title', 'filled', 'contributions'], properties: {\n          roleId: { type: 'string' }, title: { type: 'string' }, filled: { type: 'boolean' },\n          contributions: { type: 'integer', minimum: 0 },\n          turn: { type: 'boolean' },\n          occupant: { type: ['object', 'null'], additionalProperties: false,\n            required: ['self', 'name', 'observedAt'], properties: {\n              self: { type: 'boolean' }, name: { type: ['string', 'null'] },\n              observedAt: { type: ['string', 'null'], format: 'date-time' },\n            } },\n          actions: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphIssuedAction' } },\n        } } },\n      filledRoleCount: { type: 'integer', minimum: 0 },\n",
+          "baseline": "        required: ['roleId', 'title', 'filled', 'contributions'], properties: {\n          roleId: { type: 'string' }, title: { type: 'string' }, filled: { type: 'boolean' },\n          contributions: { type: 'integer', minimum: 0 },\n          actions: { type: 'array', items: { $ref: '#/components/schemas/WorldGraphIssuedAction' } },\n        } } },\n      filledRoleCount: { type: 'integer', minimum: 0 },\n"
+        },
+        {
+          "at": 153444,
           "current": "      description: 'Autonomous agents are first-class players. New accounts need no invitation. '\n        + 'See /agents for the quickstart, '\n        + '/v1/rules for the machine rulebook, and /llms.txt for the discovery index. New agents use '\n        + 'POST /v1/auth/agent; existing accounts use POST /v1/auth/agent-key. Agents need a linked EVM wallet and a minted character '\n        + 'before on-chain extraction can open for them. Errors are stable string codes: { error, message }.',\n      contact: { url: baseUrl },\n    },\n",
           "baseline": "      description: 'Autonomous agents are first-class players. New accounts need no invitation. '\n        + 'See /agents for the quickstart, '\n        + '/v1/rules for the machine rulebook, and /llms.txt for the discovery index. New agents use '\n        + 'POST /v1/auth/agent without a birth date; existing accounts use POST /v1/auth/agent-key. Agents need a linked EVM wallet and a minted character '\n        + 'before on-chain extraction can open for them. Errors are stable string codes: { error, message }.',\n      contact: { url: baseUrl },\n    },\n"
         },
         {
-          "at": 155512,
+          "at": 156378,
           "current": "- Execute a turn: POST ${baseUrl}/v1/agent/act with the latest \\`{turnId, actionId}\\`; success returns the post-action turn, while \\`409 stale_turn\\` returns a replacement snapshot without executing.\n- Agent Alpha is the owner-operated bounded runner in \\`tools/agent-alpha.js\\`: one durable identity, default one action, finite 1–50 attempts, at least 3100 ms between mutations, no reset, and no fleet, PvP, borrowing, human-faucet, wallet, mint, withdrawal, or replacement automation.\n- [OpenAPI 3.1 spec](${baseUrl}/openapi.json): every route, for your tool framework.\n- New agents: POST ${baseUrl}/v1/auth/agent with a durably saved random 32-byte base64url bootstrapSecret (permanent 🤖 flag, 90-day token). Save the bearer before acknowledging bootstrap; retry the same secret after an ambiguous response. Existing accounts use POST ${baseUrl}/v1/auth/agent-key.\n- Before extraction: link a wallet through POST ${baseUrl}/v1/wallet/challenge and POST ${baseUrl}/v1/wallet/verify, then mint the character through POST ${baseUrl}/v1/character/mint. Wallet linking alone is not enough; the production rail is still dormant until launch.\n\n## Machine rulebook\n",
           "baseline": "- Execute a turn: POST ${baseUrl}/v1/agent/act with the latest \\`{turnId, actionId}\\`; success returns the post-action turn, while \\`409 stale_turn\\` returns a replacement snapshot without executing.\n- Agent Alpha is the owner-operated bounded runner in \\`tools/agent-alpha.js\\`: one durable identity, default one action, finite 1–50 attempts, at least 3100 ms between mutations, no reset, and no fleet, PvP, borrowing, human-faucet, wallet, mint, withdrawal, or replacement automation.\n- [OpenAPI 3.1 spec](${baseUrl}/openapi.json): every route, for your tool framework.\n- New agents: POST ${baseUrl}/v1/auth/agent with a durably saved random 32-byte base64url bootstrapSecret (permanent 🤖 flag, no birth date, 90-day token). Save the bearer before acknowledging bootstrap; retry the same secret after an ambiguous response. Human signup requires an age check. Existing accounts use POST ${baseUrl}/v1/auth/agent-key.\n- Before extraction: link a wallet through POST ${baseUrl}/v1/wallet/challenge and POST ${baseUrl}/v1/wallet/verify, then mint the character through POST ${baseUrl}/v1/character/mint. Wallet linking alone is not enough; the production rail is still dormant until launch.\n\n## Machine rulebook\n"
         }
@@ -478,6 +549,52 @@ export const AGE_REMOVAL_SOURCE = freeze({
         }
       ]
     },
+    "src/chainparams.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "9a35243012ff847867a5abcf4a242982c1e1b832",
+        "sha256": "f5535d4c61569f75ea0463c70a14955229586d83f2167c8246d353dba199c02d",
+        "bytes": 21336
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "465255dfd80a2b50f6cf8b1ee40d846c3058b5b8",
+        "sha256": "0a215feed9ffe1ec5b81e82ba4b586c1e7f645ecafc64ad009bf709680eb13b5",
+        "bytes": 21541
+      },
+      "inverses": [
+        {
+          "at": 0,
+          "current": "// THE CONTROL ROOM - supported deployed-service controls and recovery boundaries.\n// Superseded transfer-tax tuning and pair registration are retired here. Two\n// all-zero emergency fee-off shortcuts remain. Contracts, ABIs, historical indexing\n// and claim obligations remain intact. This panel never executes an on-chain action.\n//\n// Founder-directed 2026-08-11: \"a GUI on the admin panel where I can edit all the variables of the\n// smart contracts like bond discount etc.\"\n",
+          "baseline": "// THE CONTROL ROOM — every on-chain parameter, what it is set to, and what it must agree with.\n//\n// Founder-directed 2026-08-11: \"a GUI on the admin panel where I can edit all the variables of the\n// smart contracts like bond discount etc.\"\n"
+        },
+        {
+          "at": 2701,
+          "current": "// Each row below names its backend counterpart, so the panel shows both numbers side by side and\n// says which disagree. That is the check no single layer can perform on itself.\n\nimport { BONDS, MINT_TRANCHES, STORE } from './rules.js';\n\nconst bps = { unit: 'bps', hint: '100 = 1%' };\nconst wei = { unit: 'wei', hint: 'ETH in wei (1 ETH = 1e18)' };\n",
+          "baseline": "// Each row below names its backend counterpart, so the panel shows both numbers side by side and\n// says which disagree. That is the check no single layer can perform on itself.\n\nimport { BONDS, SELL_TAX, MINT_TRANCHES, STORE } from './rules.js';\n\nconst bps = { unit: 'bps', hint: '100 = 1%' };\nconst wei = { unit: 'wei', hint: 'ETH in wei (1 ETH = 1e18)' };\n"
+        },
+        {
+          "at": 3620,
+          "current": "/// `mirror` — the backend value this must equal, and where it lives. The lockstep check.\n/// `why`    — what breaks if this is wrong. Shown on the row; this is a control room, and a number\n///            without its consequence is how a wrong one gets typed confidently.\nconst RETIRED_MARKET_PARAMS = new Set(['omr.pair']);\nconst LEGACY_FEE_OFF_PARAMS = new Set(['hook.sellTax', 'omr.sellTax']);\n\nexport const CHAIN_PARAMS = [\n  // ── ISSUANCE: the four walls that replaced \"nothing mints\" ──────────────────────────────────────\n  {\n",
+          "baseline": "/// `mirror` — the backend value this must equal, and where it lives. The lockstep check.\n/// `why`    — what breaks if this is wrong. Shown on the row; this is a control room, and a number\n///            without its consequence is how a wrong one gets typed confidently.\nexport const CHAIN_PARAMS = [\n  // ── ISSUANCE: the four walls that replaced \"nothing mints\" ──────────────────────────────────────\n  {\n"
+        },
+        {
+          "at": 8204,
+          "current": "      + 'close and no further.',\n  },\n\n  // Keep practical fee-off recovery while refusing to retune the superseded market.\n  {\n    key: 'hook.sellTax', contract: 'OmertaHook', env: 'OMERTA_HOOK_ADDRESS',\n    label: 'Emergency: disable legacy hook base tax', ...bps,\n    read: 'sellTaxBps', write: { fn: 'setSellTax', args: ['bps', 'devBps', 'rwaBps', 'communityBps'] },\n    wall: 'Only all four arguments set to zero are accepted. No fee increase or retuning.',\n    why: 'Preserves the Safe-only emergency base-tax off call for an existing deployment. Separate '\n      + 'surge and opening charges are not disabled by this call. Verify the chain, address and owner '\n      + 'in docs/contract-retirement-20261109.md before the Safe signs.',\n  },\n  {\n    key: 'omr.sellTax', contract: 'OMR', env: 'OMR_ADDRESS',\n    label: 'Emergency: disable legacy token base tax', ...bps,\n    read: 'sellTaxBps', write: { fn: 'setSellTax', args: ['bps', 'devBps', 'rwaBps', 'communityBps'] },\n    wall: 'Only all four arguments set to zero are accepted. No fee increase or retuning.',\n    why: 'Preserves the Safe-only emergency transfer-tax off call for an existing token. Separate '\n      + 'hook surge and opening charges remain unchanged. Verify the chain, address and owner '\n      + 'in docs/contract-retirement-20261109.md before the Safe signs.',\n  },\n  // Existing issuance controls remain for deployed obligations and emergency recovery.\n  {\n    key: 'omr.minter', contract: 'OMR', env: 'OMR_ADDRESS',\n    label: 'Minter (the bond contract)', unit: 'address',\n",
+          "baseline": "      + 'close and no further.',\n  },\n\n  // ── THE MARKET: the sell tax, in two layers that must agree ──────────────────────────────────────\n  {\n    key: 'hook.sellTax', contract: 'OmertaHook', env: 'OMERTA_HOOK_ADDRESS',\n    label: 'v4 pool sell tax (total / dev / treasury / community)', ...bps,\n    read: 'sellTaxBps', write: { fn: 'setSellTax', args: ['bps', 'devBps', 'rwaBps', 'communityBps'] },\n    wall: 'Hard-capped at MAX_SELL_TAX_BPS (1000). The LP slice is the REMAINDER — do not pass it, or '\n      + 'three independent divisions leave a wei owned by nobody.',\n    why: 'The live tax on the canonical pool. There is deliberately NO pause on the hook, so '\n      + 'setSellTax(0,0,0,0) IS the off switch: the fee stops and the pool keeps trading.',\n    mirror: () => ({ label: 'backend SELL_TAX', value: `${SELL_TAX.BPS} total / ${SELL_TAX.DEV_BPS} dev / ${SELL_TAX.RWA_BPS} treasury / ${Number(process.env.SELL_TAX_COMMUNITY_BPS ?? 0)} community bps` }),\n    relation: () => (BONDS.DISCOUNT_BPS >= SELL_TAX.BPS\n      ? `BOND DISCOUNT (${BONDS.DISCOUNT_BPS}) IS NOT BELOW THE TAX (${SELL_TAX.BPS}) — a bond flipped `\n        + 'straight back through the pool now makes money, so bonding is a subsidy on selling rather '\n        + 'than capital formation. The bonder holds known size on a known schedule and is the most '\n        + 'motivated bypass-seeker OMR will have.'\n      : null),\n  },\n  {\n    key: 'omr.sellTax', contract: 'OMR', env: 'OMR_ADDRESS',\n    label: 'ERC-20 sell tax — THE BACKSTOP (total / dev / treasury / community)', ...bps,\n    read: 'sellTaxBps', write: { fn: 'setSellTax', args: ['bps', 'devBps', 'rwaBps', 'communityBps'] },\n    wall: 'Hard-capped at MAX_SELL_TAX_BPS (1000) — the anti-rug wall. LP is the remainder.',\n    why: 'ARMED AT ZERO on purpose. A hook tax is a property of ONE pool and anyone may open an '\n      + 'unhooked one; this one is universal. The trigger to arm it is not \"we lost some tax\" — it is '\n      + '\"bonds have become an arbitrage\".',\n  },\n  {\n    key: 'omr.pair', contract: 'OMR', env: 'OMR_ADDRESS',\n    label: 'Register / unregister an AMM pair', unit: 'address, bool',\n    read: null, write: { fn: 'setPair', args: ['pair', 'isPair'] },\n    wall: 'Only transfers INTO a registered pair are taxed. Buys and wallet transfers never are.',\n    why: 'Which pools the ERC-20 backstop applies to. Registering the wrong address taxes nothing; '\n      + 'it does not break anything.',\n  },\n  {\n    key: 'omr.minter', contract: 'OMR', env: 'OMR_ADDRESS',\n    label: 'Minter (the bond contract)', unit: 'address',\n"
+        },
+        {
+          "at": 17654,
+          "current": "\n/// Validates a proposed change and returns the CALLDATA for the Safe. Never signs, never sends.\nexport async function buildParamTx(key, values) {\n  if (RETIRED_MARKET_PARAMS.has(key))\n    throw new Error(`retired market parameter: ${key}; existing claims and read-only compatibility remain available`);\n  const p = CHAIN_PARAMS.find((x) => x.key === key);\n  if (!p) throw new Error(`unknown parameter: ${key}`);\n  const to = process.env[p.env];\n  const { encodeFunctionData, isAddress } = await import('viem');\n  if ((!to || !isAddress(to)) && LEGACY_FEE_OFF_PARAMS.has(key))\n    throw new Error(`${p.env} is unset or not an address - verify the existing deployment and owner; do not deploy a retired contract for this shortcut`);\n  if (!to || !isAddress(to)) throw new Error(`${p.env} is unset or not an address — deploy ${p.contract} first`);\n\n  // Shape the arguments the same way the setter declares them, so a missing field is a named error\n",
+          "baseline": "\n/// Validates a proposed change and returns the CALLDATA for the Safe. Never signs, never sends.\nexport async function buildParamTx(key, values) {\n  const p = CHAIN_PARAMS.find((x) => x.key === key);\n  if (!p) throw new Error(`unknown parameter: ${key}`);\n  const to = process.env[p.env];\n  const { encodeFunctionData, isAddress } = await import('viem');\n  if (!to || !isAddress(to)) throw new Error(`${p.env} is unset or not an address — deploy ${p.contract} first`);\n\n  // Shape the arguments the same way the setter declares them, so a missing field is a named error\n"
+        },
+        {
+          "at": 19251,
+          "current": "    if (n < 0n) throw new Error(`${name} cannot be negative`);\n    return n;\n  });\n  if (LEGACY_FEE_OFF_PARAMS.has(key) && args.some(value => value !== 0n))\n    throw new Error(`${key} only supports all-zero emergency fee-off; legacy market tuning is retired`);\n\n  const abi = [{\n    type: 'function', name: p.write.fn, stateMutability: 'nonpayable', outputs: [],\n",
+          "baseline": "    if (n < 0n) throw new Error(`${name} cannot be negative`);\n    return n;\n  });\n\n  const abi = [{\n    type: 'function', name: p.write.fn, stateMutability: 'nonpayable', outputs: [],\n"
+        }
+      ]
+    },
     "src/client-shell.js": {
       "current": {
         "mode": "100644",
@@ -496,6 +613,79 @@ export const AGE_REMOVAL_SOURCE = freeze({
           "at": 756,
           "current": "  const revision = version(html);\n  const scripts = [...html.matchAll(/<script src=\"([^\"]+)\"[^>]*><\\/script>/g)].map(match => match[1]);\n  const styles = [...html.matchAll(/<link rel=\"stylesheet\" href=\"([^\"]+)\"[^>]*>/g)]\n    .map(match => match[1]).filter(url => !['/omerta-ui.css', '/noir-ui.css', '/noir-landing.css'].includes(url.split('?')[0]));\n  if (!scripts.length || [...scripts, ...styles].some(url => !/^\\/[a-z0-9][a-z0-9_./?=&-]*$/i.test(url) || url.split(/[/?]/).includes('..')))\n    throw new Error('Game dependencies must remain explicit local assets.');\n  const languageStart = runtime.indexOf('  const I18N = {');\n",
           "baseline": "  const revision = version(html);\n  const scripts = [...html.matchAll(/<script src=\"([^\"]+)\"[^>]*><\\/script>/g)].map(match => match[1]);\n  const styles = [...html.matchAll(/<link rel=\"stylesheet\" href=\"([^\"]+)\"[^>]*>/g)]\n    .map(match => match[1]).filter(url => !url.startsWith('/omerta-ui.css'));\n  if (!scripts.length || [...scripts, ...styles].some(url => !/^\\/[a-z0-9][a-z0-9_./?=&-]*$/i.test(url) || url.split(/[/?]/).includes('..')))\n    throw new Error('Game dependencies must remain explicit local assets.');\n  const languageStart = runtime.indexOf('  const I18N = {');\n"
+        }
+      ]
+    },
+    "src/content/city-quest-presentation.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "837a3755b1584b50af4a104dd2e795dc30059b77",
+        "sha256": "da2b9f618e165cc5d20ec83ead0659a2728733065dc48f7df8cbcfd923bf6242",
+        "bytes": 2783
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "57e3fb9dcfd3e9067546feb3ba36b360071ec148",
+        "sha256": "7abe9758e99a68dda3f00bd54ad8f4d0b61af3bae844977a69e9dbba58f64515",
+        "bytes": 2565
+      },
+      "inverses": [
+        {
+          "at": 0,
+          "current": "// Server-owned presentation belongs only to an admitted City quest and visible nodes.\nimport { NEIGHBORHOOD_QUEST_PRESENTATION, NEIGHBORHOOD_QUEST_VENUES } from './neighborhood-initiation.js';\nimport { FIRST_ERRAND_CASE } from './first-errand-case.js';\nimport { DISTRICT_STORY_ARCS } from './district-story-arcs.js';\nimport { NEIGHBORHOOD_BROADCAST_PRESENTATION, NEIGHBORHOOD_BROADCAST_VENUES,\n  NEIGHBORHOOD_BROADCAST_ACTION_LABELS } from './neighborhood-broadcast.js';\n",
+          "baseline": "// Server-owned presentation belongs only to an admitted City quest and visible nodes.\nimport { NEIGHBORHOOD_QUEST_PRESENTATION, NEIGHBORHOOD_QUEST_VENUES } from './neighborhood-initiation.js';\nimport { DISTRICT_STORY_ARCS } from './district-story-arcs.js';\nimport { NEIGHBORHOOD_BROADCAST_PRESENTATION, NEIGHBORHOOD_BROADCAST_VENUES,\n  NEIGHBORHOOD_BROADCAST_ACTION_LABELS } from './neighborhood-broadcast.js';\n"
+        },
+        {
+          "at": 751,
+          "current": "const neighborhood = Object.freeze({ ...NEIGHBORHOOD_QUEST_PRESENTATION, cityQuest: true });\nexport const CITY_QUEST_PRESENTATIONS = Object.freeze([neighborhood,\n  ...DISTRICT_STORY_ARCS.map(story => story.presentation), NEIGHBORHOOD_BROADCAST_PRESENTATION, NEIGHBORHOOD_AFTERWORD_PRESENTATION,\n  PROPERTY_QUEST_PRESENTATION, FIRST_ERRAND_CASE.presentation]);\nconst presentations = new Map(CITY_QUEST_PRESENTATIONS.map(presentation => [presentation.graphId, presentation]));\nconst venues = new Map([[neighborhood.graphId, NEIGHBORHOOD_QUEST_VENUES],\n  ...DISTRICT_STORY_ARCS.map(story => [story.package.id, story.venues]),\n  [NEIGHBORHOOD_BROADCAST_PRESENTATION.graphId, NEIGHBORHOOD_BROADCAST_VENUES],\n  [NEIGHBORHOOD_AFTERWORD_PRESENTATION.graphId, NEIGHBORHOOD_AFTERWORD_VENUES],\n  [PROPERTY_QUEST_PRESENTATION.graphId, PROPERTY_QUEST_VENUES],\n  [FIRST_ERRAND_CASE.package.id, FIRST_ERRAND_CASE.venues]]);\nconst actionLabels = new Map([...DISTRICT_STORY_ARCS.map(story => [story.package.id, story.actionLabels]),\n  [NEIGHBORHOOD_BROADCAST_PRESENTATION.graphId, NEIGHBORHOOD_BROADCAST_ACTION_LABELS],\n  [NEIGHBORHOOD_AFTERWORD_PRESENTATION.graphId, NEIGHBORHOOD_AFTERWORD_ACTION_LABELS],\n  [FIRST_ERRAND_CASE.package.id, FIRST_ERRAND_CASE.actionLabels]]);\n\nexport function cityQuestPresentation(graphId) {\n  return presentations.get(graphId) || null;\n",
+          "baseline": "const neighborhood = Object.freeze({ ...NEIGHBORHOOD_QUEST_PRESENTATION, cityQuest: true });\nexport const CITY_QUEST_PRESENTATIONS = Object.freeze([neighborhood,\n  ...DISTRICT_STORY_ARCS.map(story => story.presentation), NEIGHBORHOOD_BROADCAST_PRESENTATION, NEIGHBORHOOD_AFTERWORD_PRESENTATION,\n  PROPERTY_QUEST_PRESENTATION]);\nconst presentations = new Map(CITY_QUEST_PRESENTATIONS.map(presentation => [presentation.graphId, presentation]));\nconst venues = new Map([[neighborhood.graphId, NEIGHBORHOOD_QUEST_VENUES],\n  ...DISTRICT_STORY_ARCS.map(story => [story.package.id, story.venues]),\n  [NEIGHBORHOOD_BROADCAST_PRESENTATION.graphId, NEIGHBORHOOD_BROADCAST_VENUES],\n  [NEIGHBORHOOD_AFTERWORD_PRESENTATION.graphId, NEIGHBORHOOD_AFTERWORD_VENUES],\n  [PROPERTY_QUEST_PRESENTATION.graphId, PROPERTY_QUEST_VENUES]]);\nconst actionLabels = new Map([...DISTRICT_STORY_ARCS.map(story => [story.package.id, story.actionLabels]),\n  [NEIGHBORHOOD_BROADCAST_PRESENTATION.graphId, NEIGHBORHOOD_BROADCAST_ACTION_LABELS],\n  [NEIGHBORHOOD_AFTERWORD_PRESENTATION.graphId, NEIGHBORHOOD_AFTERWORD_ACTION_LABELS]]);\n\nexport function cityQuestPresentation(graphId) {\n  return presentations.get(graphId) || null;\n"
+        }
+      ]
+    },
+    "src/content/phase1-policy.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "4d34a718ef361bac7967c01f6a566fe27b392140",
+        "sha256": "fcf7454fd98782bacffa73fb17db2f39cb5b8f2491f195a0bafbf3d4984ee396",
+        "bytes": 7902
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "31f67a4aa71a61688873d615d08d73dfd0e58895",
+        "sha256": "f5d2339a39d856551ddd91dd1ca86a08e00e861348cc70c7f834f8a18f5bc837",
+        "bytes": 7852
+      },
+      "inverses": [
+        {
+          "at": 1200,
+          "current": "  'city-rotating-account-1', 'city-rotating-account-2', 'city-rotating-account-3',\n  'neighborhood-broadcast', 'neighborhood-afterword', 'property-investigation',\n  'equipment-recovery',\n  'first-errand-case-v2', 'crew-crosscurrent-v1',\n]);\n\nexport function phase1CraftReason(recipeId) {\n",
+          "baseline": "  'city-rotating-account-1', 'city-rotating-account-2', 'city-rotating-account-3',\n  'neighborhood-broadcast', 'neighborhood-afterword', 'property-investigation',\n  'equipment-recovery',\n]);\n\nexport function phase1CraftReason(recipeId) {\n"
+        }
+      ]
+    },
+    "src/content/phase1.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "aa154ad3282bd1b2e34b52e29379e5b0b39e92e2",
+        "sha256": "b75602cdbe44786351f2cebd687eab21c22e9145aa9b64a467b4325b3fdb5a80",
+        "bytes": 1722
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "90f295bd33959e574bfc835301380e46e6cfb2e7",
+        "sha256": "6d8ca127ad60b3e1b2672e5f015568b4b7712488c3ac8be9100f260404cc6c04",
+        "bytes": 1528
+      },
+      "inverses": [
+        {
+          "at": 0,
+          "current": "// Canonical production manifest for the Phase 1 world-graph runtime and release validator.\n// Adding a package is incomplete until this manifest, its validator census, and documentation agree.\nimport { FIRST_ERRAND_CASE_PACKAGE } from './first-errand-case.js';\nimport { CREW_CROSSCURRENT_PACKAGE } from './crew-crosscurrent.js';\nimport { EQUIPMENT_RECOVERY_PACKAGE } from './equipment-recovery.js';\nimport { AUTOMOTIVE_SALVAGE_PACKAGE } from './automotive-salvage.js';\nimport { BELLADONNA_PACKAGE } from './belladonna.js';\n",
+          "baseline": "// Canonical production manifest for the Phase 1 world-graph runtime and release validator.\n// Adding a package is incomplete until this manifest, its validator census, and documentation agree.\nimport { EQUIPMENT_RECOVERY_PACKAGE } from './equipment-recovery.js';\nimport { AUTOMOTIVE_SALVAGE_PACKAGE } from './automotive-salvage.js';\nimport { BELLADONNA_PACKAGE } from './belladonna.js';\n"
+        },
+        {
+          "at": 1562,
+          "current": "  NEIGHBORHOOD_AFTERWORD_PACKAGE,\n  PROPERTY_INVESTIGATION_PACKAGE,\n  EQUIPMENT_RECOVERY_PACKAGE,\n  FIRST_ERRAND_CASE_PACKAGE,\n  CREW_CROSSCURRENT_PACKAGE,\n]);\n",
+          "baseline": "  NEIGHBORHOOD_AFTERWORD_PACKAGE,\n  PROPERTY_INVESTIGATION_PACKAGE,\n  EQUIPMENT_RECOVERY_PACKAGE,\n]);\n"
         }
       ]
     },
@@ -522,6 +712,68 @@ export const AGE_REMOVAL_SOURCE = freeze({
           "at": 6005,
           "current": "<h2>When information is shared</h2><p>Hosting and database providers process data needed to run the service. X or Privy handles sign-in when selected. Resend, or the configured email provider, delivers requested emails; your browser's push provider delivers notifications you enable. WalletConnect and blockchain RPC providers support wallet features. See the <a href=\"/resources\">scripts, fonts and service-provider inventory</a>.</p><p>Public game content is shared with its intended audience. Information sent to a third-party AI, identity, wallet or notification provider is also subject to that provider's privacy practices. Providers may process information in a country different from yours. We may disclose information to comply with legal obligations or protect players, investigate misuse and secure the service.</p>\n<h2>How long we keep information</h2><p>We keep information for as long as needed to provide the features you use, maintain game and transaction records, resolve disputes, prevent misuse and meet applicable legal obligations. Retention depends on the type of information and why it is needed. Messages and routine operational records are subject to periodic cleanup; some account, accounting and service-integrity records are retained longer. Provider logs and backups may follow separate retention periods, and backups may retain deleted information until they expire. Public blockchain records remain available independently of OMERTÀ.</p>\n<h2>Your choices and requests</h2><p>You can unsubscribe from a digest using the link in the email or turn it off in Profile. Transaction confirmations are separate from marketing preferences and are emailed where a verified address is available. Disable push notifications in the app or browser and revoke connected-agent access in Consigliere.</p><p>Depending on where you live, you may have rights to request access, correction or deletion of personal information, or to object to certain processing. We may need to verify that a request relates to your account. Some accounting, security or legally required records may need to be retained; deleting an account cannot erase blockchain history.</p>\n<h2>Age eligibility and children</h2><p>OMERTÀ is intended only for users aged 21 and older. We do not accept users under 21, including children. If you believe someone under 21 has provided personal information, report it through the privacy contact below when available so the operator can investigate, restrict access and handle deletion as appropriate.</p>\n<h2>Privacy contact</h2>${contact ? `<p>For privacy questions, account-data requests or reports involving users under 21, email ${contact}. Do not send account credentials or wallet private keys.</p>` : '<p>A dedicated privacy contact has not yet been published. Operator contact details will appear here when available. Do not post account credentials or sensitive personal information in public chat.</p>'}\n<h2>Changes to this policy</h2><p>We will update this page and its date when our practices change, and provide additional notice or request consent when required.</p>`,\n    terms: `<p>Operator: ${esc(c.name)} · ${esc(c.address)} · ${contact}.</p><section id=\"payments\"><h2>Passes, watches and confirmation</h2><p>Made Man gives you 30 days of access for the displayed $OMR price. Street Wire gives you the displayed tier and duration. Both are prepaid game passes. Buying again extends access, and neither renews automatically. Benefits end when the pass expires unless you buy again.</p><p>Standing Watches automatically spend the displayed $OMR tap price each cycle while the watch is enrolled and eligible. The Wire screen shows the price and interval before enrollment. Select “drop the watch” online to stop future renewals; the tap you already paid for lasts until expiry. You can cancel each watch in the app or with DELETE /v1/wire/watch/:targetId.</p><p>The app confirms purchases immediately. If you have a verified email address, we also queue a transaction confirmation email regardless of your marketing preferences. Keep the confirmation and check your ledger. Wallet transactions and on-chain purchases may have network fees and their own published price. Review each transaction before signing.</p><h2>Refunds and cancellation</h2><p>${esc(c.refunds)}</p><p>Contact ${contact} with the transaction identifier for payment questions or a refund request. These terms do not limit rights provided by applicable law. Cancelling a watch stops future renewals; it does not reverse a cycle you already paid for.</p></section>`,\n",
           "baseline": "<h2>When information is shared</h2><p>Hosting and database providers process data needed to run the service. X or Privy handles sign-in when selected. Resend, or the configured email provider, delivers requested emails; your browser's push provider delivers notifications you enable. WalletConnect and blockchain RPC providers support wallet features. See the <a href=\"/resources\">scripts, fonts and service-provider inventory</a>.</p><p>Public game content is shared with its intended audience. Information sent to a third-party AI, identity, wallet or notification provider is also subject to that provider's privacy practices. Providers may process information in a country different from yours. We may disclose information to comply with legal obligations or protect players, investigate misuse and secure the service.</p>\n<h2>How long we keep information</h2><p>We keep information for as long as needed to provide the features you use, maintain game and transaction records, resolve disputes, prevent misuse and meet applicable legal obligations. Retention depends on the type of information and why it is needed. Messages and routine operational records are subject to periodic cleanup; some account, accounting and service-integrity records are retained longer. Provider logs and backups may follow separate retention periods, and backups may retain deleted information until they expire. Public blockchain records remain available independently of OMERTÀ.</p>\n<h2>Your choices and requests</h2><p>You can unsubscribe from a digest using the link in the email or turn it off in Profile. Transaction confirmations are separate from marketing preferences and are emailed where a verified address is available. Disable push notifications in the app or browser and revoke connected-agent access in Consigliere.</p><p>Depending on where you live, you may have rights to request access, correction or deletion of personal information, or to object to certain processing. We may need to verify that a request relates to your account. Some accounting, security or legally required records may need to be retained; deleting an account cannot erase blockchain history.</p>\n<h2>Age eligibility and children</h2><p>OMERTÀ is intended only for users aged 21 and older. We do not accept users under 21, including children. If you provide a birth date for an eligibility check, we use it for that check without retaining the birth date in your account. If you believe someone under 21 has provided personal information, report it through the privacy contact below when available so the operator can investigate, restrict access and handle deletion as appropriate.</p>\n<h2>Privacy contact</h2>${contact ? `<p>For privacy questions, account-data requests or reports involving users under 21, email ${contact}. Do not send account credentials or wallet private keys.</p>` : '<p>A dedicated privacy contact has not yet been published. Operator contact details will appear here when available. Do not post account credentials or sensitive personal information in public chat.</p>'}\n<h2>Changes to this policy</h2><p>We will update this page and its date when our practices change, and provide additional notice or request consent when required.</p>`,\n    terms: `<p>Operator: ${esc(c.name)} · ${esc(c.address)} · ${contact}.</p><section id=\"payments\"><h2>Passes, watches and confirmation</h2><p>Made Man gives you 30 days of access for the displayed $OMR price. Street Wire gives you the displayed tier and duration. Both are prepaid game passes. Buying again extends access, and neither renews automatically. Benefits end when the pass expires unless you buy again.</p><p>Standing Watches automatically spend the displayed $OMR tap price each cycle while the watch is enrolled and eligible. The Wire screen shows the price and interval before enrollment. Select “drop the watch” online to stop future renewals; the tap you already paid for lasts until expiry. You can cancel each watch in the app or with DELETE /v1/wire/watch/:targetId.</p><p>The app confirms purchases immediately. If you have a verified email address, we also queue a transaction confirmation email regardless of your marketing preferences. Keep the confirmation and check your ledger. Wallet transactions and on-chain purchases may have network fees and their own published price. Review each transaction before signing.</p><h2>Refunds and cancellation</h2><p>${esc(c.refunds)}</p><p>Contact ${contact} with the transaction identifier for payment questions or a refund request. These terms do not limit rights provided by applicable law. Cancelling a watch stops future renewals; it does not reverse a cycle you already paid for.</p></section>`,\n"
+        }
+      ]
+    },
+    "src/operations.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "49a6af1a5287101d6f1a5f0035b957703d8a07de",
+        "sha256": "ad90d8c92c7d9e0b74374e86df3b00aa57cad829c9d416b42e69050a43049e43",
+        "bytes": 87648
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "27df779d739f7d550558e50c8a412782a9e9290a",
+        "sha256": "175882731792bfd24f2cb7ff0ecd62dc3bb7273b817a77b8bcd5cb7817fdf679",
+        "bytes": 85985
+      },
+      "inverses": [
+        {
+          "at": 385,
+          "current": "// or transaction-ledger adapter.\nimport crypto from 'node:crypto';\nimport { dbCaps } from './db.js';\nimport { readPlayerIntel } from './playerintel.js';\nimport { GameError } from './game.js';\nimport {\n  awaitItemReadBarrier,\n",
+          "baseline": "// or transaction-ledger adapter.\nimport crypto from 'node:crypto';\nimport { dbCaps } from './db.js';\nimport { GameError } from './game.js';\nimport {\n  awaitItemReadBarrier,\n"
+        },
+        {
+          "at": 74091,
+          "current": "    id: node.id,\n    type: node.type,\n    title: node.metadata?.title || node.id,\n    ...(node.metadata?.description ? { description: node.metadata.description } : {}),\n    status: state?.state || 'pending',\n    completedAt: dateString(state?.completed_at),\n  };\n",
+          "baseline": "    id: node.id,\n    type: node.type,\n    title: node.metadata?.title || node.id,\n    status: state?.state || 'pending',\n    completedAt: dateString(state?.completed_at),\n  };\n"
+        },
+        {
+          "at": 83225,
+          "current": "  return { actions, roles, nodes };\n}\n\n/** Shared role slots and public progress; names come only from this viewer's earned notebook. No account/character/Crew IDs. */\nexport async function operationBoard(client, contextValue, operationIdValue) {\n  const context = contextOf(contextValue);\n  await awaitItemReadBarrier(client);\n",
+          "baseline": "  return { actions, roles, nodes };\n}\n\n/** Safe shared projection: role slots and public progress, never account/character/Crew identities. */\nexport async function operationBoard(client, contextValue, operationIdValue) {\n  const context = contextOf(contextValue);\n  await awaitItemReadBarrier(client);\n"
+        },
+        {
+          "at": 83910,
+          "current": "  )).rows;\n  const countByRole = new Map(contributions.map((entry) => [entry.role_id, Number(entry.n)]));\n  const states = stateMap(await stateRows(client, row.id));\n  const occupants = new Map();\n  for (const assignment of roles) {\n    // Taking a role does not grant a new sighting of the person who filled it.\n    const self = assignment.account_id === context.accountId;\n    const known = self ? null : await readPlayerIntel(client, context.accountId, assignment.character_id);\n    occupants.set(assignment.role_id, { self, name: known?.name || null,\n      observedAt: known ? dateString(known.observedAt) : null });\n  }\n  const nextRoles = new Set([...context.registry.nodes.values()].filter(node =>\n    row.status === 'active' && node.packageId === row.graph_id && node.type === 'operation_step'\n    && node.metadata?.operationId === root.id && !['completed', 'excluded'].includes(states.get(node.id)?.state)\n    && (node.requires || []).every(id => states.get(id)?.state === 'completed')\n    && (node.requiresAny || []).every(group => group.some(id => states.get(id)?.state === 'completed'))\n    && !(node.excludes || []).some(id => states.get(id)?.state === 'completed')\n    && (node.metadata?.order === undefined || ![...context.registry.nodes.values()].some(prior =>\n      prior.packageId === row.graph_id && prior.type === 'operation_step' && prior.metadata?.operationId === root.id\n      && Number.isInteger(prior.metadata?.order) && prior.metadata.order < node.metadata.order\n      && states.get(prior.id)?.state !== 'completed'))).map(node => node.metadata.roleId));\n  const nodes = [...context.registry.nodes.values()].filter((node) => (\n    node.packageId === row.graph_id && GRAPH_STATE_TYPES.has(node.type)\n    && (node.id === root.id || node.metadata?.operationId === root.id)\n",
+          "baseline": "  )).rows;\n  const countByRole = new Map(contributions.map((entry) => [entry.role_id, Number(entry.n)]));\n  const states = stateMap(await stateRows(client, row.id));\n  const nodes = [...context.registry.nodes.values()].filter((node) => (\n    node.packageId === row.graph_id && GRAPH_STATE_TYPES.has(node.type)\n    && (node.id === root.id || node.metadata?.operationId === root.id)\n"
+        },
+        {
+          "at": 85991,
+          "current": "      title: role.title || role.id,\n      filled: roles.some((assignment) => assignment.role_id === role.id),\n      contributions: countByRole.get(role.id) || 0,\n      occupant: occupants.get(role.id) || null,\n      turn: nextRoles.has(role.id),\n    })),\n    filledRoleCount: roles.length,\n    requiredRoleCount: rolesOf(root).length,\n",
+          "baseline": "      title: role.title || role.id,\n      filled: roles.some((assignment) => assignment.role_id === role.id),\n      contributions: countByRole.get(role.id) || 0,\n    })),\n    filledRoleCount: roles.length,\n    requiredRoleCount: rolesOf(root).length,\n"
+        }
+      ]
+    },
+    "src/routes/worldgraph.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "aac25ac69dd4c277725267f8592c4e6d65bd7596",
+        "sha256": "a45be0380bc06f1b88af4375ffcef283d363bdebc45cc4766dae23f106138b59",
+        "bytes": 31869
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "8c0789f4575e2c4484c5b9e51abc0745a0c3926e",
+        "sha256": "762bd5300203925bc3c58743f0e72c3b9eaf347c38b3d351cdc7b17ac662a377",
+        "bytes": 30577
+      },
+      "inverses": [
+        {
+          "at": 27209,
+          "current": "        actions: [issuedAction('cancel:' + row.id, 'Close this operation and recover held items',\n          '/v1/worldgraph/operations/' + segment(row.id) + '/cancel', {}, [],\n          'Only its original opener can cancel. Held items return to their recorded depositors, even after crew or character changes.')] }));\n      const completedOperations = [];\n      const history = (await client.query(`SELECT operation.id,operation.operation_node_id,operation.completed_at,role.role_id\n        FROM world_operations operation JOIN world_operation_roles role ON role.operation_id=operation.id\n        WHERE role.account_id=$1 AND operation.status='completed'\n        ORDER BY operation.completed_at DESC,operation.id LIMIT 20`, [req.user.sub])).rows;\n      for (const record of history) {\n        const root = PHASE1_WORLD_GRAPH.nodes.get(record.operation_node_id);\n        const completed = (await client.query(\"SELECT node_id FROM world_operation_node_state WHERE operation_id=$1 AND state='completed'\", [record.id])).rows;\n        const milestones = completed.map(row => PHASE1_WORLD_GRAPH.nodes.get(row.node_id))\n          .filter(node => node?.type === 'operation_step' && node.visibility === 'public')\n          .slice(0, 16).map(node => node.metadata?.title || node.id);\n        completedOperations.push({ operationId: record.id, title: root?.metadata?.title || 'Completed Crew run',\n          roleTitle: root?.metadata?.roles?.find(role => role.id === record.role_id)?.title || record.role_id,\n          completedAt: new Date(record.completed_at).toISOString(), milestones });\n      }\n      return { operations, recoverableOperations, completedOperations };\n    }));\n\n  app.post('/v1/worldgraph/operations/:graphId/:operationNodeId/open', mutationOptions(auth),\n",
+          "baseline": "        actions: [issuedAction('cancel:' + row.id, 'Close this operation and recover held items',\n          '/v1/worldgraph/operations/' + segment(row.id) + '/cancel', {}, [],\n          'Only its original opener can cancel. Held items return to their recorded depositors, even after crew or character changes.')] }));\n      return { operations, recoverableOperations };\n    }));\n\n  app.post('/v1/worldgraph/operations/:graphId/:operationNodeId/open', mutationOptions(auth),\n"
         }
       ]
     },
@@ -568,6 +820,32 @@ export const AGE_REMOVAL_SOURCE = freeze({
           "at": 120117,
           "current": "        return reply.redirect('/#claimed=x');\n      }\n      // (B2) invite consumed atomically inside accountForIdentity's create txn — gate held under races\n      const { accountId } = await A.accountForIdentity(\n        pool, r.identity, req.clientIp, r.invite, req.clientIpAuthority,\n      );\n",
           "baseline": "        return reply.redirect('/#claimed=x');\n      }\n      // (B2) invite consumed atomically inside accountForIdentity's create txn — gate held under races\n      requireAge(app, req);\n      const { accountId } = await A.accountForIdentity(\n        pool, r.identity, req.clientIp, r.invite, req.clientIpAuthority,\n      );\n"
+        }
+      ]
+    },
+    "src/worker.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "2f8581ee6e98b598cb0bb24ab0426ff1026c224f",
+        "sha256": "3f11ab4d82329b2d094cba0e0379052c877d1e27b452fcb726f3f3e4ef03a244",
+        "bytes": 87807
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "587ffe14766c524012aff512617aad486c540525",
+        "sha256": "0b4d4427841feb6d691e4c4311d1f40f315028139217822a43299551675b9e68",
+        "bytes": 87569
+      },
+      "inverses": [
+        {
+          "at": 6449,
+          "current": "\nconst BUYBACK_PERIOD_MS = 12 * 3600 * 1000;\n\n// Scope the diagnostic without changing parity checks, latching or configuration.\nexport const CHAIN_PARITY_NOTE = 'These checks cover configured legacy and account-service deployments, '\n  + 'not the current market manager. Compare the named values with the exact deployed contracts and '\n  + 'preserved obligations. Any fee or configuration change requires separate review; this alert '\n  + 'does not prescribe one.';\n\n// Returns null when nothing was due, else a summary of the executed buyback.\n// `opts.force` ignores the 12h timer (tests); `opts.now` overrides the clock.\nexport async function runBuyback(pool, opts = {}) {\n",
+          "baseline": "\nconst BUYBACK_PERIOD_MS = 12 * 3600 * 1000;\n\n// Returns null when nothing was due, else a summary of the executed buyback.\n// `opts.force` ignores the 12h timer (tests); `opts.now` overrides the clock.\nexport async function runBuyback(pool, opts = {}) {\n"
+        },
+        {
+          "at": 54654,
+          "current": "      console.error(`🚨 CHAIN PARITY — ${lines}. The chain and the backend disagree about a value the chain holds.`);\n      await safe('chain parity alert', () => alertDrift(pool, [{\n        name: 'chain parity', mismatches: sp.mismatches,\n        note: CHAIN_PARITY_NOTE,\n      }], 'split'));\n    } else if (sp && sp.state === 'ok' && chainParityAlerted) {\n      chainParityAlerted = false;\n",
+          "baseline": "      console.error(`🚨 CHAIN PARITY — ${lines}. The chain and the backend disagree about a value the chain holds.`);\n      await safe('chain parity alert', () => alertDrift(pool, [{\n        name: 'chain parity', mismatches: sp.mismatches,\n        note: 'A value the chain holds and the backend restates disagree. The bond bps are IMMUTABLE, so the fix '\n          + 'is the ENV (fee-splits.env on BOTH api and worker) unless the deploy itself was wrong.',\n      }], 'split'));\n    } else if (sp && sp.state === 'ok' && chainParityAlerted) {\n      chainParityAlerted = false;\n"
         }
       ]
     },
@@ -706,6 +984,99 @@ export const AGE_REMOVAL_SOURCE = freeze({
         }
       ]
     },
+    "test/chainparams.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "8a22a0d5e0d0181a17ff4dd855fbe2599c637625",
+        "sha256": "870ec8d60e4337a8d6460be6d6b25ff967e437f2a0163db6ec9a1d4408071976",
+        "bytes": 14853
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "19f04ff4a62273766500f1abe8bfd345129c97e7",
+        "sha256": "081caefb2f939937ab203272907ded5bce9398bcec74807ddb1b0bf1cc62ca65",
+        "bytes": 11942
+      },
+      "inverses": [
+        {
+          "at": 1076,
+          "current": "import assert from 'node:assert';\nimport fs from 'node:fs';\nimport { CHAIN_PARAMS, readChainParams, buildParamTx } from '../src/chainparams.js';\nimport { BONDS, MINT_TRANCHES } from '../src/rules.js';\n\n// Retire tuning and pair registration without removing practical fee-off recovery.\n// The legacy Safe may prepare only the exact all-zero base-tax call from this panel.\n{\n  const priorOmr = process.env.OMR_ADDRESS, priorHook = process.env.OMERTA_HOOK_ADDRESS;\n  try {\n    process.env.OMR_ADDRESS = '0x2222222222222222222222222222222222222222';\n    process.env.OMERTA_HOOK_ADDRESS = '0x3333333333333333333333333333333333333333';\n    const fields = ['bps', 'devBps', 'rwaBps', 'communityBps'];\n    const zeros = Object.fromEntries(fields.map(field => [field, '0']));\n    const { decodeFunctionData, toFunctionSelector } = await import('viem');\n    const abi = [{ type: 'function', name: 'setSellTax', stateMutability: 'nonpayable', outputs: [],\n      inputs: fields.map(name => ({ name, type: 'uint256' })) }];\n    for (const [key, env] of [['hook.sellTax', 'OMERTA_HOOK_ADDRESS'], ['omr.sellTax', 'OMR_ADDRESS']]) {\n      const tx = await buildParamTx(key, zeros);\n      assert.equal(tx.to, process.env[env]);\n      assert.equal(tx.value, '0');\n      assert.equal(tx.data.slice(0, 10), toFunctionSelector('setSellTax(uint256,uint256,uint256,uint256)'));\n      assert.deepEqual(decodeFunctionData({ abi, data: tx.data }).args, [0n, 0n, 0n, 0n]);\n      assert(tx.next.includes('Safe'));\n      const row = CHAIN_PARAMS.find(row => row.key === key);\n      assert.match(row.label, /Emergency.*legacy.*base tax/);\n      assert.match(row.wall, /all four.*zero/);\n      assert.match(row.why, /surge.*opening/);\n      assert.equal(row.mirror, undefined, 'No retired tax policy is presented as a current-market mirror');\n      assert.equal(row.relation, undefined);\n      delete process.env[env];\n      await assert.rejects(() => buildParamTx(key, zeros), /verify the existing deployment.*do not deploy/i);\n      process.env[env] = tx.to;\n      for (const field of fields)\n        await assert.rejects(() => buildParamTx(key, { ...zeros, [field]: 1 }), /only supports all-zero emergency/);\n      for (const values of [{}, { ...zeros, bps: -1 }, { ...zeros, bps: true },\n        { ...zeros, bps: '0x4444444444444444444444444444444444444444' }])\n        await assert.rejects(() => buildParamTx(key, values));\n    }\n    assert(!CHAIN_PARAMS.some(row => row.key === 'omr.pair'));\n    await assert.rejects(() => buildParamTx('omr.pair', { pair: process.env.OMR_ADDRESS, isPair: false }), /retired market parameter/);\n    await assert.rejects(() => buildParamTx('omr.pair', {}), /retired market parameter/);\n  } finally {\n    if (priorOmr === undefined) delete process.env.OMR_ADDRESS; else process.env.OMR_ADDRESS = priorOmr;\n    if (priorHook === undefined) delete process.env.OMERTA_HOOK_ADDRESS; else process.env.OMERTA_HOOK_ADDRESS = priorHook;\n  }\n}\n\n// ── IT CANNOT SIGN, AND IT MUST NOT BECOME ABLE TO ───────────────────────────────────────────────\n{\n",
+          "baseline": "import assert from 'node:assert';\nimport fs from 'node:fs';\nimport { CHAIN_PARAMS, readChainParams, buildParamTx } from '../src/chainparams.js';\nimport { BONDS, SELL_TAX, MINT_TRANCHES } from '../src/rules.js';\n\n// ── IT CANNOT SIGN, AND IT MUST NOT BECOME ABLE TO ───────────────────────────────────────────────\n{\n"
+        },
+        {
+          "at": 6024,
+          "current": "// write the contract — what it does, what breaks, what the contract itself refuses, and the setter.\n{\n  assert(CHAIN_PARAMS.length >= 15, `the registry covers ${CHAIN_PARAMS.length} parameters — too few to be the control room`);\n  assert.deepEqual(CHAIN_PARAMS.map(row => row.key), [\n    'bond.dailyCap', 'bond.maxRate', 'bond.oracle', 'bond.recipients', 'bond.signer',\n    'genesis.price', 'hook.sellTax', 'omr.sellTax', 'omr.minter', 'fees.fees', 'fees.reroll', 'voucher.dailyCap',\n    'gear.cap', 'staking.apy', 'alchemist.ltv', 'alchemist.caps', 'transmuter.buffer',\n    'transmuter.caps', 'denari.minter',\n  ], 'Retain 17 deployed-service controls plus two zero-only emergency shortcuts');\n  const seen = new Set();\n  for (const p of CHAIN_PARAMS) {\n    assert(!seen.has(p.key), `duplicate parameter key: ${p.key}`);\n",
+          "baseline": "// write the contract — what it does, what breaks, what the contract itself refuses, and the setter.\n{\n  assert(CHAIN_PARAMS.length >= 15, `the registry covers ${CHAIN_PARAMS.length} parameters — too few to be the control room`);\n  const seen = new Set();\n  for (const p of CHAIN_PARAMS) {\n    assert(!seen.has(p.key), `duplicate parameter key: ${p.key}`);\n"
+        },
+        {
+          "at": 9398,
+          "current": "  for (const w of MINT_TRANCHES.map((t) => t.eth))\n    assert(fm.value.includes(String(w)), `the fee mirror must show published wave ${w} — the tranche boundary IS this transaction`);\n\n  // The old bond/transfer-tax relation is not current-market policy. Its setters\n  // can only turn the legacy base tax off; retained service mirrors still read live levers.\n}\n\n// ── THE CALLDATA IS RIGHT, CHECKED AGAINST A SECOND ENCODER ──────────────────────────────────────\n",
+          "baseline": "  for (const w of MINT_TRANCHES.map((t) => t.eth))\n    assert(fm.value.includes(String(w)), `the fee mirror must show published wave ${w} — the tranche boundary IS this transaction`);\n\n  // The bond-discount / sell-tax RELATION, surfaced as an alert rather than a number. At 800 vs 900\n  // an immediate flip returns 1.08 x 0.91 = 0.983 and loses money; let the discount reach the tax and\n  // bonding becomes a subsidy on selling, paid to the most motivated bypass-seeker OMR will have.\n  const hook = CHAIN_PARAMS.find((p) => p.key === 'hook.sellTax');\n  assert.equal(hook.relation(), null, 'at the shipped values a bond is a hold, so no alert fires');\n  const shipped = SELL_TAX.BPS;\n  assert(BONDS.DISCOUNT_BPS < shipped, `the discount (${BONDS.DISCOUNT_BPS}) must sit strictly below the tax (${shipped})`);\n}\n\n// ── THE CALLDATA IS RIGHT, CHECKED AGAINST A SECOND ENCODER ──────────────────────────────────────\n"
+        },
+        {
+          "at": 12572,
+          "current": "  assert.equal(board.configured, false, 'with no RPC the board reports dormant rather than erroring');\n  assert(board.why.includes('dormant'), 'and says why');\n  assert(board.rows.length === CHAIN_PARAMS.length, 'every row is still listed — the walls and mirrors do not need a chain');\n  for (const key of ['omr.pair'])\n    assert(!board.rows.some(row => row.key === key), 'Retired controls must not be advertised on the admin board');\n  assert(board.rows.every((r) => r.live === null), 'no row invents a value it could not read');\n  const withGetter = board.rows.find((r) => r.key === 'bond.dailyCap');\n  assert.equal(withGetter.hasGetter, true,\n",
+          "baseline": "  assert.equal(board.configured, false, 'with no RPC the board reports dormant rather than erroring');\n  assert(board.why.includes('dormant'), 'and says why');\n  assert(board.rows.length === CHAIN_PARAMS.length, 'every row is still listed — the walls and mirrors do not need a chain');\n  assert(board.rows.every((r) => r.live === null), 'no row invents a value it could not read');\n  const withGetter = board.rows.find((r) => r.key === 'bond.dailyCap');\n  assert.equal(withGetter.hasGetter, true,\n"
+        },
+        {
+          "at": 13416,
+          "current": "  if (saved) process.env.CHAIN_RPC_URL = saved;\n}\n\nconsole.log('✅ THE CONTROL ROOM passed — the panel retains supported deployed-service parameters and can prepare a '\n  + 'change, and is structurally incapable of executing one: no signing client, no key, no execute '\n  + 'route, so a compromised admin session is still bounded by the Safe. The calldata is decoded back '\n  + 'with an independent encoder because a human signs it believing the screen; the walls refuse a bad '\n",
+          "baseline": "  if (saved) process.env.CHAIN_RPC_URL = saved;\n}\n\nconsole.log('✅ THE CONTROL ROOM passed — the panel can read every on-chain parameter and prepare a '\n  + 'change, and is structurally incapable of executing one: no signing client, no key, no execute '\n  + 'route, so a compromised admin session is still bounded by the Safe. The calldata is decoded back '\n  + 'with an independent encoder because a human signs it believing the screen; the walls refuse a bad '\n"
+        }
+      ]
+    },
+    "test/city-district-arcs.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "c92f94070499392f704503f42e86cc4bc2d3795e",
+        "sha256": "06c9f6ed9e2252b594f20cfdcc465c789dcbbe63710a32c4839afbc482f8599f",
+        "bytes": 19378
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "a7a8069cce50a4a8375a4e16c0ff1a86474fecf2",
+        "sha256": "abb226226c451f2b92cd2a9ad4809986e25911966b4462bb2462ee31c4ff0a29",
+        "bytes": 19144
+      },
+      "inverses": [
+        {
+          "at": 0,
+          "current": "// Real HTTP authority proof; --postgres requires an explicitly owned loopback fixture.\nimport assert from 'node:assert/strict';\nimport { firstErrandProof } from './lib/first-errand-proof.js';\nimport crypto from 'node:crypto';\nimport Ajv from 'ajv';\nimport addFormats from 'ajv-formats';\n",
+          "baseline": "// Real HTTP authority proof; --postgres requires an explicitly owned loopback fixture.\nimport assert from 'node:assert/strict';\nimport crypto from 'node:crypto';\nimport Ajv from 'ajv';\nimport addFormats from 'ajv-formats';\n"
+        },
+        {
+          "at": 6416,
+          "current": "  const afterwordId = NEIGHBORHOOD_AFTERWORD_PRESENTATION.graphId;\n  assert.equal(afterwordId, 'neighborhood-afterword');\n  for (const entries of [city, CITY_QUEST_PRESENTATIONS]) {\n    assert.deepEqual(entries.filter(entry => entry.graphId !== afterwordId && entry.graphId !== 'first-errand-case-v2').map(entry => entry.graphId).sort(),\n      [...originalCityGraphIds].sort(), 'All nine original City quests retain their identities.');\n    assert.equal(entries.filter(entry => entry.graphId === afterwordId).length, 1,\n      'Exactly one Afterword follow-up joins the original catalogue.');\n    assert.equal(entries.filter(entry => entry.graphId === 'first-errand-case-v2').length, 1);\n    assert.equal(entries.length, 11);\n  }\n  assert.deepEqual(CITY_QUEST_PRESENTATIONS.find(entry => entry.graphId === afterwordId), NEIGHBORHOOD_AFTERWORD_PRESENTATION);\n  for (const presentation of CITY_QUEST_PRESENTATIONS) {\n",
+          "baseline": "  const afterwordId = NEIGHBORHOOD_AFTERWORD_PRESENTATION.graphId;\n  assert.equal(afterwordId, 'neighborhood-afterword');\n  for (const entries of [city, CITY_QUEST_PRESENTATIONS]) {\n    assert.deepEqual(entries.filter(entry => entry.graphId !== afterwordId).map(entry => entry.graphId).sort(),\n      [...originalCityGraphIds].sort(), 'All nine original City quests retain their identities.');\n    assert.equal(entries.filter(entry => entry.graphId === afterwordId).length, 1,\n      'Exactly one Afterword follow-up joins the original catalogue.');\n    assert.equal(entries.length, 10);\n  }\n  assert.deepEqual(CITY_QUEST_PRESENTATIONS.find(entry => entry.graphId === afterwordId), NEIGHBORHOOD_AFTERWORD_PRESENTATION);\n  for (const presentation of CITY_QUEST_PRESENTATIONS) {\n"
+        },
+        {
+          "at": 18152,
+          "current": "  assert.equal(replacement.historicalInstances.filter(entry => entry.graphId.startsWith('district-')).length, 6);\n  assert((await success(call(witness, 'GET', '/v1/worldgraph/inventory'))).currentCharacterItems.every(item => !item.templateId.startsWith('item:district_')),\n    'The new living character receives no predecessor keepsake or quest progress.');\n  await firstErrandProof(app);\n  console.log('city-district-arcs PASS: six actual districts, both permanent branches, native HTTP owner/location/learned-skill authority, hidden-node privacy, unique inert character keepsakes, unchanged currencies, exact replay and preserved Neighborhood action IDs' +\n    (postgres ? '; owned-schema PostgreSQL' : '; disposable pg-mem'));\n} finally {\n",
+          "baseline": "  assert.equal(replacement.historicalInstances.filter(entry => entry.graphId.startsWith('district-')).length, 6);\n  assert((await success(call(witness, 'GET', '/v1/worldgraph/inventory'))).currentCharacterItems.every(item => !item.templateId.startsWith('item:district_')),\n    'The new living character receives no predecessor keepsake or quest progress.');\n  console.log('city-district-arcs PASS: six actual districts, both permanent branches, native HTTP owner/location/learned-skill authority, hidden-node privacy, unique inert character keepsakes, unchanged currencies, exact replay and preserved Neighborhood action IDs' +\n    (postgres ? '; owned-schema PostgreSQL' : '; disposable pg-mem'));\n} finally {\n"
+        }
+      ]
+    },
+    "test/city-rpg.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "c3f67160dcd3de2658c482e99fa3d3e60ce046e1",
+        "sha256": "46d2433487382e7b8d9c33e446163a95b9d88966de58dd826267f638c7ebf6bd",
+        "bytes": 17775
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "62fe9a3f1ae87a5195e7d113c70d6b7fb560f3ec",
+        "sha256": "04c61d8a9e8c0be7ea83bfa660883f832ba648b9d69fb61f6f9b7f205d59e3e2",
+        "bytes": 17775
+      },
+      "inverses": [
+        {
+          "at": 1329,
+          "current": "  { id: 'ask', task: 'mystery:neighborhood-ask', interaction: 'inspect_neighborhood_delivery',\n    other: 'mystery:neighborhood-listen', evidence: 'evidence:neighborhood-route' },\n];\nassert.equal(report.packages, 27);\nassert.equal(report.nodes, 229);\nassert.equal(NEIGHBORHOOD_INITIATION_PACKAGE.nodes.length, 9, 'The original newcomer case remains nine nodes.');\nassert.equal(report.economyPolicy.omrAuthorityPaths, 0);\nassert.equal(report.economyPolicy.cashRewardSourcePaths, 0);\n",
+          "baseline": "  { id: 'ask', task: 'mystery:neighborhood-ask', interaction: 'inspect_neighborhood_delivery',\n    other: 'mystery:neighborhood-listen', evidence: 'evidence:neighborhood-route' },\n];\nassert.equal(report.packages, 25);\nassert.equal(report.nodes, 193);\nassert.equal(NEIGHBORHOOD_INITIATION_PACKAGE.nodes.length, 9, 'The original newcomer case remains nine nodes.');\nassert.equal(report.economyPolicy.omrAuthorityPaths, 0);\nassert.equal(report.economyPolicy.cashRewardSourcePaths, 0);\n"
+        }
+      ]
+    },
     "test/client-shell-browser.js": {
       "current": {
         "mode": "100644",
@@ -828,9 +1199,9 @@ export const AGE_REMOVAL_SOURCE = freeze({
     "test/hardening.js": {
       "current": {
         "mode": "100644",
-        "blob": "c6dd6e3613d7cc4b3ab5dbd62041d1ece87ff0eb",
-        "sha256": "cba4c8e4c4c5ab7936a32cb2642db4887b1c5e0cae139b51ef0f6b77b3028eeb",
-        "bytes": 142355
+        "blob": "cad9cb6e2aec82d5bc45fb83c7ba88cac36efe83",
+        "sha256": "48fd1cd0d242e6abf99f21f2da6fa4a76c8a565918bc61539b4607aa4a14b633",
+        "bytes": 143070
       },
       "baseline": {
         "mode": "100644",
@@ -858,6 +1229,11 @@ export const AGE_REMOVAL_SOURCE = freeze({
           "at": 79076,
           "current": "    r = await call('POST', '/v1/auth/x/start', { token: rival.token, body: {} });\n    state = new URL(r.body.url).searchParams.get('state');\n    cb = await app.inject({ method: 'GET', url: `/v1/auth/x/callback?code=ok&state=${state}`,\n      headers: { cookie: `omerta_oauth=${state}` } });\n    assert(cb.headers.location.includes('#autherr=linked_elsewhere'), 'one X account, one street — the collision is clean');\n    // (3) a transient X failure during the exchange is a clean retryable x_busy, never a 500\n    xmock.token = () => jres(500, {});\n    r = await call('POST', '/v1/auth/x/start', { body: {} });\n    state = new URL(r.body.url).searchParams.get('state');\n    cb = await app.inject({ method: 'GET', url: `/v1/auth/x/callback?code=ok&state=${state}`,\n      headers: { cookie: `omerta_oauth=${state}` } });\n    assert(cb.headers.location.includes('#autherr=x_busy'), 'an X outage mid-exchange reads as busy, not broken');\n    // (4) verifyPostUp semantics: transient ≠ definitive (an outage must NEVER read as \"post gone\")\n    process.env.SOCIAL_VERIFY_MODE = 'live';\n",
           "baseline": "    r = await call('POST', '/v1/auth/x/start', { token: rival.token, body: {} });\n    state = new URL(r.body.url).searchParams.get('state');\n    cb = await app.inject({ method: 'GET', url: `/v1/auth/x/callback?code=ok&state=${state}`,\n      headers: { cookie: `omerta_oauth=${state}; ${ageCookie}` } });\n    assert(cb.headers.location.includes('#autherr=linked_elsewhere'), 'one X account, one street — the collision is clean');\n    // (3) a transient X failure during the exchange is a clean retryable x_busy, never a 500\n    xmock.token = () => jres(500, {});\n    r = await call('POST', '/v1/auth/x/start', { body: {} });\n    state = new URL(r.body.url).searchParams.get('state');\n    cb = await app.inject({ method: 'GET', url: `/v1/auth/x/callback?code=ok&state=${state}`,\n      headers: { cookie: `omerta_oauth=${state}; ${ageCookie}` } });\n    assert(cb.headers.location.includes('#autherr=x_busy'), 'an X outage mid-exchange reads as busy, not broken');\n    // (4) verifyPostUp semantics: transient ≠ definitive (an outage must NEVER read as \"post gone\")\n    process.env.SOCIAL_VERIFY_MODE = 'live';\n"
+        },
+        {
+          "at": 117413,
+          "current": "// This is the whole silent-failure class the drift monitor exists to catch, aimed at the monitor itself.\n{\n  const { webhookText } = await import('../src/invariants.js');\n  const { CHAIN_PARITY_NOTE } = await import('../src/worker.js');\n  assert.match(CHAIN_PARITY_NOTE || '', /legacy and account-service deployments/,\n    'Parity alerts must identify their deployment scope rather than present retired taxes as current-market policy');\n  assert.match(CHAIN_PARITY_NOTE, /not the current market manager/);\n  assert.match(CHAIN_PARITY_NOTE, /preserved obligations/);\n  assert(!/the fix is the ENV|enable.*tax/i.test(CHAIN_PARITY_NOTE),\n    'An observational warning must not prescribe enabling or changing legacy tax configuration');\n  assert.match(readFileSync('src/worker.js', 'utf8'),\n    /name: 'chain parity', mismatches: sp.mismatches,\\s+note: CHAIN_PARITY_NOTE/,\n    'The worker must pass the scoped note to the real alert payload');\n  const split = webhookText('split', [{ name: 'chain parity', mismatches: [\n    { what: 'OmertaBond.polBps', onchain: 7500, backend: 6500 },\n    { what: 'OmertaFees.mintFee', onchain: '5000000000000000', backend: '3000000000000000' },\n    { what: 'OmertaFees.mintDevBps', onchain: null, backend: 10000 },\n  ], note: CHAIN_PARITY_NOTE }]);\n  assert(split.includes('OmertaBond.polBps: on-chain 7500 vs backend 6500'));\n  assert(split.includes('5000000000000000 vs backend 3000000000000000'));\n  assert(split.includes('on-chain null vs backend 10000'));\n  assert(split.includes(CHAIN_PARITY_NOTE));\n  assert(!split.includes('[object Object]'));\n  assert(webhookText('backup', [{ name: 'nested', detail: { archive: 'off' } }])\n    .includes('detail={\"archive\":\"off\"}'), 'other nested diagnostics remain readable');\n",
+          "baseline": "// This is the whole silent-failure class the drift monitor exists to catch, aimed at the monitor itself.\n{\n  const { webhookText } = await import('../src/invariants.js');\n  const split = webhookText('split', [{ name: 'chain parity', mismatches: [\n    { what: 'OmertaBond.polBps', onchain: 7500, backend: 6500 },\n    { what: 'OmertaFees.mintFee', onchain: '5000000000000000', backend: '3000000000000000' },\n    { what: 'OmertaFees.mintDevBps', onchain: null, backend: 10000 },\n  ], note: 'Check the active deployment configuration.' }]);\n  assert(split.includes('OmertaBond.polBps: on-chain 7500 vs backend 6500'));\n  assert(split.includes('5000000000000000 vs backend 3000000000000000'));\n  assert(split.includes('on-chain null vs backend 10000'));\n  assert(split.includes('Check the active deployment configuration.'));\n  assert(!split.includes('[object Object]'));\n  assert(webhookText('backup', [{ name: 'nested', detail: { archive: 'off' } }])\n    .includes('detail={\"archive\":\"off\"}'), 'other nested diagnostics remain readable');\n"
         }
       ]
     },
@@ -1215,6 +1591,37 @@ export const AGE_REMOVAL_SOURCE = freeze({
         }
       ]
     },
+    "test/staged-crew-missions-api.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "7663b498079c6d094e42fd98a81057694fae9c17",
+        "sha256": "d9f009f371f4a512d0ddb23c7fd7fde60a117af4945e72e521c883ce28d26f1b",
+        "bytes": 25710
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "ab5dd961d4092f925537fac98c3ac03fd886a431",
+        "sha256": "8a1df6bd7009aebaed4646bd856d4c23bedb513b3194f934a2ce2fe878f12e0a",
+        "bytes": 17619
+      },
+      "inverses": [
+        {
+          "at": 171,
+          "current": "import Ajv from 'ajv';\nimport addFormats from 'ajv-formats';\nimport { STAGED_CREW_MISSIONS_PACKAGE as mission } from '../src/content/staged-crew-missions.js';\nimport { CREW_CROSSCURRENT_PACKAGE as crosscurrent } from '../src/content/crew-crosscurrent.js';\n\nconst postgres = process.argv.includes('--postgres');\nlet app, admin, namespace, createdSchema = false;\n",
+          "baseline": "import Ajv from 'ajv';\nimport addFormats from 'ajv-formats';\nimport { STAGED_CREW_MISSIONS_PACKAGE as mission } from '../src/content/staged-crew-missions.js';\n\nconst postgres = process.argv.includes('--postgres');\nlet app, admin, namespace, createdSchema = false;\n"
+        },
+        {
+          "at": 9170,
+          "current": "    assert(invitation.available); await success(call(players[index], 'POST', invitation.path, invitation.body));\n  }\n  assert.equal((await shared(players[0])).status, 'active');\n  await app.pool.query('DELETE FROM player_intel WHERE owner_account=$1', [players[0].account]);\n  const unknownRoles = await shared(players[0]);\n  assert(unknownRoles.roles.find(role => role.roleId === 'planner').occupant,\n    'Role projections identify self without revealing another player.');\n  assert.equal(unknownRoles.roles.find(role => role.roleId === 'planner').occupant.self, true);\n  assert.equal(unknownRoles.roles.find(role => role.roleId === 'lookout').occupant.name, null);\n  assert.deepEqual(unknownRoles.roles.filter(role => role.turn).map(role => role.roleId), ['planner']);\n  assert.equal(Number((await app.pool.query('SELECT COUNT(*) n FROM player_intel WHERE owner_account=$1', [players[0].account])).rows[0].n), 0,\n    'Polling role occupants is read-only and never grants notebook facts.');\n  await success(call(players[0], 'POST', '/v1/streets/' + players[1].character + '/meet', {}));\n  const learned = (await shared(players[0])).roles.find(role => role.roleId === 'lookout').occupant;\n  assert.equal(learned.name, players[1].name); assert(learned.observedAt);\n  await app.pool.query('UPDATE characters SET name=$2 WHERE id=$1', [players[1].character, 'Changed private name']);\n  assert.deepEqual((await shared(players[0])).roles.find(role => role.roleId === 'lookout').occupant, learned,\n    'A shared role uses the viewer-earned snapshot, not a new live name.');\n  assert.equal((await shared(players[2])).roles.find(role => role.roleId === 'lookout').occupant.name, null);\n  const before = await Promise.all(players.map(async player => ({\n    character: (await app.pool.query('SELECT cash,bank,heat,ammo,respect FROM characters WHERE id=$1', [player.character])).rows[0],\n    omr: (await app.pool.query('SELECT omr FROM account_persistent WHERE account_id=$1', [player.account])).rows[0],\n",
+          "baseline": "    assert(invitation.available); await success(call(players[index], 'POST', invitation.path, invitation.body));\n  }\n  assert.equal((await shared(players[0])).status, 'active');\n  const before = await Promise.all(players.map(async player => ({\n    character: (await app.pool.query('SELECT cash,bank,heat,ammo,respect FROM characters WHERE id=$1', [player.character])).rows[0],\n    omr: (await app.pool.query('SELECT omr FROM account_persistent WHERE account_id=$1', [player.account])).rows[0],\n"
+        },
+        {
+          "at": 17952,
+          "current": "  const abandoned = await success(call(second.players[0], 'POST', otherBase + '/contributions/' + encodeURIComponent(steps[0].id), body(steps[0])));\n  assert.equal(abandoned.status, 'abandoned');\n  assert.equal((await app.pool.query('SELECT id FROM item_instances WHERE template_id=$1', ['item:quiet_pier_manifest'])).rows.length, 1);\n  // Four real route/signal combinations; every driver chooses between two distinct consequences.\n  // No global numeric ordering may make an unchosen branch a prerequisite.\n  assert(Object.isFrozen(crosscurrent));\n  assert(crosscurrent.nodes.filter(node => node.type === 'operation_step').every(node => node.metadata.order === undefined));\n  for (const [route, signal, escape, alternate] of [\n    ['quay', 'wait', 'barge', 'towpath'], ['quay', 'blue', 'mooring', 'gate'],\n    ['canal', 'wait', 'oars', 'drift'], ['canal', 'blue', 'towline', 'lockwall'],\n  ]) {\n    const group = await party('Cross ' + route + ' ' + signal), team = group.players;\n    await completeDocks(team[0]);\n    const openedCross = await success(call(team[0], 'POST', '/v1/worldgraph/operations/' + crosscurrent.id + '/operation%3Acrosscurrent-run/open', {}));\n    const path = '/v1/worldgraph/operations/' + openedCross.operationId;\n    for (const [index, roleId] of ['planner', 'lookout', 'driver'].entries()) await success(call(team[index], 'POST', path + '/roles/' + roleId, {}));\n    const unchanged = await Promise.all(team.map(async member => ({\n      cash: (await app.pool.query('SELECT cash,bank,heat,health,respect FROM characters WHERE id=$1', [member.character])).rows[0],\n      items: (await success(call(member, 'GET', '/v1/worldgraph/inventory'))).items,\n      moneyEntries: Number((await app.pool.query('SELECT COUNT(*) n FROM transactions WHERE account_id=$1 OR character_id=$2', [member.account, member.character])).rows[0].n),\n    })));\n    const perform = async (index, key) => {\n      const board = await success(call(team[index], 'GET', path + '/role'));\n      const action = board.nodes.find(node => node.id === 'operation:crosscurrent-' + key)?.actions[0];\n      assert(action?.available, key + ' must be issued by the current actual role board');\n      const receiptKey = crypto.randomUUID(), committed = await success(call(team[index], 'POST', action.path, action.body, receiptKey));\n      assert.deepEqual(await success(call(team[index], 'POST', action.path, action.body, receiptKey)), committed);\n      return committed;\n    };\n    await perform(0, route);\n    const otherRoute = route === 'quay' ? 'canal' : 'quay';\n    assert.equal((await denied(call(team[0], 'POST', path + '/contributions/operation%3Acrosscurrent-' + otherRoute,\n      { interactionId: 'crosscurrent:' + otherRoute }))).error, 'operation_branch_closed');\n    await perform(0, 'brief'); await perform(1, 'read-' + route);\n    const roleClue = crosscurrent.nodes.find(node => node.id === 'evidence:crosscurrent-' + route).metadata.privateEvidence;\n    assert(JSON.stringify(await success(call(team[1], 'GET', path + '/role'))).includes(roleClue));\n    assert(!JSON.stringify(await success(call(team[0], 'GET', path + '/role'))).includes(roleClue));\n    assert(!JSON.stringify(await success(call(team[2], 'GET', path))).includes(roleClue));\n    await perform(1, signal); await perform(1, 'signal'); await perform(2, 'read-escape');\n    const driverBoard = await success(call(team[2], 'GET', path + '/role'));\n    for (const key of [escape, alternate]) assert(driverBoard.nodes.find(node => node.id === 'operation:crosscurrent-' + key).actions[0].available);\n    assert.equal(driverBoard.nodes.filter(node => node.actions?.some(action => action.available)).length, 2);\n    await perform(2, escape);\n    assert.equal((await denied(call(team[2], 'POST', path + '/contributions/operation%3Acrosscurrent-' + alternate,\n      { interactionId: 'crosscurrent:' + alternate }))).error, 'operation_branch_closed');\n    await perform(2, 'finish');\n    const completionKey = crypto.randomUUID(), result = await success(call(team[0], 'POST', path + '/complete', {}, completionKey));\n    assert.equal(result.status, 'completed'); assert.deepEqual(result.effects, [{ kind: 'status_award' }]);\n    assert.deepEqual(await success(call(team[0], 'POST', path + '/complete', {}, completionKey)), result);\n    const final = await success(call(team[0], 'GET', path)); assert(validateShared(final), JSON.stringify(validateShared.errors));\n    assert.equal(final.nodes.find(node => node.id === 'operation:crosscurrent-' + escape).status, 'completed');\n    assert.equal(final.nodes.find(node => node.id === 'operation:crosscurrent-' + alternate).status, 'excluded');\n    assert.deepEqual(await Promise.all(team.map(async member => ({\n      cash: (await app.pool.query('SELECT cash,bank,heat,health,respect FROM characters WHERE id=$1', [member.character])).rows[0],\n      items: (await success(call(member, 'GET', '/v1/worldgraph/inventory'))).items,\n      moneyEntries: Number((await app.pool.query('SELECT COUNT(*) n FROM transactions WHERE account_id=$1 OR character_id=$2', [member.account, member.character])).rows[0].n),\n    }))), unchanged, 'Branching narrative outcomes create no cash, item or stat faucet.');\n  }\n  console.log('Crosscurrent PASS: all four route/signal combinations, eight issued driver alternatives, actual private complementary clues, three-role convergence, closed alternatives, immutable exact-key replay, no economic mutations; role notebook snapshots never live names or GET-earned intel');\n  const validateCatalogue = ajv.compile({ $ref: '#/components/schemas/WorldGraphOperationDiscovery', components: { schemas } });\n  const completedBoard = await success(call(players[2], 'GET', '/v1/worldgraph/operations'));\n  assert(validateCatalogue(completedBoard), JSON.stringify(validateCatalogue.errors));\n  const saved = completedBoard.completedOperations.find(item => item.operationId === opened.operationId);\n  assert.equal(saved.title, 'The Quiet Pier Run'); assert.equal(saved.roleTitle, 'Driver'); assert(saved.completedAt);\n  assert(saved.milestones.includes('Complete the Getaway'));\n  assert(privateTexts.every(text => !JSON.stringify(saved).includes(text)));\n  assert(![first.crewId, ...players.flatMap(player => [player.account, player.character])].some(id => JSON.stringify(saved).includes(id)));\n  await success(call(players[2], 'POST', '/v1/crew/leave', {}));\n  assert.deepEqual((await success(call(players[2], 'GET', '/v1/worldgraph/operations'))).completedOperations.find(item => item.operationId === opened.operationId), saved,\n    'A confirmed private accomplishment survives leaving the Crew; it does not grant access to its old live board.');\n  await denied(call(players[2], 'GET', base));\n  assert.deepEqual((await success(call(outsider, 'GET', '/v1/worldgraph/operations'))).completedOperations, []);\n  console.log('staged-crew-missions-api PASS: actual Crew invite/accept and mystery bridge, consenting distinct roles, current-district refusal/canonical travel, role-private and ghost denial, issued stage order, same-key contributions, closing rollback/concurrent one-winner/exact replay, durable driver-only inert artifact, unchanged currencies and Crew-leave abandonment' +\n    (postgres ? '; owned-schema PostgreSQL' : '; disposable pg-mem'));\n} finally {\n",
+          "baseline": "  const abandoned = await success(call(second.players[0], 'POST', otherBase + '/contributions/' + encodeURIComponent(steps[0].id), body(steps[0])));\n  assert.equal(abandoned.status, 'abandoned');\n  assert.equal((await app.pool.query('SELECT id FROM item_instances WHERE template_id=$1', ['item:quiet_pier_manifest'])).rows.length, 1);\n  console.log('staged-crew-missions-api PASS: actual Crew invite/accept and mystery bridge, consenting distinct roles, current-district refusal/canonical travel, role-private and ghost denial, issued stage order, same-key contributions, closing rollback/concurrent one-winner/exact replay, durable driver-only inert artifact, unchanged currencies and Crew-leave abandonment' +\n    (postgres ? '; owned-schema PostgreSQL' : '; disposable pg-mem'));\n} finally {\n"
+        }
+      ]
+    },
     "test/ux-community-browser.js": {
       "current": {
         "mode": "100644",
@@ -1366,6 +1773,32 @@ export const AGE_REMOVAL_SOURCE = freeze({
           "at": 11324,
           "current": "  });\n  const pocket = await pocketReady.jsonValue();\n  assert.equal(pocket.terms, 1); assert.equal(pocket.rows, 1); assert.equal(pocket.matchingTerms, 1, 'mobile reuses the original action and cost terms once');\n  assert.ok(pocket.bottom <= pocket.barTop + 2 && pocket.z < 20, `mobile action controls remain above bottom navigation and below dialogs: ${JSON.stringify(pocket)}`);\n  await noOverflow(page, 'mobile active operation');\n  await page.screenshot({ path: path.join(artifacts, 'ux-action-mobile.png'), fullPage: false });\n  // Change account in the same browser store: preferences keyed by account cannot carry over.\n",
           "baseline": "  });\n  const pocket = await pocketReady.jsonValue();\n  assert.equal(pocket.terms, 1); assert.equal(pocket.rows, 1); assert.equal(pocket.matchingTerms, 1, 'mobile reuses the original action and cost terms once');\n  assert.ok(pocket.bottom <= pocket.barTop + 2 && pocket.z < 20, 'mobile action controls remain above bottom navigation and below dialogs');\n  await noOverflow(page, 'mobile active operation');\n  await page.screenshot({ path: path.join(artifacts, 'ux-action-mobile.png'), fullPage: false });\n  // Change account in the same browser store: preferences keyed by account cannot carry over.\n"
+        }
+      ]
+    },
+    "test/ux-feedback.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "021eef834c6cbebec37b77ab1483f2e5d101405c",
+        "sha256": "0b7f98eecc791775d6dd89a6d7896dc22d1fcca7d615c556f2dbd027a77d2427",
+        "bytes": 10727
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "21ff6035019901c707a7aee41ab0dc78d8b58ffc",
+        "sha256": "4258d965a394340cbc1837d978e087db0286208e5ce51818caa946066fdf5cc1",
+        "bytes": 10391
+      },
+      "inverses": [
+        {
+          "at": 7905,
+          "current": "  constructor(src) { this.src = src; this.volume = 1; this.paused = true; audioInstances.push(this); }\n  play() { this.paused = false; return Promise.resolve(); }\n  pause() { this.paused = true; }\n  removeAttribute(name) { if (name === 'src') this.src = ''; }\n  load() {}\n}\nconst audioContext = vm.createContext({ setTimeout, clearTimeout, addEventListener() {}, Audio: FakeAudio, document: audioDocument, navigator: { connection: {} }, SFX: { enabled: () => audioEnabled },\n  feedbackPreferences: () => ({ ambience: true }), MOTION: { beds: new Set(['bed-streets', 'bed-docks']) },\n  setInterval(callback) { audioTimers.set(++audioTimerId, callback); return audioTimerId; }, clearInterval(id) { audioTimers.delete(id); } });\nvm.runInContext(html.slice(ambientStart, ambientEnd) + '\\nglobalThis.audioEngine = AMBIENT;', audioContext);\n",
+          "baseline": "  constructor(src) { this.src = src; this.volume = 1; this.paused = true; audioInstances.push(this); }\n  play() { this.paused = false; return Promise.resolve(); }\n  pause() { this.paused = true; }\n}\nconst audioContext = vm.createContext({ Audio: FakeAudio, document: audioDocument, navigator: { connection: {} }, SFX: { enabled: () => audioEnabled },\n  feedbackPreferences: () => ({ ambience: true }), MOTION: { beds: new Set(['bed-streets', 'bed-docks']) },\n  setInterval(callback) { audioTimers.set(++audioTimerId, callback); return audioTimerId; }, clearInterval(id) { audioTimers.delete(id); } });\nvm.runInContext(html.slice(ambientStart, ambientEnd) + '\\nglobalThis.audioEngine = AMBIENT;', audioContext);\n"
+        },
+        {
+          "at": 9588,
+          "current": "assert.equal(audioInstances[1].volume, .11 * .6); assert.equal(audioTimers.size, 0);\nassert.equal(audioContext.audioEngine.soundscape({ enabled: true, key: 'unverified-file', volume: 100 }), false, 'only boot-verified audio assets can be selected');\naudioDocument.hidden = true; audioListeners.visibilitychange(); assert.equal(audioInstances[1].paused, true);\naudioDocument.hidden = false; audioListeners.visibilitychange(); await Promise.resolve(); advanceAudio(); assert.equal(audioInstances.length, 3); assert.equal(audioInstances[1].paused, true, 'return never revives the released element'); assert.equal(audioInstances[2].paused, false); assert.equal(audioInstances[2].volume, .11 * .6);\naudioEnabled = false; audioContext.audioEngine.sync(); assert.equal(audioInstances[2].paused, true, 'the site master mute immediately stops the custom room bed'); assert.equal(audioTimers.size, 0);\nconsole.log('UX soundscape bridge: gesture, verified assets, independent crossfades, volume, hidden page and master mute passed.');\nconst { runJourneyModelProof } = await import('./lib/ux-journeys.js');\nawait runJourneyModelProof();\n",
+          "baseline": "assert.equal(audioInstances[1].volume, .11 * .6); assert.equal(audioTimers.size, 0);\nassert.equal(audioContext.audioEngine.soundscape({ enabled: true, key: 'unverified-file', volume: 100 }), false, 'only boot-verified audio assets can be selected');\naudioDocument.hidden = true; audioListeners.visibilitychange(); assert.equal(audioInstances[1].paused, true);\naudioDocument.hidden = false; audioListeners.visibilitychange(); await Promise.resolve(); advanceAudio(); assert.equal(audioInstances[1].paused, false);\naudioEnabled = false; audioContext.audioEngine.sync(); advanceAudio(); assert.equal(audioInstances[1].paused, true, 'the site master mute stops the custom room bed');\nconsole.log('UX soundscape bridge: gesture, verified assets, independent crossfades, volume, hidden page and master mute passed.');\nconst { runJourneyModelProof } = await import('./lib/ux-journeys.js');\nawait runJourneyModelProof();\n"
         }
       ]
     },
@@ -1525,6 +1958,58 @@ export const AGE_REMOVAL_SOURCE = freeze({
           "at": 12868,
           "current": "    }\n    // The onboarding landing can visit Home during reload, selecting the default\n    // planning view. Reopen Trials before inspecting the persisted practice run.\n    if (!await table.evaluate(node => node.open)) await table.locator(':scope > summary').click();\n    await table.locator('[data-tactics-view=\"trials\"]').click();\n    await page.waitForFunction(() => document.querySelectorAll('#tab-streets [data-ux-tactics] [data-trial-card]').length === 3);\n  };\n",
           "baseline": "    }\n    // The onboarding landing can visit Home during reload, selecting the default\n    // planning view. Reopen Trials before inspecting the persisted practice run.\n    await table.locator('[data-tactics-view=\"trials\"]').click();\n    await page.waitForFunction(() => document.querySelectorAll('#tab-streets [data-ux-tactics] [data-trial-card]').length === 3);\n  };\n"
+        }
+      ]
+    },
+    "test/world-fieldwork-browser.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "c490ff70b1669ded7ce9eaf62b4e670e8c8642b1",
+        "sha256": "830c759348d713e7ed94d0fece2b5d9a4da1bcd893d1d584eb23c7fbfbea878d",
+        "bytes": 40283
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "0136105841d2ccd4ab67ce309ee0d083b2fa6a1c",
+        "sha256": "dc53e82991aac9a78f22570834498fb100f22073ae3f79b6e07086a9f53470f5",
+        "bytes": 40093
+      },
+      "inverses": [
+        {
+          "at": 29979,
+          "current": "  await refresh();\n  await page.getByRole('button', { name: 'Complete operation', exact: true }).click(); await confirm();\n  assert.equal((await call('GET', '/v1/worldgraph/operations/' + operationId, players[0])).status, 'completed', 'The closer completes the real four-account operation.');\n  assert.equal(await page.getByRole('heading', { name: 'Your accomplishments', exact: true }).count(), 1,\n    'The confirmed private completion is accessible in the current Fieldwork UI.');\n  const completedBlockers = await page.locator('.fieldwork-role .fieldwork-node .fieldwork-blockers li').allTextContents();\n  assert.equal(new Set(completedBlockers).size, completedBlockers.length, 'Completed-role blocker copy is displayed once.');\n\n",
+          "baseline": "  await refresh();\n  await page.getByRole('button', { name: 'Complete operation', exact: true }).click(); await confirm();\n  assert.equal((await call('GET', '/v1/worldgraph/operations/' + operationId, players[0])).status, 'completed', 'The closer completes the real four-account operation.');\n  const completedBlockers = await page.locator('.fieldwork-role .fieldwork-node .fieldwork-blockers li').allTextContents();\n  assert.equal(new Set(completedBlockers).size, completedBlockers.length, 'Completed-role blocker copy is displayed once.');\n\n"
+        }
+      ]
+    },
+    "test/worldgraph-validation.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "88acc0f2220f194b42ad3411684ad6aa4ffcf363",
+        "sha256": "0ca4110a6a87b8f293eb924873e6dbfc9de4f94b80f6dcbdbc2416c55e6d1810",
+        "bytes": 82632
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "c73f08efbd515a6dbb4037de18a1b63defb6be4e",
+        "sha256": "3c5db55fc8f1cb0fe42e2750661ff1084d42e96aa21efe0cace570b825aa7f8f",
+        "bytes": 82460
+      },
+      "inverses": [
+        {
+          "at": 42052,
+          "current": "  'city-careful-negotiation', 'city-sealed-record', 'city-rotating-account-0',\n  'city-rotating-account-1', 'city-rotating-account-2', 'city-rotating-account-3',\n  'neighborhood-broadcast', 'neighborhood-afterword', 'property-investigation', 'equipment-recovery',\n  'first-errand-case-v2', 'crew-crosscurrent-v1',\n]);\nassert.equal(PHASE1_WORLD_GRAPH_PACKAGES.length, 27);\nassert.equal(phase1First.packages, 27);\nassert.equal(phase1First.nodes, 229);\nassert.equal(phase1First.recipes, 5);\nassert.equal(phase1First.omrRewards, 0, 'the Phase 1 graph cannot mint OMR');\nassert.deepEqual(phase1First.executableDefinitions, {\n",
+          "baseline": "  'city-careful-negotiation', 'city-sealed-record', 'city-rotating-account-0',\n  'city-rotating-account-1', 'city-rotating-account-2', 'city-rotating-account-3',\n  'neighborhood-broadcast', 'neighborhood-afterword', 'property-investigation', 'equipment-recovery',\n]);\nassert.equal(PHASE1_WORLD_GRAPH_PACKAGES.length, 25);\nassert.equal(phase1First.packages, 25);\nassert.equal(phase1First.nodes, 193);\nassert.equal(phase1First.recipes, 5);\nassert.equal(phase1First.omrRewards, 0, 'the Phase 1 graph cannot mint OMR');\nassert.deepEqual(phase1First.executableDefinitions, {\n"
+        },
+        {
+          "at": 79218,
+          "current": "    fs.readFileSync(path.join(root, 'src', 'content', file), 'utf8'),\n  )).sort();\nassert.deepEqual(packageSources, [\n  'automotive-salvage.js', 'belladonna.js', 'city-world-opportunities.js', 'company-production-quality.js', 'core-materials.js', 'crew-crosscurrent.js', 'district-story-arcs.js', 'equipment-recovery.js', 'first-errand-case.js', 'neighborhood-afterword.js', 'neighborhood-broadcast.js', 'neighborhood-initiation.js', 'phase1.js', 'property-investigation.js', 'staged-crew-missions.js',\n], 'every production world-graph package module must be present in the canonical Phase 1 manifest');\nconst phase1RuntimeFiles = [\n  'src/items.js', 'src/crafting.js', 'src/mysteries.js', 'src/operations.js',\n",
+          "baseline": "    fs.readFileSync(path.join(root, 'src', 'content', file), 'utf8'),\n  )).sort();\nassert.deepEqual(packageSources, [\n  'automotive-salvage.js', 'belladonna.js', 'city-world-opportunities.js', 'company-production-quality.js', 'core-materials.js', 'district-story-arcs.js', 'equipment-recovery.js', 'neighborhood-afterword.js', 'neighborhood-broadcast.js', 'neighborhood-initiation.js', 'phase1.js', 'property-investigation.js', 'staged-crew-missions.js',\n], 'every production world-graph package module must be present in the canonical Phase 1 manifest');\nconst phase1RuntimeFiles = [\n  'src/items.js', 'src/crafting.js', 'src/mysteries.js', 'src/operations.js',\n"
+        },
+        {
+          "at": 80309,
+          "current": "  'src/content/neighborhood-initiation.js', 'src/content/neighborhood-initiation.json',\n  'src/content/neighborhood-broadcast.js',\n  'src/content/neighborhood-afterword.js',\n  'src/content/first-errand-case.js', 'src/content/crew-crosscurrent.js',\n  'src/content/property-investigation.js',\n  'src/content/district-story-arcs.js', 'src/content/city-quest-presentation.js',\n  'src/content/staged-crew-missions.js', 'src/content/city-world-opportunities.js',\n",
+          "baseline": "  'src/content/neighborhood-initiation.js', 'src/content/neighborhood-initiation.json',\n  'src/content/neighborhood-broadcast.js',\n  'src/content/neighborhood-afterword.js',\n  'src/content/property-investigation.js',\n  'src/content/district-story-arcs.js', 'src/content/city-quest-presentation.js',\n  'src/content/staged-crew-missions.js', 'src/content/city-world-opportunities.js',\n"
         }
       ]
     },
@@ -1767,6 +2252,12 @@ export const AGE_REMOVAL_SOURCE = freeze({
     }
   },
   "additions": {
+    "docs/contract-retirement-20261109.md": {
+      "mode": "100644",
+      "blob": "5d5dbaf4cb1849cafbbae5a9bafdd7c19f0ee0ed",
+      "sha256": "dfba631b09602d6eaf7696980164033f7912a94958f92212d39d2cd9ced32a70",
+      "bytes": 7848
+    },
     "docs/superpowers/plans/2026-11-09-business-deadlines.md": {
       "mode": "100644",
       "blob": "bf61f42a0ca68abd77cdd0675c2979f1f43be146",
@@ -1821,11 +2312,53 @@ export const AGE_REMOVAL_SOURCE = freeze({
       "sha256": "cc7cc7e2f53d5db0235ab2226e85fc6e91655161573b39813b41bb00e5919674",
       "bytes": 188
     },
+    "src/content/crew-crosscurrent.js": {
+      "mode": "100644",
+      "blob": "f3c4434f5936a84b76f28ca1c2a552e2cc532efe",
+      "sha256": "e6cd8e7680a4d8e6dcdda62d464a72e4997ebea309b7b571c0f4ed020a8e1772",
+      "bytes": 7630
+    },
+    "src/content/first-errand-case.js": {
+      "mode": "100644",
+      "blob": "efc09fdbec7bbcf2edb2fcc2935c8eb7c3d2f50b",
+      "sha256": "9b608d75e3e08f173fb2523ba3c824131b2480397ff34afbcdd8c5aa1cacd701",
+      "bytes": 7839
+    },
+    "test/ambient-lifecycle-browser.js": {
+      "mode": "100644",
+      "blob": "27f0167ea0273893b8827abece6c0dab1fb014d1",
+      "sha256": "f99409ec393916ec371d9e86a45d6e44b3906e4b0f4c51e9378f1ac940cf2756",
+      "bytes": 7183
+    },
+    "test/ambient-lifecycle.js": {
+      "mode": "100644",
+      "blob": "d6514da19f26e211544b37c5f12202a5032dd84e",
+      "sha256": "6559f61c2859bb11f647be813da3a51b557fed0ab002151cf21bd572eda38e5d",
+      "bytes": 9667
+    },
+    "test/city-case-story-browser.js": {
+      "mode": "100644",
+      "blob": "9ec8ebf3b07f0fd58af46674894bb05f055627f7",
+      "sha256": "6e79ca0372775c86c9d121e054925e5e112114b4c9ea1b654c0b88c3639d9ccb",
+      "bytes": 14176
+    },
+    "test/city-cooperative-content.js": {
+      "mode": "100644",
+      "blob": "8a0db7c3f7df153aa70341ce75bb1f435e1598f3",
+      "sha256": "37ed9deb520f19a874eabe84b5869ad126eef03aa8207af50f634a9fce139c72",
+      "bytes": 1893
+    },
     "test/lib/age-removal-source-transfer-proof.js": {
       "mode": "100644",
       "blob": "914db9dc5a5dd0d848a1da75f667786c30ec067c",
       "sha256": "eba04ba9ee8a53ae55d31cc394b7c88c66948e902ee736b65c82c09c99173d41",
       "bytes": 15106
+    },
+    "test/lib/first-errand-proof.js": {
+      "mode": "100644",
+      "blob": "91e8bd196721071f4e775874b330ea6292794d1d",
+      "sha256": "e4d295135d1b088ba5a25bb98dcecd5e477d701ed81437425aa31b93e6d0a87b",
+      "bytes": 8288
     },
     "test/lib/ux-disclosure-browser.js": {
       "mode": "100644",
@@ -1839,6 +2372,12 @@ export const AGE_REMOVAL_SOURCE = freeze({
       "sha256": "626cdced36ba412e492237d97adcac5e1fe5c0eca08342700a233556a666f027",
       "bytes": 8705
     },
+    "test/population-goods-postgres.js": {
+      "mode": "100644",
+      "blob": "0575db4d13dd56f05b4da12faba00a2e4d7b19f8",
+      "sha256": "14c45eec4289119eab0166c5545436b98bd7f48fbbd05d0bd6b1d88d0f979ed2",
+      "bytes": 10935
+    },
     "test/strategy-command-browser.js": {
       "mode": "100644",
       "blob": "d7019399a540e555c73e970ebd5489bd618b23bc",
@@ -1847,9 +2386,9 @@ export const AGE_REMOVAL_SOURCE = freeze({
     },
     "tools/age-removal-source-seal.js": {
       "mode": "100644",
-      "blob": "7216ceb3998d38d01220f7bce2fa376db05ee8e2",
-      "sha256": "4e682a022010b23ee28ad6716c7950d0ad35ca61be9e5752d8bbb01e106d74ad",
-      "bytes": 14134
+      "blob": "0701cccee2b31dfe86fc2e42d6a3158980a31614",
+      "sha256": "e9f1f16862be0cc73c130a6f7c01acfc363f2f508902e50a206638893742ae38",
+      "bytes": 15011
     },
     "tools/age-removal-source-transfer.js": {
       "mode": "100644",
@@ -1871,4 +2410,4 @@ export const AGE_REMOVAL_SOURCE = freeze({
     }
   }
 });
-export const AGE_REMOVAL_SOURCE_SHA256 = '3492e128744d1d7b290dd50eb481aa9a32822e096864498b0d5f9972af753322';
+export const AGE_REMOVAL_SOURCE_SHA256 = '84c17b9e7ee733b05354450b41b4de4adafc9fa17a0631368decdbfc50d85652';
