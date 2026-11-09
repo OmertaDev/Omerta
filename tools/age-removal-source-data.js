@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const AGE_REMOVAL_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_AGE_REMOVAL_SOURCE_COMPARISON_ONLY",
-  "revision": "e1dff0914867c44c57b19614241972bda17b8f34",
-  "tree": "d81e65396c25309bdda6d001a520c7f383f67611",
+  "revision": "b2c4a9026af74119e49298b54cb404283894216b",
+  "tree": "a62c468b60cc9b1f841d4381ba096c817356ed45",
   "predecessor": "35913ec1b448275b227019ede2a2ef8047be55aa",
   "predecessorTree": "c74c606d97ee2f8ebb6c5201a4ddd2c2781d5db0",
   "files": {
@@ -1625,9 +1625,9 @@ export const AGE_REMOVAL_SOURCE = freeze({
     },
     "test/lib/age-removal-source-transfer-proof.js": {
       "mode": "100644",
-      "blob": "052a400eb8c897543909ff6764456a38ac810ef5",
-      "sha256": "6310449ebd6142ec199814fafe019561853f7b8e485491b40f44c3abda3053bb",
-      "bytes": 11597
+      "blob": "b9fb91b20d092b1e9ddb670467853a9ccdbd8307",
+      "sha256": "9361fb88ec2208bc4d8ae38c9e139ad9f17486bbabb4aa665908c1a117643cc8",
+      "bytes": 13347
     },
     "test/lib/ux-disclosure-browser.js": {
       "mode": "100644",
@@ -1649,9 +1649,9 @@ export const AGE_REMOVAL_SOURCE = freeze({
     },
     "tools/age-removal-source-seal.js": {
       "mode": "100644",
-      "blob": "5b3d77765e5c1ef1a45d4a14d5a412f98f74ed2d",
-      "sha256": "abd99c4b608d5940e4862fd7996f35be7e803ab99b66d9ed9f3bcd97cbd98f0a",
-      "bytes": 10181
+      "blob": "84d3b0dac7f39e55cac3ca4dc49e3e9cb65f6c8a",
+      "sha256": "837013473d26e4e0858a56af879eec5ccd25aa149fdd7db8edbba0456c144270",
+      "bytes": 11931
     },
     "tools/age-removal-source-transfer.js": {
       "mode": "100644",
@@ -1673,4 +1673,4 @@ export const AGE_REMOVAL_SOURCE = freeze({
     }
   }
 });
-export const AGE_REMOVAL_SOURCE_SHA256 = '29dafabd39577c0132ea801736ccd607aa7851dc1f76e4ef2439460eb763fabf';
+export const AGE_REMOVAL_SOURCE_SHA256 = 'd811b77c235630a8098e598ffa0ca0bd48464bf91c9dfcf370917a490c3f6888';
