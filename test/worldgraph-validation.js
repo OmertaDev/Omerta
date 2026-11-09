@@ -1109,10 +1109,11 @@ assert.deepEqual(phase1First.packageIds, [
   'city-careful-negotiation', 'city-sealed-record', 'city-rotating-account-0',
   'city-rotating-account-1', 'city-rotating-account-2', 'city-rotating-account-3',
   'neighborhood-broadcast', 'neighborhood-afterword', 'property-investigation', 'equipment-recovery',
+  'first-errand-case-v2', 'crew-crosscurrent-v1',
 ]);
-assert.equal(PHASE1_WORLD_GRAPH_PACKAGES.length, 25);
-assert.equal(phase1First.packages, 25);
-assert.equal(phase1First.nodes, 193);
+assert.equal(PHASE1_WORLD_GRAPH_PACKAGES.length, 27);
+assert.equal(phase1First.packages, 27);
+assert.equal(phase1First.nodes, 229);
 assert.equal(phase1First.recipes, 5);
 assert.equal(phase1First.omrRewards, 0, 'the Phase 1 graph cannot mint OMR');
 assert.deepEqual(phase1First.executableDefinitions, {
@@ -1858,7 +1859,7 @@ const packageSources = fs.readdirSync(path.join(root, 'src', 'content'))
     fs.readFileSync(path.join(root, 'src', 'content', file), 'utf8'),
   )).sort();
 assert.deepEqual(packageSources, [
-  'automotive-salvage.js', 'belladonna.js', 'city-world-opportunities.js', 'company-production-quality.js', 'core-materials.js', 'district-story-arcs.js', 'equipment-recovery.js', 'neighborhood-afterword.js', 'neighborhood-broadcast.js', 'neighborhood-initiation.js', 'phase1.js', 'property-investigation.js', 'staged-crew-missions.js',
+  'automotive-salvage.js', 'belladonna.js', 'city-world-opportunities.js', 'company-production-quality.js', 'core-materials.js', 'crew-crosscurrent.js', 'district-story-arcs.js', 'equipment-recovery.js', 'first-errand-case.js', 'neighborhood-afterword.js', 'neighborhood-broadcast.js', 'neighborhood-initiation.js', 'phase1.js', 'property-investigation.js', 'staged-crew-missions.js',
 ], 'every production world-graph package module must be present in the canonical Phase 1 manifest');
 const phase1RuntimeFiles = [
   'src/items.js', 'src/crafting.js', 'src/mysteries.js', 'src/operations.js',
@@ -1870,6 +1871,7 @@ const phase1RuntimeFiles = [
   'src/content/neighborhood-initiation.js', 'src/content/neighborhood-initiation.json',
   'src/content/neighborhood-broadcast.js',
   'src/content/neighborhood-afterword.js',
+  'src/content/first-errand-case.js', 'src/content/crew-crosscurrent.js',
   'src/content/property-investigation.js',
   'src/content/district-story-arcs.js', 'src/content/city-quest-presentation.js',
   'src/content/staged-crew-missions.js', 'src/content/city-world-opportunities.js',

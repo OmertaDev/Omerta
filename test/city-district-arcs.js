@@ -1,5 +1,6 @@
 // Real HTTP authority proof; --postgres requires an explicitly owned loopback fixture.
 import assert from 'node:assert/strict';
+import { firstErrandProof } from './lib/first-errand-proof.js';
 import crypto from 'node:crypto';
 import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
@@ -95,11 +96,12 @@ try {
   const afterwordId = NEIGHBORHOOD_AFTERWORD_PRESENTATION.graphId;
   assert.equal(afterwordId, 'neighborhood-afterword');
   for (const entries of [city, CITY_QUEST_PRESENTATIONS]) {
-    assert.deepEqual(entries.filter(entry => entry.graphId !== afterwordId).map(entry => entry.graphId).sort(),
+    assert.deepEqual(entries.filter(entry => entry.graphId !== afterwordId && entry.graphId !== 'first-errand-case-v2').map(entry => entry.graphId).sort(),
       [...originalCityGraphIds].sort(), 'All nine original City quests retain their identities.');
     assert.equal(entries.filter(entry => entry.graphId === afterwordId).length, 1,
       'Exactly one Afterword follow-up joins the original catalogue.');
-    assert.equal(entries.length, 10);
+    assert.equal(entries.filter(entry => entry.graphId === 'first-errand-case-v2').length, 1);
+    assert.equal(entries.length, 11);
   }
   assert.deepEqual(CITY_QUEST_PRESENTATIONS.find(entry => entry.graphId === afterwordId), NEIGHBORHOOD_AFTERWORD_PRESENTATION);
   for (const presentation of CITY_QUEST_PRESENTATIONS) {
@@ -234,6 +236,7 @@ try {
   assert.equal(replacement.historicalInstances.filter(entry => entry.graphId.startsWith('district-')).length, 6);
   assert((await success(call(witness, 'GET', '/v1/worldgraph/inventory'))).currentCharacterItems.every(item => !item.templateId.startsWith('item:district_')),
     'The new living character receives no predecessor keepsake or quest progress.');
+  await firstErrandProof(app);
   console.log('city-district-arcs PASS: six actual districts, both permanent branches, native HTTP owner/location/learned-skill authority, hidden-node privacy, unique inert character keepsakes, unchanged currencies, exact replay and preserved Neighborhood action IDs' +
     (postgres ? '; owned-schema PostgreSQL' : '; disposable pg-mem'));
 } finally {

@@ -1,5 +1,7 @@
 // Canonical production manifest for the Phase 1 world-graph runtime and release validator.
 // Adding a package is incomplete until this manifest, its validator census, and documentation agree.
+import { FIRST_ERRAND_CASE_PACKAGE } from './first-errand-case.js';
+import { CREW_CROSSCURRENT_PACKAGE } from './crew-crosscurrent.js';
 import { EQUIPMENT_RECOVERY_PACKAGE } from './equipment-recovery.js';
 import { AUTOMOTIVE_SALVAGE_PACKAGE } from './automotive-salvage.js';
 import { BELLADONNA_PACKAGE } from './belladonna.js';
@@ -26,4 +28,6 @@ export const PHASE1_WORLD_GRAPH_PACKAGES = Object.freeze([
   NEIGHBORHOOD_AFTERWORD_PACKAGE,
   PROPERTY_INVESTIGATION_PACKAGE,
   EQUIPMENT_RECOVERY_PACKAGE,
+  FIRST_ERRAND_CASE_PACKAGE,
+  CREW_CROSSCURRENT_PACKAGE,
 ]);

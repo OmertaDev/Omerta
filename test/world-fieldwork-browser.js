@@ -321,6 +321,8 @@ try {
   await refresh();
   await page.getByRole('button', { name: 'Complete operation', exact: true }).click(); await confirm();
   assert.equal((await call('GET', '/v1/worldgraph/operations/' + operationId, players[0])).status, 'completed', 'The closer completes the real four-account operation.');
+  assert.equal(await page.getByRole('heading', { name: 'Your accomplishments', exact: true }).count(), 1,
+    'The confirmed private completion is accessible in the current Fieldwork UI.');
   const completedBlockers = await page.locator('.fieldwork-role .fieldwork-node .fieldwork-blockers li').allTextContents();
   assert.equal(new Set(completedBlockers).size, completedBlockers.length, 'Completed-role blocker copy is displayed once.');
 
