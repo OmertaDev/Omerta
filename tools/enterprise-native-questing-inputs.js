@@ -4,7 +4,7 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "ACTUAL_CURRENT_QUESTING_ENTERPRISE_NATIVE_INPUTS",
-  "authoredRevision": "034338ae66535ca85c30dcbb790acafa1caf57a2",
+  "authoredRevision": "02099badf027f905238909f2f65d877514b2fd8c",
   "predecessorDefinitionSha256": "6b9128d3311945fc511748f852803354ac415a23082b6b5ce017980a2b7596bf",
   "proofInventorySha256": "3fd878600cd363ebdd9d89bb59b7cc3de7650f895062d83711b2bd1774c298e9",
   "files": [
@@ -305,8 +305,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "package.json",
       "mode": "100644",
-      "blob": "e4a9a5a209c08b6aaec459cb83ba5b3fb7553f84",
-      "sha256": "89b79a5c581530f00bc3534d206bbb332eba8e47cbc237cf0980ee0d32ac9f7f"
+      "blob": "2ea69139a099f0bb68331278b65288f01091bd7f",
+      "sha256": "af308fc3bb54eab6a21ec78236829df05c3d02c51871dee9d27ab8493696f9e8"
     },
     {
       "file": "public/admin.html",
@@ -3803,8 +3803,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "public/index.html",
       "mode": "100644",
-      "blob": "d031f03f8050e0d07b2a195bf7bdb6af93e7e79f",
-      "sha256": "3504a39e1a670166f093675e8c14e91ffec231eaea1cbcc95d60cd6b44268b3d"
+      "blob": "c71b7ff43c8d0f712225ed96deb8c678cf631cfd",
+      "sha256": "3aac63602e8e6f93f1a017b3857715be5f10979d3c9afcef8adedc42b5204881"
     },
     {
       "file": "public/invite.html",
@@ -3863,8 +3863,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "public/world-fieldwork.js",
       "mode": "100644",
-      "blob": "067b1420b4c1f8390c96775b9f1cf360cc9722a4",
-      "sha256": "4819b12427fe4adac7b35a2aeb859369aa861356795e7e56ecddb881fde24e9f"
+      "blob": "ab4450fccda1be889a80919bba82710ddde5edc7",
+      "sha256": "b74ed1a641683640914d423b6e6cc44e606c4111b8e82e929e036875be809f85"
     },
     {
       "file": "schema.sql",
@@ -3899,8 +3899,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "src/agentgateway.js",
       "mode": "100644",
-      "blob": "b453f64df26b4a4a42adaf8352e4a1e2a00556b3",
-      "sha256": "1f17ee1bb1550ec60a0d862df77b029c5966d3a4447638dfe89a7e83bf461d50"
+      "blob": "7d80c83c5578cc60bd8d837f2aa4b7a9cf3943db",
+      "sha256": "1a3aaa0c6f87e76eb4714c4d2c5e6c2fd081224303105dbe6fd3490614bbf613"
     },
     {
       "file": "src/agentoperatingmemory.js",
@@ -4139,8 +4139,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "src/chainparams.js",
       "mode": "100644",
-      "blob": "465255dfd80a2b50f6cf8b1ee40d846c3058b5b8",
-      "sha256": "0a215feed9ffe1ec5b81e82ba4b586c1e7f645ecafc64ad009bf709680eb13b5"
+      "blob": "9a35243012ff847867a5abcf4a242982c1e1b832",
+      "sha256": "f5535d4c61569f75ea0463c70a14955229586d83f2167c8246d353dba199c02d"
     },
     {
       "file": "src/circle.js",
@@ -4565,8 +4565,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "src/content/city-quest-presentation.js",
       "mode": "100644",
-      "blob": "57e3fb9dcfd3e9067546feb3ba36b360071ec148",
-      "sha256": "7abe9758e99a68dda3f00bd54ad8f4d0b61af3bae844977a69e9dbba58f64515"
+      "blob": "837a3755b1584b50af4a104dd2e795dc30059b77",
+      "sha256": "da2b9f618e165cc5d20ec83ead0659a2728733065dc48f7df8cbcfd923bf6242"
     },
     {
       "file": "src/content/city-world-opportunities.js",
@@ -4697,8 +4697,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "src/content/phase1-policy.js",
       "mode": "100644",
-      "blob": "31f67a4aa71a61688873d615d08d73dfd0e58895",
-      "sha256": "f5d2339a39d856551ddd91dd1ca86a08e00e861348cc70c7f834f8a18f5bc837"
+      "blob": "4d34a718ef361bac7967c01f6a566fe27b392140",
+      "sha256": "fcf7454fd98782bacffa73fb17db2f39cb5b8f2491f195a0bafbf3d4984ee396"
     },
     {
       "file": "src/content/phase1-validation.js",
@@ -4709,8 +4709,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "src/content/phase1.js",
       "mode": "100644",
-      "blob": "90f295bd33959e574bfc835301380e46e6cfb2e7",
-      "sha256": "6d8ca127ad60b3e1b2672e5f015568b4b7712488c3ac8be9100f260404cc6c04"
+      "blob": "aa154ad3282bd1b2e34b52e29379e5b0b39e92e2",
+      "sha256": "b75602cdbe44786351f2cebd687eab21c22e9145aa9b64a467b4325b3fdb5a80"
     },
     {
       "file": "src/content/phase2-transactions.js",
@@ -5813,8 +5813,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "src/operations.js",
       "mode": "100644",
-      "blob": "27df779d739f7d550558e50c8a412782a9e9290a",
-      "sha256": "175882731792bfd24f2cb7ff0ecd62dc3bb7273b817a77b8bcd5cb7817fdf679"
+      "blob": "49a6af1a5287101d6f1a5f0035b957703d8a07de",
+      "sha256": "ad90d8c92c7d9e0b74374e86df3b00aa57cad829c9d416b42e69050a43049e43"
     },
     {
       "file": "src/opportunities.js",
@@ -6707,8 +6707,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "src/routes/worldgraph.js",
       "mode": "100644",
-      "blob": "8c0789f4575e2c4484c5b9e51abc0745a0c3926e",
-      "sha256": "762bd5300203925bc3c58743f0e72c3b9eaf347c38b3d351cdc7b17ac662a377"
+      "blob": "aac25ac69dd4c277725267f8592c4e6d65bd7596",
+      "sha256": "a45be0380bc06f1b88af4375ffcef283d363bdebc45cc4766dae23f106138b59"
     },
     {
       "file": "src/rules.generated.js",
@@ -7091,8 +7091,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "src/worker.js",
       "mode": "100644",
-      "blob": "587ffe14766c524012aff512617aad486c540525",
-      "sha256": "0b4d4427841feb6d691e4c4311d1f40f315028139217822a43299551675b9e68"
+      "blob": "2f8581ee6e98b598cb0bb24ab0426ff1026c224f",
+      "sha256": "3f11ab4d82329b2d094cba0e0379052c877d1e27b452fcb726f3f3e4ef03a244"
     },
     {
       "file": "src/workertraining.js",
@@ -8147,8 +8147,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/worldgraph-validation.js",
       "mode": "100644",
-      "blob": "c73f08efbd515a6dbb4037de18a1b63defb6be4e",
-      "sha256": "3c5db55fc8f1cb0fe42e2750661ff1084d42e96aa21efe0cace570b825aa7f8f"
+      "blob": "88acc0f2220f194b42ad3411684ad6aa4ffcf363",
+      "sha256": "0ca4110a6a87b8f293eb924873e6dbfc9de4f94b80f6dcbdbc2416c55e6d1810"
     },
     {
       "file": "tools/city-play-source-transfer.js",
@@ -11175,6 +11175,18 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       "sha256": "ee6cf76f6fab981356fd0c6068369218cd6fe1b9f8f968018e69bf4a146dd305"
     },
     {
+      "file": "src/content/crew-crosscurrent.js",
+      "mode": "100644",
+      "blob": "f3c4434f5936a84b76f28ca1c2a552e2cc532efe",
+      "sha256": "e6cd8e7680a4d8e6dcdda62d464a72e4997ebea309b7b571c0f4ed020a8e1772"
+    },
+    {
+      "file": "src/content/first-errand-case.js",
+      "mode": "100644",
+      "blob": "efc09fdbec7bbcf2edb2fcc2935c8eb7c3d2f50b",
+      "sha256": "9b608d75e3e08f173fb2523ba3c824131b2480397ff34afbcdd8c5aa1cacd701"
+    },
+    {
       "file": "src/content/narrative.js",
       "mode": "100644",
       "blob": "790d08fb5f51bd7c5a58f6b41f8469e28194ed88",
@@ -11303,8 +11315,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/age-removal-source-data.js",
       "mode": "100644",
-      "blob": "107b8aaf6134c15a5546fc7cb97a686f64177521",
-      "sha256": "637b3e79ca6f77f571af27f5b364e0b60ca728fd52201cad0c6e152c4fb569c6"
+      "blob": "f678cc658c17d7762be3ad203996707245734d5c",
+      "sha256": "32d2cc31ed02b83025deda8f9b189a6dbde5e5d61df103f056e51ed0fc6c7de1"
     },
     {
       "file": "tools/age-removal-source-transfer.js",
@@ -11451,8 +11463,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       "after": {
         "file": "package.json",
         "mode": "100644",
-        "blob": "e4a9a5a209c08b6aaec459cb83ba5b3fb7553f84",
-        "sha256": "89b79a5c581530f00bc3534d206bbb332eba8e47cbc237cf0980ee0d32ac9f7f"
+        "blob": "2ea69139a099f0bb68331278b65288f01091bd7f",
+        "sha256": "af308fc3bb54eab6a21ec78236829df05c3d02c51871dee9d27ab8493696f9e8"
       }
     },
     {
@@ -11481,8 +11493,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       "after": {
         "file": "public/index.html",
         "mode": "100644",
-        "blob": "d031f03f8050e0d07b2a195bf7bdb6af93e7e79f",
-        "sha256": "3504a39e1a670166f093675e8c14e91ffec231eaea1cbcc95d60cd6b44268b3d"
+        "blob": "c71b7ff43c8d0f712225ed96deb8c678cf631cfd",
+        "sha256": "3aac63602e8e6f93f1a017b3857715be5f10979d3c9afcef8adedc42b5204881"
       }
     },
     {
@@ -11561,6 +11573,21 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       }
     },
     {
+      "file": "public/world-fieldwork.js",
+      "before": {
+        "file": "public/world-fieldwork.js",
+        "mode": "100644",
+        "blob": "067b1420b4c1f8390c96775b9f1cf360cc9722a4",
+        "sha256": "4819b12427fe4adac7b35a2aeb859369aa861356795e7e56ecddb881fde24e9f"
+      },
+      "after": {
+        "file": "public/world-fieldwork.js",
+        "mode": "100644",
+        "blob": "ab4450fccda1be889a80919bba82710ddde5edc7",
+        "sha256": "b74ed1a641683640914d423b6e6cc44e606c4111b8e82e929e036875be809f85"
+      }
+    },
+    {
       "file": "schema.sql",
       "before": {
         "file": "schema.sql",
@@ -11601,8 +11628,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       "after": {
         "file": "src/agentgateway.js",
         "mode": "100644",
-        "blob": "b453f64df26b4a4a42adaf8352e4a1e2a00556b3",
-        "sha256": "1f17ee1bb1550ec60a0d862df77b029c5966d3a4447638dfe89a7e83bf461d50"
+        "blob": "7d80c83c5578cc60bd8d837f2aa4b7a9cf3943db",
+        "sha256": "1a3aaa0c6f87e76eb4714c4d2c5e6c2fd081224303105dbe6fd3490614bbf613"
       }
     },
     {
@@ -11666,6 +11693,21 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       }
     },
     {
+      "file": "src/chainparams.js",
+      "before": {
+        "file": "src/chainparams.js",
+        "mode": "100644",
+        "blob": "465255dfd80a2b50f6cf8b1ee40d846c3058b5b8",
+        "sha256": "0a215feed9ffe1ec5b81e82ba4b586c1e7f645ecafc64ad009bf709680eb13b5"
+      },
+      "after": {
+        "file": "src/chainparams.js",
+        "mode": "100644",
+        "blob": "9a35243012ff847867a5abcf4a242982c1e1b832",
+        "sha256": "f5535d4c61569f75ea0463c70a14955229586d83f2167c8246d353dba199c02d"
+      }
+    },
+    {
       "file": "src/clues.js",
       "before": {
         "file": "src/clues.js",
@@ -11681,6 +11723,21 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       }
     },
     {
+      "file": "src/content/city-quest-presentation.js",
+      "before": {
+        "file": "src/content/city-quest-presentation.js",
+        "mode": "100644",
+        "blob": "57e3fb9dcfd3e9067546feb3ba36b360071ec148",
+        "sha256": "7abe9758e99a68dda3f00bd54ad8f4d0b61af3bae844977a69e9dbba58f64515"
+      },
+      "after": {
+        "file": "src/content/city-quest-presentation.js",
+        "mode": "100644",
+        "blob": "837a3755b1584b50af4a104dd2e795dc30059b77",
+        "sha256": "da2b9f618e165cc5d20ec83ead0659a2728733065dc48f7df8cbcfd923bf6242"
+      }
+    },
+    {
       "file": "src/content/compiler.js",
       "before": {
         "file": "src/content/compiler.js",
@@ -11693,6 +11750,36 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
         "mode": "100644",
         "blob": "10b5aab91c03d456cc41d3e52d83f5abcc795c98",
         "sha256": "20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641"
+      }
+    },
+    {
+      "file": "src/content/phase1-policy.js",
+      "before": {
+        "file": "src/content/phase1-policy.js",
+        "mode": "100644",
+        "blob": "31f67a4aa71a61688873d615d08d73dfd0e58895",
+        "sha256": "f5d2339a39d856551ddd91dd1ca86a08e00e861348cc70c7f834f8a18f5bc837"
+      },
+      "after": {
+        "file": "src/content/phase1-policy.js",
+        "mode": "100644",
+        "blob": "4d34a718ef361bac7967c01f6a566fe27b392140",
+        "sha256": "fcf7454fd98782bacffa73fb17db2f39cb5b8f2491f195a0bafbf3d4984ee396"
+      }
+    },
+    {
+      "file": "src/content/phase1.js",
+      "before": {
+        "file": "src/content/phase1.js",
+        "mode": "100644",
+        "blob": "90f295bd33959e574bfc835301380e46e6cfb2e7",
+        "sha256": "6d8ca127ad60b3e1b2672e5f015568b4b7712488c3ac8be9100f260404cc6c04"
+      },
+      "after": {
+        "file": "src/content/phase1.js",
+        "mode": "100644",
+        "blob": "aa154ad3282bd1b2e34b52e29379e5b0b39e92e2",
+        "sha256": "b75602cdbe44786351f2cebd687eab21c22e9145aa9b64a467b4325b3fdb5a80"
       }
     },
     {
@@ -11801,6 +11888,21 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       }
     },
     {
+      "file": "src/operations.js",
+      "before": {
+        "file": "src/operations.js",
+        "mode": "100644",
+        "blob": "27df779d739f7d550558e50c8a412782a9e9290a",
+        "sha256": "175882731792bfd24f2cb7ff0ecd62dc3bb7273b817a77b8bcd5cb7817fdf679"
+      },
+      "after": {
+        "file": "src/operations.js",
+        "mode": "100644",
+        "blob": "49a6af1a5287101d6f1a5f0035b957703d8a07de",
+        "sha256": "ad90d8c92c7d9e0b74374e86df3b00aa57cad829c9d416b42e69050a43049e43"
+      }
+    },
+    {
       "file": "src/ops.js",
       "before": {
         "file": "src/ops.js",
@@ -11891,6 +11993,21 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       }
     },
     {
+      "file": "src/routes/worldgraph.js",
+      "before": {
+        "file": "src/routes/worldgraph.js",
+        "mode": "100644",
+        "blob": "8c0789f4575e2c4484c5b9e51abc0745a0c3926e",
+        "sha256": "762bd5300203925bc3c58743f0e72c3b9eaf347c38b3d351cdc7b17ac662a377"
+      },
+      "after": {
+        "file": "src/routes/worldgraph.js",
+        "mode": "100644",
+        "blob": "aac25ac69dd4c277725267f8592c4e6d65bd7596",
+        "sha256": "a45be0380bc06f1b88af4375ffcef283d363bdebc45cc4766dae23f106138b59"
+      }
+    },
+    {
       "file": "src/server.js",
       "before": {
         "file": "src/server.js",
@@ -11946,8 +12063,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       "after": {
         "file": "src/worker.js",
         "mode": "100644",
-        "blob": "587ffe14766c524012aff512617aad486c540525",
-        "sha256": "0b4d4427841feb6d691e4c4311d1f40f315028139217822a43299551675b9e68"
+        "blob": "2f8581ee6e98b598cb0bb24ab0426ff1026c224f",
+        "sha256": "3f11ab4d82329b2d094cba0e0379052c877d1e27b452fcb726f3f3e4ef03a244"
       }
     },
     {
@@ -12068,6 +12185,21 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
         "mode": "100644",
         "blob": "0baf22494f6a5138a7973e62de8cc98ebf4daac2",
         "sha256": "418c91a0b19abfb172be6f04f6a8295cea3186f122f3cf031c9fa32afdd7c7c5"
+      }
+    },
+    {
+      "file": "test/worldgraph-validation.js",
+      "before": {
+        "file": "test/worldgraph-validation.js",
+        "mode": "100644",
+        "blob": "c73f08efbd515a6dbb4037de18a1b63defb6be4e",
+        "sha256": "3c5db55fc8f1cb0fe42e2750661ff1084d42e96aa21efe0cace570b825aa7f8f"
+      },
+      "after": {
+        "file": "test/worldgraph-validation.js",
+        "mode": "100644",
+        "blob": "88acc0f2220f194b42ad3411684ad6aa4ffcf363",
+        "sha256": "0ca4110a6a87b8f293eb924873e6dbfc9de4f94b80f6dcbdbc2416c55e6d1810"
       }
     },
     {
@@ -12751,6 +12883,18 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       "sha256": "ee6cf76f6fab981356fd0c6068369218cd6fe1b9f8f968018e69bf4a146dd305"
     },
     {
+      "file": "src/content/crew-crosscurrent.js",
+      "mode": "100644",
+      "blob": "f3c4434f5936a84b76f28ca1c2a552e2cc532efe",
+      "sha256": "e6cd8e7680a4d8e6dcdda62d464a72e4997ebea309b7b571c0f4ed020a8e1772"
+    },
+    {
+      "file": "src/content/first-errand-case.js",
+      "mode": "100644",
+      "blob": "efc09fdbec7bbcf2edb2fcc2935c8eb7c3d2f50b",
+      "sha256": "9b608d75e3e08f173fb2523ba3c824131b2480397ff34afbcdd8c5aa1cacd701"
+    },
+    {
       "file": "src/content/narrative.js",
       "mode": "100644",
       "blob": "790d08fb5f51bd7c5a58f6b41f8469e28194ed88",
@@ -12879,8 +13023,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/age-removal-source-data.js",
       "mode": "100644",
-      "blob": "107b8aaf6134c15a5546fc7cb97a686f64177521",
-      "sha256": "637b3e79ca6f77f571af27f5b364e0b60ca728fd52201cad0c6e152c4fb569c6"
+      "blob": "f678cc658c17d7762be3ad203996707245734d5c",
+      "sha256": "32d2cc31ed02b83025deda8f9b189a6dbde5e5d61df103f056e51ed0fc6c7de1"
     },
     {
       "file": "tools/age-removal-source-transfer.js",
@@ -12956,4 +13100,4 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     }
   ]
 });
-export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "d4754628927be25b794837238d5bdd3ea3ef8909035bcbe2fd53dd41d94f2569";
+export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "330674e1eb84f1f2767a3f374e10fe2833d32ee2c8b5108d2be8732deaeb1c38";
