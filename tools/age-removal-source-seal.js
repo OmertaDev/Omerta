@@ -109,6 +109,9 @@ const generated = new Set([metadata, 'tools/enterprise-native-questing-inputs.js
   "output/quest-quality-verification/quality-mw95h79m-quest-quality-study.log",
 ]);
 const allowed = new Set([
+  // Reviewed PR #208 reconciliation: shadow-only scheduling and its tests/documentation.
+  'src/businesspolicy.js', 'tools/business-agent.js', 'test/businesspolicy.js', 'test/business-agent.js',
+  'docs/agent-business-shadow.md', 'docs/superpowers/plans/2026-11-09-business-deadlines.md',
   // Release-gate regression repair: native quest disclosure state survives refetch repaint.
   'public/ux-quests.js', 'test/quest-experience-browser.js',
   // The approved combined release includes the complete noir UI source and build inputs.
