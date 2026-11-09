@@ -17,7 +17,7 @@ function definition() {
 }
 function canonical(input) {
   const buffer = Buffer.isBuffer(input), text = buffer ? input.toString('utf8') : input;
-  if (buffer) assert(Buffer.from(text).equals(input), 'Lossless UTF-8 source required');
+  if (buffer) assert(Buffer.from(text).equals(input), 'Lossless UTF-8 source required; lossless UTF-8 required');
   if (typeof text !== 'string' || /[\0\ufeff]/.test(text)) return null;
   const lf = text.replaceAll('\r\n', '\n');
   if (lf.includes('\r') || (text !== lf && text !== lf.replaceAll('\n', '\r\n'))) return null;

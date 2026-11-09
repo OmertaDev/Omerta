@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { AGE_REMOVAL_SOURCE as source, ageRemovalSourceDataBytes, qualifyAgeRemovalSource,
-  ageRemovalHistoricalInput, ageRemovalHistoricalEntry, ageRemovalHistoricalRecord } from '../tools/age-removal-source-transfer.js';
+  ageRemovalHistoricalInput, ageRemovalHistoricalEntry, ageRemovalHistoricalRecord } from '../../tools/age-removal-source-transfer.js';
 
 const predecessor = '35913ec1b448275b227019ede2a2ef8047be55aa';
 const metadata = 'tools/age-removal-source-data.js';
@@ -81,8 +81,10 @@ for (const [file, row] of Object.entries(source.files)) {
     assert.equal(ageRemovalHistoricalInput(file, changed), changed); refusals++;
   }
   const invalidUtf8 = Buffer.from([0xff]);
-  assert.throws(() => qualifyAgeRemovalSource(file, invalidUtf8));
-  assert.throws(() => ageRemovalHistoricalInput(file, invalidUtf8)); refusals += 2;
+  for (const reader of [qualifyAgeRemovalSource, ageRemovalHistoricalInput]) {
+    assert.throws(() => reader(file, invalidUtf8), error => error.code === 'ERR_ASSERTION'
+      && /Lossless UTF-8/.test(error.message) && /lossless UTF-8/.test(error.message)); refusals++;
+  }
 }
 for (const [file, pin] of Object.entries(source.additions)) {
   const current = actual(file, pin);

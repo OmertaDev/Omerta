@@ -1,5 +1,5 @@
 // Actual website Git/index/physical identities qualify before any historical comparison.
-import './age-removal-source-transfer.js';
+import './lib/age-removal-source-transfer-proof.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { createHash } from 'node:crypto';

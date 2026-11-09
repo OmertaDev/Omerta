@@ -16,7 +16,7 @@ const allowed = new Set([
   'tools/agent-alpha.js', 'tools/mobile.js', 'tools/public-ui.js', 'tools/rc1-mobile-journeys.js',
   'tools/site-basics-source-transfer.js', 'test/site-basics-source-transfer.js',
   'test/lib/rc1-historical-source-fixture.js',
-  'tools/age-removal-source-transfer.js', 'tools/age-removal-source-seal.js', 'test/age-removal-source-transfer.js',
+  'tools/age-removal-source-transfer.js', 'tools/age-removal-source-seal.js', 'test/lib/age-removal-source-transfer-proof.js',
 ]);
 const git = (...args) => execFileSync('git', ['--no-optional-locks', '--no-replace-objects', ...args], {
   encoding: 'utf8', windowsHide: true, maxBuffer: 64 * 1024 * 1024,
