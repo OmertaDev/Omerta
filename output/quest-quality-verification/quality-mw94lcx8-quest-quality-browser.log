@@ -1,0 +1,14 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+{"component":"player-command","phase":"request","correlationId":"94b81011-0d7c-4cce-ad32-9dad1ef6627f"}
+{"component":"player-command","phase":"authorization","correlationId":"94b81011-0d7c-4cce-ad32-9dad1ef6627f","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"94b81011-0d7c-4cce-ad32-9dad1ef6627f","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"94b81011-0d7c-4cce-ad32-9dad1ef6627f","statusCode":409,"elapsedMs":4}
+{"component":"player-command","phase":"request","correlationId":"68d09b81-92bf-43e8-a175-a000272ed46d"}
+{"component":"player-command","phase":"authorization","correlationId":"68d09b81-92bf-43e8-a175-a000272ed46d","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"68d09b81-92bf-43e8-a175-a000272ed46d","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"68d09b81-92bf-43e8-a175-a000272ed46d","statusCode":409,"elapsedMs":2}
+{"component":"player-command","phase":"request","correlationId":"57ac861f-fec3-4a09-849a-b38e9d92288d"}
+{"component":"player-command","phase":"authorization","correlationId":"57ac861f-fec3-4a09-849a-b38e9d92288d","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"57ac861f-fec3-4a09-849a-b38e9d92288d","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"57ac861f-fec3-4a09-849a-b38e9d92288d","statusCode":409,"elapsedMs":2}
+Quest quality production browser PASS: real pilot proof/conclusion/evidence, exact clauses, hidden-question boundary, private revision/reload/peer isolation, drafts/undo, motive, commitments, truthful AI study/24h refusal and eligible recall, opt-in debrief, actual fieldwork/disclosure, independent unsure/share, real cross-role volunteering, opaque mandate/pre-ack blocker/ack/withdraw/commit and390px. Artifacts: C:\Users\Jorge\AppData\Local\Temp\omerta-quality-Ha7YmS
