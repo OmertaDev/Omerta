@@ -76,7 +76,10 @@ const authenticate = async (player, base) => {
   return page;
 };
 const wetWork = async (page) => {
+  const directory = page.locator('#city-directory');
+  if (!await directory.evaluate(node => node.open)) await directory.locator(':scope > summary').click();
   await page.locator('#grouprail [data-group="blood"]').click();
+  if (!await directory.evaluate(node => node.open)) await directory.locator(':scope > summary').click();
   await page.locator('#tabs [data-tab="pvp"]').click();
   await page.locator('#tab-pvp h2').filter({ hasText: 'People you know' }).waitFor();
 };

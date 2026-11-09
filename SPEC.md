@@ -15,7 +15,7 @@ File counts include the combined playtest fixes and quest-quality additions as o
 | | |
 |---|---|
 | Backend modules | **618** files, **141073** lines (recursive source inventory) |
-| Test suites | **1032** files, **213491** lines (recursive source inventory) |
+| Test suites | **1035** files, **213491** lines (recursive source inventory) |
 | HTTP routes | **1386** registrations (**1386** unique; 1274 under `/v1`) |
 | Database tables | **585** (`schema.sql`, 9820 lines) |
 | Client | **14683** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |
