@@ -8,6 +8,7 @@ import { contractReleaseFeeInput } from '../tools/contract-release-source-transf
 import { QUESTING_SOURCE, qualifyQuestingSource, questingHistoricalInput,
   questingHistoricalEntry } from '../tools/questing-source-transfer.js';
 import { SITE_BASICS_SOURCE, qualifySiteBasicsSource } from '../tools/site-basics-source-transfer.js';
+import { ageRemovalHistoricalRecord } from '../tools/age-removal-source-transfer.js';
 import {
   GENESIS_FEE_READINESS_BASE_REVISION, GENESIS_FEE_READINESS_REVIEWED_REVISION,
   GENESIS_FEE_READINESS_DOMAINS, GENESIS_FEE_READINESS_SOURCE_TRANSFER,
@@ -185,16 +186,24 @@ console.log(`genesis-fee-readiness-source-transfer: PASS three complete sources,
   assert(Buffer.from(physical).equals(raw), 'Lossless actual fixture UTF-8 required');
   assert(physical === head || physical === head.replaceAll('\n', '\r\n'),
     'Whole actual fixture LF/CRLF bytes qualify before projection');
-  assert.deepEqual({ mode: actual[1], blob: actual[2], sha256: sha(head), bytes: Buffer.byteLength(head) },
-    SITE_BASICS_SOURCE.files[fixture].current, 'The real current fixture independently matches its exact site pin');
+  const historical = ageRemovalHistoricalRecord(fixture, { head: { mode: actual[1], blob: actual[2] }, index: actualIndex,
+    committed: Buffer.from(head), physical: raw, regular: stat.isFile(), symbolic: stat.isSymbolicLink() });
+  assert.deepEqual({ mode: historical.head.mode, blob: historical.head.blob, sha256: sha(historical.committed), bytes: historical.committed.length },
+    SITE_BASICS_SOURCE.files[fixture].current, 'Independently admitted current fixture reconstructs its unchanged site pin');
   function fixtureComparison(file, input, tree, index) {
     assert.equal(arguments.length, 4, 'Only the closed fixture byte/tree/index comparison is accepted');
     assert.equal(file, fixture, 'Only the exact Genesis historical fixture comparison');
     assert(Buffer.isBuffer(input), 'Complete physical fixture Buffer required');
+    const actualTree = typeof tree === 'string' && tree.match(/^(100644|100755) blob ([a-f0-9]{40})\t(.+)$/);
+    assert(actualTree && actualTree[0] === tree && actualTree[3] === file, 'Complete current fixture tree identity required');
+    const historical = ageRemovalHistoricalRecord(file, { head: { mode: actualTree[1], blob: actualTree[2] }, index,
+      committed: Buffer.from(lf(input.toString('utf8'))), physical: input, regular: true, symbolic: false });
+    tree = historical.head.mode + ' blob ' + historical.head.blob + '\t' + file;
+    index = historical.index;
     const currentPin = SITE_BASICS_SOURCE.files[file].current;
     assert.equal(tree, currentPin.mode + ' blob ' + currentPin.blob + '\t' + file, 'Only the exact current site tree is admitted');
     assert.equal(index, currentPin.mode + ' ' + currentPin.blob + ' 0\t' + file, 'Only the exact current site index is admitted');
-    const siteProof = qualifySiteBasicsSource(file, input);
+    const siteProof = qualifySiteBasicsSource(file, historical.committed);
     assert.deepEqual([siteProof.sourceOnly, siteProof.runtime, siteProof.native, siteProof.financial, siteProof.activation,
       siteProof.deployment, siteProof.priorResultsTransferred], [true, false, false, false, false, false, false]);
     const siteText = siteProof.baselineText;
@@ -296,7 +305,7 @@ console.log(`genesis-fee-readiness-source-transfer: PASS three complete sources,
   for (const supplied of [Buffer.from(head + '\n// unrelated fixture edit\n'), Buffer.from(head.slice(1)),
     Buffer.from('\ufeff' + head), Buffer.from(head + '\0'), Buffer.from(head.replace('\n', '\r\n')),
     Buffer.from(head.replace('\n', '\r')), Buffer.from(head.replace(/\S/, '?')), Buffer.from([255]),
-    comparison.source, head, null]) {
+    comparison.source, historical.committed, head, null]) {
     assert.throws(() => fixtureComparison(fixture, supplied, actualEntry, actualIndex)); currentRefusals++;
   }
   for (const kind of ['tree', 'index']) {
@@ -313,7 +322,7 @@ console.log(`genesis-fee-readiness-source-transfer: PASS three complete sources,
   assert.throws(() => fixtureComparison(fixture, raw, actualEntry)); currentRefusals++;
   assert.throws(() => fixtureComparison(fixture, raw, actualEntry, actualIndex, {})); currentRefusals++;
   assert.throws(() => { comparison.proof.native = true; }, TypeError); currentRefusals++;
-  assert.equal(currentPositives, 2); assert.equal(currentRefusals, 30);
+  assert.equal(currentPositives, 2); assert.equal(currentRefusals, 31);
   let siteRefusals = 0;
   const questCurrent = QUESTING_SOURCE.files[fixture].current;
   const oldTree = questCurrent.mode + ' blob ' + questCurrent.blob + '\t' + fixture;

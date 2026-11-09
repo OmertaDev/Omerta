@@ -8,6 +8,13 @@ import { AGE_REMOVAL_SOURCE as source, ageRemovalSourceDataBytes, qualifyAgeRemo
 
 const predecessor = '35913ec1b448275b227019ede2a2ef8047be55aa';
 const metadata = 'tools/age-removal-source-data.js';
+// These closed generated domains retain their independent mandatory checks and
+// obtain no historical source comparison from this proof.
+const generated = new Set([metadata, 'tools/enterprise-native-questing-inputs.js',
+  'knowledge/generated/documents.md', 'knowledge/generated/github-history.md',
+  'knowledge/generated/graph-summary.md', 'knowledge/generated/graph.json',
+  'knowledge/generated/graph.mmd', 'knowledge/generated/inventory.md',
+  'knowledge/generated/modules.md', 'knowledge/generated/routes.md']);
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], {
   encoding: 'utf8', windowsHide: true, maxBuffer: 64 * 1024 * 1024,
 });
@@ -20,12 +27,14 @@ for (const [revision, tree] of [[source.revision, source.tree], [source.predeces
 git('merge-base', '--is-ancestor', predecessor, source.revision);
 git('merge-base', '--is-ancestor', source.revision, 'HEAD');
 const changed = status => git('diff', '--name-only', '--no-renames', '--diff-filter=' + status,
-  '-z', predecessor, source.revision).split('\0').filter(file => file && file !== metadata);
+  '-z', predecessor, source.revision).split('\0').filter(file => file && !generated.has(file));
 assert.deepEqual(Object.keys(source.files), changed('M'), 'Every reviewed modification is independently pinned');
 assert.deepEqual(Object.keys(source.additions), changed('A'), 'Every new helper is independently pinned');
 assert.deepEqual(changed('DRTCUXB'), [], 'No historical file deletion or type replacement');
 assert.equal(fs.readFileSync(metadata, 'utf8').replaceAll('\r\n', '\n'), ageRemovalSourceDataBytes(source),
   'The only self-reference is exact generated data');
+for (const file of generated) assert(!Object.hasOwn(source.files, file) && !Object.hasOwn(source.additions, file),
+  'Generated metadata cannot inherit a historical source proof');
 function actual(file, pin) {
   const committed = Buffer.from(git('show', 'HEAD:' + file));
   const authored = Buffer.from(git('show', source.revision + ':' + file));

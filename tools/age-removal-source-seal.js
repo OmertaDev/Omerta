@@ -7,11 +7,19 @@ import { ageRemovalSourceDataBytes } from './age-removal-source-transfer.js';
 
 const predecessor = '35913ec1b448275b227019ede2a2ef8047be55aa';
 const metadata = 'tools/age-removal-source-data.js';
+// Independently generated data is verified by its existing knowledge/native gates.
+// None receives historical qualification or inherited execution results here.
+const generated = new Set([metadata, 'tools/enterprise-native-questing-inputs.js',
+  'knowledge/generated/documents.md', 'knowledge/generated/github-history.md',
+  'knowledge/generated/graph-summary.md', 'knowledge/generated/graph.json',
+  'knowledge/generated/graph.mmd', 'knowledge/generated/inventory.md',
+  'knowledge/generated/modules.md', 'knowledge/generated/routes.md']);
 const allowed = new Set([
   'AGENTS.md', 'docs/legal-security-setup.md', 'omerta-mcp/README.md', 'omerta-mcp/index.js',
   'public/index.html', 'public/invite.html', 'src/agentgateway.js', 'src/auth.js', 'src/legal.js', 'src/server.js',
   'test/age.js', 'test/agent-onboarding.js', 'test/auth-fixture.js', 'test/client-shell-browser.js',
   'test/gates.js', 'test/hardening.js', 'test/launch-invites-browser.js', 'test/legal-security.js',
+  'test/genesis-fee-readiness-source-transfer.js',
   'test/rc1-mobile-postgres.js', 'test/routes.js', 'test/server-fixture.js', 'test/site-entry-browser.js',
   'tools/agent-alpha.js', 'tools/mobile.js', 'tools/public-ui.js', 'tools/rc1-mobile-journeys.js',
   'tools/site-basics-source-transfer.js', 'test/site-basics-source-transfer.js',
@@ -48,7 +56,7 @@ assert.equal(git('rev-parse', 'HEAD').trim(), revision);
 assert.equal(git('status', '--porcelain', '--untracked-files=all').trim(), '', 'Commit all reviewed age-removal source before sealing');
 git('merge-base', '--is-ancestor', predecessor, revision);
 const changed = git('diff', '--name-status', '--no-renames', predecessor, revision).trim().split('\n')
-  .filter(Boolean).map(line => line.split('\t')).filter(([, file]) => file !== metadata);
+  .filter(Boolean).map(line => line.split('\t')).filter(([, file]) => !generated.has(file));
 assert(changed.length && changed.every(([status, file]) => ['M', 'A'].includes(status) && allowed.has(file)),
   'Only the reviewed closed age-removal source scope; no deletions or unrelated changes');
 const value = { status: 'SEALED', phase: 'EXACT_AGE_REMOVAL_SOURCE_COMPARISON_ONLY', revision,
