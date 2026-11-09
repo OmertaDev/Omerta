@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `a5ca10a91319`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `f85dd69ed408`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 5725 |
+| Commits in clone | 5729 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-11-09 — Reseal actual inputs for complete quest and UX qualification |
+| Latest commit | 2026-11-09 — Reseal actual inputs after direct-signup assertion fix |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 4592 |
+| OmertaDev | 4596 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 150 |
@@ -31,10 +31,10 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 954 | historical |
-| knowledge/generated/graph-summary.md | 954 | historical |
-| knowledge/generated/graph.json | 954 | historical |
-| knowledge/generated/inventory.md | 954 | historical |
+| knowledge/generated/github-history.md | 955 | historical |
+| knowledge/generated/graph-summary.md | 955 | historical |
+| knowledge/generated/graph.json | 955 | historical |
+| knowledge/generated/inventory.md | 955 | historical |
 | [SPEC.md](../../SPEC.md) | 646 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 513 | yes |
@@ -67,8 +67,8 @@
 | [docs/WIKI.md](../../docs/WIKI.md) | 92 | yes |
 | [test/social.js](../../test/social.js) | 88 | yes |
 | [test/hardening.js](../../test/hardening.js) | 73 | yes |
+| [tools/enterprise-native-questing-inputs.js](../../tools/enterprise-native-questing-inputs.js) | 72 | yes |
 | [tools/enterprise-native-inputs.js](../../tools/enterprise-native-inputs.js) | 72 | yes |
-| [tools/enterprise-native-questing-inputs.js](../../tools/enterprise-native-questing-inputs.js) | 71 | yes |
 | [src/preflight.js](../../src/preflight.js) | 71 | yes |
 | [test/director-migration.js](../../test/director-migration.js) | 70 | yes |
 

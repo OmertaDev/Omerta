@@ -556,7 +556,7 @@
 | [src/social/combat.js](../../src/social/combat.js) | 1092 | platform-core | 18 / 6 | 0 | 21 | 2 |
 | [src/social/contracts.js](../../src/social/contracts.js) | 604 | platform-core | 5 / 5 | 0 | 14 | 0 |
 | [src/social/defense.js](../../src/social/defense.js) | 221 | platform-core | 8 / 5 | 0 | 4 | 1 |
-| [src/social/estate.js](../../src/social/estate.js) | 744 | enterprise-logistics | 58 / 98 | 0 | 88 | 76 |
+| [src/social/estate.js](../../src/social/estate.js) | 744 | enterprise-logistics | 58 / 99 | 0 | 88 | 76 |
 | [src/social/exchange.js](../../src/social/exchange.js) | 128 | economy-ledger | 3 / 1 | 0 | 2 | 0 |
 | [src/social/gangs.js](../../src/social/gangs.js) | 810 | platform-core | 12 / 12 | 0 | 15 | 5 |
 | [src/social/shared.js](../../src/social/shared.js) | 44 | platform-core | 2 / 9 | 0 | 2 | 0 |

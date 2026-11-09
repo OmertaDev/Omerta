@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "a5ca10a913196423645eaf3966511cf69ddf9086",
+  "sourceRevision": "f85dd69ed408402ac1e2601e20f500f01986384a",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 18910,
-    "edges": 75480,
+    "nodes": 18914,
+    "edges": 75493,
     "byNodeType": {
       "Artifact": 7656,
       "Command": 320,
-      "Commit": 5725,
+      "Commit": 5729,
       "Contract": 156,
       "Document": 974,
       "Domain": 13,
@@ -65,16 +65,16 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5984,
-      "CHANGED": 29426,
+      "CHANGED": 29434,
       "CONTAINS": 7677,
       "DECLARES": 320,
       "DEFINED_IN": 1817,
       "DEPENDS_ON": 69,
       "EXECUTES": 1269,
       "HANDLED_BY": 951,
-      "HAS_COMMIT": 5725,
+      "HAS_COMMIT": 5729,
       "IMPLEMENTS": 124,
-      "IMPORTS": 9301,
+      "IMPORTS": 9302,
       "INHERITS": 47,
       "REFERENCES": 3978,
       "REPRESENTS": 2769,
@@ -147217,20 +147217,20 @@
       "path": "test/customerlayaway-integration.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 7368,
-      "lines": 26,
-      "version": "5bb691447d2b5e13",
+      "bytes": 7125,
+      "lines": 25,
+      "version": "ab04a832f7cc8ab8",
       "text": true,
       "provenance": [
         {
           "file": "test/customerlayaway-integration.js",
           "line": 1,
-          "version": "5bb691447d2b5e13"
+          "version": "ab04a832f7cc8ab8"
         }
       ],
-      "lastChangedAt": "2026-10-15T15:30:59.000Z",
+      "lastChangedAt": "2026-11-09T07:12:45.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4a75276e5d0f824027cbabd4b612aae5a7c60e26"
+      "lastChangedCommit": "9c11db8a179f1941894a61b4e48ad69a224db74e"
     },
     {
       "key": "Artifact:test/customerlayaway.js",
@@ -166054,20 +166054,20 @@
       "path": "tools/age-removal-source-data.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 157937,
-      "lines": 1007,
-      "version": "cda3eb73407b3b61",
+      "bytes": 164340,
+      "lines": 1033,
+      "version": "ff73d0e966a89105",
       "text": true,
       "provenance": [
         {
           "file": "tools/age-removal-source-data.js",
           "line": 1,
-          "version": "cda3eb73407b3b61"
+          "version": "ff73d0e966a89105"
         }
       ],
-      "lastChangedAt": "2026-11-09T06:35:43.000Z",
+      "lastChangedAt": "2026-11-09T07:13:11.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "208696a6d479000a0be549f732088595aa42771f"
+      "lastChangedCommit": "9658f103f084ecfda49f6d0584fc9b11e457db51"
     },
     {
       "key": "Artifact:tools/age-removal-source-seal.js",
@@ -166077,20 +166077,20 @@
       "path": "tools/age-removal-source-seal.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 7337,
-      "lines": 106,
-      "version": "43f29e66efbd6601",
+      "bytes": 7378,
+      "lines": 107,
+      "version": "772eca4b23f86005",
       "text": true,
       "provenance": [
         {
           "file": "tools/age-removal-source-seal.js",
           "line": 1,
-          "version": "43f29e66efbd6601"
+          "version": "772eca4b23f86005"
         }
       ],
-      "lastChangedAt": "2026-11-09T06:35:15.000Z",
+      "lastChangedAt": "2026-11-09T07:12:45.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "226a1f62306431c198cfd355c93d0267a94c1aee"
+      "lastChangedCommit": "9c11db8a179f1941894a61b4e48ad69a224db74e"
     },
     {
       "key": "Artifact:tools/age-removal-source-transfer.js",
@@ -169023,20 +169023,20 @@
       "path": "tools/enterprise-native-questing-inputs.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 484224,
-      "lines": 12888,
-      "version": "0dac502ec66de0b2",
+      "bytes": 484794,
+      "lines": 12903,
+      "version": "08944d20dfea9db0",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-questing-inputs.js",
           "line": 1,
-          "version": "0dac502ec66de0b2"
+          "version": "08944d20dfea9db0"
         }
       ],
-      "lastChangedAt": "2026-11-09T06:36:08.000Z",
+      "lastChangedAt": "2026-11-09T07:13:47.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "a5ca10a913196423645eaf3966511cf69ddf9086"
+      "lastChangedCommit": "f85dd69ed408402ac1e2601e20f500f01986384a"
     },
     {
       "key": "Artifact:tools/enterprise-native-questing-seal.js",
@@ -208768,6 +208768,22 @@
       ]
     },
     {
+      "key": "Commit:4f3fbc76f8338c8f545454475f6d5aff6e66718c",
+      "type": "Commit",
+      "id": "4f3fbc76f8338c8f545454475f6d5aff6e66718c",
+      "label": "Refresh release knowledge after complete quest qualification",
+      "title": "Refresh release knowledge after complete quest qualification",
+      "date": "2026-11-09T06:45:58.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/4f3fbc76f8338c8f545454475f6d5aff6e66718c",
+      "provenance": [
+        {
+          "commit": "4f3fbc76f8338c8f545454475f6d5aff6e66718c",
+          "url": "https://github.com/OmertaDev/Omerta/commit/4f3fbc76f8338c8f545454475f6d5aff6e66718c"
+        }
+      ]
+    },
+    {
       "key": "Commit:4f42a7d8b4ca1f690f89e5d657196c0e377dcf72",
       "type": "Commit",
       "id": "4f42a7d8b4ca1f690f89e5d657196c0e377dcf72",
@@ -234624,6 +234640,22 @@
       ]
     },
     {
+      "key": "Commit:9658f103f084ecfda49f6d0584fc9b11e457db51",
+      "type": "Commit",
+      "id": "9658f103f084ecfda49f6d0584fc9b11e457db51",
+      "label": "Seal direct-signup integration expectation",
+      "title": "Seal direct-signup integration expectation",
+      "date": "2026-11-09T07:13:11.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/9658f103f084ecfda49f6d0584fc9b11e457db51",
+      "provenance": [
+        {
+          "commit": "9658f103f084ecfda49f6d0584fc9b11e457db51",
+          "url": "https://github.com/OmertaDev/Omerta/commit/9658f103f084ecfda49f6d0584fc9b11e457db51"
+        }
+      ]
+    },
+    {
       "key": "Commit:966228e58e3b948ddcd3b85f40375dbf5364df1c",
       "type": "Commit",
       "id": "966228e58e3b948ddcd3b85f40375dbf5364df1c",
@@ -236908,6 +236940,22 @@
         {
           "commit": "9c05e845c596951d04177fca5b7fc3b7313e38c4",
           "url": "https://github.com/OmertaDev/Omerta/commit/9c05e845c596951d04177fca5b7fc3b7313e38c4"
+        }
+      ]
+    },
+    {
+      "key": "Commit:9c11db8a179f1941894a61b4e48ad69a224db74e",
+      "type": "Commit",
+      "id": "9c11db8a179f1941894a61b4e48ad69a224db74e",
+      "label": "Expect direct guest signup in layaway integration",
+      "title": "Expect direct guest signup in layaway integration",
+      "date": "2026-11-09T07:12:45.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/9c11db8a179f1941894a61b4e48ad69a224db74e",
+      "provenance": [
+        {
+          "commit": "9c11db8a179f1941894a61b4e48ad69a224db74e",
+          "url": "https://github.com/OmertaDev/Omerta/commit/9c11db8a179f1941894a61b4e48ad69a224db74e"
         }
       ]
     },
@@ -269088,6 +269136,22 @@
       ]
     },
     {
+      "key": "Commit:f85dd69ed408402ac1e2601e20f500f01986384a",
+      "type": "Commit",
+      "id": "f85dd69ed408402ac1e2601e20f500f01986384a",
+      "label": "Reseal actual inputs after direct-signup assertion fix",
+      "title": "Reseal actual inputs after direct-signup assertion fix",
+      "date": "2026-11-09T07:13:47.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/f85dd69ed408402ac1e2601e20f500f01986384a",
+      "provenance": [
+        {
+          "commit": "f85dd69ed408402ac1e2601e20f500f01986384a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/f85dd69ed408402ac1e2601e20f500f01986384a"
+        }
+      ]
+    },
+    {
       "key": "Commit:f8642cfa03b06ebae22854e0de9f2512d234b979",
       "type": "Commit",
       "id": "f8642cfa03b06ebae22854e0de9f2512d234b979",
@@ -300914,6 +300978,9 @@
           "commit": "4ea14c24d8249722ad506368133163055edc4c9d"
         },
         {
+          "commit": "4f3fbc76f8338c8f545454475f6d5aff6e66718c"
+        },
+        {
           "commit": "4f9bf08bbdbbb7222cb68244f81e792f7eacaafa"
         },
         {
@@ -303785,6 +303852,9 @@
           "commit": "4ea14c24d8249722ad506368133163055edc4c9d"
         },
         {
+          "commit": "4f3fbc76f8338c8f545454475f6d5aff6e66718c"
+        },
+        {
           "commit": "4f9bf08bbdbbb7222cb68244f81e792f7eacaafa"
         },
         {
@@ -306654,6 +306724,9 @@
         },
         {
           "commit": "4ea14c24d8249722ad506368133163055edc4c9d"
+        },
+        {
+          "commit": "4f3fbc76f8338c8f545454475f6d5aff6e66718c"
         },
         {
           "commit": "4f9bf08bbdbbb7222cb68244f81e792f7eacaafa"
@@ -310302,6 +310375,9 @@
         },
         {
           "commit": "4ea14c24d8249722ad506368133163055edc4c9d"
+        },
+        {
+          "commit": "4f3fbc76f8338c8f545454475f6d5aff6e66718c"
         },
         {
           "commit": "4f9bf08bbdbbb7222cb68244f81e792f7eacaafa"
@@ -327455,7 +327531,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "a5ca10a913196423645eaf3966511cf69ddf9086",
+      "revision": "f85dd69ed408402ac1e2601e20f500f01986384a",
       "currentBranch": "codex/remove-age-verification-20261109",
       "defaultBranch": "main",
       "visibility": "public",
@@ -369451,13 +369527,13 @@
       "type": "TestSuite",
       "id": "test/customerlayaway-integration.js",
       "label": "test/customerlayaway-integration.js",
-      "lines": 26,
-      "version": "5bb691447d2b5e13",
+      "lines": 25,
+      "version": "ab04a832f7cc8ab8",
       "provenance": [
         {
           "file": "test/customerlayaway-integration.js",
           "line": 1,
-          "version": "5bb691447d2b5e13"
+          "version": "ab04a832f7cc8ab8"
         }
       ]
     },
@@ -499097,6 +499173,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:4f3fbc76f8338c8f545454475f6d5aff6e66718c",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "4f3fbc76f8338c8f545454475f6d5aff6e66718c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4f3fbc76f8338c8f545454475f6d5aff6e66718c",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "4f3fbc76f8338c8f545454475f6d5aff6e66718c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4f3fbc76f8338c8f545454475f6d5aff6e66718c",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "4f3fbc76f8338c8f545454475f6d5aff6e66718c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4f3fbc76f8338c8f545454475f6d5aff6e66718c",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "4f3fbc76f8338c8f545454475f6d5aff6e66718c"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:4f4b7d911c3ad7b37f14ee5bd70b7591ae6109fb",
       "to": "Artifact:MARKETING-POSTS.md",
       "provenance": {
@@ -560489,6 +560597,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:9658f103f084ecfda49f6d0584fc9b11e457db51",
+      "to": "Artifact:tools/age-removal-source-data.js",
+      "provenance": {
+        "commit": "9658f103f084ecfda49f6d0584fc9b11e457db51"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:966228e58e3b948ddcd3b85f40375dbf5364df1c",
       "to": "HistoricalArtifact:knowledge/generated/github-history.md",
       "provenance": {
@@ -565829,6 +565945,22 @@
       "to": "Artifact:tools/quest-quality-source-data.js",
       "provenance": {
         "commit": "9bf663da6015b572d71747ec8350525a4f9bd452"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9c11db8a179f1941894a61b4e48ad69a224db74e",
+      "to": "Artifact:test/customerlayaway-integration.js",
+      "provenance": {
+        "commit": "9c11db8a179f1941894a61b4e48ad69a224db74e"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9c11db8a179f1941894a61b4e48ad69a224db74e",
+      "to": "Artifact:tools/age-removal-source-seal.js",
+      "provenance": {
+        "commit": "9c11db8a179f1941894a61b4e48ad69a224db74e"
       }
     },
     {
@@ -663137,6 +663269,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:f85dd69ed408402ac1e2601e20f500f01986384a",
+      "to": "Artifact:tools/enterprise-native-questing-inputs.js",
+      "provenance": {
+        "commit": "f85dd69ed408402ac1e2601e20f500f01986384a"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:f8642cfa03b06ebae22854e0de9f2512d234b979",
       "to": "HistoricalArtifact:knowledge/generated/documents.md",
       "provenance": {
@@ -759153,7 +759293,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:enterprise-logistics",
-      "weight": 118
+      "weight": 120
     },
     {
       "type": "DEPENDS_ON",
@@ -794677,6 +794817,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:4f3fbc76f8338c8f545454475f6d5aff6e66718c",
+      "provenance": {
+        "commit": "4f3fbc76f8338c8f545454475f6d5aff6e66718c"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:4f42a7d8b4ca1f690f89e5d657196c0e377dcf72",
       "provenance": {
         "commit": "4f42a7d8b4ca1f690f89e5d657196c0e377dcf72"
@@ -807605,6 +807753,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:9658f103f084ecfda49f6d0584fc9b11e457db51",
+      "provenance": {
+        "commit": "9658f103f084ecfda49f6d0584fc9b11e457db51"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:966228e58e3b948ddcd3b85f40375dbf5364df1c",
       "provenance": {
         "commit": "966228e58e3b948ddcd3b85f40375dbf5364df1c"
@@ -808744,6 +808900,14 @@
       "to": "Commit:9c05e845c596951d04177fca5b7fc3b7313e38c4",
       "provenance": {
         "commit": "9c05e845c596951d04177fca5b7fc3b7313e38c4"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:9c11db8a179f1941894a61b4e48ad69a224db74e",
+      "provenance": {
+        "commit": "9c11db8a179f1941894a61b4e48ad69a224db74e"
       }
     },
     {
@@ -824832,6 +824996,14 @@
       "to": "Commit:f853b7a7497e2d26fe17afd6534ff396e8a8ad3b",
       "provenance": {
         "commit": "f853b7a7497e2d26fe17afd6534ff396e8a8ad3b"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:f85dd69ed408402ac1e2601e20f500f01986384a",
+      "provenance": {
+        "commit": "f85dd69ed408402ac1e2601e20f500f01986384a"
       }
     },
     {
@@ -859786,15 +859958,6 @@
       "provenance": {
         "file": "test/customerlayaway-integration.js",
         "line": 3
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:test/customerlayaway-integration.js",
-      "to": "Artifact:test/auth-fixture.js",
-      "provenance": {
-        "file": "test/customerlayaway-integration.js",
-        "line": 6
       }
     },
     {
@@ -896415,7 +896578,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "tools/age-removal-source-data.js",
-        "line": 711
+        "line": 737
       }
     },
     {
@@ -896424,7 +896587,25 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "tools/age-removal-source-data.js",
-        "line": 712
+        "line": 738
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/age-removal-source-data.js",
+      "to": "Artifact:src/social/estate.js",
+      "provenance": {
+        "file": "tools/age-removal-source-data.js",
+        "line": 441
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/age-removal-source-data.js",
+      "to": "Artifact:src/social/estate.js",
+      "provenance": {
+        "file": "tools/age-removal-source-data.js",
+        "line": 442
       }
     },
     {
@@ -896433,7 +896614,7 @@
       "to": "Artifact:tools/questing-source-transfer.js",
       "provenance": {
         "file": "tools/age-removal-source-data.js",
-        "line": 462
+        "line": 488
       }
     },
     {
@@ -896442,7 +896623,7 @@
       "to": "Artifact:tools/questing-source-transfer.js",
       "provenance": {
         "file": "tools/age-removal-source-data.js",
-        "line": 463
+        "line": 489
       }
     },
     {
