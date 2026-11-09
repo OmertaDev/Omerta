@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `62f3583eeef6`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `071032e40266`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 5763 |
+| Commits in clone | 5765 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-11-09 — Bind native declarations to repaired release inputs |
+| Latest commit | 2026-11-09 — Merge pull request #333 from OmertaDev/codex/remove-age-verification-20261109 |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 4630 |
+| OmertaDev | 4632 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 150 |
@@ -31,10 +31,10 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 961 | historical |
-| knowledge/generated/graph-summary.md | 961 | historical |
-| knowledge/generated/graph.json | 961 | historical |
-| knowledge/generated/inventory.md | 961 | historical |
+| knowledge/generated/github-history.md | 962 | historical |
+| knowledge/generated/graph-summary.md | 962 | historical |
+| knowledge/generated/graph.json | 962 | historical |
+| knowledge/generated/inventory.md | 962 | historical |
 | [SPEC.md](../../SPEC.md) | 648 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 514 | yes |
