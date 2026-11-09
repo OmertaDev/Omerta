@@ -5,6 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { chromium } from 'playwright-core';
 import { buildServer } from './server-fixture.js';
+import { revealOptional } from './lib/ux-disclosure-browser.js';
 import { masteryXpFor } from '../src/rules.js';
 
 if (process.env.DATABASE_URL) throw new Error('UX browser integration requires the disposable in-memory database.');
@@ -85,8 +86,10 @@ try {
   await page.locator('[data-ux-search]').waitFor();
   assert.equal(await page.evaluate(() => ['createOmertaFeedback', 'createOmertaProgression', 'createOmertaSocial', 'createOmertaNavigation'].every((name) => typeof window[name] === 'function')), true);
   await openTab(page, 'life');
+  await revealOptional(page.locator('#tab-life [data-ux-progression="life"]'));
   const goal = page.locator('#tab-life select[aria-label="Choose your next achievement"]');
   await goal.waitFor(); await goal.selectOption('trade:larceny');
+  await openDisclosure(page, '#city-directory');
   await openDisclosure(page, '#character-sheet');
   await page.locator('#sheet-body .ux-goal-card strong').filter({ hasText: 'Larceny' }).waitFor();
   await openTab(page, 'streets');
@@ -151,7 +154,7 @@ try {
   });
   const pocket = await pocketReady.jsonValue();
   assert.equal(pocket.terms, 1); assert.equal(pocket.rows, 1); assert.equal(pocket.matchingTerms, 1, 'mobile reuses the original action and cost terms once');
-  assert.ok(pocket.bottom <= pocket.barTop + 2 && pocket.z < 20, 'mobile action controls remain above bottom navigation and below dialogs');
+  assert.ok(pocket.bottom <= pocket.barTop + 2 && pocket.z < 20, `mobile action controls remain above bottom navigation and below dialogs: ${JSON.stringify(pocket)}`);
   await noOverflow(page, 'mobile active operation');
   await page.screenshot({ path: path.join(artifacts, 'ux-action-mobile.png'), fullPage: false });
   // Change account in the same browser store: preferences keyed by account cannot carry over.

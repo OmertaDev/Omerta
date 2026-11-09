@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { chromium } from 'playwright-core';
 import { cityAfterwordFixture, afterwordGraph as graph, mysteryRoot } from './city-afterword-fixture.js';
+import { revealOptional } from './ux-disclosure-browser.js';
 
 export async function runCityAfterwordBrowserProof() {
   const executablePath = [process.env.CHROMIUM_PATH, chromium.executablePath(),
@@ -69,6 +70,7 @@ export async function runCityAfterwordBrowserProof() {
       assert.equal((await board(owner)).status, 'completed');
       await detail.getByRole('heading', { name: 'Case closed', exact: true }).waitFor();
       const ending = page.locator('[data-ux-story="case"] [data-story-section^="epilogue:"]');
+      await revealOptional(ending);
       await ending.waitFor();
       if (!await ending.evaluate(element => element.open)) await ending.locator(':scope > summary').click();
       assert.match(await ending.innerText(), branch === 'live' ? /The neighborhood knows whom to call/ : /The archive remembers another name/);

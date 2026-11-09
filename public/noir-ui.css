@@ -70,6 +70,7 @@ button, summary, a { -webkit-tap-highlight-color: transparent; }
 #screen-main #vitals .v-i { display: inline-flex; align-items: center; gap: 5px; font: 12px/1.5 var(--om-font-body); }
 #screen-main #vitals .v-i b { color: var(--ink); font: 500 14px var(--om-font-body); }
 #screen-main #vitals svg { opacity: .65; }
+#screen-main #action-readiness button, #screen-main .ux-tactics-trial-actions .act { min-height: 44px; }
 
 /* Five dependable stops, with the complete directory one disclosure away. */
 #screen-main #layout {
@@ -248,7 +249,7 @@ button, summary, a { -webkit-tap-highlight-color: transparent; }
 #screen-main #bnav button { background: transparent; color: var(--dim); border: 0; font: 10px/1.4 var(--om-font-body); min-height: 58px; letter-spacing: 0; }
 #screen-main #bnav button.on { color: var(--gold); background: #c8aa780a; box-shadow: none; }
 #screen-main #bnav button.on::before { height: 2px; background: var(--gold); box-shadow: none; }
-.ux-action-pocket { bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
+#screen-main .ux-action-pocket { bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
 .noir-previous-result { border-top: 1px solid var(--line); }
 .noir-previous-result > summary { cursor: pointer; min-height: 44px; padding: 11px 16px; color: var(--dim); font: 12px/1.7 var(--om-font-body); }
 .ux-toast, #toast { border-radius: 7px; font-family: var(--om-font-body); }

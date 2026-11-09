@@ -6,6 +6,7 @@ import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { chromium } from 'playwright-core';
 import { buildServer } from './server-fixture.js';
+import { revealOptional } from './lib/ux-disclosure-browser.js';
 import { masteryXpFor } from '../src/rules.js';
 import { grantStack, withItemTransaction } from '../src/items.js';
 
@@ -65,7 +66,7 @@ try {
   page.on('request', request => { if (!request.url().startsWith(base + '/v1/')) return; const url = new URL(request.url()); if (request.method() === 'GET') reads.add(url.pathname); else if (url.pathname !== '/v1/ux/workspace') writes.push(url.pathname); });
   assert.equal(await page.evaluate(() => ['Workspace', 'Feedback', 'Progression', 'Social', 'Navigation', 'Tactics', 'Investigation', 'Coordination', 'Feel', 'Tools', 'Identity', 'Story', 'Community', 'World'].every(name => typeof window['createOmerta' + name] === 'function')), true, 'all fourteen factories load on the actual page');
 
-  await jump(page, 'profile'); const identity = page.locator('#tab-profile .ux-identity'); await identity.waitFor();
+  await jump(page, 'profile'); const identity = page.locator('#tab-profile .ux-identity'); await revealOptional(identity);
   const office = identity.locator('[data-identity-section="office"]'); await disclosure(office); await office.locator('[data-office-add]').selectOption('plant');
   await office.locator('[data-office-position="plant"]').selectOption('0'); assert.equal(await office.locator('.ux-office-prop').first().getAttribute('data-office-prop'), 'plant');
   const wardrobe = identity.locator('[data-identity-section="wardrobe"]'); await disclosure(wardrobe); await wardrobe.locator('[data-identity-setting="coat"]').selectOption('wine');
@@ -113,7 +114,7 @@ try {
   await eventuallySaved(alice, values => values.tools?.builds?.some(build => build.name === 'The Patient Reader') && values.tools?.tray?.length);
 
   await jump(page, 'fieldwork'); await page.locator('[data-fieldwork-view="mysteries"]').click(); await page.locator('[data-fieldwork-mystery="property-investigation"]').click();
-  const story = page.locator('[data-ux-story="case"]'); await story.locator('.story-cold-open').waitFor();
+  const story = page.locator('[data-ux-story="case"]'); await revealOptional(story); await story.locator('.story-cold-open').waitFor();
   assert.equal(await story.locator('[data-story-section^="epilogue:"]').count(), 0, 'active case has no invented ending');
   await disclosure(story.locator('[data-story-section="documents"]'));
   assert.equal(await story.locator('[data-story-transcript]').count(), 2, 'active case exposes exactly its two already revealed documents');
@@ -138,7 +139,7 @@ try {
   assert.deepEqual(writes, [], 'identity, Room, inventory planning, builds, history and story annotation execute no gameplay write');
   assert.deepEqual(await snapshot(alice), gameBefore, 'integrated presentation leaves actual currency, materials, owned car and gameplay stats unchanged');
 
-  await jump(page, 'crew'); const community = page.locator('#ux-community'); await community.locator('h3').waitFor();
+  await jump(page, 'crew'); const community = page.locator('#ux-community'); await revealOptional(community); await community.locator('h3').waitFor();
   const threadForm = community.locator('form[data-community-form="thread"]'); await disclosure(threadForm.locator('..'));
   await threadForm.locator('[name="anchor"]').selectOption('question'); await threadForm.locator('[name="title"]').fill('Compare the corrected dates');
   await threadForm.locator('[name="body"]').fill('The witness account agrees with the corrected registry.'); await threadForm.locator('[name="spoiler"]').check();
@@ -151,14 +152,14 @@ try {
   await pinForm.locator('[name="title"]').fill('Read together by the canal'); await pinForm.locator('[name="destinationId"]').selectOption('canal'); await pinForm.locator('[name="note"]').fill('A public destination for later.');
   const pinSaved = page.waitForResponse(reply => reply.url().endsWith('/v1/ux/community') && reply.request().method() === 'POST' && reply.status() === 200); await pinForm.locator('button[type="submit"]').click(); await pinSaved;
   const teammateBoard = await api('GET', '/v1/ux/community', mate); assert.ok(teammateBoard.entries.some(entry => entry.kind === 'thread' && entry.data.title === 'Compare the corrected dates'));
-  await jump(page, 'map'); await page.locator('#ux-community-pins').waitFor(); assert.match(await page.locator('#ux-community-pins').innerText(), /Read together by the canal/);
+  await jump(page, 'map'); await revealOptional(page.locator('#ux-community-pins')); assert.match(await page.locator('#ux-community-pins').innerText(), /Read together by the canal/);
   assert.ok(writes.every(url => url === '/v1/ux/community'), 'only explicitly posted Crew writing leaves the private workspace');
 
-  const teammatePage = await open(mate); await jump(teammatePage, 'crew'); const teammateThread = teammatePage.locator('.ux-community-thread').filter({ hasText: 'Compare the corrected dates' }); await teammateThread.waitFor();
+  const teammatePage = await open(mate); await jump(teammatePage, 'crew'); await revealOptional(teammatePage.locator('#ux-community')); const teammateThread = teammatePage.locator('.ux-community-thread').filter({ hasText: 'Compare the corrected dates' }); await teammateThread.waitFor();
   assert.equal(await teammateThread.locator(':scope > .ux-community-spoiler').evaluate(element => element.open), false);
   await teammateThread.locator(':scope > .ux-community-spoiler > summary').click(); assert.match(await teammateThread.innerText(), /witness account agrees/);
 
-  const mobile = await open(alice, true); await jump(mobile, 'profile'); const mobileIdentity = mobile.locator('#tab-profile .ux-identity'); await mobileIdentity.waitFor();
+  const mobile = await open(alice, true); await jump(mobile, 'profile'); const mobileIdentity = mobile.locator('#tab-profile .ux-identity'); await revealOptional(mobileIdentity);
   const mobileOffice = mobileIdentity.locator('[data-identity-section="office"]'); await disclosure(mobileOffice); await mobileOffice.locator('[data-office-position="plant"]').waitFor();
   assert.equal(await mobileOffice.locator('.ux-office-prop').first().getAttribute('data-office-prop'), 'plant', 'fresh device hydrates private office arrangement');
   await disclosure(mobileIdentity.locator('[data-identity-section="wardrobe"]')); assert.equal(await mobileIdentity.locator('[data-identity-setting="hat"]').inputValue(), 'fedora');
@@ -170,14 +171,14 @@ try {
   await mobile.screenshot({ path: path.join(artifacts, 'personality-desk-mobile.png'), fullPage: false }); await mobileDesk.locator('[data-tools-close]').click();
   await mobile.locator('.ux-screen-tools-close').click();
   await jump(mobile, 'fieldwork'); await mobile.locator('[data-fieldwork-view="mysteries"]').click(); await mobile.locator('[data-fieldwork-mystery="property-investigation"]').click();
-  const mobileStory = mobile.locator('[data-ux-story="case"]'); await mobileStory.locator('.story-cold-open').waitFor(); await disclosure(mobileStory.locator('[data-story-section="documents"]'));
+  const mobileStory = mobile.locator('[data-ux-story="case"]'); await revealOptional(mobileStory); await mobileStory.locator('.story-cold-open').waitFor(); await disclosure(mobileStory.locator('[data-story-section="documents"]'));
   assert.match(await mobileStory.innerText(), /My private cross-reference/, 'fresh-device story highlights hydrate beside the revealed passage');
   await mobileStory.getByRole('button', { name: 'Compare two found documents', exact: true }).click(); await noOverflow(mobile, 'mobile story dialog');
   await mobile.getByRole('button', { name: 'Close story reading', exact: true }).click();
-  await jump(mobile, 'crew'); await mobile.locator('#ux-community h3').waitFor(); await noOverflow(mobile, 'mobile Crew writing');
+  await jump(mobile, 'crew'); await revealOptional(mobile.locator('#ux-community')); await mobile.locator('#ux-community h3').waitFor(); await noOverflow(mobile, 'mobile Crew writing');
   await mobile.screenshot({ path: path.join(artifacts, 'personality-crew-mobile.png'), fullPage: false });
 
-  const stranger = await open(other); await jump(stranger, 'profile'); const strangerIdentity = stranger.locator('#tab-profile .ux-identity'); await strangerIdentity.waitFor();
+  const stranger = await open(other); await jump(stranger, 'profile'); const strangerIdentity = stranger.locator('#tab-profile .ux-identity'); await revealOptional(strangerIdentity);
   assert.ok(!(await strangerIdentity.innerText()).includes('The Quiet Reader')); assert.equal(await strangerIdentity.locator('[data-identity-setting="hat"]').inputValue(), 'none');
   assert.equal((await api('GET', '/v1/ux/workspace', other)).values.identity, undefined); assert.equal((await api('GET', '/v1/ux/workspace', other)).values.story, undefined);
   await stranger.locator('[data-tools-open]').click(); const strangerDesk = stranger.locator('dialog.ux-tools-dialog[open]'); await strangerDesk.locator('[data-tools-view="builds"]').click(); assert.ok(!(await strangerDesk.innerText()).includes('The Patient Reader')); await strangerDesk.locator('[data-tools-close]').click();

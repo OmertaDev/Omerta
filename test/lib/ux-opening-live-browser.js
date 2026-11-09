@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { chromium } from 'playwright-core';
 import { buildServer } from '../server-fixture.js';
+import { revealOptional } from './ux-disclosure-browser.js';
 
 export async function runOpeningLiveBrowserProof() {
   assert(!process.env.DATABASE_URL, 'Opening journey proof requires disposable pg-mem.');
@@ -32,7 +33,10 @@ export async function runOpeningLiveBrowserProof() {
     await page.locator(`#jump-list [data-jump="${tab}"]`).first().click();
     await page.locator(`#tab-${tab}.on`).waitFor();
   };
-  const openDetails = async locator => { if (!await locator.evaluate(node => node.open)) await locator.locator(':scope > summary').click(); };
+  const openDetails = async locator => {
+    await revealOptional(locator);
+    if (!await locator.evaluate(node => node.open)) await locator.locator(':scope > summary').click();
+  };
   const opening = (page, tab) => page.locator(`#tab-${tab} [data-ux-progression="opening"] .ux-opening`);
   const economy = async id => ({
     cash: Number((await pool.query('SELECT cash FROM characters WHERE id=$1', [id])).rows[0].cash),
@@ -115,6 +119,7 @@ export async function runOpeningLiveBrowserProof() {
     assert.match(await opening(page, 'empire').locator('.ux-opening-complete').innerText(), /Journey complete/);
     assert.deepEqual(mutations, ['/v1/crimes/pick', '/v1/assets/beater/buy']);
     assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 2), 'The real opening journey fits a 390px phone.');
+    await openDetails(opening(page, 'empire'));
     await opening(page, 'empire').scrollIntoViewIfNeeded();
     await page.screenshot({ path: path.join(artifacts, 'opening-complete-mobile.png'), fullPage: false });
     await opening(page, 'empire').screenshot({ path: path.join(artifacts, 'opening-complete-panel.png') });
