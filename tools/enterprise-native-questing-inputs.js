@@ -4,7 +4,7 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "ACTUAL_CURRENT_QUESTING_ENTERPRISE_NATIVE_INPUTS",
-  "authoredRevision": "ead4f29b3336b6e30a2b17cab6e75c77f7bfbbbc",
+  "authoredRevision": "9fd933cb19ea8089fd5a385f99c9aa927dabd3c0",
   "predecessorDefinitionSha256": "6b9128d3311945fc511748f852803354ac415a23082b6b5ce017980a2b7596bf",
   "proofInventorySha256": "3fd878600cd363ebdd9d89bb59b7cc3de7650f895062d83711b2bd1774c298e9",
   "files": [
@@ -11153,8 +11153,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "public/ux-quests.js",
       "mode": "100644",
-      "blob": "61b4ec05c45408e3d992434b42d119652dcf702d",
-      "sha256": "8b8aeb833b7704f9051099f421551b91dcd1c1670076dc825ac6f78699f5beeb"
+      "blob": "bb47e0b2aeda913a607a6b9a9981168b964ce902",
+      "sha256": "8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205"
     },
     {
       "file": "src/casinorakeback.js",
@@ -11249,8 +11249,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/lib/age-removal-source-transfer-proof.js",
       "mode": "100644",
-      "blob": "b9fb91b20d092b1e9ddb670467853a9ccdbd8307",
-      "sha256": "9361fb88ec2208bc4d8ae38c9e139ad9f17486bbabb4aa665908c1a117643cc8"
+      "blob": "914db9dc5a5dd0d848a1da75f667786c30ec067c",
+      "sha256": "eba04ba9ee8a53ae55d31cc394b7c88c66948e902ee736b65c82c09c99173d41"
     },
     {
       "file": "test/lib/questing-ux-director-reader-source-compatibility.js",
@@ -11303,8 +11303,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/age-removal-source-data.js",
       "mode": "100644",
-      "blob": "b8948fb077a23fedf5865da656e6516ecbe0a48d",
-      "sha256": "7d4aad2d64c925f5ea748c0a0ad38e6fce9ff35a836aa896108391f61e8a84c2"
+      "blob": "4cdd3e660817b32de7633f0c925bc028f4eddfdb",
+      "sha256": "f09c84fe02aa0886a3553c5c52861d26a803a8fb02d854f324e9ddddb7dfcd73"
     },
     {
       "file": "tools/age-removal-source-transfer.js",
@@ -12714,8 +12714,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "public/ux-quests.js",
       "mode": "100644",
-      "blob": "61b4ec05c45408e3d992434b42d119652dcf702d",
-      "sha256": "8b8aeb833b7704f9051099f421551b91dcd1c1670076dc825ac6f78699f5beeb"
+      "blob": "bb47e0b2aeda913a607a6b9a9981168b964ce902",
+      "sha256": "8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205"
     },
     {
       "file": "src/casinorakeback.js",
@@ -12810,8 +12810,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/lib/age-removal-source-transfer-proof.js",
       "mode": "100644",
-      "blob": "b9fb91b20d092b1e9ddb670467853a9ccdbd8307",
-      "sha256": "9361fb88ec2208bc4d8ae38c9e139ad9f17486bbabb4aa665908c1a117643cc8"
+      "blob": "914db9dc5a5dd0d848a1da75f667786c30ec067c",
+      "sha256": "eba04ba9ee8a53ae55d31cc394b7c88c66948e902ee736b65c82c09c99173d41"
     },
     {
       "file": "test/lib/questing-ux-director-reader-source-compatibility.js",
@@ -12864,8 +12864,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/age-removal-source-data.js",
       "mode": "100644",
-      "blob": "b8948fb077a23fedf5865da656e6516ecbe0a48d",
-      "sha256": "7d4aad2d64c925f5ea748c0a0ad38e6fce9ff35a836aa896108391f61e8a84c2"
+      "blob": "4cdd3e660817b32de7633f0c925bc028f4eddfdb",
+      "sha256": "f09c84fe02aa0886a3553c5c52861d26a803a8fb02d854f324e9ddddb7dfcd73"
     },
     {
       "file": "tools/age-removal-source-transfer.js",
@@ -12941,4 +12941,4 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     }
   ]
 });
-export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "f8496cfc50b9e62c4e70b7d4e7457148dfe0d09dc251d50ed01e941c9595e93d";
+export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "ba8e55f03a9be77a5626b1ae51c402d9effcd91ba7b0cda82cad04f7894f4e99";
