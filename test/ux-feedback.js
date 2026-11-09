@@ -104,8 +104,10 @@ class FakeAudio {
   constructor(src) { this.src = src; this.volume = 1; this.paused = true; audioInstances.push(this); }
   play() { this.paused = false; return Promise.resolve(); }
   pause() { this.paused = true; }
+  removeAttribute(name) { if (name === 'src') this.src = ''; }
+  load() {}
 }
-const audioContext = vm.createContext({ Audio: FakeAudio, document: audioDocument, navigator: { connection: {} }, SFX: { enabled: () => audioEnabled },
+const audioContext = vm.createContext({ setTimeout, clearTimeout, addEventListener() {}, Audio: FakeAudio, document: audioDocument, navigator: { connection: {} }, SFX: { enabled: () => audioEnabled },
   feedbackPreferences: () => ({ ambience: true }), MOTION: { beds: new Set(['bed-streets', 'bed-docks']) },
   setInterval(callback) { audioTimers.set(++audioTimerId, callback); return audioTimerId; }, clearInterval(id) { audioTimers.delete(id); } });
 vm.runInContext(html.slice(ambientStart, ambientEnd) + '\nglobalThis.audioEngine = AMBIENT;', audioContext);
@@ -119,8 +121,8 @@ assert.equal(audioInstances.length, 2); assert.equal(audioInstances[0].paused, t
 assert.equal(audioInstances[1].volume, .11 * .6); assert.equal(audioTimers.size, 0);
 assert.equal(audioContext.audioEngine.soundscape({ enabled: true, key: 'unverified-file', volume: 100 }), false, 'only boot-verified audio assets can be selected');
 audioDocument.hidden = true; audioListeners.visibilitychange(); assert.equal(audioInstances[1].paused, true);
-audioDocument.hidden = false; audioListeners.visibilitychange(); await Promise.resolve(); advanceAudio(); assert.equal(audioInstances[1].paused, false);
-audioEnabled = false; audioContext.audioEngine.sync(); advanceAudio(); assert.equal(audioInstances[1].paused, true, 'the site master mute stops the custom room bed');
+audioDocument.hidden = false; audioListeners.visibilitychange(); await Promise.resolve(); advanceAudio(); assert.equal(audioInstances.length, 3); assert.equal(audioInstances[1].paused, true, 'return never revives the released element'); assert.equal(audioInstances[2].paused, false); assert.equal(audioInstances[2].volume, .11 * .6);
+audioEnabled = false; audioContext.audioEngine.sync(); assert.equal(audioInstances[2].paused, true, 'the site master mute immediately stops the custom room bed'); assert.equal(audioTimers.size, 0);
 console.log('UX soundscape bridge: gesture, verified assets, independent crossfades, volume, hidden page and master mute passed.');
 const { runJourneyModelProof } = await import('./lib/ux-journeys.js');
 await runJourneyModelProof();

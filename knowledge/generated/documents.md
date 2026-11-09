@@ -326,7 +326,7 @@
 | [DEPLOY-CHECKLIST.md](../../DEPLOY-CHECKLIST.md) | operations | 147 | 2026-08-13 |
 | [DEPLOY.md](../../DEPLOY.md) | operations | 578 | 2026-10-23 |
 | [DESIGN.md](../../DESIGN.md) | design | 160 | 2026-09-07 |
-| [docs/agent-business-shadow.md](../../docs/agent-business-shadow.md) | documentation | 48 | 2026-10-10 |
+| [docs/agent-business-shadow.md](../../docs/agent-business-shadow.md) | documentation | 58 | 2026-10-10 |
 | [docs/agent-company-roadmap.md](../../docs/agent-company-roadmap.md) | documentation | 17 | 2026-10-10 |
 | [docs/agent-economy-autonomy-release-review.md](../../docs/agent-economy-autonomy-release-review.md) | documentation | 122 | 2026-10-14 |
 | [docs/agent-economy-commercial-release-review.md](../../docs/agent-economy-commercial-release-review.md) | documentation | 88 | 2026-10-14 |
@@ -433,6 +433,7 @@
 | [docs/consignments-security-review.md](../../docs/consignments-security-review.md) | documentation | 55 | 2026-10-15 |
 | [docs/contract-auction-receipt-repair-review.md](../../docs/contract-auction-receipt-repair-review.md) | documentation | 20 | 2026-10-13 |
 | [docs/contract-auctions-security-review.md](../../docs/contract-auctions-security-review.md) | documentation | 42 | 2026-10-13 |
+| [docs/contract-retirement-20261109.md](../../docs/contract-retirement-20261109.md) | documentation | 128 | 2026-11-09 |
 | [docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md](../../docs/coordination-engine/adr/ADR_001_COORDINATION_GRAPH.md) | documentation | 8 | 2026-09-14 |
 | [docs/coordination-engine/adr/ADR_002_EVENT_ARCHITECTURE.md](../../docs/coordination-engine/adr/ADR_002_EVENT_ARCHITECTURE.md) | documentation | 8 | 2026-09-14 |
 | [docs/coordination-engine/adr/ADR_003_KNOWLEDGE_IMMUTABILITY.md](../../docs/coordination-engine/adr/ADR_003_KNOWLEDGE_IMMUTABILITY.md) | documentation | 8 | 2026-09-14 |
@@ -695,6 +696,7 @@
 | [docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md](../../docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-contract-addendum.md) | documentation | 388 | 2026-09-07 |
 | [docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-transition-addendum.md](../../docs/superpowers/plans/2026-09-07-world-graph-phase-2a-lot-transition-addendum.md) | documentation | 122 | 2026-09-07 |
 | [docs/superpowers/plans/2026-10-22-player-experience-insights.md](../../docs/superpowers/plans/2026-10-22-player-experience-insights.md) | documentation | 28 | 2026-10-22 |
+| [docs/superpowers/plans/2026-11-09-business-deadlines.md](../../docs/superpowers/plans/2026-11-09-business-deadlines.md) | documentation | 41 | uncommitted |
 | [docs/superpowers/specs/2026-08-23-first-action-onboarding-design.md](../../docs/superpowers/specs/2026-08-23-first-action-onboarding-design.md) | design | 124 | 2026-08-24 |
 | [docs/superpowers/specs/2026-08-25-agent-alpha-deep-city-design.md](../../docs/superpowers/specs/2026-08-25-agent-alpha-deep-city-design.md) | design | 177 | 2026-09-25 |
 | [docs/superpowers/specs/2026-08-26-grill-completion.md](../../docs/superpowers/specs/2026-08-26-grill-completion.md) | documentation | 878 | 2026-10-06 |
