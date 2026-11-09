@@ -1,0 +1,14 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+{"component":"player-command","phase":"request","correlationId":"aca1b617-5cc5-4928-bdf1-14cf82c1b673"}
+{"component":"player-command","phase":"authorization","correlationId":"aca1b617-5cc5-4928-bdf1-14cf82c1b673","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"aca1b617-5cc5-4928-bdf1-14cf82c1b673","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"aca1b617-5cc5-4928-bdf1-14cf82c1b673","statusCode":409,"elapsedMs":3}
+{"component":"player-command","phase":"request","correlationId":"a51dfd15-9060-4454-b16c-446ea93b525b"}
+{"component":"player-command","phase":"authorization","correlationId":"a51dfd15-9060-4454-b16c-446ea93b525b","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"a51dfd15-9060-4454-b16c-446ea93b525b","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"a51dfd15-9060-4454-b16c-446ea93b525b","statusCode":409,"elapsedMs":2}
+{"component":"player-command","phase":"request","correlationId":"59cbc627-1184-4da6-8206-514a235eaaaa"}
+{"component":"player-command","phase":"authorization","correlationId":"59cbc627-1184-4da6-8206-514a235eaaaa","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"59cbc627-1184-4da6-8206-514a235eaaaa","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"59cbc627-1184-4da6-8206-514a235eaaaa","statusCode":409,"elapsedMs":2}
+Quest quality production browser PASS: real pilot proof/conclusion/evidence, exact clauses, hidden-question boundary, private revision/reload/peer isolation, drafts/undo, motive, commitments, truthful AI study/24h refusal and eligible recall, opt-in debrief, actual fieldwork/disclosure, independent unsure/share, real cross-role volunteering, opaque mandate/pre-ack blocker/ack/withdraw/commit and390px. Artifacts: C:\Users\Jorge\AppData\Local\Temp\omerta-quality-iRKXsh
