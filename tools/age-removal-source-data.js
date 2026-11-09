@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const AGE_REMOVAL_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_AGE_REMOVAL_SOURCE_COMPARISON_ONLY",
-  "revision": "5e85a7f806c4829f43a49029dc8b0e9f092ee91b",
-  "tree": "ef2a96787672f7669a9d2ee0b21dbbfc06602230",
+  "revision": "afe62c90a78465c87f2945cd5ebb26d49b5593c1",
+  "tree": "9d22b332356607b7bb95382bd1433c9eb0fc7632",
   "predecessor": "35913ec1b448275b227019ede2a2ef8047be55aa",
   "predecessorTree": "c74c606d97ee2f8ebb6c5201a4ddd2c2781d5db0",
   "files": {
@@ -2386,9 +2386,9 @@ export const AGE_REMOVAL_SOURCE = freeze({
     },
     "tools/age-removal-source-seal.js": {
       "mode": "100644",
-      "blob": "0701cccee2b31dfe86fc2e42d6a3158980a31614",
-      "sha256": "e9f1f16862be0cc73c130a6f7c01acfc363f2f508902e50a206638893742ae38",
-      "bytes": 15011
+      "blob": "afcf467e6283a4e3525c0c64eb4293586404f2eb",
+      "sha256": "ffba34dc4b438e8d717329292f9248ab866291a010246faa192bfc6993da9237",
+      "bytes": 16763
     },
     "tools/age-removal-source-transfer.js": {
       "mode": "100644",
@@ -2410,4 +2410,4 @@ export const AGE_REMOVAL_SOURCE = freeze({
     }
   }
 });
-export const AGE_REMOVAL_SOURCE_SHA256 = '84c17b9e7ee733b05354450b41b4de4adafc9fa17a0631368decdbfc50d85652';
+export const AGE_REMOVAL_SOURCE_SHA256 = '39a0cd0dd0459c235614ad583795a129aa6b15b9dfe25bb13b48fcdbb2761955';
