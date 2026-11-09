@@ -2,6 +2,7 @@ import { integratedEconomicParentInput } from '../../tools/integrated-economic-p
 import { QUESTING_SOURCE, questingHistoricalInput, questingHistoricalEntry } from '../../tools/questing-source-transfer.js';
 import { QUEST_QUALITY_SOURCE, qualifyQuestQualitySource } from '../../tools/quest-quality-source-transfer.js';
 import { SITE_BASICS_SOURCE, qualifySiteBasicsSource } from '../../tools/site-basics-source-transfer.js';
+import { ageRemovalHistoricalRecord } from '../../tools/age-removal-source-transfer.js';
 import { BUSINESS_DESK_COMBINED_SOURCE, assertBusinessDeskCombinedSourceTransfer } from '../../tools/businessdesk-combined-source-transfer.js';
 import assert from 'node:assert/strict';
 import { readFileSync, lstatSync } from 'node:fs';
@@ -83,6 +84,13 @@ export function runAfterwordSourceProof() {
   const rootSource = assertContractReleaseSourceDefinition();
   const assertActualHeadInput = (file, raw, current, physical = current) => {
     const original = pin.files.find(row => row.file === file); assert(original, 'Closed actual Afterword source subject');
+    assert.equal(typeof current, 'string'); assert.equal(typeof physical, 'string');
+    const actualIndex = git('ls-files', '--stage', '--', file).trim();
+    const actualStat = lstatSync(new URL('../../' + file, import.meta.url));
+    const historical = ageRemovalHistoricalRecord(file, { head: raw,
+      index: actualIndex, committed: Buffer.from(current), physical: Buffer.from(physical),
+      regular: actualStat.isFile(), symbolic: actualStat.isSymbolicLink() });
+    raw = historical.head; current = historical.committed.toString('utf8'); physical = historical.physical.toString('utf8');
     const desk = rootSource.status === 'BOUND' && Object.hasOwn(rootSource.sourceViews, file)
       && Object.hasOwn(rootSource.sourceViews[file].targets, 'desk') ? rootSource.sourceViews[file] : null;
     const domain = Object.hasOwn(BUSINESS_DESK_DOMAINS, file) ? BUSINESS_DESK_DOMAINS[file] : original;

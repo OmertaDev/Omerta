@@ -197,7 +197,7 @@ console.log(`genesis-fee-readiness-source-transfer: PASS three complete sources,
     const actualTree = typeof tree === 'string' && tree.match(/^(100644|100755) blob ([a-f0-9]{40})\t(.+)$/);
     assert(actualTree && actualTree[0] === tree && actualTree[3] === file, 'Complete current fixture tree identity required');
     const historical = ageRemovalHistoricalRecord(file, { head: { mode: actualTree[1], blob: actualTree[2] }, index,
-      committed: Buffer.from(lf(input.toString('utf8'))), physical: input, regular: true, symbolic: false });
+      committed: Buffer.from(lf(input.toString('utf8'))), physical: input, regular: stat.isFile(), symbolic: stat.isSymbolicLink() });
     tree = historical.head.mode + ' blob ' + historical.head.blob + '\t' + file;
     index = historical.index;
     const currentPin = SITE_BASICS_SOURCE.files[file].current;
