@@ -4,7 +4,7 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "ACTUAL_CURRENT_QUESTING_ENTERPRISE_NATIVE_INPUTS",
-  "authoredRevision": "bee46f65a9bd6cecabce8f6c611898d06c656a7b",
+  "authoredRevision": "38902a874992bd542608dfc638b657025ebf490d",
   "predecessorDefinitionSha256": "6b9128d3311945fc511748f852803354ac415a23082b6b5ce017980a2b7596bf",
   "proofInventorySha256": "3fd878600cd363ebdd9d89bb59b7cc3de7650f895062d83711b2bd1774c298e9",
   "files": [
@@ -305,8 +305,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "package.json",
       "mode": "100644",
-      "blob": "d5d8a72320cffc23defc816a00e601b445aba858",
-      "sha256": "56a1e5fc383339bcd4d3c25be44208b2a6aa2f5837a56e8d871737f8e55804d3"
+      "blob": "73e7dd96e54a6397e760f756766594a3a84b8bc6",
+      "sha256": "04b7b6b45867a34602093d04c8902eaa19a512d720a6c0cbb726456441839c10"
     },
     {
       "file": "public/admin.html",
@@ -8891,8 +8891,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/enterprise-deed-release-phase2-migration-catalog.js",
       "mode": "100644",
-      "blob": "f72928e9f6db7c23601bdffdfe842a8a82124962",
-      "sha256": "d9ce65cc618b419f7be1efca0c7926d7f72cd28a21abbdc4e7f86a0f14672ef7"
+      "blob": "be5ea2feaf519f9155ab32c77c1611da75e8d9d9",
+      "sha256": "1b57b97ad706b5328ac23f4dd9fc46f10ea018aa2f09a9fbb557074c3bd5c5c0"
     },
     {
       "file": "tools/enterprise-current-source-data.js",
@@ -9563,8 +9563,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/deed-quest-source-compatibility.js",
       "mode": "100644",
-      "blob": "2c846f97633519c506c23f7260ae1ac7df94de5a",
-      "sha256": "f2556ecda8d8d1daea852e381232a2ea8ecbffd827b2b7a8df2870305de8df3b"
+      "blob": "bd4410bd824fb22fb251adeae6c3ac4033a329c9",
+      "sha256": "2eee811d415be698f805b693b7f4f96a45d8a7813007783fe82398ee11dfa754"
     },
     {
       "file": "test/economy-release-composition.js",
@@ -11273,8 +11273,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/lib/age-removal-source-transfer-proof.js",
       "mode": "100644",
-      "blob": "914db9dc5a5dd0d848a1da75f667786c30ec067c",
-      "sha256": "eba04ba9ee8a53ae55d31cc394b7c88c66948e902ee736b65c82c09c99173d41"
+      "blob": "e853edce63e9aeb87dfe69628123052e3ff13b03",
+      "sha256": "23481487c6c5fbf7b9e8c7090b3efb442ad31a3e631a6d61539d369eac0fc987"
     },
     {
       "file": "test/lib/questing-ux-director-reader-source-compatibility.js",
@@ -11327,8 +11327,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/age-removal-source-data.js",
       "mode": "100644",
-      "blob": "519458a05d3fc4eaa1bed34c93e0feee812edae8",
-      "sha256": "07101de5e1b10ede0966f4a3c4717a402e9ead011e8e42806e7c925c61d16c23"
+      "blob": "1a4261ec4500aa56df6c68232ab93f54e0ad7db4",
+      "sha256": "e999499e4c959e0e2dd9d52d72ed17d67e4d95a51c115e9f94ea5dcb4f3bf5a9"
     },
     {
       "file": "tools/age-removal-source-transfer.js",
@@ -11475,8 +11475,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       "after": {
         "file": "package.json",
         "mode": "100644",
-        "blob": "d5d8a72320cffc23defc816a00e601b445aba858",
-        "sha256": "56a1e5fc383339bcd4d3c25be44208b2a6aa2f5837a56e8d871737f8e55804d3"
+        "blob": "73e7dd96e54a6397e760f756766594a3a84b8bc6",
+        "sha256": "04b7b6b45867a34602093d04c8902eaa19a512d720a6c0cbb726456441839c10"
       }
     },
     {
@@ -12200,6 +12200,21 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       }
     },
     {
+      "file": "tools/enterprise-deed-release-phase2-migration-catalog.js",
+      "before": {
+        "file": "tools/enterprise-deed-release-phase2-migration-catalog.js",
+        "mode": "100644",
+        "blob": "f72928e9f6db7c23601bdffdfe842a8a82124962",
+        "sha256": "d9ce65cc618b419f7be1efca0c7926d7f72cd28a21abbdc4e7f86a0f14672ef7"
+      },
+      "after": {
+        "file": "tools/enterprise-deed-release-phase2-migration-catalog.js",
+        "mode": "100644",
+        "blob": "be5ea2feaf519f9155ab32c77c1611da75e8d9d9",
+        "sha256": "1b57b97ad706b5328ac23f4dd9fc46f10ea018aa2f09a9fbb557074c3bd5c5c0"
+      }
+    },
+    {
       "file": "test/enterprise-current-source-compatibility.js",
       "before": {
         "file": "test/enterprise-current-source-compatibility.js",
@@ -12332,6 +12347,21 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
         "mode": "100644",
         "blob": "ff17d0c8356b8b1420cb242b7e12d41288eb2078",
         "sha256": "1ec84d7069f9a4a75971f1d6a1e609e003d1dbe53f7cabc1fa80f68ae6978285"
+      }
+    },
+    {
+      "file": "test/deed-quest-source-compatibility.js",
+      "before": {
+        "file": "test/deed-quest-source-compatibility.js",
+        "mode": "100644",
+        "blob": "2c846f97633519c506c23f7260ae1ac7df94de5a",
+        "sha256": "f2556ecda8d8d1daea852e381232a2ea8ecbffd827b2b7a8df2870305de8df3b"
+      },
+      "after": {
+        "file": "test/deed-quest-source-compatibility.js",
+        "mode": "100644",
+        "blob": "bd4410bd824fb22fb251adeae6c3ac4033a329c9",
+        "sha256": "2eee811d415be698f805b693b7f4f96a45d8a7813007783fe82398ee11dfa754"
       }
     },
     {
@@ -12933,8 +12963,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/lib/age-removal-source-transfer-proof.js",
       "mode": "100644",
-      "blob": "914db9dc5a5dd0d848a1da75f667786c30ec067c",
-      "sha256": "eba04ba9ee8a53ae55d31cc394b7c88c66948e902ee736b65c82c09c99173d41"
+      "blob": "e853edce63e9aeb87dfe69628123052e3ff13b03",
+      "sha256": "23481487c6c5fbf7b9e8c7090b3efb442ad31a3e631a6d61539d369eac0fc987"
     },
     {
       "file": "test/lib/questing-ux-director-reader-source-compatibility.js",
@@ -12987,8 +13017,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/age-removal-source-data.js",
       "mode": "100644",
-      "blob": "519458a05d3fc4eaa1bed34c93e0feee812edae8",
-      "sha256": "07101de5e1b10ede0966f4a3c4717a402e9ead011e8e42806e7c925c61d16c23"
+      "blob": "1a4261ec4500aa56df6c68232ab93f54e0ad7db4",
+      "sha256": "e999499e4c959e0e2dd9d52d72ed17d67e4d95a51c115e9f94ea5dcb4f3bf5a9"
     },
     {
       "file": "tools/age-removal-source-transfer.js",
@@ -13064,4 +13094,4 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     }
   ]
 });
-export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "52e4281bb516b8f28f5b808d29e6495e135fd4873ea53ad33c5571ff8dff4227";
+export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "1f8501aca29690835a3848d6d39c2675a3cb0ff6d81a1a6d02eb65f6fd302bde";
