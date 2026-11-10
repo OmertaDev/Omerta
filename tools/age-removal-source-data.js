@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const AGE_REMOVAL_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_AGE_REMOVAL_SOURCE_COMPARISON_ONLY",
-  "revision": "7d1de997963893e552c3ddfe8a780a2c7fbad7dd",
-  "tree": "7c36d02815fae686602ac521581493f401407e56",
+  "revision": "61c839ad607508c406fb08775236e433b2f87a39",
+  "tree": "bb7401540ad09dd53123c7be0a1a91e88662d9cb",
   "predecessor": "35913ec1b448275b227019ede2a2ef8047be55aa",
   "predecessorTree": "c74c606d97ee2f8ebb6c5201a4ddd2c2781d5db0",
   "files": {
@@ -63,8 +63,8 @@ export const AGE_REMOVAL_SOURCE = freeze({
     "MARKETING-POSTS.md": {
       "current": {
         "mode": "100644",
-        "blob": "c9afbaf5b88cd494f5a2e2fce44cf89679391038",
-        "sha256": "96eb02934156476b4dfd3d423b79276aa3c34e57781def781ba56751ce881306",
+        "blob": "1aa4bcaa13fc03c72ad5ad7c76b0a4cb2b4831f1",
+        "sha256": "d401f7e47eaa820d5d23e9306f02a2b0536511c4f3d5396ee4041e8563463b94",
         "bytes": 7262
       },
       "baseline": {
@@ -81,7 +81,7 @@ export const AGE_REMOVAL_SOURCE = freeze({
         },
         {
           "at": 2521,
-          "current": "and the game says so in-game rather than pretending otherwise.\n\nStack: Node + Postgres, one static-file web client, Foundry for the contracts. The test posture is\nthe part I'm proudest of: 391 suites, plus separate harnesses that run every SQL string against\nreal Postgres (pg-mem lies about type unification — that class took us down once), drive real\nChromium across every screen at two phone sizes, SIGKILL the worker mid-sweep to prove idempotency,\nand load-test §10.4 conservation under concurrency.\n",
+          "current": "and the game says so in-game rather than pretending otherwise.\n\nStack: Node + Postgres, one static-file web client, Foundry for the contracts. The test posture is\nthe part I'm proudest of: 393 suites, plus separate harnesses that run every SQL string against\nreal Postgres (pg-mem lies about type unification — that class took us down once), drive real\nChromium across every screen at two phone sizes, SIGKILL the worker mid-sweep to prove idempotency,\nand load-test §10.4 conservation under concurrency.\n",
           "baseline": "and the game says so in-game rather than pretending otherwise.\n\nStack: Node + Postgres, one static-file web client, Foundry for the contracts. The test posture is\nthe part I'm proudest of: 390 suites, plus separate harnesses that run every SQL string against\nreal Postgres (pg-mem lies about type unification — that class took us down once), drive real\nChromium across every screen at two phone sizes, SIGKILL the worker mid-sweep to prove idempotency,\nand load-test §10.4 conservation under concurrency.\n"
         },
         {
@@ -94,8 +94,8 @@ export const AGE_REMOVAL_SOURCE = freeze({
     "SPEC.md": {
       "current": {
         "mode": "100644",
-        "blob": "8acd074ddd0b81db0377c31f9fb4b25158922e77",
-        "sha256": "d0336e933736e2157e19dfaa962f4df93de4ed86ab4884024895b27005f43d74",
+        "blob": "bda743a1fda96bcbf471d93f8031ab58594ee968",
+        "sha256": "a7ab9b2cbb241c6e98b972548d08d45a0a00cb1728b05d9de9836f83a8b6e43b",
         "bytes": 57384
       },
       "baseline": {
@@ -107,7 +107,7 @@ export const AGE_REMOVAL_SOURCE = freeze({
       "inverses": [
         {
           "at": 318,
-          "current": "\nCounts were measured for the combined release source on 2026-11-07, before generated release records; they do not identify a deployed revision.\n\nFile counts include the combined playtest fixes, quest-quality additions and task puzzles as of 2026-11-10. Backend, test and schema line totals were refreshed for task puzzles; other line totals retain the 2026-11-07 snapshot.\n\n| | |\n|---|---|\n| Backend modules | **622** files, **142384** lines (recursive source inventory) |\n| Test suites | **1043** files, **218404** lines (recursive source inventory) |\n| HTTP routes | **1401** registrations (**1401** unique; 1277 under `/v1`) |\n| Database tables | **586** (`schema.sql`, 9848 lines) |\n| Client | **14683** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n| Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |\n| Smart contracts | **41** top-level Solidity files, **11590** lines, **1125** declared top-level Foundry test functions; the release gate re-measures the passing suite |\n| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |\n| Design + audit docs | **991** markdown files, **158775** lines — dated security evidence is indexed in `docs/AUDITS.md` |\n| Ledger invariants | **133** checks — **127** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |\n\nRoughly **369,000 lines** of backend code, tests, schema and top-level contracts.\n",
+          "current": "\nCounts were measured for the combined release source on 2026-11-07, before generated release records; they do not identify a deployed revision.\n\nFile counts include the combined playtest fixes, quest-quality additions and task puzzles as of 2026-11-10. Backend, test and schema line totals were refreshed for task puzzles; other line totals retain the 2026-11-07 snapshot.\n\n| | |\n|---|---|\n| Backend modules | **622** files, **142384** lines (recursive source inventory) |\n| Test suites | **1045** files, **218587** lines (recursive source inventory) |\n| HTTP routes | **1401** registrations (**1401** unique; 1277 under `/v1`) |\n| Database tables | **586** (`schema.sql`, 9848 lines) |\n| Client | **14683** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n| Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |\n| Smart contracts | **41** top-level Solidity files, **11590** lines, **1125** declared top-level Foundry test functions; the release gate re-measures the passing suite |\n| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |\n| Design + audit docs | **991** markdown files, **158775** lines — dated security evidence is indexed in `docs/AUDITS.md` |\n| Ledger invariants | **133** checks — **127** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |\n\nRoughly **369,000 lines** of backend code, tests, schema and top-level contracts.\n",
           "baseline": "\nCounts were measured for the combined release source on 2026-11-07, before generated release records; they do not identify a deployed revision.\n\nFile counts include the combined playtest fixes and quest-quality additions as of 2026-11-08. Line totals retain the 2026-11-07 snapshot.\n\n| | |\n|---|---|\n| Backend modules | **618** files, **141073** lines (recursive source inventory) |\n| Test suites | **1032** files, **213491** lines (recursive source inventory) |\n| HTTP routes | **1386** registrations (**1386** unique; 1274 under `/v1`) |\n| Database tables | **585** (`schema.sql`, 9820 lines) |\n| Client | **14683** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n| Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |\n| Smart contracts | **41** top-level Solidity files, **11590** lines, **1125** declared top-level Foundry test functions; the release gate re-measures the passing suite |\n| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |\n| Design + audit docs | **987** markdown files, **158083** lines — dated security evidence is indexed in `docs/AUDITS.md` |\n| Ledger invariants | **133** checks — **127** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |\n\nRoughly **369,000 lines** of backend code, tests, schema and top-level contracts.\n"
         }
       ]
@@ -256,9 +256,9 @@ export const AGE_REMOVAL_SOURCE = freeze({
     "package.json": {
       "current": {
         "mode": "100644",
-        "blob": "73e7dd96e54a6397e760f756766594a3a84b8bc6",
-        "sha256": "04b7b6b45867a34602093d04c8902eaa19a512d720a6c0cbb726456441839c10",
-        "bytes": 64672
+        "blob": "9152919069a59c509cae29251cc8e0f01e274310",
+        "sha256": "2c16352b08dae5ba9b4a92ee4f8bcc7bbe71744134c59257e28b29e63336e232",
+        "bytes": 64774
       },
       "baseline": {
         "mode": "100644",
@@ -274,26 +274,26 @@ export const AGE_REMOVAL_SOURCE = freeze({
         },
         {
           "at": 11785,
-          "current": "    \"phase2:lots:check\": \"node test/phase2-lot-boundary.js && node test/phase2-lots.js && node test/phase2-lots-property.js\",\n    \"phase2:lots:postgres\": \"node test/phase2-postgres.js --lots\",\n    \"phase2:definitions:postgres\": \"node test/phase2-postgres.js --definitions\",\n    \"test\": \"npm run test:questing && npm run test:ux && node test/classic-interface-source-compatibility.js && npm run test:player-experience && node test/player-intel.js && node test/player-intel-projections.js && node test/player-intel-gates.js && node test/resourceproviders.js && node test/resourceauction.js && node test/resourcepayments.js && node test/resourcecompute.js && node test/resourcework.js && node test/resourcelabor.js && node test/resourcebusiness.js && node test/resourceoutcomes.js && node test/resourcestorefront.js && node test/agentcompany.js && node test/resourceoutcomeobserver.js && node test/businesspolicy.js && node test/business-agent.js && node test/computeexperiment.js && node test/compute-experiment-cli.js && node test/computerouting.js && node test/computeoutcomes.js && node test/compute-router-cli.js && node test/decisionproofs.js && node test/decisionproofs-api.js && node test/resource-agent.js && node test/resource-worker.js && node test/operatingpolicy.js && node test/supplytenders.js && node test/supplytenders-api.js && node test/warehouseleases.js && node test/warehouseleases-api.js && node test/crewlogistics.js && node test/crewlogistics-api.js && node test/franchiselicenses.js && node test/franchiselicenses-api.js && node test/intelforecasts.js && node test/intelforecastjobs.js && node test/intelforecastjobs-api.js && node test/rc1-intel-source-compatibility.js && node test/rc1-loan-source-compatibility.js && node test/rc1-invoice-source-compatibility.js && node test/deliveryfinanceterms.js && node test/deliveryfinance.js && node test/deliveryfinance-guards.js && node test/deliveryfinance-api.js && node test/logisticscoverageterms.js && node test/logisticscoverage-event-clock.js && node test/logisticscoverage.js && node test/logisticscoverage-api.js && node test/rc1-logistics-coverage-source-compatibility.js && node test/strategylicenses.js && node test/strategylicenses-api.js && node test/rc1-strategy-source-compatibility.js && node test/companysuccession.js && node test/companysuccession-api.js && node test/rc1-company-succession-source-compatibility.js && node test/marketfeed.js && node test/marketfeed-api.js && node test/rc1-market-feed-source-compatibility.js && node test/strategyleagues.js && node test/strategyleagues-api.js && node test/rc1-strategy-league-source-compatibility.js && node test/supplier-history.js && node test/delivery.js && node test/depot.js && node test/restock.js && node test/restock-api.js && node test/smoke.js && node test/persist.js && node test/economy.js && node test/business-settlement.js && node test/goods-market.js && node test/social.js && node test/growth.js && node test/hardening.js && node test/agent-alpha.js && node test/agent-cohort.js && node test/agentturn.js && node test/agentturn-jail-units.js && node test/local-agent-human-coordination.js && node test/agent-turn-cadence.js && node test/security.js && node test/chain.js && node test/watcher.js && node test/vig.js && node test/casino.js && node test/heists.js && node test/convoy.js && node test/commission.js && node test/stockcatalog.js && node test/stockcatalogv2.js && node test/market.js && node test/skills.js && node test/underworld.js && node test/law.js && node test/world.js && node test/npcwar.js && node test/pen.js && node test/loans.js && node test/portfolio.js && node test/estate.js && node test/deeds.js && node test/auction.js && node test/wire.js && node test/store.js && node test/pass.js && node test/landmarks.js && node test/speakeasy.js && node test/boxing.js && node test/inventory-bond-checkout.js && node test/bonds.js && node test/races.js && node test/port.js && node test/stable.js && node test/migrate.js && node test/emission.js && node test/desk.js && node test/made.js && node test/nft.js && node test/reimport.js && node test/walletforge.js && node test/expansion.js && node test/dynasty.js && node test/intrigue.js && node test/megaproject.js && node test/duels.js && node test/clues.js && node test/seasons.js && node test/ring.js && node test/standing.js && node test/sacking.js && node test/shields.js && node test/population.js && node test/tokenomics.js && node test/treasury.js && node test/stockdeliver.js && node test/dexbot.js && node test/mastery.js && node test/activity.js && node test/brokers.js && node test/deed-upgrades.js && node test/deed-upgrade-ownership.js && node test/bank.js && node test/community.js && node test/tokenhealth.js && node test/regimen.js && node test/career.js && node test/favors.js && node test/crew.js && node test/firstblood.js && node test/firstblood-intel.js && node test/discovery.js && node test/mentor.js && node test/events.js && node test/results.js && node test/vouch.js && node test/streak.js && node test/circle.js && node test/collision.js && node test/firsts.js && node test/runs.js && node test/shipment.js && node test/avatar.js && node test/portrait.js && node test/nft-art.js && node test/portrait-access.js && node test/push.js && node test/dispatch.js && node test/pwa.js && node test/people.js && node test/citywire.js && node test/bulletin.js && node test/explore.js && node test/primetime.js && node test/citymap.js && node test/day.js && node test/payroll.js && node test/home.js && node test/streets.js && node test/citywide.js && node test/drop.js && node test/sweeps.js && node test/tax.js && node test/router.js && node test/auth.js && node test/agent-onboarding.js && node test/rules.js && node test/path-funnel.js && node test/routes.js && node test/diagram-renderer.js && node test/coldstart.js && node test/preflight.js && node test/client-ip.js && node test/client.js && node test/engagement.js && node test/levers.js && node test/graph.js && node test/gates.js && node test/chainparams.js && node test/docs.js && node test/playthrough-firstblood-truth.js && node test/playthrough-truth.js && node tools/knowledge-test.js && node test/genesisauction.js && node test/genesis-auction-http.js && node test/player-genesis-client.js && node test/genesis-auction-operations.js && node test/genesis-deploy-client.js && node test/city-presence.js && node test/city-presence-api.js && node test/city-activity.js && node test/city-social-api.js && node test/city-homes-api.js && npm run test:city:layout && npm run test:city-gameplay && npm run test:company-workforce && npm run test:company-commercial && npm run test:company-autonomy && node test/wiki-economy-media.js\",\n    \"content:check\": \"npm run content:check:corpus\",\n    \"content:check:corpus\": \"node tools/content.js check-corpus content/packs\",\n    \"content:build\": \"node tools/content.js build content/packs/sixth-chair-v2/pack.json content/dist/sixth-chair-v2.json\",\n",
+          "current": "    \"phase2:lots:check\": \"node test/phase2-lot-boundary.js && node test/phase2-lots.js && node test/phase2-lots-property.js\",\n    \"phase2:lots:postgres\": \"node test/phase2-postgres.js --lots\",\n    \"phase2:definitions:postgres\": \"node test/phase2-postgres.js --definitions\",\n    \"test\": \"node test/task-puzzle-native-catalog-guard.js && node test/task-puzzle-native-integration-guard.js && npm run test:questing && npm run test:ux && node test/classic-interface-source-compatibility.js && npm run test:player-experience && node test/player-intel.js && node test/player-intel-projections.js && node test/player-intel-gates.js && node test/resourceproviders.js && node test/resourceauction.js && node test/resourcepayments.js && node test/resourcecompute.js && node test/resourcework.js && node test/resourcelabor.js && node test/resourcebusiness.js && node test/resourceoutcomes.js && node test/resourcestorefront.js && node test/agentcompany.js && node test/resourceoutcomeobserver.js && node test/businesspolicy.js && node test/business-agent.js && node test/computeexperiment.js && node test/compute-experiment-cli.js && node test/computerouting.js && node test/computeoutcomes.js && node test/compute-router-cli.js && node test/decisionproofs.js && node test/decisionproofs-api.js && node test/resource-agent.js && node test/resource-worker.js && node test/operatingpolicy.js && node test/supplytenders.js && node test/supplytenders-api.js && node test/warehouseleases.js && node test/warehouseleases-api.js && node test/crewlogistics.js && node test/crewlogistics-api.js && node test/franchiselicenses.js && node test/franchiselicenses-api.js && node test/intelforecasts.js && node test/intelforecastjobs.js && node test/intelforecastjobs-api.js && node test/rc1-intel-source-compatibility.js && node test/rc1-loan-source-compatibility.js && node test/rc1-invoice-source-compatibility.js && node test/deliveryfinanceterms.js && node test/deliveryfinance.js && node test/deliveryfinance-guards.js && node test/deliveryfinance-api.js && node test/logisticscoverageterms.js && node test/logisticscoverage-event-clock.js && node test/logisticscoverage.js && node test/logisticscoverage-api.js && node test/rc1-logistics-coverage-source-compatibility.js && node test/strategylicenses.js && node test/strategylicenses-api.js && node test/rc1-strategy-source-compatibility.js && node test/companysuccession.js && node test/companysuccession-api.js && node test/rc1-company-succession-source-compatibility.js && node test/marketfeed.js && node test/marketfeed-api.js && node test/rc1-market-feed-source-compatibility.js && node test/strategyleagues.js && node test/strategyleagues-api.js && node test/rc1-strategy-league-source-compatibility.js && node test/supplier-history.js && node test/delivery.js && node test/depot.js && node test/restock.js && node test/restock-api.js && node test/smoke.js && node test/persist.js && node test/economy.js && node test/business-settlement.js && node test/goods-market.js && node test/social.js && node test/growth.js && node test/hardening.js && node test/agent-alpha.js && node test/agent-cohort.js && node test/agentturn.js && node test/agentturn-jail-units.js && node test/local-agent-human-coordination.js && node test/agent-turn-cadence.js && node test/security.js && node test/chain.js && node test/watcher.js && node test/vig.js && node test/casino.js && node test/heists.js && node test/convoy.js && node test/commission.js && node test/stockcatalog.js && node test/stockcatalogv2.js && node test/market.js && node test/skills.js && node test/underworld.js && node test/law.js && node test/world.js && node test/npcwar.js && node test/pen.js && node test/loans.js && node test/portfolio.js && node test/estate.js && node test/deeds.js && node test/auction.js && node test/wire.js && node test/store.js && node test/pass.js && node test/landmarks.js && node test/speakeasy.js && node test/boxing.js && node test/inventory-bond-checkout.js && node test/bonds.js && node test/races.js && node test/port.js && node test/stable.js && node test/migrate.js && node test/emission.js && node test/desk.js && node test/made.js && node test/nft.js && node test/reimport.js && node test/walletforge.js && node test/expansion.js && node test/dynasty.js && node test/intrigue.js && node test/megaproject.js && node test/duels.js && node test/clues.js && node test/seasons.js && node test/ring.js && node test/standing.js && node test/sacking.js && node test/shields.js && node test/population.js && node test/tokenomics.js && node test/treasury.js && node test/stockdeliver.js && node test/dexbot.js && node test/mastery.js && node test/activity.js && node test/brokers.js && node test/deed-upgrades.js && node test/deed-upgrade-ownership.js && node test/bank.js && node test/community.js && node test/tokenhealth.js && node test/regimen.js && node test/career.js && node test/favors.js && node test/crew.js && node test/firstblood.js && node test/firstblood-intel.js && node test/discovery.js && node test/mentor.js && node test/events.js && node test/results.js && node test/vouch.js && node test/streak.js && node test/circle.js && node test/collision.js && node test/firsts.js && node test/runs.js && node test/shipment.js && node test/avatar.js && node test/portrait.js && node test/nft-art.js && node test/portrait-access.js && node test/push.js && node test/dispatch.js && node test/pwa.js && node test/people.js && node test/citywire.js && node test/bulletin.js && node test/explore.js && node test/primetime.js && node test/citymap.js && node test/day.js && node test/payroll.js && node test/home.js && node test/streets.js && node test/citywide.js && node test/drop.js && node test/sweeps.js && node test/tax.js && node test/router.js && node test/auth.js && node test/agent-onboarding.js && node test/rules.js && node test/path-funnel.js && node test/routes.js && node test/diagram-renderer.js && node test/coldstart.js && node test/preflight.js && node test/client-ip.js && node test/client.js && node test/engagement.js && node test/levers.js && node test/graph.js && node test/gates.js && node test/chainparams.js && node test/docs.js && node test/playthrough-firstblood-truth.js && node test/playthrough-truth.js && node tools/knowledge-test.js && node test/genesisauction.js && node test/genesis-auction-http.js && node test/player-genesis-client.js && node test/genesis-auction-operations.js && node test/genesis-deploy-client.js && node test/city-presence.js && node test/city-presence-api.js && node test/city-activity.js && node test/city-social-api.js && node test/city-homes-api.js && npm run test:city:layout && npm run test:city-gameplay && npm run test:company-workforce && npm run test:company-commercial && npm run test:company-autonomy && node test/wiki-economy-media.js\",\n    \"content:check\": \"npm run content:check:corpus\",\n    \"content:check:corpus\": \"node tools/content.js check-corpus content/packs\",\n    \"content:build\": \"node tools/content.js build content/packs/sixth-chair-v2/pack.json content/dist/sixth-chair-v2.json\",\n",
           "baseline": "    \"phase2:lots:check\": \"node test/phase2-lot-boundary.js && node test/phase2-lots.js && node test/phase2-lots-property.js\",\n    \"phase2:lots:postgres\": \"node test/phase2-postgres.js --lots\",\n    \"phase2:definitions:postgres\": \"node test/phase2-postgres.js --definitions\",\n    \"test\": \"npm run test:questing && npm run test:ux && node test/classic-interface-source-compatibility.js && npm run test:player-experience && node test/player-intel.js && node test/player-intel-projections.js && node test/player-intel-gates.js && node test/resourceproviders.js && node test/resourceauction.js && node test/resourcepayments.js && node test/resourcecompute.js && node test/resourcework.js && node test/resourcelabor.js && node test/resourcebusiness.js && node test/resourceoutcomes.js && node test/resourcestorefront.js && node test/agentcompany.js && node test/resourceoutcomeobserver.js && node test/businesspolicy.js && node test/business-agent.js && node test/computeexperiment.js && node test/compute-experiment-cli.js && node test/computerouting.js && node test/computeoutcomes.js && node test/compute-router-cli.js && node test/decisionproofs.js && node test/decisionproofs-api.js && node test/resource-agent.js && node test/resource-worker.js && node test/operatingpolicy.js && node test/supplytenders.js && node test/supplytenders-api.js && node test/warehouseleases.js && node test/warehouseleases-api.js && node test/crewlogistics.js && node test/crewlogistics-api.js && node test/franchiselicenses.js && node test/franchiselicenses-api.js && node test/intelforecasts.js && node test/intelforecastjobs.js && node test/intelforecastjobs-api.js && node test/rc1-intel-source-compatibility.js && node test/rc1-loan-source-compatibility.js && node test/rc1-invoice-source-compatibility.js && node test/deliveryfinanceterms.js && node test/deliveryfinance.js && node test/deliveryfinance-guards.js && node test/deliveryfinance-api.js && node test/logisticscoverageterms.js && node test/logisticscoverage-event-clock.js && node test/logisticscoverage.js && node test/logisticscoverage-api.js && node test/rc1-logistics-coverage-source-compatibility.js && node test/strategylicenses.js && node test/strategylicenses-api.js && node test/rc1-strategy-source-compatibility.js && node test/companysuccession.js && node test/companysuccession-api.js && node test/rc1-company-succession-source-compatibility.js && node test/marketfeed.js && node test/marketfeed-api.js && node test/rc1-market-feed-source-compatibility.js && node test/strategyleagues.js && node test/strategyleagues-api.js && node test/rc1-strategy-league-source-compatibility.js && node test/supplier-history.js && node test/delivery.js && node test/depot.js && node test/restock.js && node test/restock-api.js && node test/smoke.js && node test/persist.js && node test/economy.js && node test/business-settlement.js && node test/goods-market.js && node test/social.js && node test/growth.js && node test/hardening.js && node test/agent-alpha.js && node test/agent-cohort.js && node test/agentturn.js && node test/agentturn-jail-units.js && node test/local-agent-human-coordination.js && node test/agent-turn-cadence.js && node test/security.js && node test/chain.js && node test/watcher.js && node test/vig.js && node test/casino.js && node test/heists.js && node test/convoy.js && node test/commission.js && node test/stockcatalog.js && node test/stockcatalogv2.js && node test/market.js && node test/skills.js && node test/underworld.js && node test/law.js && node test/world.js && node test/npcwar.js && node test/pen.js && node test/loans.js && node test/portfolio.js && node test/estate.js && node test/deeds.js && node test/auction.js && node test/wire.js && node test/store.js && node test/pass.js && node test/landmarks.js && node test/speakeasy.js && node test/boxing.js && node test/inventory-bond-checkout.js && node test/bonds.js && node test/races.js && node test/port.js && node test/stable.js && node test/migrate.js && node test/emission.js && node test/desk.js && node test/made.js && node test/nft.js && node test/reimport.js && node test/walletforge.js && node test/expansion.js && node test/dynasty.js && node test/intrigue.js && node test/megaproject.js && node test/duels.js && node test/clues.js && node test/seasons.js && node test/ring.js && node test/standing.js && node test/sacking.js && node test/shields.js && node test/population.js && node test/tokenomics.js && node test/treasury.js && node test/stockdeliver.js && node test/dexbot.js && node test/mastery.js && node test/activity.js && node test/brokers.js && node test/deed-upgrades.js && node test/deed-upgrade-ownership.js && node test/bank.js && node test/community.js && node test/tokenhealth.js && node test/regimen.js && node test/career.js && node test/favors.js && node test/crew.js && node test/firstblood.js && node test/firstblood-intel.js && node test/discovery.js && node test/mentor.js && node test/events.js && node test/results.js && node test/vouch.js && node test/streak.js && node test/circle.js && node test/collision.js && node test/firsts.js && node test/runs.js && node test/shipment.js && node test/avatar.js && node test/portrait.js && node test/nft-art.js && node test/portrait-access.js && node test/push.js && node test/dispatch.js && node test/pwa.js && node test/people.js && node test/citywire.js && node test/bulletin.js && node test/explore.js && node test/primetime.js && node test/citymap.js && node test/day.js && node test/payroll.js && node test/home.js && node test/streets.js && node test/citywide.js && node test/drop.js && node test/sweeps.js && node test/tax.js && node test/router.js && node test/auth.js && node test/agent-onboarding.js && node test/rules.js && node test/path-funnel.js && node test/routes.js && node test/diagram-renderer.js && node test/coldstart.js && node test/preflight.js && node test/client-ip.js && node test/client.js && node test/engagement.js && node test/levers.js && node test/graph.js && node test/gates.js && node test/chainparams.js && node test/docs.js && node test/playthrough-truth.js && node tools/knowledge-test.js && node test/genesisauction.js && node test/genesis-auction-http.js && node test/player-genesis-client.js && node test/genesis-auction-operations.js && node test/genesis-deploy-client.js && node test/city-presence.js && node test/city-presence-api.js && node test/city-activity.js && node test/city-social-api.js && node test/city-homes-api.js && npm run test:city:layout && npm run test:city-gameplay && npm run test:company-workforce && npm run test:company-commercial && npm run test:company-autonomy && node test/wiki-economy-media.js\",\n    \"content:check\": \"npm run content:check:corpus\",\n    \"content:check:corpus\": \"node tools/content.js check-corpus content/packs\",\n    \"content:build\": \"node tools/content.js build content/packs/sixth-chair-v2/pack.json content/dist/sixth-chair-v2.json\",\n"
         },
         {
-          "at": 52008,
+          "at": 52110,
           "current": "    \"test:gateway:postgres\": \"node test/gateway-postgres.js\",\n    \"test:gateway:browser\": \"node test/consigliere-recovery-browser.js\",\n    \"build:walletconnect\": \"node tools/build-walletconnect.mjs\",\n    \"build:strategy-city\": \"node tools/build-strategy-city.mjs\",\n    \"test:legal-security\": \"node test/age.js && node test/db-rls.js && node test/legal-security.js && node test/payment-receipts.js\",\n    \"release:media\": \"node tools/release-media.mjs unpack\",\n    \"postinstall\": \"node tools/release-media.mjs unpack\",\n",
           "baseline": "    \"test:gateway:postgres\": \"node test/gateway-postgres.js\",\n    \"test:gateway:browser\": \"node test/consigliere-recovery-browser.js\",\n    \"build:walletconnect\": \"node tools/build-walletconnect.mjs\",\n    \"test:legal-security\": \"node test/age.js && node test/db-rls.js && node test/legal-security.js && node test/payment-receipts.js\",\n    \"release:media\": \"node tools/release-media.mjs unpack\",\n    \"postinstall\": \"node tools/release-media.mjs unpack\",\n"
         },
         {
-          "at": 60054,
+          "at": 60156,
           "current": "    \"test:city:layout\": \"node test/city-world-layout.js && node test/continuous-city-source-compatibility.js\",\n    \"test:decision-guide\": \"node test/decision-guide.js && node test/decision-guide-client.js && node test/decision-guide-api.js\",\n    \"test:ux\": \"npm run test:ux:source && node test/ux-feedback.js && node test/circle-highlights.js && node test/ux-workspace.js && node test/ux-tactics.js && node test/ux-investigation-api.js && node test/ux-coordination.js && node test/ux-identity.js && node test/ux-story.js && node test/ux-community.js && node test/ux-tools.js\",\n    \"test:ux:browser\": \"node test/strategy-command-browser.js && node test/noir-shell-browser.js && node test/ux-shell-browser.js && node test/ux-progression-browser.js && node test/ux-navigation-browser.js && node test/ux-social-browser.js && node test/ux-experience-browser.js && node test/ux-workspace-browser.js && node test/ux-tactics-browser.js && node test/ux-investigation-browser.js && node test/ux-coordination-browser.js && node test/ux-expanded-browser.js && node test/ux-feel-browser.js && node test/ux-tools-browser.js && node test/ux-identity-browser.js && node test/ux-story-browser.js && node test/ux-community-browser.js && node test/ux-personality-browser.js && npm run test:site && npm run test:site:browser\",\n    \"test:ux:postgres\": \"node test/ux-postgres.js && node test/ux-postgres-rls.js\",\n    \"test:ux:source\": \"node test/noir-ui-source-compatibility.js && node test/sale-source-compatibility.js && node test/ux-source-compatibility.js\",\n    \"test:economy-ux-source\": \"node test/contract-release-source-compatibility.js && node test/businessdesk-combined-source-compatibility.js && node test/businessdesk-combined-native-provenance.js && node test/economy-deed-merge-source-compatibility.js && node test/businessdesk-noir-source-compatibility.js && node test/businessdesk-source-compatibility.js && node test/deed-allocation-source-compatibility.js && node test/deed-benefit-native-catalog.js && node test/economy-ux-merge-source-compatibility.js\",\n    \"test:economy-security\": \"node test/economy-monitor.js && node test/economy-composition.js\",\n    \"test:eth-rewards\": \"node test/marketv2abi.js && node test/marketv2keeper-eth.js && node test/eth-rewards-readiness.js && node test/eth-rewards-upkeep.js && node test/ethrewardsworker.js && node test/eth-staking.js\",\n    \"test:eth-staking:browser\": \"node test/eth-staking.js --browser\",\n    \"test:questing\": \"npm run test:task-puzzles && node test/content-narrative.js && node test/content-narrative-security.js && node test/content-casework.js && node test/quest-saga.js && node test/quest-saga-social.js && node test/quest-specialist.js && node test/quest-workshop.js && node test/clue-puzzles.js && node test/content-api.js && npm run test:quest-quality\",\n    \"test:questing:browser\": \"npm run test:task-puzzles:browser && node test/quest-experience-browser.js && node test/clue-puzzles-browser.js && node test/quest-quality-browser.js\",\n    \"questing:check\": \"node tools/questing-content.js check && node tools/questing-workgraph.js check --complete && node tools/quest-quality-workgraph.js check\",\n    \"test:questing:postgres\": \"node test/questing-postgres.js && node test/quest-quality-postgres.js\",\n    \"test:quest-quality\": \"node test/quest-quality-source-transfer.js && node test/quest-quality-rules.js && node test/quest-quality-stateful.js && node test/quest-quality-api.js && node test/quest-quality-runtime.js && node test/quest-quality-social.js && node test/quest-quality-spoilers.js && node test/quest-quality-content.js && node test/quest-quality-studio.js && node test/quest-quality-study.js\",\n",
           "baseline": "    \"test:city:layout\": \"node test/city-world-layout.js && node test/continuous-city-source-compatibility.js\",\n    \"test:decision-guide\": \"node test/decision-guide.js && node test/decision-guide-client.js && node test/decision-guide-api.js\",\n    \"test:ux\": \"npm run test:ux:source && node test/ux-feedback.js && node test/circle-highlights.js && node test/ux-workspace.js && node test/ux-tactics.js && node test/ux-investigation-api.js && node test/ux-coordination.js && node test/ux-identity.js && node test/ux-story.js && node test/ux-community.js && node test/ux-tools.js\",\n    \"test:ux:browser\": \"node test/ux-shell-browser.js && node test/ux-progression-browser.js && node test/ux-navigation-browser.js && node test/ux-social-browser.js && node test/ux-experience-browser.js && node test/ux-workspace-browser.js && node test/ux-tactics-browser.js && node test/ux-investigation-browser.js && node test/ux-coordination-browser.js && node test/ux-expanded-browser.js && node test/ux-feel-browser.js && node test/ux-tools-browser.js && node test/ux-identity-browser.js && node test/ux-story-browser.js && node test/ux-community-browser.js && node test/ux-personality-browser.js && npm run test:site && npm run test:site:browser\",\n    \"test:ux:postgres\": \"node test/ux-postgres.js && node test/ux-postgres-rls.js\",\n    \"test:ux:source\": \"node test/noir-ui-source-compatibility.js && node test/sale-source-compatibility.js && node test/ux-source-compatibility.js\",\n    \"test:economy-ux-source\": \"node test/contract-release-source-compatibility.js && node test/businessdesk-combined-source-compatibility.js && node test/businessdesk-combined-native-provenance.js && node test/economy-deed-merge-source-compatibility.js && node test/businessdesk-noir-source-compatibility.js && node test/businessdesk-source-compatibility.js && node test/deed-allocation-source-compatibility.js && node test/deed-benefit-native-catalog.js && node test/economy-ux-merge-source-compatibility.js\",\n    \"test:economy-security\": \"node test/economy-monitor.js && node test/economy-composition.js\",\n    \"test:eth-rewards\": \"node test/marketv2abi.js && node test/marketv2keeper-eth.js && node test/eth-rewards-readiness.js && node test/eth-rewards-upkeep.js && node test/ethrewardsworker.js && node test/eth-staking.js\",\n    \"test:eth-staking:browser\": \"node test/eth-staking.js --browser\",\n    \"test:questing\": \"node test/content-narrative.js && node test/content-narrative-security.js && node test/content-casework.js && node test/quest-saga.js && node test/quest-saga-social.js && node test/quest-specialist.js && node test/quest-workshop.js && node test/clue-puzzles.js && node test/content-api.js && npm run test:quest-quality\",\n    \"test:questing:browser\": \"node test/quest-experience-browser.js && node test/clue-puzzles-browser.js && node test/quest-quality-browser.js\",\n    \"questing:check\": \"node tools/questing-content.js check && node tools/questing-workgraph.js check --complete && node tools/quest-quality-workgraph.js check\",\n    \"test:questing:postgres\": \"node test/questing-postgres.js && node test/quest-quality-postgres.js\",\n    \"test:quest-quality\": \"node test/quest-quality-source-transfer.js && node test/quest-quality-rules.js && node test/quest-quality-stateful.js && node test/quest-quality-api.js && node test/quest-quality-runtime.js && node test/quest-quality-social.js && node test/quest-quality-spoilers.js && node test/quest-quality-content.js && node test/quest-quality-studio.js && node test/quest-quality-study.js\",\n"
         },
         {
-          "at": 63794,
+          "at": 63896,
           "current": "    \"quest-quality:studio\": \"node tools/quest-quality-studio.js\",\n    \"test:foundry-release-api\": \"node test/foundry-release-api.js\",\n    \"test:agent-onboarding:postgres\": \"node test/agent-onboarding-postgres.js\",\n    \"test:casino-rakeback:postgres\": \"node test/casino-rakeback-postgres.js\",\n    \"test:task-puzzles:browser\": \"node test/task-puzzles-browser.js\"\n  },\n  \"dependencies\": {\n    \"@fastify/jwt\": \"^10.2.0\",\n",
           "baseline": "    \"quest-quality:studio\": \"node tools/quest-quality-studio.js\",\n    \"test:foundry-release-api\": \"node test/foundry-release-api.js\",\n    \"test:agent-onboarding:postgres\": \"node test/agent-onboarding-postgres.js\",\n    \"test:casino-rakeback:postgres\": \"node test/casino-rakeback-postgres.js\"\n  },\n  \"dependencies\": {\n    \"@fastify/jwt\": \"^10.2.0\",\n"
         },
         {
-          "at": 64536,
+          "at": 64638,
           "current": "    \"acorn\": \"8.18.0\",\n    \"playwright-core\": \"^1.62.0\",\n    \"solhint\": \"6.2.4\",\n    \"esbuild\": \"0.25.12\",\n    \"three\": \"0.187.0\"\n  }\n}\n",
           "baseline": "    \"acorn\": \"8.18.0\",\n    \"playwright-core\": \"^1.62.0\",\n    \"solhint\": \"6.2.4\",\n    \"esbuild\": \"0.25.12\"\n  }\n}\n"
         }
@@ -1256,6 +1256,58 @@ export const AGE_REMOVAL_SOURCE = freeze({
         }
       ]
     },
+    "test/director-migration.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "e030e2ecbf1385b4120c0fb007233d41ee9ff9b2",
+        "sha256": "ad15526aa69d33ffc25a57fa576ecc90787aaa595d38d2dc72fd5853ab223dda",
+        "bytes": 72451
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "5671cae4c65742f93b74018cd3fe89d8c472d32d",
+        "sha256": "0f59c17c250b72f75ca1986724791bc5e1408f3163251b1bb504233f8c021b6f",
+        "bytes": 72277
+      },
+      "inverses": [
+        {
+          "at": 336,
+          "current": "import { execFileSync } from 'node:child_process';\nimport pg from 'pg';\nimport { equipmentEconomyMigrationProjection, EQUIPMENT_ECONOMY_MIGRATION_TABLES } from './lib/equipment-economy-migration-catalog.js';\nimport { createTaskPuzzleReleasePhase2MigrationCatalog as createCommerceReleasePhase2MigrationCatalog, readTaskPuzzleReleasePhase2Metadata as readCommerceReleasePhase2Metadata,\n  verifyTaskPuzzleReleasePhase2CausalNegatives as verifyCommerceReleasePhase2CausalNegatives, COMMERCE_NATIVE_TABLES, assertTaskPuzzlePhase2SourceInputs as assertQuestingPhase2SourceInputs } from '../tools/questing-ux-release-phase2-native-catalog.js';\nimport { readCommerceReleasePhase2Metadata as readHistoricalCommerceReleasePhase2Metadata } from '../tools/commerce-deed-release-phase2-native-catalog.js';\nimport { dbCaps, migrateSchemaUnderLock } from '../src/db.js';\nimport { withCharacter, travel } from '../src/game.js';\n",
+          "baseline": "import { execFileSync } from 'node:child_process';\nimport pg from 'pg';\nimport { equipmentEconomyMigrationProjection, EQUIPMENT_ECONOMY_MIGRATION_TABLES } from './lib/equipment-economy-migration-catalog.js';\nimport { createCommerceReleasePhase2MigrationCatalog, readCommerceReleasePhase2Metadata,\n  verifyCommerceReleasePhase2CausalNegatives, COMMERCE_NATIVE_TABLES, assertQuestingPhase2SourceInputs } from '../tools/questing-ux-release-phase2-native-catalog.js';\nimport { readCommerceReleasePhase2Metadata as readHistoricalCommerceReleasePhase2Metadata } from '../tools/commerce-deed-release-phase2-native-catalog.js';\nimport { dbCaps, migrateSchemaUnderLock } from '../src/db.js';\nimport { withCharacter, travel } from '../src/game.js';\n"
+        }
+      ]
+    },
+    "test/enterprise-release-phase2-migration-catalog.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "52a65b3565084a512dfabf2e717d3a486c564be6",
+        "sha256": "1354b7d7432ad8236079d00af76c2345f2cc9a6482bc6064b67aa2d55f399e60",
+        "bytes": 34322
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "c35ebb7882d2a1103ac080b00630cff2f7fbbb00",
+        "sha256": "a8789026111be911cc53a5348847a2583bf7895f9ad46ee819276e7f51132e3b",
+        "bytes": 32624
+      },
+      "inverses": [
+        {
+          "at": 101,
+          "current": "import {isDeepStrictEqual} from 'node:util';\nimport {execFileSync} from 'node:child_process';\nimport {deedQuestSourceBaseline} from '../tools/deed-quest-source-transfer.js';\nimport {ageRemovalHistoricalInput} from '../tools/age-removal-source-transfer.js';\n\nassert.equal(process.execArgv.length,0,'Only the bare Node test entrypoint is admitted');\nconst native=process.argv.length===3&&process.argv[2]==='--postgres';\n",
+          "baseline": "import {isDeepStrictEqual} from 'node:util';\nimport {execFileSync} from 'node:child_process';\nimport {deedQuestSourceBaseline} from '../tools/deed-quest-source-transfer.js';\n\nassert.equal(process.execArgv.length,0,'Only the bare Node test entrypoint is admitted');\nconst native=process.argv.length===3&&process.argv[2]==='--postgres';\n"
+        },
+        {
+          "at": 1893,
+          "current": "const lf=text=>text.replaceAll('\\r\\n','\\n');\nconst uniform=text=>{const normalized=lf(text);return !normalized.includes('\\r')&&(text===normalized||text===normalized.replaceAll('\\n','\\r\\n'));};\nconst hash=text=>crypto.createHash('sha256').update(text).digest('hex');\nconst frozenText=(relative,expected,file)=>{const raw=fs.readFileSync(new URL(relative,import.meta.url),'utf8');assert(uniform(raw),'Only exact LF or uniform checkout CRLF');const text=file?deedQuestSourceBaseline(file,ageRemovalHistoricalInput(file,lf(raw))):lf(raw);assert.equal(hash(text),expected,'Complete reviewed source remains exact: '+relative);return text;};\n// Explicit current-Commerce dispatch in the same original Enterprise16 catalog slot.\nconst dispatchRaw=fs.readFileSync(new URL('../schema.sql',import.meta.url),'utf8');assert(uniform(dispatchRaw));\nconst dispatchSchema=deedQuestSourceBaseline('schema.sql',dispatchRaw);\n",
+          "baseline": "const lf=text=>text.replaceAll('\\r\\n','\\n');\nconst uniform=text=>{const normalized=lf(text);return !normalized.includes('\\r')&&(text===normalized||text===normalized.replaceAll('\\n','\\r\\n'));};\nconst hash=text=>crypto.createHash('sha256').update(text).digest('hex');\nconst frozenText=(relative,expected,file)=>{const raw=fs.readFileSync(new URL(relative,import.meta.url),'utf8');assert(uniform(raw),'Only exact LF or uniform checkout CRLF');const text=file?deedQuestSourceBaseline(file,lf(raw)):lf(raw);assert.equal(hash(text),expected,'Complete reviewed source remains exact: '+relative);return text;};\n// Explicit current-Commerce dispatch in the same original Enterprise16 catalog slot.\nconst dispatchRaw=fs.readFileSync(new URL('../schema.sql',import.meta.url),'utf8');assert(uniform(dispatchRaw));\nconst dispatchSchema=deedQuestSourceBaseline('schema.sql',dispatchRaw);\n"
+        },
+        {
+          "at": 2916,
+          "current": "const commerceDeedCurrent=hash(lf(dispatchSchema))==='833373245ddb1ce5a3c9ed386a9b3245d81ddb0bdb51e75d1e5ffee2a7684335';\nconst questingAdapter=await import('../tools/questing-enterprise-catalog.js');\nconst questingCurrent=hash(lf(dispatchRaw))===questingAdapter.QUESTING_CATALOG_SOURCE.sha256;\nconst taskPuzzleAdapter=await import('../tools/task-puzzle-native-catalog.js');\nconst taskPuzzleCurrent=hash(lf(dispatchRaw))===taskPuzzleAdapter.TASK_PUZZLE_CATALOG_SOURCE.sha256;\nif(taskPuzzleCurrent){\n  const sources=taskPuzzleAdapter.taskPuzzleCatalogSource(dispatchRaw);\n  assert.equal(sources.actualTables,586);assert.equal(sources.baselineTables,585);\n  console.log('Exact raw task-puzzle586 source qualifies separately; complete585 remains an independent comparison reference.');\n  if(native){\n    const {default:pg}=await import('pg'),pool=new pg.Pool({connectionString:endpoint.href,max:1});\n    try{\n      const {verifyTaskPuzzleEnterpriseCatalog}=await import('../tools/task-puzzle-enterprise-catalog.js');\n      const result=await verifyTaskPuzzleEnterpriseCatalog(pool,endpoint.href,dispatchRaw);\n      assert.equal(result.actualTables,586);assert.equal(result.baselineTables,585);assert.equal(result.idempotent,2);\n      assert.equal(result.questDdlCausal,26);assert.equal(result.casinoDdlCausal,28);\n      assert.equal(result.puzzleDdlCausal,2*taskPuzzleAdapter.TASK_PUZZLE_DDL_CONTROLS.length);\n      console.log(JSON.stringify({phase:result.phase,freshTables:586,upgradeTables:586,baselineTables:585,\n        counterFreshOrdinal:92,counterUpgradeOrdinal:119,puzzleDdlCausal:result.puzzleDdlCausal,\n        questDdlCausal:result.questDdlCausal,casinoDdlCausal:result.casinoDdlCausal,idempotent:result.idempotent,\n        historicalReferenceCausal:result.historical.causal,native:true,priorNativeResultsTransferred:false}));\n    }finally{await pool.end();}\n  }\n}else if(questingCurrent){\n  const adapter=questingAdapter;\n  const sources=adapter.questingCatalogSource(dispatchRaw);\n  assert.equal(sources.actualTables,585);assert.equal(sources.baselineTables,582);\n",
+          "baseline": "const commerceDeedCurrent=hash(lf(dispatchSchema))==='833373245ddb1ce5a3c9ed386a9b3245d81ddb0bdb51e75d1e5ffee2a7684335';\nconst questingAdapter=await import('../tools/questing-enterprise-catalog.js');\nconst questingCurrent=hash(lf(dispatchRaw))===questingAdapter.QUESTING_CATALOG_SOURCE.sha256;\nif(questingCurrent){\n  const adapter=questingAdapter;\n  const sources=adapter.questingCatalogSource(dispatchRaw);\n  assert.equal(sources.actualTables,585);assert.equal(sources.baselineTables,582);\n"
+        }
+      ]
+    },
     "test/firstblood.js": {
       "current": {
         "mode": "100644",
@@ -1520,6 +1572,84 @@ export const AGE_REMOVAL_SOURCE = freeze({
         }
       ]
     },
+    "test/lib/questing-ux-director-reader-source-compatibility.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "d66bd40793b923fd6bd9593a5cf06c4ce001312c",
+        "sha256": "aa8a25d6ecb4576ba91d33b809e338033cd945144b21e4d9bf1d607f959fb114",
+        "bytes": 10560
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "5d4cc4bb41cc2f73fd3eedbc81372b09557239ce",
+        "sha256": "603696309eae395a64ba601ea8e8db07ba48ae0a828a77aa3c7aed21853efeb1",
+        "bytes": 10237
+      },
+      "inverses": [
+        {
+          "at": 0,
+          "current": "import { ageRemovalHistoricalInput, ageRemovalHistoricalEntry } from '../../tools/age-removal-source-transfer.js';\n// Additive source-only reader view; the complete actual HEAD/index/physical source qualifies first.\nimport { QUESTING_SOURCE, qualifyQuestingSource, questingHistoricalEntry } from '../../tools/questing-source-transfer.js';\nexport function questingDirectorReaderView(file, input, entry) {\n",
+          "baseline": "// Additive source-only reader view; the complete actual HEAD/index/physical source qualifies first.\nimport { QUESTING_SOURCE, qualifyQuestingSource, questingHistoricalEntry } from '../../tools/questing-source-transfer.js';\nexport function questingDirectorReaderView(file, input, entry) {\n"
+        },
+        {
+          "at": 966,
+          "current": "  const parsed = entry.match(/^(100644|100755) blob ([a-f0-9]{40})\\t([^\\0\\r\\n]+)$/);\n  assert(parsed && parsed[3] === file, 'Exact regular reader Git entry');\n  assert.equal(crypto.createHash('sha1').update('blob ' + Buffer.byteLength(lf) + '\\0').update(lf).digest('hex'), parsed[2], 'Whole comparison input equals its admitted actual Git blob');\n  // Actual whole bytes and Git entry qualify above; only this pure comparison uses the outer view.\n  input = ageRemovalHistoricalInput(file, input);\n  entry = ageRemovalHistoricalEntry(file, entry, 'tree');\n  const flags = { sourceOnly: true, runtime: false, native: false, financial: false, activation: false, deployment: false, priorResultsTransferred: false };\n  if (!Object.hasOwn(QUESTING_SOURCE.files, file)) return Object.freeze({ input, entry, ...flags });\n  const proof = qualifyQuestingSource(file, input);\n",
+          "baseline": "  const parsed = entry.match(/^(100644|100755) blob ([a-f0-9]{40})\\t([^\\0\\r\\n]+)$/);\n  assert(parsed && parsed[3] === file, 'Exact regular reader Git entry');\n  assert.equal(crypto.createHash('sha1').update('blob ' + Buffer.byteLength(lf) + '\\0').update(lf).digest('hex'), parsed[2], 'Whole comparison input equals its admitted actual Git blob');\n  const flags = { sourceOnly: true, runtime: false, native: false, financial: false, activation: false, deployment: false, priorResultsTransferred: false };\n  if (!Object.hasOwn(QUESTING_SOURCE.files, file)) return Object.freeze({ input, entry, ...flags });\n  const proof = qualifyQuestingSource(file, input);\n"
+        }
+      ]
+    },
+    "test/lib/questing-ux-enterprise-reader-source-compatibility.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "d31e620b3fe0c98b21a63e8c4c36f0e7da7f5dab",
+        "sha256": "918e486d33342c524e32bd9086289c897de68f98e7ce04353cd52d3e84488e62",
+        "bytes": 10259
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "25072693250b1545e046596d9548f1953bd5eb41",
+        "sha256": "29e10bd68ffc4a04004e46bcb51011cce8256e921488f2ce272b2a951bd91978",
+        "bytes": 9936
+      },
+      "inverses": [
+        {
+          "at": 0,
+          "current": "import { ageRemovalHistoricalInput, ageRemovalHistoricalEntry } from '../../tools/age-removal-source-transfer.js';\n// Additive source-only reader view; the complete actual HEAD/index/physical source qualifies first.\nimport { QUESTING_SOURCE, qualifyQuestingSource, questingHistoricalEntry } from '../../tools/questing-source-transfer.js';\nimport { qualifySiteBasicsSource } from '../../tools/site-basics-source-transfer.js';\n",
+          "baseline": "// Additive source-only reader view; the complete actual HEAD/index/physical source qualifies first.\nimport { QUESTING_SOURCE, qualifyQuestingSource, questingHistoricalEntry } from '../../tools/questing-source-transfer.js';\nimport { qualifySiteBasicsSource } from '../../tools/site-basics-source-transfer.js';\n"
+        },
+        {
+          "at": 1079,
+          "current": "  const parsed = entry.match(/^(100644|100755) blob ([a-f0-9]{40})\\t([^\\0\\r\\n]+)$/);\n  assert(parsed && parsed[3] === file, 'Exact regular reader Git entry');\n  assert.equal(crypto.createHash('sha1').update('blob ' + Buffer.byteLength(lf) + '\\0').update(lf).digest('hex'), parsed[2], 'Whole comparison input equals its admitted actual Git blob');\n  // Actual whole bytes and Git entry qualify above; only this pure comparison uses the outer view.\n  input = ageRemovalHistoricalInput(file, input);\n  entry = ageRemovalHistoricalEntry(file, entry, 'tree');\n  const flags = { sourceOnly: true, runtime: false, native: false, financial: false, activation: false, deployment: false, priorResultsTransferred: false };\n  assert(Object.hasOwn(QUESTING_SOURCE.files, file), 'The declared current-only reader has an exact quest comparison domain');\n  const site = qualifySiteBasicsSource(file, input);\n",
+          "baseline": "  const parsed = entry.match(/^(100644|100755) blob ([a-f0-9]{40})\\t([^\\0\\r\\n]+)$/);\n  assert(parsed && parsed[3] === file, 'Exact regular reader Git entry');\n  assert.equal(crypto.createHash('sha1').update('blob ' + Buffer.byteLength(lf) + '\\0').update(lf).digest('hex'), parsed[2], 'Whole comparison input equals its admitted actual Git blob');\n  const flags = { sourceOnly: true, runtime: false, native: false, financial: false, activation: false, deployment: false, priorResultsTransferred: false };\n  assert(Object.hasOwn(QUESTING_SOURCE.files, file), 'The declared current-only reader has an exact quest comparison domain');\n  const site = qualifySiteBasicsSource(file, input);\n"
+        }
+      ]
+    },
+    "test/lib/questing-ux-native-reader-source-compatibility.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "c04adc241ce3c5d3c1e16cc55a9dc1931e04db28",
+        "sha256": "d2dcf536b1b97448b31d5ce6300f5430eecd681fee7558508a2db70af3e8403d",
+        "bytes": 23664
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "5461e1765f868d72ccab93aaffce8a7b44aeffc2",
+        "sha256": "edc637f8492814d77a2433604e3be99d614225c22e0ab4e62030135d23905fc9",
+        "bytes": 23341
+      },
+      "inverses": [
+        {
+          "at": 0,
+          "current": "import { ageRemovalHistoricalInput, ageRemovalHistoricalEntry } from '../../tools/age-removal-source-transfer.js';\n// Additive source-only reader view; the complete actual HEAD/index/physical source qualifies first.\nimport { QUESTING_SOURCE, qualifyQuestingSource, questingHistoricalEntry } from '../../tools/questing-source-transfer.js';\nexport function questingNativeReaderView(file, input, entry) {\n",
+          "baseline": "// Additive source-only reader view; the complete actual HEAD/index/physical source qualifies first.\nimport { QUESTING_SOURCE, qualifyQuestingSource, questingHistoricalEntry } from '../../tools/questing-source-transfer.js';\nexport function questingNativeReaderView(file, input, entry) {\n"
+        },
+        {
+          "at": 1024,
+          "current": "  const parsed = entry.match(/^(100644|100755) blob ([a-f0-9]{40})\\t([^\\0\\r\\n]+)$/);\n  assert(parsed && parsed[3] === file, 'Exact regular reader Git entry');\n  assert.equal(crypto.createHash('sha1').update('blob ' + Buffer.byteLength(lf) + '\\0').update(lf).digest('hex'), parsed[2], 'Whole comparison input equals its admitted actual Git blob');\n  // Actual whole bytes and Git entry qualify above; only this pure comparison uses the outer view.\n  input = ageRemovalHistoricalInput(file, input);\n  entry = ageRemovalHistoricalEntry(file, entry, 'tree');\n  const flags = { sourceOnly: true, runtime: false, native: false, financial: false, activation: false, deployment: false, priorResultsTransferred: false };\n  if (!Object.hasOwn(QUESTING_SOURCE.files, file)) return Object.freeze({ input, entry, ...flags });\n  const proof = qualifyQuestingSource(file, input);\n",
+          "baseline": "  const parsed = entry.match(/^(100644|100755) blob ([a-f0-9]{40})\\t([^\\0\\r\\n]+)$/);\n  assert(parsed && parsed[3] === file, 'Exact regular reader Git entry');\n  assert.equal(crypto.createHash('sha1').update('blob ' + Buffer.byteLength(lf) + '\\0').update(lf).digest('hex'), parsed[2], 'Whole comparison input equals its admitted actual Git blob');\n  const flags = { sourceOnly: true, runtime: false, native: false, financial: false, activation: false, deployment: false, priorResultsTransferred: false };\n  if (!Object.hasOwn(QUESTING_SOURCE.files, file)) return Object.freeze({ input, entry, ...flags });\n  const proof = qualifyQuestingSource(file, input);\n"
+        }
+      ]
+    },
     "test/lib/rc1-historical-source-fixture.js": {
       "current": {
         "mode": "100644",
@@ -1629,6 +1759,27 @@ export const AGE_REMOVAL_SOURCE = freeze({
         }
       ]
     },
+    "test/phase2-postgres.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "ad44c1827bfc472b003112538ca2f9462879c554",
+        "sha256": "95e46eb6c479466a49675b645266f836cf453581079fd4268aea8c4b8fa290c1",
+        "bytes": 89727
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "067affc62ac84f53ec9cec3c73f49c79932a27f3",
+        "sha256": "4972db279a1f24355f122b8c38128abbbbe4cae39c4d911914e0653b2befdf91",
+        "bytes": 89519
+      },
+      "inverses": [
+        {
+          "at": 864,
+          "current": "import { createCityGameplayMigrationCatalog, readCityGameplayMigrationMetadata,\n  cityGameplayMigrationPredecessorSchema, cityGameplayMigrationEndpoint, CITY_GAMEPLAY_MIGRATION_TABLES } from './lib/city-gameplay-migration-catalog.js';\nimport { equipmentEconomyMigrationProjection, EQUIPMENT_ECONOMY_MIGRATION_TABLES } from './lib/equipment-economy-migration-catalog.js';\nimport { createTaskPuzzleReleasePhase2MigrationCatalog as createCommerceReleasePhase2MigrationCatalog, readTaskPuzzleReleasePhase2Metadata as readCommerceReleasePhase2Metadata,\n  verifyTaskPuzzleReleasePhase2CausalNegatives as verifyCommerceReleasePhase2CausalNegatives, verifyTaskPuzzleNativeBranches as verifyCommerceNativeBranches, assertTaskPuzzlePhase2SourceInputs as assertQuestingPhase2SourceInputs } from '../tools/questing-ux-release-phase2-native-catalog.js';\n\nconst architectureUpgradeCatalog = JSON.parse(fs.readFileSync(\n  new URL('./lib/phase2-architecture-upgrade-catalog.json', import.meta.url), 'utf8'));\n",
+          "baseline": "import { createCityGameplayMigrationCatalog, readCityGameplayMigrationMetadata,\n  cityGameplayMigrationPredecessorSchema, cityGameplayMigrationEndpoint, CITY_GAMEPLAY_MIGRATION_TABLES } from './lib/city-gameplay-migration-catalog.js';\nimport { equipmentEconomyMigrationProjection, EQUIPMENT_ECONOMY_MIGRATION_TABLES } from './lib/equipment-economy-migration-catalog.js';\nimport { createCommerceReleasePhase2MigrationCatalog, readCommerceReleasePhase2Metadata,\n  verifyCommerceReleasePhase2CausalNegatives, verifyCommerceNativeBranches, assertQuestingPhase2SourceInputs } from '../tools/questing-ux-release-phase2-native-catalog.js';\n\nconst architectureUpgradeCatalog = JSON.parse(fs.readFileSync(\n  new URL('./lib/phase2-architecture-upgrade-catalog.json', import.meta.url), 'utf8'));\n"
+        }
+      ]
+    },
     "test/player-intel-browser.js": {
       "current": {
         "mode": "100644",
@@ -1715,6 +1866,58 @@ export const AGE_REMOVAL_SOURCE = freeze({
           "at": 2110,
           "current": "assert.deepEqual(Object.keys(source.additions), changed('A').filter(file => /\\.(?:js|json|html|css|sql)$/.test(file)));\nassert.equal(fs.readFileSync(new URL('../tools/quest-quality-source-data.js', import.meta.url), 'utf8').replaceAll('\\r\\n', '\\n'), questQualitySourceDataBytes(source));\nfunction actual(file, pin) {\n  const committed = git('show', 'HEAD:' + file), authored = git('show', source.revision + ':' + file);\n  const stat = fs.lstatSync(file), physical = fs.readFileSync(file); assert(stat.isFile() && !stat.isSymbolicLink());\n  const actualEntry = git('ls-tree', 'HEAD', '--', file).trim();\n  const match = actualEntry.match(/^(100644|100755) blob ([a-f0-9]{40})\\t(.+)$/);\n  assert(match && match[3] === file, 'Actual regular Git source qualifies first');\n  assert.equal(blob(committed), match[2], 'Complete actual source bytes equal the raw HEAD blob');\n  const index = git('ls-files', '--stage', '--', file).trim();\n  assert.equal(index, match[1] + ' ' + match[2] + ' 0\\t' + file);\n  assert(physical.equals(Buffer.from(committed)) || physical.equals(Buffer.from(committed.replaceAll('\\n', '\\r\\n'))));\n  const historical = ageRemovalHistoricalRecord(file, { head: { mode: match[1], blob: match[2] }, index,\n    committed: Buffer.from(committed), physical, regular: stat.isFile(), symbolic: stat.isSymbolicLink() });\n  const text = historical.committed.toString('utf8'), raw = historical.physical;\n  assert.equal(text, authored, 'Independently admitted current source reconstructs the unchanged quality source: ' + file);\n  assert.equal(sha(text), pin.sha256); assert.equal(blob(text), pin.blob); assert.equal(Buffer.byteLength(text), pin.bytes);\n  const entry = pin.mode + ' blob ' + pin.blob + '\\t' + file;\n  assert.deepEqual(historical.head, { mode: pin.mode, blob: pin.blob });\n  assert.equal(historical.index, pin.mode + ' ' + pin.blob + ' 0\\t' + file);\n  return { text, raw, entry };\n}\nlet positives = 0, refusals = 0, inverseControls = 0;\n",
           "baseline": "assert.deepEqual(Object.keys(source.additions), changed('A').filter(file => /\\.(?:js|json|html|css|sql)$/.test(file)));\nassert.equal(fs.readFileSync(new URL('../tools/quest-quality-source-data.js', import.meta.url), 'utf8').replaceAll('\\r\\n', '\\n'), questQualitySourceDataBytes(source));\nfunction actual(file, pin) {\n  const text = git('show', 'HEAD:' + file), authored = git('show', source.revision + ':' + file);\n  assert.equal(text, authored, 'Whole reviewed source remains the actual committed source: ' + file);\n  const stat = fs.lstatSync(file), raw = fs.readFileSync(file); assert(stat.isFile() && !stat.isSymbolicLink());\n  assert(raw.equals(Buffer.from(text)) || raw.equals(Buffer.from(text.replaceAll('\\n', '\\r\\n'))));\n  assert.equal(sha(text), pin.sha256); assert.equal(blob(text), pin.blob); assert.equal(Buffer.byteLength(text), pin.bytes);\n  const entry = pin.mode + ' blob ' + pin.blob + '\\t' + file;\n  assert.equal(git('ls-tree', 'HEAD', '--', file).trim(), entry);\n  assert.equal(git('ls-files', '--stage', '--', file).trim(), pin.mode + ' ' + pin.blob + ' 0\\t' + file);\n  return { text, raw, entry };\n}\nlet positives = 0, refusals = 0, inverseControls = 0;\n"
+        }
+      ]
+    },
+    "test/questing-enterprise-catalog-guard.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "a338bcbf4af414d0d53e274fe65f5529722ddab1",
+        "sha256": "d1e67a177042e8b37a39341b9d26c79bdce5c386b59f2e12e8cc4222239e7f84",
+        "bytes": 10708
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "a6045d7c764babc1d0572cf4774a0ecc3f29e8df",
+        "sha256": "e75b585345f259e07769fc0dc5a39992a9d583e827c1a89710d09194f1b14aef",
+        "bytes": 10340
+      },
+      "inverses": [
+        {
+          "at": 0,
+          "current": "import assert from 'node:assert/strict';\nimport fs from 'node:fs';\nimport { execFileSync } from 'node:child_process';\nimport './task-puzzle-native-catalog-guard.js';\nimport { questingCatalogSource, questingCatalogProjection, QUESTING_CATALOG_COLUMNS as columns,\n  QUESTING_CATALOG_TABLES as tables, questingCasinoCatalogProjection } from '../tools/questing-enterprise-catalog.js';\n\nconst raw = fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8');\nassert.throws(() => questingCatalogSource(raw), /Exact complete actual quest585/);\nconst pinned585 = execFileSync('git', ['--no-replace-objects', 'cat-file', 'blob', '86b671c5d6f6928ff3e66f1ad0fca5f46a7364e3'], { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 });\nconst source = questingCatalogSource(pinned585);\nassert.equal(questingCatalogSource(source.current.replaceAll('\\n', '\\r\\n')).current, source.current);\nlet refusals = 0;\nfor (const bad of [source.baseline, source.archivedBaseline, source.archived, source.current + '\\n', source.current.slice(1), '\\ufeff' + source.current,\n",
+          "baseline": "import assert from 'node:assert/strict';\nimport fs from 'node:fs';\nimport { questingCatalogSource, questingCatalogProjection, QUESTING_CATALOG_COLUMNS as columns,\n  QUESTING_CATALOG_TABLES as tables, questingCasinoCatalogProjection } from '../tools/questing-enterprise-catalog.js';\n\nconst raw = fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8');\nconst source = questingCatalogSource(raw);\nassert.equal(questingCatalogSource(source.current.replaceAll('\\n', '\\r\\n')).current, source.current);\nlet refusals = 0;\nfor (const bad of [source.baseline, source.archivedBaseline, source.archived, source.current + '\\n', source.current.slice(1), '\\ufeff' + source.current,\n"
+        }
+      ]
+    },
+    "test/questing-ux-release-phase2-native-catalog-guard.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "c2b7f681775d3f70b05ffc502d2dca6db45ddce1",
+        "sha256": "4e3f2bd2756c24f6716302c930224a8a1fdd634788a2ab412a9d2da8e5933007",
+        "bytes": 29433
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "c70143519c1de9b10d560b62305ca5d467a7859b",
+        "sha256": "34a493ce4e8ddc005abcc25625c3287cff446deb8e4fdced7a3298de8e5b4949",
+        "bytes": 29213
+      },
+      "inverses": [
+        {
+          "at": 0,
+          "current": "// Pure controls only; no mocked backend result is native qualification.\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs';\nimport { ageRemovalHistoricalInput } from '../tools/age-removal-source-transfer.js';\nimport './task-puzzle-native-integration-guard.js';\nimport crypto from 'node:crypto';\nimport {execFileSync} from 'node:child_process';\nimport {questingNativeQuestProjection, questingNativeCatalogProjection, assertQuestingPhase2SourceInputs,\n",
+          "baseline": "// Pure controls only; no mocked backend result is native qualification.\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs';\nimport crypto from 'node:crypto';\nimport {execFileSync} from 'node:child_process';\nimport {questingNativeQuestProjection, questingNativeCatalogProjection, assertQuestingPhase2SourceInputs,\n"
+        },
+        {
+          "at": 3171,
+          "current": "const oldRaw=fs.readFileSync(protectedFile),oldStat=fs.lstatSync(protectedFile);\nassert(oldStat.isFile()&&!oldStat.isSymbolicLink());\nassert(oldRaw.equals(protectedBytes)||oldRaw.equals(Buffer.from(protectedSource.replaceAll('\\n','\\r\\n'))));\nconst successor=ageRemovalHistoricalInput(successorFile,fs.readFileSync(successorFile,'utf8')).replaceAll('\\r\\n','\\n');\nconst raw=fs.readFileSync('schema.sql','utf8');\nconst baseline={relations:[{name:'accounts',kind:'r',persistence:'p'}],columns:[],constraints:[],indexes:[]};\nfunction fixture(version) {\n",
+          "baseline": "const oldRaw=fs.readFileSync(protectedFile),oldStat=fs.lstatSync(protectedFile);\nassert(oldStat.isFile()&&!oldStat.isSymbolicLink());\nassert(oldRaw.equals(protectedBytes)||oldRaw.equals(Buffer.from(protectedSource.replaceAll('\\n','\\r\\n'))));\nconst successor=fs.readFileSync(successorFile,'utf8').replaceAll('\\r\\n','\\n');\nconst raw=fs.readFileSync('schema.sql','utf8');\nconst baseline={relations:[{name:'accounts',kind:'r',persistence:'p'}],columns:[],constraints:[],indexes:[]};\nfunction fixture(version) {\n"
+        },
+        {
+          "at": 24644,
+          "current": "  const stat = fs.lstatSync(record.original); assert(stat.isFile() && !stat.isSymbolicLink());\n  assert(oldPhysical.equals(oldCommitted) || oldPhysical.equals(Buffer.from(oldText.replaceAll('\\n','\\r\\n'))));\n  const newStat = fs.lstatSync(record.target); assert(newStat.isFile() && !newStat.isSymbolicLink());\n  const source = ageRemovalHistoricalInput(record.target, fs.readFileSync(record.target, 'utf8')).replaceAll('\\r\\n','\\n');\n  assert(qualifyPureReaderCopy(source, record));\n  const crlfSource = source.replaceAll('\\n','\\r\\n'); assert.notEqual(crlfSource, source); assert(qualifyPureReaderCopy(crlfSource, record));\n  for (const bad of [source+'\\n', source.slice(1), '\\ufeff'+source, source.replace('\\n','\\r\\n'),\n",
+          "baseline": "  const stat = fs.lstatSync(record.original); assert(stat.isFile() && !stat.isSymbolicLink());\n  assert(oldPhysical.equals(oldCommitted) || oldPhysical.equals(Buffer.from(oldText.replaceAll('\\n','\\r\\n'))));\n  const newStat = fs.lstatSync(record.target); assert(newStat.isFile() && !newStat.isSymbolicLink());\n  const source = fs.readFileSync(record.target, 'utf8').replaceAll('\\r\\n','\\n');\n  assert(qualifyPureReaderCopy(source, record));\n  const crlfSource = source.replaceAll('\\n','\\r\\n'); assert.notEqual(crlfSource, source); assert(qualifyPureReaderCopy(crlfSource, record));\n  for (const bad of [source+'\\n', source.slice(1), '\\ufeff'+source, source.replace('\\n','\\r\\n'),\n"
         }
       ]
     },
@@ -2244,6 +2447,27 @@ export const AGE_REMOVAL_SOURCE = freeze({
         }
       ]
     },
+    "tools/enterprise-native-questing.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "ed54afe500d395be798cef44490dcc3f0610c8a9",
+        "sha256": "18f9542d5fb438c37f2fa4d3768ee010b2124289a2f689d113d8ac464a97762e",
+        "bytes": 26688
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "93991a6444e0f58eb6e6a1c0249ead248415d6ef",
+        "sha256": "76860a00443a23916ebab3263c9b09ab1883d040d498b70da36a0457b7c38a4d",
+        "bytes": 26510
+      },
+      "inverses": [
+        {
+          "at": 1261,
+          "current": "export const QUESTING_NATIVE_PREDECESSOR_METADATA = 'tools/enterprise-native-contract-release-inputs.js';\nexport { declaration as QUESTING_ENTERPRISE_NATIVE_INPUTS };\nexport const QUESTING_NATIVE_SUPPORT = Object.freeze([\n  'tools/task-puzzle-native-catalog.js', 'tools/task-puzzle-enterprise-catalog.js',\n  'test/task-puzzle-native-catalog-guard.js', 'test/task-puzzle-native-integration-guard.js',\n  'tools/enterprise-native-questing.js', 'tools/enterprise-native-questing-seal.js',\n  'tools/install-foundry-verified.sh',\n  'test/enterprise-native-questing-guard.js', QUESTING_NATIVE_PREDECESSOR_METADATA,\n",
+          "baseline": "export const QUESTING_NATIVE_PREDECESSOR_METADATA = 'tools/enterprise-native-contract-release-inputs.js';\nexport { declaration as QUESTING_ENTERPRISE_NATIVE_INPUTS };\nexport const QUESTING_NATIVE_SUPPORT = Object.freeze([\n  'tools/enterprise-native-questing.js', 'tools/enterprise-native-questing-seal.js',\n  'tools/install-foundry-verified.sh',\n  'test/enterprise-native-questing-guard.js', QUESTING_NATIVE_PREDECESSOR_METADATA,\n"
+        }
+      ]
+    },
     "tools/mobile.js": {
       "current": {
         "mode": "100644",
@@ -2370,6 +2594,52 @@ export const AGE_REMOVAL_SOURCE = freeze({
           "at": 4375,
           "current": "}\nexport function questQualityHistoricalEntry(file, entry, kind) {\n  assert(kind === 'tree' || kind === 'index');\n  entry = ageRemovalHistoricalEntry(file, entry, kind);\n  if (!known(file)) return entry;\n  const row = QUEST_QUALITY_SOURCE.files[file];\n  const format = pin => kind === 'tree' ? pin.mode + ' blob ' + pin.blob + '\\t' + file\n",
           "baseline": "}\nexport function questQualityHistoricalEntry(file, entry, kind) {\n  assert(kind === 'tree' || kind === 'index');\n  if (!known(file)) return entry;\n  const row = QUEST_QUALITY_SOURCE.files[file];\n  const format = pin => kind === 'tree' ? pin.mode + ' blob ' + pin.blob + '\\t' + file\n"
+        }
+      ]
+    },
+    "tools/questing-ux-release-phase2-native-catalog.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "2ceeaa3db6470218fb6762871b30b2d457809449",
+        "sha256": "34d346de5b6f03a6caa95d4d00795b07e651693c7d5bc922838caaaaf0860e14",
+        "bytes": 62347
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "2b987db6920def5e2a34e04e861c335be2e3be49",
+        "sha256": "65cd8de2870f545c34ed2e869d2cbc1b892a0cdb23feee594e593ed247b40d63",
+        "bytes": 54498
+      },
+      "inverses": [
+        {
+          "at": 35361,
+          "current": "  return { type: 'blob', mode: match[1], blob: match[2] };\n}\nexport function assertQuestingPhase2SourceInputs() {\n  assert.equal(arguments.length, 0); return phase2SourceInputs(false);\n}\nexport function assertTaskPuzzlePhase2SourceInputs() {\n  assert.equal(arguments.length, 0); return phase2SourceInputs(true);\n}\nfunction phase2SourceInputs(taskPuzzle) {\n  assert.equal(process.execArgv.length, 0); assert.equal(process.argv.length, 3);\n  const main = path.resolve(process.argv[1]);\n  const caller = main === path.join(questRoot, 'test', 'phase2-postgres.js')\n",
+          "baseline": "  return { type: 'blob', mode: match[1], blob: match[2] };\n}\nexport function assertQuestingPhase2SourceInputs() {\n  assert.equal(arguments.length, 0);\n  assert.equal(process.execArgv.length, 0); assert.equal(process.argv.length, 3);\n  const main = path.resolve(process.argv[1]);\n  const caller = main === path.join(questRoot, 'test', 'phase2-postgres.js')\n"
+        },
+        {
+          "at": 36284,
+          "current": "  if (!questSourceCapture) questSourceCapture = captureQuestingEnterpriseSource();\n  else assertQuestingEnterpriseStable(questSourceCapture);\n  const inputs = ['schema.sql', 'tools/questing-ux-release-phase2-native-catalog.js',\n    'tools/questing-enterprise-catalog.js', 'test/questing-ux-release-phase2-native-catalog-guard.js', caller,\n    ...(taskPuzzle ? ['tools/task-puzzle-native-catalog.js', 'tools/task-puzzle-enterprise-catalog.js',\n      'test/task-puzzle-native-catalog-guard.js', 'test/task-puzzle-native-integration-guard.js'] : [])];\n  for (const file of inputs) {\n    const current = questEntry('HEAD', file), authored = questEntry(questDeclaration.authoredRevision, file);\n    assert.equal(questGit('ls-files', '--stage', '--', file).toString('utf8').trim(),\n",
+          "baseline": "  if (!questSourceCapture) questSourceCapture = captureQuestingEnterpriseSource();\n  else assertQuestingEnterpriseStable(questSourceCapture);\n  const inputs = ['schema.sql', 'tools/questing-ux-release-phase2-native-catalog.js',\n    'tools/questing-enterprise-catalog.js', 'test/questing-ux-release-phase2-native-catalog-guard.js', caller];\n  for (const file of inputs) {\n    const current = questEntry('HEAD', file), authored = questEntry(questDeclaration.authoredRevision, file);\n    assert.equal(questGit('ls-files', '--stage', '--', file).toString('utf8').trim(),\n"
+        },
+        {
+          "at": 37700,
+          "current": "    assertQuestingEnterpriseTrackedInput(file, current, authored, committed);\n  }\n  const raw = fs.readFileSync(path.join(questRoot, 'schema.sql'), 'utf8').replaceAll('\\r\\n', '\\n');\n  if (taskPuzzle) taskPuzzleCatalogSource(raw);\n  else assert.equal(questSha(raw), QUESTING_CATALOG_SOURCE.sha256);\n  return raw;\n}\nfunction archived582ComparisonSource() {\n",
+          "baseline": "    assertQuestingEnterpriseTrackedInput(file, current, authored, committed);\n  }\n  const raw = fs.readFileSync(path.join(questRoot, 'schema.sql'), 'utf8').replaceAll('\\r\\n', '\\n');\n  assert.equal(questSha(raw), QUESTING_CATALOG_SOURCE.sha256);\n  return raw;\n}\nfunction archived582ComparisonSource() {\n"
+        },
+        {
+          "at": 51698,
+          "current": "export async function createCommerceReleasePhase2MigrationCatalog(pool, endpoint, input, options) {\n  assert.equal(arguments.length, 4);\n  const actual = questActualInput(input);\n  return createQuestCatalogComparison(pool, endpoint, actual, options);\n}\nasync function createQuestCatalogComparison(pool, endpoint, actual, options) {\n  await assertNativeCaller(pool, endpoint, options?.legacyProfile, options?.includeNotNull);\n  const version = await questVersion(pool), compiled = await compileQuestReference(pool, endpoint, actual.addition, version);\n  const reference = freeze({ ...compiled, version });\n",
+          "baseline": "export async function createCommerceReleasePhase2MigrationCatalog(pool, endpoint, input, options) {\n  assert.equal(arguments.length, 4);\n  const actual = questActualInput(input);\n  await assertNativeCaller(pool, endpoint, options?.legacyProfile, options?.includeNotNull);\n  const version = await questVersion(pool), compiled = await compileQuestReference(pool, endpoint, actual.addition, version);\n  const reference = freeze({ ...compiled, version });\n"
+        },
+        {
+          "at": 52992,
+          "current": "export async function verifyCommerceNativeBranches(pool, endpoint) {\n  assert.equal(arguments.length, 2);\n  const actual = questActualInput(fs.readFileSync(path.join(questRoot, 'schema.sql'), 'utf8'));\n  return verifyQuestCatalogComparison(pool, endpoint, actual);\n}\nasync function verifyQuestCatalogComparison(pool, endpoint, actual) {\n  await assertNativeCaller(pool, endpoint, 'fresh', true);\n  const version = await questVersion(pool), compiled = await compileQuestReference(pool, endpoint, actual.addition, version);\n  const reference = freeze({ ...compiled, version });\n",
+          "baseline": "export async function verifyCommerceNativeBranches(pool, endpoint) {\n  assert.equal(arguments.length, 2);\n  const actual = questActualInput(fs.readFileSync(path.join(questRoot, 'schema.sql'), 'utf8'));\n  await assertNativeCaller(pool, endpoint, 'fresh', true);\n  const version = await questVersion(pool), compiled = await compileQuestReference(pool, endpoint, actual.addition, version);\n  const reference = freeze({ ...compiled, version });\n"
+        },
+        {
+          "at": 55180,
+          "current": "  assertQuestingEnterpriseStable(questSourceCapture);\n  return result;\n}\n\n// Distinct current586 admission; the old exported585 entrypoints above remain strict.\nimport { taskPuzzleCatalogSource, verifyTaskPuzzleCatalogDelta, taskPuzzleComparisonMetadata,\n  taskPuzzleComparisonConstraints, readTaskPuzzleSequenceMetadata, verifyTaskPuzzleNativeReferences,\n  TASK_PUZZLE_DDL_CONTROLS } from './task-puzzle-native-catalog.js';\nconst taskStates=new WeakMap(),taskProfiles=new WeakMap();\nfunction taskActualInput(input){\n  const physical=assertTaskPuzzlePhase2SourceInputs(),actual=taskPuzzleCatalogSource(input);\n  assert.equal(actual.current,physical,'Native current586 input is the complete actual physical schema');return actual;\n}\nasync function taskMetadata(client){\n  return {...await readCommerceReleasePhase2Metadata(client),sequences:await readTaskPuzzleSequenceMetadata(client)};\n}\nexport async function readTaskPuzzleReleasePhase2Metadata(pool){\n  assert.equal(arguments.length,1);assertTaskPuzzlePhase2SourceInputs();\n  const profile=taskProfiles.get(pool);assert(profile,'Only a pool admitted by a current586 native catalog');\n  const metadata=await taskMetadata(pool);verifyTaskPuzzleCatalogDelta(metadata,await questVersion(pool),profile,false);return metadata;\n}\nasync function taskProjectedCaller(pool,version,profile){\n  const wrap=async queryable=>{\n    const qualify=async()=>{const metadata={...await original.readCommerceReleasePhase2Metadata(queryable),sequences:await readTaskPuzzleSequenceMetadata(queryable)};verifyTaskPuzzleCatalogDelta(metadata,version,profile,false);return metadata;};\n    await qualify();const context=(await queryable.query(catalogQueries[0])).rows[0];\n    return {query:async(sql,values)=>{\n      const field=catalogFields.get(sql),metadata=field||sql===catalogQueries[0]?await qualify():null;\n      const result=await queryable.query(sql,values);if(!field)return result;\n      const rows=field==='indexes'?result.rows.map(row=>{const anchor=' ON '+context.schema+'.';assert.equal(row.definition.split(anchor).length,2);return {...row,definition:row.definition.replace(anchor,' ON $self.')};}):result.rows;\n      const projected=taskPuzzleComparisonMetadata({...metadata,[field]:rows},version,profile,false)[field];\n      return {...result,rows:field==='indexes'?projected.map(row=>({...row,definition:row.definition.replace(' ON $self.',' ON '+context.schema+'.')})):projected};\n    }};\n  };\n  return {...await wrap(pool),connect:async()=>{const client=await pool.connect();try{return {...await wrap(client),release:client.release.bind(client)};}catch(error){client.release();throw error;}}};\n}\nasync function taskDdlControls(pool,version,profile){\n  const client=await pool.connect();let causal=0;\n  try{\n    const originalMetadata=await taskMetadata(client);verifyTaskPuzzleCatalogDelta(originalMetadata,version,profile,false);\n    for(const ddl of TASK_PUZZLE_DDL_CONTROLS){\n      await client.query('BEGIN');try{await client.query(ddl);await assert.rejects(async()=>assert.deepEqual(await taskMetadata(client),originalMetadata),error=>error?.code==='ERR_ASSERTION');causal++;}finally{await client.query('ROLLBACK');}\n      const restored=await taskMetadata(client);verifyTaskPuzzleCatalogDelta(restored,version,profile,false);assert.deepEqual(restored,originalMetadata,'Exact same-client task DDL rollback reread');\n    }\n  }finally{client.release();}return causal;\n}\nfunction extendTaskCatalog(prior,current,version,profile,includeNotNull,projected,references,ddlCausal){\n  const project=metadata=>taskPuzzleComparisonMetadata(metadata,version,profile,false);\n  const verifyMetadata=metadata=>{const result=project(metadata);prior.verifyMetadata(result);assert.deepEqual(metadata,current,'Complete admitted current586 catalog');return true;};\n  verifyMetadata(current);freeze(current);\n  const result=Object.freeze({...prior,reference:current,...(prior.current?{current}:{}),verifyMetadata,\n    ...(prior.verify?{verify:verifyMetadata}:{}),\n    ...(prior.normalize?{normalize:rows=>prior.normalize(taskPuzzleComparisonConstraints(rows,version,includeNotNull,profile))}:{}),\n    actualTables:586,taskPuzzleReferences:references,taskPuzzleDdlCausal:ddlCausal,\n    phase:'Actual586 live catalog and independently compiled raw585 upgrade; '+prior.phase});\n  taskStates.set(result,{prior,projected,version,profile,includeNotNull,current});return result;\n}\nexport async function createTaskPuzzleReleasePhase2MigrationCatalog(pool,endpoint,input,options){\n  assert.equal(arguments.length,4);const actual=taskActualInput(input);\n  await assertNativeCaller(pool,endpoint,options?.legacyProfile,options?.includeNotNull);\n  const profile=options.legacyProfile;assert(['phase2','director'].includes(profile));const version=await questVersion(pool);\n  const before=await taskMetadata(pool);verifyTaskPuzzleCatalogDelta(before,version,profile,false);\n  const references=await verifyTaskPuzzleNativeReferences(pool,endpoint,actual.current),ddlCausal=await taskDdlControls(pool,version,profile);\n  const projected=await taskProjectedCaller(pool,version,profile);\n  const prior=await createQuestCatalogComparison(projected,endpoint,actual.quest,options);\n  taskProfiles.set(pool,profile);const current=await readTaskPuzzleReleasePhase2Metadata(pool);assertQuestingEnterpriseStable(questSourceCapture);\n  return extendTaskCatalog(prior,current,version,profile,options.includeNotNull,projected,references,ddlCausal);\n}\nexport async function verifyTaskPuzzleNativeBranches(pool,endpoint){\n  assert.equal(arguments.length,2);const actual=taskActualInput(fs.readFileSync(path.join(questRoot,'schema.sql'),'utf8'));\n  await assertNativeCaller(pool,endpoint,'fresh',true);const version=await questVersion(pool);\n  verifyTaskPuzzleCatalogDelta(await taskMetadata(pool),version,'fresh',false);\n  const references=await verifyTaskPuzzleNativeReferences(pool,endpoint,actual.current),ddlCausal=await taskDdlControls(pool,version,'fresh');\n  const projected=await taskProjectedCaller(pool,version,'fresh'),prior=await verifyQuestCatalogComparison(projected,endpoint,actual.quest);\n  taskProfiles.set(pool,'fresh');const current=await readTaskPuzzleReleasePhase2Metadata(pool);assertQuestingEnterpriseStable(questSourceCapture);\n  return extendTaskCatalog(prior,current,version,'fresh',true,projected,references,ddlCausal);\n}\nexport async function verifyTaskPuzzleReleasePhase2CausalNegatives(pool,catalog,rows,verifyRows){\n  assert.equal(arguments.length,4);const state=taskStates.get(catalog);assert(state,'Only this invocation\\'s actual current586 catalog');assertTaskPuzzlePhase2SourceInputs();\n  const {prior,projected,version,profile,includeNotNull,current}=state;\n  assert.deepEqual(await taskMetadata(pool),current);\n  const parentRows=taskPuzzleComparisonConstraints(rows,version,includeNotNull,profile),addedRows=rows.filter(row=>!parentRows.includes(row));\n  const result=await verifyCommerceReleasePhase2CausalNegatives(projected,prior,parentRows,candidate=>verifyRows(questOrder([...candidate,...addedRows])));\n  assert.deepEqual(await taskMetadata(pool),current);assertQuestingEnterpriseStable(questSourceCapture);return result;\n}\n",
+          "baseline": "  assertQuestingEnterpriseStable(questSourceCapture);\n  return result;\n}\n"
         }
       ]
     },
@@ -2588,6 +2858,18 @@ export const AGE_REMOVAL_SOURCE = freeze({
       "sha256": "6b80ba7c3a1016daecb63e07b5c57dfa529ea4acf22c70293271c97ef12b0c4b",
       "bytes": 14612
     },
+    "test/task-puzzle-native-catalog-guard.js": {
+      "mode": "100644",
+      "blob": "1a47adbd97ee06efab8392adb404ae5dfaa5ac6a",
+      "sha256": "0b4e769ad99d5e94662aeec3aba5e6d3974763677c7e80d0a8ef6a71a0e7da3f",
+      "bytes": 11468
+    },
+    "test/task-puzzle-native-integration-guard.js": {
+      "mode": "100644",
+      "blob": "355e56376c125dd7426fd0c253cfc748bb76012a",
+      "sha256": "7b22b55481ceb4cde4bd2f4f57c975eebc6c102e8048828d4893e5e1f8614eab",
+      "bytes": 8943
+    },
     "test/task-puzzle-postgres.js": {
       "mode": "100644",
       "blob": "75bf18f388431f5076f4b3a4e24032f0cc2ef702",
@@ -2608,9 +2890,9 @@ export const AGE_REMOVAL_SOURCE = freeze({
     },
     "tools/age-removal-source-seal.js": {
       "mode": "100644",
-      "blob": "2b2625f061d915bd8d449384ee35cb761c3b9b59",
-      "sha256": "4bb024b25731f2fbe24c9f9934a4aa72b939d83e19107031998d2e26a665e5ad",
-      "bytes": 15528
+      "blob": "5e6c2355711ec1cd39c59222799addcb0c426b77",
+      "sha256": "bd3a84975764dee5aa62dd862072bc6c2ac1baf1a99f3c12cdccab6717dfd7f9",
+      "bytes": 16302
     },
     "tools/age-removal-source-transfer.js": {
       "mode": "100644",
@@ -2629,7 +2911,19 @@ export const AGE_REMOVAL_SOURCE = freeze({
       "blob": "00cefd5b28acbc9c06e174fcd456efe59034ab47",
       "sha256": "11e31e905979ae7d3318c1c23129e729b9c72bd8e22444c5ec152f71492c7863",
       "bytes": 27895
+    },
+    "tools/task-puzzle-enterprise-catalog.js": {
+      "mode": "100644",
+      "blob": "d7bf8ee9e30bc9ef0c5df921e97eb77ec8110fdf",
+      "sha256": "57d43acf4548d3a0fa701f0a3cd64f8a62ddbf63feaaab191a1127de177446ba",
+      "bytes": 3227
+    },
+    "tools/task-puzzle-native-catalog.js": {
+      "mode": "100644",
+      "blob": "84f1a935ac143c69147fea1b9b9cff7632cab1f3",
+      "sha256": "948a723c4387dfa067de79fe9c45459df00d214b71a6ffd0f89562feda905c1c",
+      "bytes": 25818
     }
   }
 });
-export const AGE_REMOVAL_SOURCE_SHA256 = 'ec05b0651f38b93dc774834304e6df73cbd3902500b5823ad9fa7292bf78405b';
+export const AGE_REMOVAL_SOURCE_SHA256 = '5e4f13fc1fb7cb3cf8e216a4963bf95a3588f00339ca3a94076211a4af949950';
