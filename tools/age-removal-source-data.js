@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const AGE_REMOVAL_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_AGE_REMOVAL_SOURCE_COMPARISON_ONLY",
-  "revision": "429f032760c351b98f4734c755a08f2a90a88d89",
-  "tree": "74882606ea4574f310319354e017e59752a54ca4",
+  "revision": "38059555b37d5202bfd0b3f1e8a9f00a1a60d9c2",
+  "tree": "6c3bfe0d730013273b42a91ee93b4dc4c327f1ff",
   "predecessor": "35913ec1b448275b227019ede2a2ef8047be55aa",
   "predecessorTree": "c74c606d97ee2f8ebb6c5201a4ddd2c2781d5db0",
   "files": {
@@ -94,8 +94,8 @@ export const AGE_REMOVAL_SOURCE = freeze({
     "SPEC.md": {
       "current": {
         "mode": "100644",
-        "blob": "bba154e3876d3d7731b463b004f5a96df0c1f4d5",
-        "sha256": "fabf5cad931700747912211746d2aab532a2e11ec94302f0c8df32a933787d94",
+        "blob": "47629926cba04315fdaba01823bc1fc96eb04bea",
+        "sha256": "9453070d3cdc71940f3d767da0c503bfd0458f2156880dcc91532e92057a5c46",
         "bytes": 57384
       },
       "baseline": {
@@ -107,7 +107,7 @@ export const AGE_REMOVAL_SOURCE = freeze({
       "inverses": [
         {
           "at": 318,
-          "current": "\nCounts were measured for the combined release source on 2026-11-07, before generated release records; they do not identify a deployed revision.\n\nFile counts include the combined playtest fixes, quest-quality additions and task puzzles as of 2026-11-10. Backend, test and schema line totals were refreshed for task puzzles; other line totals retain the 2026-11-07 snapshot.\n\n| | |\n|---|---|\n| Backend modules | **622** files, **142384** lines (recursive source inventory) |\n| Test suites | **1045** files, **219208** lines (recursive source inventory) |\n| HTTP routes | **1401** registrations (**1401** unique; 1277 under `/v1`) |\n| Database tables | **586** (`schema.sql`, 9848 lines) |\n| Client | **14683** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n| Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |\n| Smart contracts | **41** top-level Solidity files, **11590** lines, **1125** declared top-level Foundry test functions; the release gate re-measures the passing suite |\n| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |\n| Design + audit docs | **991** markdown files, **158775** lines — dated security evidence is indexed in `docs/AUDITS.md` |\n| Ledger invariants | **133** checks — **127** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |\n\nRoughly **369,000 lines** of backend code, tests, schema and top-level contracts.\n",
+          "current": "\nCounts were measured for the combined release source on 2026-11-07, before generated release records; they do not identify a deployed revision.\n\nFile counts include the combined playtest fixes, quest-quality additions and task puzzles as of 2026-11-10. Backend, test and schema line totals were refreshed for task puzzles; other line totals retain the 2026-11-07 snapshot.\n\n| | |\n|---|---|\n| Backend modules | **622** files, **142384** lines (recursive source inventory) |\n| Test suites | **1045** files, **219231** lines (recursive source inventory) |\n| HTTP routes | **1401** registrations (**1401** unique; 1277 under `/v1`) |\n| Database tables | **586** (`schema.sql`, 9848 lines) |\n| Client | **14683** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n| Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |\n| Smart contracts | **41** top-level Solidity files, **11590** lines, **1125** declared top-level Foundry test functions; the release gate re-measures the passing suite |\n| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |\n| Design + audit docs | **991** markdown files, **158775** lines — dated security evidence is indexed in `docs/AUDITS.md` |\n| Ledger invariants | **133** checks — **127** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |\n\nRoughly **369,000 lines** of backend code, tests, schema and top-level contracts.\n",
           "baseline": "\nCounts were measured for the combined release source on 2026-11-07, before generated release records; they do not identify a deployed revision.\n\nFile counts include the combined playtest fixes and quest-quality additions as of 2026-11-08. Line totals retain the 2026-11-07 snapshot.\n\n| | |\n|---|---|\n| Backend modules | **618** files, **141073** lines (recursive source inventory) |\n| Test suites | **1032** files, **213491** lines (recursive source inventory) |\n| HTTP routes | **1386** registrations (**1386** unique; 1274 under `/v1`) |\n| Database tables | **585** (`schema.sql`, 9820 lines) |\n| Client | **14683** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n| Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |\n| Smart contracts | **41** top-level Solidity files, **11590** lines, **1125** declared top-level Foundry test functions; the release gate re-measures the passing suite |\n| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |\n| Design + audit docs | **987** markdown files, **158083** lines — dated security evidence is indexed in `docs/AUDITS.md` |\n| Ledger invariants | **133** checks — **127** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |\n\nRoughly **369,000 lines** of backend code, tests, schema and top-level contracts.\n"
         }
       ]
@@ -2817,9 +2817,9 @@ export const AGE_REMOVAL_SOURCE = freeze({
     },
     "test/lib/age-removal-source-transfer-proof.js": {
       "mode": "100644",
-      "blob": "e853edce63e9aeb87dfe69628123052e3ff13b03",
-      "sha256": "23481487c6c5fbf7b9e8c7090b3efb442ad31a3e631a6d61539d369eac0fc987",
-      "bytes": 15141
+      "blob": "b255b552a7faf371b7d6888d331b1ee77dbd3ecd",
+      "sha256": "978b6bfbbbff006e0feab7c7143c80922f3570ec99abed3300e54b71db955b8b",
+      "bytes": 16904
     },
     "test/lib/task-puzzle-solver.js": {
       "mode": "100644",
@@ -2895,9 +2895,9 @@ export const AGE_REMOVAL_SOURCE = freeze({
     },
     "tools/age-removal-source-seal.js": {
       "mode": "100644",
-      "blob": "130530c3b9545046e56cd3817b6e02ddae9a744d",
-      "sha256": "ded16e20fe7550fc453d7a9928c4aa12edb374a3e95ad591d494fd9ae9b61abf",
-      "bytes": 16278
+      "blob": "3b5b332d044f97143cf392e5fadfb1436f54b8f3",
+      "sha256": "adc7a5a7fa1b8367e9dcfd19a1a0b7e112198338ff975aebe2bdfe47351c02d9",
+      "bytes": 18041
     },
     "tools/age-removal-source-transfer.js": {
       "mode": "100644",
@@ -2931,4 +2931,4 @@ export const AGE_REMOVAL_SOURCE = freeze({
     }
   }
 });
-export const AGE_REMOVAL_SOURCE_SHA256 = '93662b695ceea9df98e4367b15d1b0485bb12938de19ae71aa770c0b5fc2f9df';
+export const AGE_REMOVAL_SOURCE_SHA256 = 'eddac5e85bfe537c885ed18ca1ed52199bd4360d64f2059d1e140d189462cbca';
