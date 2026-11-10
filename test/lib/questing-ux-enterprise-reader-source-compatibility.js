@@ -1,3 +1,4 @@
+import { ageRemovalHistoricalInput, ageRemovalHistoricalEntry } from '../../tools/age-removal-source-transfer.js';
 // Additive source-only reader view; the complete actual HEAD/index/physical source qualifies first.
 import { QUESTING_SOURCE, qualifyQuestingSource, questingHistoricalEntry } from '../../tools/questing-source-transfer.js';
 import { qualifySiteBasicsSource } from '../../tools/site-basics-source-transfer.js';
@@ -12,6 +13,9 @@ export function questingEnterpriseReaderView(file, input, entry) {
   const parsed = entry.match(/^(100644|100755) blob ([a-f0-9]{40})\t([^\0\r\n]+)$/);
   assert(parsed && parsed[3] === file, 'Exact regular reader Git entry');
   assert.equal(crypto.createHash('sha1').update('blob ' + Buffer.byteLength(lf) + '\0').update(lf).digest('hex'), parsed[2], 'Whole comparison input equals its admitted actual Git blob');
+  // Actual whole bytes and Git entry qualify above; only this pure comparison uses the outer view.
+  input = ageRemovalHistoricalInput(file, input);
+  entry = ageRemovalHistoricalEntry(file, entry, 'tree');
   const flags = { sourceOnly: true, runtime: false, native: false, financial: false, activation: false, deployment: false, priorResultsTransferred: false };
   assert(Object.hasOwn(QUESTING_SOURCE.files, file), 'The declared current-only reader has an exact quest comparison domain');
   const site = qualifySiteBasicsSource(file, input);

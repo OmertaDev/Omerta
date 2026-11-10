@@ -14,8 +14,8 @@ import { runLedgerInvariants } from '../src/invariants.js';
 import { createCityGameplayMigrationCatalog, readCityGameplayMigrationMetadata,
   cityGameplayMigrationPredecessorSchema, cityGameplayMigrationEndpoint, CITY_GAMEPLAY_MIGRATION_TABLES } from './lib/city-gameplay-migration-catalog.js';
 import { equipmentEconomyMigrationProjection, EQUIPMENT_ECONOMY_MIGRATION_TABLES } from './lib/equipment-economy-migration-catalog.js';
-import { createCommerceReleasePhase2MigrationCatalog, readCommerceReleasePhase2Metadata,
-  verifyCommerceReleasePhase2CausalNegatives, verifyCommerceNativeBranches, assertQuestingPhase2SourceInputs } from '../tools/questing-ux-release-phase2-native-catalog.js';
+import { createTaskPuzzleReleasePhase2MigrationCatalog as createCommerceReleasePhase2MigrationCatalog, readTaskPuzzleReleasePhase2Metadata as readCommerceReleasePhase2Metadata,
+  verifyTaskPuzzleReleasePhase2CausalNegatives as verifyCommerceReleasePhase2CausalNegatives, verifyTaskPuzzleNativeBranches as verifyCommerceNativeBranches, assertTaskPuzzlePhase2SourceInputs as assertQuestingPhase2SourceInputs } from '../tools/questing-ux-release-phase2-native-catalog.js';
 
 const architectureUpgradeCatalog = JSON.parse(fs.readFileSync(
   new URL('./lib/phase2-architecture-upgrade-catalog.json', import.meta.url), 'utf8'));

@@ -110,6 +110,17 @@ const generated = new Set([metadata, 'tools/enterprise-native-questing-inputs.js
   "output/quest-quality-verification/quality-mw95h79m-quest-quality-study.log",
 ]);
 const allowed = new Set([
+  // Exact current586 native catalog integration; historical source views only.
+  'tools/task-puzzle-native-catalog.js', 'tools/task-puzzle-enterprise-catalog.js',
+  'test/task-puzzle-native-catalog-guard.js', 'test/task-puzzle-native-integration-guard.js',
+  'tools/questing-ux-release-phase2-native-catalog.js',
+  'test/enterprise-release-phase2-migration-catalog.js', 'test/phase2-postgres.js', 'test/director-migration.js',
+  'test/questing-enterprise-catalog-guard.js', 'test/questing-ux-release-phase2-native-catalog-guard.js',
+  'test/lib/questing-ux-native-reader-source-compatibility.js',
+  'test/lib/questing-ux-director-reader-source-compatibility.js',
+  'test/lib/questing-ux-enterprise-reader-source-compatibility.js',
+  'tools/enterprise-native-questing.js',
+
   // Task puzzles: the exact 30 additional paths measured from approved base
   // 0a45705bb34acb5a0a9b620802e042eaa4609259; no runtime/native result transfer.
   '.github/workflows/ci.yml', 'MARKETING-POSTS.md',

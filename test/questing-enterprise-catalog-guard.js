@@ -1,10 +1,14 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import { execFileSync } from 'node:child_process';
+import './task-puzzle-native-catalog-guard.js';
 import { questingCatalogSource, questingCatalogProjection, QUESTING_CATALOG_COLUMNS as columns,
   QUESTING_CATALOG_TABLES as tables, questingCasinoCatalogProjection } from '../tools/questing-enterprise-catalog.js';
 
 const raw = fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8');
-const source = questingCatalogSource(raw);
+assert.throws(() => questingCatalogSource(raw), /Exact complete actual quest585/);
+const pinned585 = execFileSync('git', ['--no-replace-objects', 'cat-file', 'blob', '86b671c5d6f6928ff3e66f1ad0fca5f46a7364e3'], { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 });
+const source = questingCatalogSource(pinned585);
 assert.equal(questingCatalogSource(source.current.replaceAll('\n', '\r\n')).current, source.current);
 let refusals = 0;
 for (const bad of [source.baseline, source.archivedBaseline, source.archived, source.current + '\n', source.current.slice(1), '\ufeff' + source.current,

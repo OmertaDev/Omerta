@@ -1,6 +1,8 @@
 // Pure controls only; no mocked backend result is native qualification.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import { ageRemovalHistoricalInput } from '../tools/age-removal-source-transfer.js';
+import './task-puzzle-native-integration-guard.js';
 import crypto from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import {questingNativeQuestProjection, questingNativeCatalogProjection, assertQuestingPhase2SourceInputs,
@@ -52,7 +54,7 @@ assert.equal(git('ls-files','--stage','--',protectedFile).toString('utf8').trim(
 const oldRaw=fs.readFileSync(protectedFile),oldStat=fs.lstatSync(protectedFile);
 assert(oldStat.isFile()&&!oldStat.isSymbolicLink());
 assert(oldRaw.equals(protectedBytes)||oldRaw.equals(Buffer.from(protectedSource.replaceAll('\n','\r\n'))));
-const successor=fs.readFileSync(successorFile,'utf8').replaceAll('\r\n','\n');
+const successor=ageRemovalHistoricalInput(successorFile,fs.readFileSync(successorFile,'utf8')).replaceAll('\r\n','\n');
 const raw=fs.readFileSync('schema.sql','utf8');
 const baseline={relations:[{name:'accounts',kind:'r',persistence:'p'}],columns:[],constraints:[],indexes:[]};
 function fixture(version) {
@@ -347,7 +349,7 @@ for (const record of readerCopyPins) {
   const stat = fs.lstatSync(record.original); assert(stat.isFile() && !stat.isSymbolicLink());
   assert(oldPhysical.equals(oldCommitted) || oldPhysical.equals(Buffer.from(oldText.replaceAll('\n','\r\n'))));
   const newStat = fs.lstatSync(record.target); assert(newStat.isFile() && !newStat.isSymbolicLink());
-  const source = fs.readFileSync(record.target, 'utf8').replaceAll('\r\n','\n');
+  const source = ageRemovalHistoricalInput(record.target, fs.readFileSync(record.target, 'utf8')).replaceAll('\r\n','\n');
   assert(qualifyPureReaderCopy(source, record));
   const crlfSource = source.replaceAll('\n','\r\n'); assert.notEqual(crlfSource, source); assert(qualifyPureReaderCopy(crlfSource, record));
   for (const bad of [source+'\n', source.slice(1), '\ufeff'+source, source.replace('\n','\r\n'),

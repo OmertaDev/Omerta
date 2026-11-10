@@ -4,6 +4,7 @@ import crypto from 'node:crypto';
 import {isDeepStrictEqual} from 'node:util';
 import {execFileSync} from 'node:child_process';
 import {deedQuestSourceBaseline} from '../tools/deed-quest-source-transfer.js';
+import {ageRemovalHistoricalInput} from '../tools/age-removal-source-transfer.js';
 
 assert.equal(process.execArgv.length,0,'Only the bare Node test entrypoint is admitted');
 const native=process.argv.length===3&&process.argv[2]==='--postgres';
@@ -28,7 +29,7 @@ if(native){
 const lf=text=>text.replaceAll('\r\n','\n');
 const uniform=text=>{const normalized=lf(text);return !normalized.includes('\r')&&(text===normalized||text===normalized.replaceAll('\n','\r\n'));};
 const hash=text=>crypto.createHash('sha256').update(text).digest('hex');
-const frozenText=(relative,expected,file)=>{const raw=fs.readFileSync(new URL(relative,import.meta.url),'utf8');assert(uniform(raw),'Only exact LF or uniform checkout CRLF');const text=file?deedQuestSourceBaseline(file,lf(raw)):lf(raw);assert.equal(hash(text),expected,'Complete reviewed source remains exact: '+relative);return text;};
+const frozenText=(relative,expected,file)=>{const raw=fs.readFileSync(new URL(relative,import.meta.url),'utf8');assert(uniform(raw),'Only exact LF or uniform checkout CRLF');const text=file?deedQuestSourceBaseline(file,ageRemovalHistoricalInput(file,lf(raw))):lf(raw);assert.equal(hash(text),expected,'Complete reviewed source remains exact: '+relative);return text;};
 // Explicit current-Commerce dispatch in the same original Enterprise16 catalog slot.
 const dispatchRaw=fs.readFileSync(new URL('../schema.sql',import.meta.url),'utf8');assert(uniform(dispatchRaw));
 const dispatchSchema=deedQuestSourceBaseline('schema.sql',dispatchRaw);
@@ -36,7 +37,27 @@ const commerceCurrent=hash(lf(dispatchSchema))==='ce98d276e71072975bd745f43205fa
 const commerceDeedCurrent=hash(lf(dispatchSchema))==='833373245ddb1ce5a3c9ed386a9b3245d81ddb0bdb51e75d1e5ffee2a7684335';
 const questingAdapter=await import('../tools/questing-enterprise-catalog.js');
 const questingCurrent=hash(lf(dispatchRaw))===questingAdapter.QUESTING_CATALOG_SOURCE.sha256;
-if(questingCurrent){
+const taskPuzzleAdapter=await import('../tools/task-puzzle-native-catalog.js');
+const taskPuzzleCurrent=hash(lf(dispatchRaw))===taskPuzzleAdapter.TASK_PUZZLE_CATALOG_SOURCE.sha256;
+if(taskPuzzleCurrent){
+  const sources=taskPuzzleAdapter.taskPuzzleCatalogSource(dispatchRaw);
+  assert.equal(sources.actualTables,586);assert.equal(sources.baselineTables,585);
+  console.log('Exact raw task-puzzle586 source qualifies separately; complete585 remains an independent comparison reference.');
+  if(native){
+    const {default:pg}=await import('pg'),pool=new pg.Pool({connectionString:endpoint.href,max:1});
+    try{
+      const {verifyTaskPuzzleEnterpriseCatalog}=await import('../tools/task-puzzle-enterprise-catalog.js');
+      const result=await verifyTaskPuzzleEnterpriseCatalog(pool,endpoint.href,dispatchRaw);
+      assert.equal(result.actualTables,586);assert.equal(result.baselineTables,585);assert.equal(result.idempotent,2);
+      assert.equal(result.questDdlCausal,26);assert.equal(result.casinoDdlCausal,28);
+      assert.equal(result.puzzleDdlCausal,2*taskPuzzleAdapter.TASK_PUZZLE_DDL_CONTROLS.length);
+      console.log(JSON.stringify({phase:result.phase,freshTables:586,upgradeTables:586,baselineTables:585,
+        counterFreshOrdinal:92,counterUpgradeOrdinal:119,puzzleDdlCausal:result.puzzleDdlCausal,
+        questDdlCausal:result.questDdlCausal,casinoDdlCausal:result.casinoDdlCausal,idempotent:result.idempotent,
+        historicalReferenceCausal:result.historical.causal,native:true,priorNativeResultsTransferred:false}));
+    }finally{await pool.end();}
+  }
+}else if(questingCurrent){
   const adapter=questingAdapter;
   const sources=adapter.questingCatalogSource(dispatchRaw);
   assert.equal(sources.actualTables,585);assert.equal(sources.baselineTables,582);
