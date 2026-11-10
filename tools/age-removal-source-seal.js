@@ -133,6 +133,8 @@ const generated = new Set([metadata, 'tools/enterprise-native-questing-inputs.js
   "output/quest-quality-verification/quality-mwarmp0t-quest-quality-study.log",
 ]);
 const allowed = new Set([
+  // Reviewed current-growth receipt SQL model repin; no historical/native result transfer.
+  'tools/pgquery.js',
   // Exact current586 native catalog integration; historical source views only.
   'tools/task-puzzle-native-catalog.js', 'tools/task-puzzle-enterprise-catalog.js',
   'test/task-puzzle-native-catalog-guard.js', 'test/task-puzzle-native-integration-guard.js',

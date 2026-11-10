@@ -25,6 +25,7 @@
 // `safeHoused(ch)` proves the shield is consulted, not that the comparison is the right way round.
 import assert from 'node:assert';
 import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -33,6 +34,101 @@ import { DEED_QUEST_SOURCE_DOMAINS, deedQuestSourceBaseline } from '../tools/dee
 import { QUESTING_SOURCE, qualifyQuestingSource } from '../tools/questing-source-transfer.js';
 import { FOUNDRY_RELEASE, verifyFoundryArchive } from '../tools/ci-foundry.js';
 import { POLICY as FOUNDRY_API_POLICY } from '../tools/foundry-release-api.js';
+import { scanQueryCalls } from '../tools/sqlscan.js';
+
+// Current pgquery admission is executable source validation, not a native SQL result.
+// A stale pin must fail here; a function-only replacement must fail the unchanged-body controls.
+{
+  const root = process.cwd(), options = { ecmaVersion: 'latest', sourceType: 'module' };
+  const read = file => fs.readFileSync(path.join(root, file), 'utf8');
+  const pgquery = read('tools/pgquery.js').replaceAll('\r\n', '\n');
+  const tree = parse(pgquery, options).body;
+  const declaration = (nodes, name) => {
+    const found = nodes.filter(node => node.type === 'VariableDeclaration'
+      && node.declarations.some(value => value.id.name === name));
+    assert.equal(found.length, 1, 'One actual production declaration: ' + name);
+    return found[0];
+  };
+  const models = tree.filter(node => node.type === 'FunctionDeclaration' && node.id.name === 'modelSocialReceiptQueries');
+  assert.equal(models.length, 1);
+  const model = models[0], statements = model.body.body;
+  const imports = statements.filter(node => node.type === 'VariableDeclaration'
+    && node.declarations.some(value => value.init?.type === 'AwaitExpression'));
+  assert.equal(imports.length, 1, 'One bounded runtime import boundary');
+  const prefix = pgquery.slice(model.body.start + 1, imports[0].start);
+  assert(!prefix.includes('import('), 'Source and signature regression stops before runtime imports');
+  const helpers = ['canonicalSql', 'scannerSignature'].map(name => {
+    const node = declaration(tree, name); return pgquery.slice(node.start, node.end);
+  }).join('\n');
+  const verify = new Function('createHash', 'readFileSync', 'path', 'ROOT', 'rows',
+    helpers + '\n' + prefix + '\nreturn { sourcePins, rowByName };');
+  const files = ['src/accountdaily.js', 'src/db.js', 'src/growth.js'];
+  const sources = Object.fromEntries(files.map(file => [file, read(file)]));
+  const { readable } = scanQueryCalls(path.join(root, 'src'), { root });
+  const admit = candidate => verify(createHash, (file, encoding) => {
+    assert.equal(encoding, 'utf8');
+    const rel = path.relative(root, file).replaceAll('\\', '/');
+    assert(files.includes(rel), 'Only the three real complete sources are supplied');
+    return candidate[rel];
+  }, path, root, readable);
+  const accepted = admit(sources), growth = sources['src/growth.js'].replaceAll('\r\n', '\n');
+  const withGrowth = value => ({ ...sources, 'src/growth.js': value });
+  admit(withGrowth(growth)); admit(withGrowth(growth.replaceAll('\n', '\r\n')));
+  assert.deepEqual([...accepted.rowByName.keys()], ['accountInsert', 'migrationCutoff', 'migrationClaims',
+    'migrationTelemetry', 'sweepPaid', 'sweepPending', 'sweepDelete']);
+  const counts = declaration(statements, 'expectedCounts');
+  assert.deepEqual(new Function(pgquery.slice(counts.start, counts.end) + '; return expectedCounts;')(),
+    { accountInsert: 1000, migrationCutoff: 2, migrationClaims: 2, migrationTelemetry: 3,
+      sweepPaid: 2, sweepPending: 2, sweepDelete: 2000 });
+  const functionText = (source, name) => {
+    const nodes = parse(source, options).body.map(node => node.declaration || node)
+      .filter(node => node.type === 'FunctionDeclaration' && node.id.name === name);
+    assert.equal(nodes.length, 1); return source.slice(nodes[0].start, nodes[0].end);
+  };
+  const sweep = functionText(growth, 'sweepSocialClaims');
+  const unchangedBody = [growth + '\n// Unknown complete-source successor.\n', growth.replace('// M4', '// M5')];
+  for (const mutation of unchangedBody) {
+    assert.notEqual(mutation, growth);
+    assert.equal(functionText(mutation, 'sweepSocialClaims'), sweep);
+    assert.throws(() => admit(withGrowth(mutation)), /src\/growth\.js source changed/,
+      'Unchanged generator cannot authorize unknown complete source');
+  }
+  const oldGrowth = execFileSync('git', ['--no-optional-locks', '--no-replace-objects', 'cat-file', 'blob',
+    '95c12467a^:src/growth.js'], { cwd: root, encoding: 'utf8', windowsHide: true });
+  assert.throws(() => admit(withGrowth(oldGrowth)), /src\/growth\.js source changed/,
+    'Historical source is not current runtime-model admission');
+  for (const malformed of [growth.replace('\n', '\r\n'), growth.replace('\n', '\r'), '\ufeff' + growth, growth + '\0'])
+    assert.throws(() => admit(withGrowth(malformed)), /source changed|complete LF or uniform CRLF/);
+  const pins = declaration(statements, 'generatorPins'), pinIndex = statements.indexOf(pins);
+  const loop = statements[pinIndex + 1];
+  assert.equal(loop.type, 'ForOfStatement'); assert.equal(loop.right.name, 'generatorPins');
+  const checkGenerators = new Function('createHash', 'canonicalSql', 'takeAccountDailyClaims', 'sweepSocialClaims',
+    pgquery.slice(pins.start, loop.end));
+  const account = functionText(sources['src/accountdaily.js'].replaceAll('\r\n', '\n'), 'takeAccountDailyClaims');
+  const fn = source => new Function('return (' + source + ');')();
+  const check = (left, right) => checkGenerators(createHash, sql => sql.replaceAll('\r\n', '\n'), fn(left), fn(right));
+  check(account, sweep);
+  assert.throws(() => check(account.replace('{', '{ '), sweep), /takeAccountDailyClaims source changed/);
+  assert.throws(() => check(account, sweep.replace('{', '{ ')), /sweepSocialClaims source changed/);
+  assert.throws(() => admit(withGrowth(growth.replace(sweep, sweep.replace('{', '{ ')))), /src\/growth\.js source changed/);
+  const dmlNode = declaration(tree, 'DML');
+  const dml = new Function(pgquery.slice(dmlNode.start, dmlNode.end) + '; return DML;')();
+  const puzzleSql = [
+    ['src/task-puzzles.js', 'SELECT * FROM task_puzzles WHERE character_id=$1 AND scope=$2 AND target_id=$3 AND context_key=$4'],
+    ['src/task-puzzles.js', 'SELECT kind,structural_signature FROM task_puzzles WHERE character_id=$1 ORDER BY issue_order DESC LIMIT 16'],
+    ['src/task-puzzles.js', 'INSERT INTO task_puzzles (id,character_id,scope,target_id,context_key,version,kind,structural_signature,puzzle) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)'],
+    ['src/task-puzzles.js', 'UPDATE task_puzzles SET consumed_at=now() WHERE id=$1 AND character_id=$2 AND scope=$3 AND target_id=$4 AND context_key=$5 AND consumed_at IS NULL RETURNING id'],
+    ['src/task-puzzle-jobs.js', 'SELECT step FROM hustles WHERE character_id=$1 AND day=$2'],
+    ['src/task-puzzle-jobs.js', 'SELECT crime_puzzle_revision FROM characters WHERE id=$1'],
+    ['src/game.js', 'UPDATE characters SET crime_puzzle_revision=crime_puzzle_revision+1 WHERE id=$1'],
+  ];
+  for (const [rel, sql] of puzzleSql) {
+    const matches = readable.filter(row => row.rel === rel && row.sql === sql);
+    assert.equal(matches.length, 1); assert(!matches[0].interpolated); assert(dml.test(matches[0].sql));
+  }
+  console.log('  pgquery source admission: current LF/CRLF and seven receipt signatures accepted; unknown, historical, malformed and generator mutations refused; seven puzzle literals remain in the PREPARE corpus (source-only, no database).');
+}
+// End current pgquery admission regression.
 
 const expectedFoundryRelease = {
   version: '1.7.1',

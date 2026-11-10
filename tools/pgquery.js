@@ -67,7 +67,7 @@ async function modelSocialReceiptQueries(rows) {
   const sourcePins = Object.freeze({
     'src/accountdaily.js': 'ec1c5b770146297f4471a839ff8bfbbbeeec44fe607eeadb926fc5c91f39aca3',
     'src/db.js': '9d8ef3f15ed9141792679808d791b51dd679daf28f9f70768ba9472d3b84cae4',
-    'src/growth.js': 'a56eef048988290bcab08966e9874b74dd84d1275e062e84b1d26c5d1097657b',
+    'src/growth.js': '32f6733d566505eeb5407da8dfb65c9cdfd115f717f9890ed329153b62067298',
   });
   const verifyPinnedSource = (rel, raw, expectedHash) => {
     const lf = canonicalSql(raw);
