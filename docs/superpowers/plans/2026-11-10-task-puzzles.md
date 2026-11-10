@@ -54,11 +54,11 @@
 - Optional crime preparation applies to valid crime IDs, uses an issuance cycle that refresh cannot reroll, and is consumed with the crime attempt. No reward/odds changes; ordinary crime without preparation remains valid.
 - Append optional puzzle arguments to existing mutation signatures so other callers remain compatible; enforce required gates inside authoritative mutation functions, not only HTTP handlers.
 
-- [ ] Write failing HTTP and direct-function tests proving required API bypass refusal and wrong/cross-task/old-character answer refusal before job mutations.
-- [ ] Implement trusted task-context resolution, metadata and routing, preserving existing eligibility error priorities and agent compatibility. Do not modify employment or authored content progression.
-- [ ] Add tests that eligible completed jobs retain exact reward formulas/caps; crime preparation preserves random outcome/payout and does not substitute for Hustle legwork.
-- [ ] Add native PostgreSQL tests using only an explicitly guarded disposable loopback omerta_task_puzzles* database and isolated schema. Race issue, required completion and replay; force rollback after consumption and prove neither completion nor payout persists.
-- [ ] Run task engine/service/job tests, relevant existing growth/daily-lineage/security/client tests and native PostgreSQL test. Add package scripts for the new suites. Commit only task files; document any unrelated failures precisely.
+- [x] Write failing HTTP and direct-function tests proving required API bypass refusal and wrong/cross-task/old-character answer refusal before job mutations.
+- [x] Implement trusted task-context resolution, metadata and routing, preserving existing eligibility error priorities and agent compatibility. Do not modify employment or authored content progression.
+- [x] Add tests that eligible completed jobs retain exact reward formulas/caps; crime preparation preserves random outcome/payout and does not substitute for Hustle legwork.
+- [x] Add native PostgreSQL tests using only an explicitly guarded disposable loopback omerta_task_puzzles* database and isolated schema. Race issue, required completion and replay; force rollback after consumption and prove neither completion nor payout persists.
+- [x] Run task engine/service/job tests, relevant existing growth/daily-lineage/security/client tests and native PostgreSQL test. Add package scripts for the new suites. Commit only task files; document any unrelated failures precisely.
 
 ### Task 3: Accessible puzzle interaction and release verification
 
@@ -71,4 +71,5 @@
 - [ ] Cover wrong answer then retry, reload, dismissal/reopen, repeated clicks, request failure and stale occurrence recovery in browser tests. Assert no horizontal overflow or page errors and that real job rewards arrive only once.
 - [ ] Run new browser tests, existing clue/quest browser tests, all feature unit/API/native tests and npm test on final code. Record failed/blocked/never-run checks accurately; do not call focused tests a full suite pass.
 - [ ] Perform independent final review and fix material findings with regression tests. Update plan evidence and commit tested changes. Leave isolated branch ready for user review; no publish/merge/deploy.
+
 
