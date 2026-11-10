@@ -4,7 +4,7 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "ACTUAL_CURRENT_QUESTING_ENTERPRISE_NATIVE_INPUTS",
-  "authoredRevision": "217c319ea6b833d4852ba7e07a28976ecf512c57",
+  "authoredRevision": "ae032a2ffc974da5d7d022b6ead0556259fb3ba7",
   "predecessorDefinitionSha256": "6b9128d3311945fc511748f852803354ac415a23082b6b5ce017980a2b7596bf",
   "proofInventorySha256": "3fd878600cd363ebdd9d89bb59b7cc3de7650f895062d83711b2bd1774c298e9",
   "files": [
@@ -11327,20 +11327,20 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/task-puzzle-native-catalog-guard.js",
       "mode": "100644",
-      "blob": "1a47adbd97ee06efab8392adb404ae5dfaa5ac6a",
-      "sha256": "0b4e769ad99d5e94662aeec3aba5e6d3974763677c7e80d0a8ef6a71a0e7da3f"
+      "blob": "e505d2dcaeec6c34b6b64a162b3c5a36f9e3d528",
+      "sha256": "9958edd308423bc8e8494225e307592df72bdab7255ac9788011d421237eb4ee"
     },
     {
       "file": "test/task-puzzle-native-integration-guard.js",
       "mode": "100644",
-      "blob": "2db171a603294666393c9db8f0474da36e3c6c95",
-      "sha256": "268d00300b91b3ba04fa473941c241bc3c2b5c34068f9328355bade00277db17"
+      "blob": "8f9bab060f338ab391197cd28a03f63f85ab298b",
+      "sha256": "47c04f01cc77ec3a11820b572efd5ed6889ddbdaa242f09fdcb308ba563f7b37"
     },
     {
       "file": "tools/age-removal-source-data.js",
       "mode": "100644",
-      "blob": "a55f4b410bfd2fe3db7036e2f4cd954a20b71e29",
-      "sha256": "48c4f718dc6f6f62bbbef087832b4dcf0d7e56d937dc70dcfc68ce37953ed308"
+      "blob": "2d4741c0cb45ac40db64603d8cc9ef8fc3b0f991",
+      "sha256": "b8f49e7f79701aae298499ceab6c6c41828fb3eef1a2605018a1a99cd68940ab"
     },
     {
       "file": "tools/age-removal-source-transfer.js",
@@ -11399,8 +11399,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/questing-ux-release-phase2-native-catalog.js",
       "mode": "100644",
-      "blob": "a07ce75890d2a29de73e1f584c0ae32b4abd7906",
-      "sha256": "3add740bfb8acdc73fc1890ff870852b52fc87f8022b46a70915578f474c02c5"
+      "blob": "d9a43484d99da05cc7acb3d8ed72434555677d46",
+      "sha256": "fb5906932edb8d4f6634c3341f75215ed49d19327e09cacf730c055cb3b4d838"
     },
     {
       "file": "tools/site-basics-source-data.js",
@@ -11423,8 +11423,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/task-puzzle-native-catalog.js",
       "mode": "100644",
-      "blob": "84f1a935ac143c69147fea1b9b9cff7632cab1f3",
-      "sha256": "948a723c4387dfa067de79fe9c45459df00d214b71a6ffd0f89562feda905c1c"
+      "blob": "db536dd8baa784b400f2445b30ad394e9a3e9468",
+      "sha256": "0eedc865bb24d98483d02aba26968e73d8d1e78dad136affcd6730b7c63c9cbe"
     }
   ],
   "replacements": [
@@ -13041,20 +13041,20 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/task-puzzle-native-catalog-guard.js",
       "mode": "100644",
-      "blob": "1a47adbd97ee06efab8392adb404ae5dfaa5ac6a",
-      "sha256": "0b4e769ad99d5e94662aeec3aba5e6d3974763677c7e80d0a8ef6a71a0e7da3f"
+      "blob": "e505d2dcaeec6c34b6b64a162b3c5a36f9e3d528",
+      "sha256": "9958edd308423bc8e8494225e307592df72bdab7255ac9788011d421237eb4ee"
     },
     {
       "file": "test/task-puzzle-native-integration-guard.js",
       "mode": "100644",
-      "blob": "2db171a603294666393c9db8f0474da36e3c6c95",
-      "sha256": "268d00300b91b3ba04fa473941c241bc3c2b5c34068f9328355bade00277db17"
+      "blob": "8f9bab060f338ab391197cd28a03f63f85ab298b",
+      "sha256": "47c04f01cc77ec3a11820b572efd5ed6889ddbdaa242f09fdcb308ba563f7b37"
     },
     {
       "file": "tools/age-removal-source-data.js",
       "mode": "100644",
-      "blob": "a55f4b410bfd2fe3db7036e2f4cd954a20b71e29",
-      "sha256": "48c4f718dc6f6f62bbbef087832b4dcf0d7e56d937dc70dcfc68ce37953ed308"
+      "blob": "2d4741c0cb45ac40db64603d8cc9ef8fc3b0f991",
+      "sha256": "b8f49e7f79701aae298499ceab6c6c41828fb3eef1a2605018a1a99cd68940ab"
     },
     {
       "file": "tools/age-removal-source-transfer.js",
@@ -13113,8 +13113,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/questing-ux-release-phase2-native-catalog.js",
       "mode": "100644",
-      "blob": "a07ce75890d2a29de73e1f584c0ae32b4abd7906",
-      "sha256": "3add740bfb8acdc73fc1890ff870852b52fc87f8022b46a70915578f474c02c5"
+      "blob": "d9a43484d99da05cc7acb3d8ed72434555677d46",
+      "sha256": "fb5906932edb8d4f6634c3341f75215ed49d19327e09cacf730c055cb3b4d838"
     },
     {
       "file": "tools/site-basics-source-data.js",
@@ -13137,9 +13137,9 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/task-puzzle-native-catalog.js",
       "mode": "100644",
-      "blob": "84f1a935ac143c69147fea1b9b9cff7632cab1f3",
-      "sha256": "948a723c4387dfa067de79fe9c45459df00d214b71a6ffd0f89562feda905c1c"
+      "blob": "db536dd8baa784b400f2445b30ad394e9a3e9468",
+      "sha256": "0eedc865bb24d98483d02aba26968e73d8d1e78dad136affcd6730b7c63c9cbe"
     }
   ]
 });
-export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "7e16ac30f9a86ae7bcd3c0a26abd9be84cf1138b2627c819b10fa62f2663cf6f";
+export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "fa573e3249bfc05ffc3b7197c5ed9eaa6ae747e82d8a779eacdf015eba3d1396";
