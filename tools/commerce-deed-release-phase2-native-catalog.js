@@ -13,6 +13,7 @@ import { fileURLToPath } from 'node:url';
 import fs from 'node:fs';
 import pg from 'pg';
 import {deedQuestSourceBaseline} from './deed-quest-source-transfer.js';
+import {ageRemovalHistoricalInput} from './age-removal-source-transfer.js';
 import {ECONOMY_HARDENING_SOURCE_DOMAINS,ECONOMY_HARDENING_SOURCE_REVISION,
   economyHardeningSourceBaseline} from './economy-hardening-source-transfer.js';
 import {columnMigrations} from '../src/db.js';
@@ -833,7 +834,7 @@ const COMMERCE_DEED_PROTECTED={"src/city-home-migration.js":"0d9609c6d5fcff0aa2e
 const commerceDeedFields=['relations','columns','constraints','indexes'];
 const commerceDeedUniform=input=>{assert.equal(typeof input,'string');const lf=input.replaceAll('\r\n','\n');assert(!lf.includes('\r')&&(input===lf||input===lf.replaceAll('\n','\r\n')),'Only whole LF or uniform CRLF current source');return lf;};
 const commerceDeedUndo=(text,inverses)=>{for(const h of inverses){assert.equal(text.split(h.current).length-1,1,'Unique exact current Commerce/Deed inverse');text=text.replace(h.current,()=>h.baseline);}return text;};
-function assertCommerceDeedProtectedSources(){for(const[file,pin]of Object.entries(COMMERCE_DEED_PROTECTED)){const text=commerceDeedUniform(fs.readFileSync(new URL('../'+file,import.meta.url),'utf8'));assert.equal(hash(deedQuestSourceBaseline(file,text)),pin,'Whole protected original module: '+file);}}
+function assertCommerceDeedProtectedSources(){for(const[file,pin]of Object.entries(COMMERCE_DEED_PROTECTED)){const text=commerceDeedUniform(fs.readFileSync(new URL('../'+file,import.meta.url),'utf8'));assert.equal(hash(deedQuestSourceBaseline(file,ageRemovalHistoricalInput(file,text))),pin,'Whole protected original module: '+file);}}
 
 const ECONOMY_HARDENING_TABLES=Object.freeze(['account_daily_claims','economy_migrations']);
 const ECONOMY_HARDENING_EXISTING_COLUMNS=Object.freeze([

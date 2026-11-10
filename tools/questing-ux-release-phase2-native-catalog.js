@@ -6,6 +6,7 @@ import { execFileSync } from 'node:child_process';
 import { parse } from 'acorn';
 import pg from 'pg';
 import * as original from './commerce-deed-release-phase2-native-catalog.js';
+import { ageRemovalHistoricalInput } from './age-removal-source-transfer.js';
 import { economyHardeningSourceBaseline } from './economy-hardening-source-transfer.js';
 import { economyUxMergeCandidateHistoricalInput,
   economyUxMergeMainHistoricalInput } from './economy-ux-merge-source-compatibility.js';
@@ -77,7 +78,7 @@ const merge = (base, socialBridge, ux, monitor) => {
 // The unchanged historical constructor also reads its caller's catalog internally. Only its four
 // exact, immutable catalog SELECTs get the validated UX projection; all other queries stay real.
 const commerceDeedHelper = 'tools/commerce-deed-release-phase2-native-catalog.js';
-const commerceDeedRaw = fs.readFileSync(new URL('./commerce-deed-release-phase2-native-catalog.js', import.meta.url), 'utf8');
+const commerceDeedRaw = ageRemovalHistoricalInput(commerceDeedHelper, fs.readFileSync(new URL('./commerce-deed-release-phase2-native-catalog.js', import.meta.url), 'utf8'));
 const commerceDeedCandidate = economyUxMergeCandidateHistoricalInput(commerceDeedHelper, commerceDeedRaw);
 const commerceDeedMain = economyUxMergeMainHistoricalInput(commerceDeedHelper, commerceDeedRaw);
 assert.equal(economyHardeningSourceBaseline(commerceDeedHelper, commerceDeedCandidate), commerceDeedMain,

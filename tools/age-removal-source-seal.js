@@ -111,6 +111,7 @@ const generated = new Set([metadata, 'tools/enterprise-native-questing-inputs.js
 ]);
 const allowed = new Set([
   // Exact current586 native catalog integration; historical source views only.
+  'tools/commerce-deed-release-phase2-native-catalog.js',
   'tools/task-puzzle-native-catalog.js', 'tools/task-puzzle-enterprise-catalog.js',
   'test/task-puzzle-native-catalog-guard.js', 'test/task-puzzle-native-integration-guard.js',
   'tools/questing-ux-release-phase2-native-catalog.js',
