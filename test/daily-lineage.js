@@ -1,6 +1,7 @@
 // Character death must not reset same-day cash/token reward ceilings. Work progress may die with the
 // street, but the account's right to be paid for Daily Contracts, Corner jobs, and the Hustle does not.
 import assert from 'node:assert/strict';
+import { solveTaskPuzzle } from './task-puzzle-solver.js';
 
 // Default to pg-mem, but allow an explicit disposable loopback PostgreSQL run for the
 // concurrency/death replay proof. Never inherit DATABASE_URL implicitly from a developer shell.
@@ -338,7 +339,8 @@ try {
   counters[hustle.leg.kind] = Number(counters[hustle.leg.kind] || 0) + 1;
   await setCounters(player.id, counters);
   await pool.query('UPDATE characters SET loc=$2 WHERE id=$1', [player.id, hustle.stops[1]]);
-  assert.equal((await call('POST', '/v1/hustle/advance', { token: player.token })).code, 200);
+  const legworkPuzzle = (await call('POST', '/v1/task-puzzles', { token: player.token, body: { scope: 'hustle', targetId: 'legwork' } })).body.puzzle;
+  assert.equal((await call('POST', '/v1/hustle/advance', { token: player.token, body: { puzzle: solveTaskPuzzle(legworkPuzzle) } })).code, 200);
   await pool.query('UPDATE characters SET loc=$2 WHERE id=$1', [player.id, hustle.stops[2]]);
   const hustlePaid = await call('POST', '/v1/hustle/advance', { token: player.token });
   assert.equal(hustlePaid.code, 200, JSON.stringify(hustlePaid.body));

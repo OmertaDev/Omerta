@@ -2176,6 +2176,10 @@ CREATE TABLE IF NOT EXISTS rng_audit (
   outcome TEXT NOT NULL
 );
 
+-- A durable crime occurrence, including failed attempts. Direct SQL prevents a
+-- stale character snapshot from clobbering it; prepared answers never bind to clocks.
+ALTER TABLE characters ADD COLUMN IF NOT EXISTS crime_puzzle_revision BIGINT NOT NULL DEFAULT 0;
+
 -- ── Indexes & integrity (audit hardening) — after all tables exist ──
 -- No two LIVING characters may share a name (referral codes resolve by name, §7.13).
 CREATE UNIQUE INDEX IF NOT EXISTS ux_char_name_alive ON characters (name) WHERE alive;

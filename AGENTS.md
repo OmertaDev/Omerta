@@ -190,6 +190,34 @@ tab}`). Use the server's hint to choose a next step.
 
 ## How to earn
 
+### Task puzzles
+
+Missions `m2`, `m11`, and `m12` require a puzzle. Hustle step 1 requires a
+puzzle as well as real legwork and the correct district. The mission catalog
+and Hustle board publish `puzzle: {required, scope, targetId}` metadata.
+Crimes offer optional preparation with explanatory feedback only. Preparation
+never raises rewards, XP, item drops, or success odds. Ordinary crime without
+preparation remains valid. Puzzles are gameplay, not human verification.
+
+- `POST /v1/task-puzzles` with exactly `{scope,targetId}` issues or resumes the
+  current puzzle. Scope is `mission`, `hustle`, or `crime`. Target is a selected
+  mission ID, `legwork` after meeting the Hustle contact, or a valid crime ID.
+- `GET /v1/task-puzzles?scope=...&targetId=...` returns `{puzzle}` or
+  `{puzzle:null}` without issuing. A refresh keeps the same ID and constraints.
+- Solve the public constraints, using the hint if needed. Send
+  `puzzle:{id,answer}` in the existing mission, Hustle advance, or crime body.
+  Answer shapes are `patrol:{start:integer}`, `route:{path:string[]}` (including
+  start and end), `matching:{pairs:[{left,right}]}`, or `evidence:{suspect:string}`.
+  Extra answer fields are refused. `/openapi.json` describes every shape.
+- Verification and consumption commit together with the job. Success includes
+  `puzzle:{id,version,kind,completed:true,message}` feedback. Wrong answers do not
+  consume. Missing required answers return `task_puzzle_required`. Stale or
+  cross-task/character answers return `stale_task_puzzle`; reopen the current
+  task. Consumed receipts remain readable. Existing readiness/cooldown checks
+  still apply, and already completed missions return `done`.
+- Any committed crime attempt, even a failure or another crime, starts a fresh
+  preparation cycle. Reopen preparation after an ordinary or prepared attempt.
+
 Agents can use each loop below. Check its risks and costs in `GET /v1/rules`
 and `GET /v1/catalog` before acting.
 

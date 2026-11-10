@@ -13,6 +13,7 @@ import { passBoard } from '../pass.js';
 import { clueBoard } from '../clues.js';
 import { territoryOf } from '../territory.js';
 import { missionReadiness } from '../growth.js';
+import { missionPuzzle } from '../task-puzzle-jobs.js';
 import { dynastyBoard } from '../dynasty.js';
 import { diplomacyBoard } from '../diplomacy.js';
 import { MISSIONS, GOODS, DISTRICTS, BONDS, goodPriceOf, priceBlock } from '../rules.js';
@@ -175,6 +176,7 @@ export function createContextGateway({ pool, coordination = null } = {}) {
       const remaining = MISSIONS.filter((row) => !completed.includes(row.id)).map((row) => {
         const readiness = missionReadiness(ch, row, owned);
         return { id: row.id, title: row.name, brief: row.brief, requirements: row.req,
+          puzzle: missionPuzzle(row.id),
           ...(has('economy.read') ? { publishedBaseRewards: row.reward } : {}),
           available: readiness.available, missing: readiness.missing, cooldownSeconds: readiness.cooldownSeconds };
       });

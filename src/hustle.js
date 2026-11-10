@@ -12,6 +12,8 @@
 import { HUSTLE, hustleOf, dayOf, levelOf, DISTRICTS, jailed, districtName } from './rules.js';
 import { GameError, dailyCounterAdvanced } from './game.js';
 import { accountDailyClaims, takeAccountDailyClaim } from './accountdaily.js';
+import { hustlePuzzle, taskPuzzleContext } from './task-puzzle-jobs.js';
+import { consumeTaskPuzzle } from './task-puzzles.js';
 
 
 async function countersOf(client, chId, day) {
@@ -57,6 +59,7 @@ export async function hustleBoard(ch, client) {
   const legworkDone = cur.step === 1 ? legworkSatisfied(h, row, await countersOf(client, ch.id, day)) : true;
   return {
     legworkDone,
+    puzzle: cur.step === 1 ? hustlePuzzle() : null,
     day,
     contact: h.contact,
     stops: h.stops.map((id) => ({ id, name: districtName(id) })),
@@ -74,7 +77,7 @@ export async function hustleBoard(ch, client) {
 
 // ── advance the chain: claim the CURRENT stop (location-gated; the legwork stop also needs the
 // drawn action done SINCE the contact meeting — a counter delta, never a re-countable total) ──
-export async function advanceHustle(ch, client, h2) {
+export async function advanceHustle(ch, client, h2, puzzle) {
   if (jailed(ch)) throw new GameError('jailed', 'No working the streets from lockup.');
   const day = dayOf();
   if ((await accountDailyClaims(client, ch.account_id, day, 'hustle')).has('payoff'))
@@ -88,6 +91,8 @@ export async function advanceHustle(ch, client, h2) {
   const counters = await countersOf(client, ch.id, day);
   if (cur.step === 1 && !legworkSatisfied(h, row, counters))
     throw new GameError('legwork', `The contact wants the work done first — ${h.leg.how}.`);
+  const puzzleFeedback = cur.step === 1
+    ? await consumeTaskPuzzle(ch, await taskPuzzleContext(ch, { scope: 'hustle', targetId: 'legwork' }, client), puzzle, client) : null;
   const next = cur.step + 1;
   // the baseline snapshots the counters at the moment the LEGWORK stop opens, so only work done
   // AFTER meeting the contact counts (a morning's stockpiled jobs can't pre-pay the chain)
@@ -105,5 +110,6 @@ export async function advanceHustle(ch, client, h2) {
   }
   const after = stepOf(h, { step: next });
   return { ok: true, step: next, of: 3, pay: pay || undefined,
+    ...(puzzleFeedback ? { puzzle: puzzleFeedback } : {}),
     what: after.what, district: after.district, contact: h.contact };
 }

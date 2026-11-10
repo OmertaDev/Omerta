@@ -42,6 +42,7 @@ import { COMPANY_ECONOMY_CONTRACTS, COMPANY_ECONOMY_SCHEMAS } from './company-ec
 import { EQUIPMENT_ECONOMY_CONTRACTS, EQUIPMENT_ECONOMY_SCHEMAS } from './equipment-economy-contracts.js';
 import { COMPANY_WORKFORCE_CONTRACTS, COMPANY_WORKFORCE_SCHEMAS } from './company-workforce-contracts.js';
 import { DISTRICTS, GOODS } from './rules.js';
+import { TASK_PUZZLE_CONTRACTS, TASK_PUZZLE_SCHEMAS, TASK_PUZZLE_SUBMISSION } from './task-puzzle-contract.js';
 
 // Routes reachable WITHOUT a player token (the discovery + auth surface). Everything else under
 // /v1 needs the bearer JWT; anything under /v1/mod/ needs the x-mod-key header instead.
@@ -322,6 +323,7 @@ export const COORDINATION_SCHEMAS = {
 // COMPLETE path discovery; these overlays replace its generic object body where the server itself
 // emits an action that an agent is expected to send back verbatim.
 const OPERATION_CONTRACTS = {
+  ...TASK_PUZZLE_CONTRACTS,
   ...QUESTING_CONTRACTS,
   'GET /v1/deeds/discovery': {
     operationId: 'getDeedDiscovery',
@@ -740,6 +742,7 @@ const OPERATION_CONTRACTS = {
     operationId: 'commitCrime',
     requestSchema: { type: 'object', additionalProperties: false, properties: {
       approach: { type: 'string', enum: ['quiet', 'standard', 'loud'], default: 'standard' },
+      puzzle: { ...TASK_PUZZLE_SUBMISSION, description: 'Optional preparation, feedback only. Issue/resume with scope crime and this crime ID. Any committed crime attempt invalidates previous preparations. Omit for ordinary crime; never changes odds or rewards.' },
     } },
   },
   'POST /v1/market/:id/fill': {
@@ -1051,6 +1054,7 @@ const OPERATION_CONTRACTS = {
 };
 
 const AGENT_SCHEMAS = {
+  ...TASK_PUZZLE_SCHEMAS,
   ...QUESTING_SCHEMAS,
   DeedDiscovery: {
     type: 'object', required: ['config', 'primaryClaimed', 'currentDistrict', 'questEligible', 'actorEligible', 'buildings'],
@@ -2436,6 +2440,7 @@ export function llmsTxt({ baseUrl = 'https://www.omerta.fun' } = {}) {
 
 ## Machine rulebook
 - [Rules](${baseUrl}/v1/rules): crimes, districts, guns, drugs, goods, catalogs, thresholds, paths.
+- Task puzzles: POST /v1/task-puzzles with {scope,targetId} issues or resumes the current puzzle; GET with the same query reads it without issuing. Required for missions m2/m11/m12 and Hustle legwork (targetId legwork, step 1). Submit puzzle:{id,answer} with the existing job action. Crime preparation is optional feedback only. Hints and all constraints are public; agents remain first-class players. Puzzles are gameplay, not human verification.
 - [Capability catalog](${baseUrl}/v1/catalog): level-gated fronts plus direct Phase 1 world-graph route pointers.
 
 ## Phase 1 world graph: direct play

@@ -201,13 +201,13 @@ export function registerTacticsRoutes(app, { pool, auth, readCharacter }) {
   app.get('/v1/ux/tactics', { preHandler: auth }, req => readCharacter(pool, req.user.sub, (ch, client, h) => tacticsBoard(ch, client, h, req.query)));
 }
 
-export async function crimeWithDecisionContext(ch, crimeId, client, h, approach) {
+export async function crimeWithDecisionContext(ch, crimeId, client, h, approach, puzzle) {
   const crime = CRIMES.find(entry => entry.id === crimeId);
   // Preserve the original validation/error contract for unknown actions.
-  if (!crime) return doCrime(ch, crimeId, client, h, approach);
+  if (!crime) return doCrime(ch, crimeId, client, h, approach, puzzle);
   const projection = quoteCrime(ch, h, crime, approach, await assignedSoldier(client, ch.id));
   const projectedAt = new Date().toISOString();
-  const result = await doCrime(ch, crimeId, client, h, approach);
+  const result = await doCrime(ch, crimeId, client, h, approach, puzzle);
   return { ...result, decisionContext: { crimeId: crime.id, cost: { ...projection.cost },
     probability: projection.probability, modifiers: projection.modifiers,
     jailSecondsOnFailure: projection.jailSeconds, projectedAt, source: projection.formula.source,
