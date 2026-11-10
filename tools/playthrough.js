@@ -478,7 +478,15 @@ async function obeyCoach(m) {
     const mark = named ? list.find((x) => x.name === named) : null;
     if (!mark) { coachCantAct.set(label, `the coach names "${named}", who is not on the roster — a rung pointing at somebody gone`); return false; }
     const r = await call('POST', `/v1/streets/${mark.id}/jump`, { token, body: { intent: 'standard' } });
-    if (r.code === 200) { did('jump'); first('jump'); return obeyed(); }
+    if (r.code === 200) {
+      did('jump'); first('jump');
+      // A lost jump is also HTTP 200. Only the assigned-rival settlement
+      // completes First Blood; an attempted fight must not start the pin clock.
+      if (!r.body?.win) return false;
+      if (!r.body.firstBlood)
+        throw new Error(`First Blood anomaly: won against assigned rival ${named} without a settlement receipt`);
+      return obeyed();
+    }
     hit('jump', r.body?.error || r.code);
     return false;
   }
