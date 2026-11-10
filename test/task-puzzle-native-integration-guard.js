@@ -10,6 +10,76 @@ import { ageRemovalHistoricalInput } from '../tools/age-removal-source-transfer.
 import { deedQuestSourceBaseline } from '../tools/deed-quest-source-transfer.js';
 import { questingCatalogSource } from '../tools/questing-enterprise-catalog.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as immutablePredecessor, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as immutablePredecessorHash } from '../tools/enterprise-native-contract-release-inputs.js';
+// Missing scope, public modes or unrelated source changes must fail before historical comparison.
+const splitNative=await import('../tools/task-puzzle-native-catalog.js');
+assert.equal(typeof splitNative.compileTaskPuzzleCallerReferences,'function','caller_reference_scope_is_distinct: missing caller-only entrypoint');
+const splitEdits={
+  "tools/task-puzzle-native-catalog.js": [
+    [
+      "export async function verifyTaskPuzzleNativeReferences(pool,endpoint,raw){\n  assert.equal(arguments.length,3);assert.equal(process.execArgv.length,0);assert.equal(process.argv.length,3);",
+      "export async function verifyTaskPuzzleNativeReferences(pool,endpoint,raw){\n  assert.equal(arguments.length,3);return runTaskPuzzleNativeReferences(pool,endpoint,raw,'full-reference-proof');\n}\nexport async function compileTaskPuzzleCallerReferences(pool,endpoint,raw){\n  assert.equal(arguments.length,3);return runTaskPuzzleNativeReferences(pool,endpoint,raw,'caller-reference-comparison');\n}\nasync function runTaskPuzzleNativeReferences(pool,endpoint,raw,operation){\n  assert.equal(arguments.length,4);assert(['full-reference-proof','caller-reference-comparison'].includes(operation));\n  assert.equal(process.execArgv.length,0);assert.equal(process.argv.length,3);"
+    ],
+    [
+      "  assert(enterprise||phase2||director,'Only real canonical native callers');assert(phase2?['--definitions','--lots'].includes(process.argv[2]):process.argv[2]==='--postgres');",
+      "  assert(enterprise||phase2||director,'Only real canonical native callers');assert(phase2?['--definitions','--lots'].includes(process.argv[2]):process.argv[2]==='--postgres');\n  if(operation==='caller-reference-comparison')assert(!enterprise,'Only live Phase2 and Director reference callers');"
+    ],
+    [
+      "    for(const [group,ddls]of [['puzzle',TASK_PUZZLE_DDL_CONTROLS],['quest',questDdl],['casino',QUESTING_CASINO_DDL_CONTROLS]])for(const ddl of ddls){",
+      "    if(operation==='full-reference-proof'){\n    for(const [group,ddls]of [['puzzle',TASK_PUZZLE_DDL_CONTROLS],['quest',questDdl],['casino',QUESTING_CASINO_DDL_CONTROLS]])for(const ddl of ddls){"
+    ],
+    [
+      "    await client.query(source.current);proof.verify(await readTaskPuzzleNativeMetadata(client));idempotent++;",
+      "    }\n    await client.query(source.current);proof.verify(await readTaskPuzzleNativeMetadata(client));idempotent++;"
+    ],
+    [
+      "  return freeze({current,upgraded,baseline,questBaseline,archivedBaseline,actualTables:586,baselineTables:585,version,puzzleDdlCausal,questDdlCausal,casinoDdlCausal,idempotent,priorQuestCausal:priorQuest.causal,native:true,priorResultsTransferred:false});",
+      "  if(operation==='caller-reference-comparison')return freeze({current,upgraded,baseline,questBaseline,archivedBaseline,actualTables:586,baselineTables:585,version,idempotent,priorQuestCausal:priorQuest.causal,native:true,priorResultsTransferred:false,\n    scope:'independent-positive-current586-references',referenceDdl:{status:'not-run',owner:'test/enterprise-release-phase2-migration-catalog.js --postgres'}});\n  return freeze({current,upgraded,baseline,questBaseline,archivedBaseline,actualTables:586,baselineTables:585,version,puzzleDdlCausal,questDdlCausal,casinoDdlCausal,idempotent,priorQuestCausal:priorQuest.causal,native:true,priorResultsTransferred:false});"
+    ]
+  ],
+  "tools/questing-ux-release-phase2-native-catalog.js": [
+    [
+      "  taskPuzzleComparisonConstraints, readTaskPuzzleSequenceMetadata, verifyTaskPuzzleNativeReferences,",
+      "  taskPuzzleComparisonConstraints, readTaskPuzzleSequenceMetadata, compileTaskPuzzleCallerReferences,"
+    ],
+    [
+      "  const references=await verifyTaskPuzzleNativeReferences(pool,endpoint,actual.current),ddlCausal=await taskDdlControls(pool,version,profile);",
+      "  const references=await compileTaskPuzzleCallerReferences(pool,endpoint,actual.current),ddlCausal=await taskDdlControls(pool,version,profile);"
+    ],
+    [
+      "  const references=await verifyTaskPuzzleNativeReferences(pool,endpoint,actual.current),ddlCausal=await taskDdlControls(pool,version,'fresh');",
+      "  const references=await compileTaskPuzzleCallerReferences(pool,endpoint,actual.current),ddlCausal=await taskDdlControls(pool,version,'fresh');"
+    ],
+    [
+      "function extendTaskCatalog(prior,current,version,profile,includeNotNull,projected,references,ddlCausal){",
+      "function extendTaskCatalog(prior,current,version,profile,includeNotNull,projected,references,ddlCausal){\n  assert.equal(references.scope,'independent-positive-current586-references');\n  assert.deepEqual(references.referenceDdl,{status:'not-run',owner:'test/enterprise-release-phase2-migration-catalog.js --postgres'});\n  assert.equal(references.actualTables,586);assert.equal(references.baselineTables,585);assert.equal(references.idempotent,2);assert.equal(ddlCausal,47);"
+    ],
+    [
+      "    phase:'Actual586 live catalog and independently compiled raw585 upgrade; '+prior.phase});",
+      "    phase:'Actual586 live profile catalog with independently compiled positive raw references; reference DDL adversarial proof is a separate Enterprise obligation; '+prior.phase});"
+    ]
+  ]
+};
+const splitPins={"tools/task-puzzle-native-catalog.js":"0eedc865bb24d98483d02aba26968e73d8d1e78dad136affcd6730b7c63c9cbe","tools/questing-ux-release-phase2-native-catalog.js":"fb5906932edb8d4f6634c3341f75215ed49d19327e09cacf730c055cb3b4d838"};
+const splitBase=new Map(Object.keys(splitEdits).map(file=>[file,execFileSync('git',['--no-replace-objects','show','0a3b4aba5b0940bcbc70ef79ddabae53cb4a07c7:'+file],{encoding:'utf8',windowsHide:true,maxBuffer:32e6})]));
+const restoreSplitSource=(file,input)=>{
+  assert.equal(typeof input,'string');let text=input.replaceAll('\r\n','\n');assert(!text.includes('\r')&&(input===text||input===text.replaceAll('\n','\r\n')));
+  assert(Object.hasOwn(splitEdits,file));
+  for(const[before,after]of splitEdits[file]){assert.notEqual(before,after);assert.equal(text.split(after).length,2,'One exact split edit');}
+  for(const[before,after]of splitEdits[file].toReversed())text=text.replace(after,()=>before);
+  assert.equal(crypto.createHash('sha256').update(splitBase.get(file)).digest('hex'),splitPins[file],'Original0a comparison pin');
+  assert.equal(text,splitBase.get(file),'Only the closed reference split; every original proof and admission remains exact');return text;
+};
+let splitConservationRefusals=0;
+for(const file of Object.keys(splitEdits)){
+  const text=fs.readFileSync(file,'utf8');restoreSplitSource(file,text);restoreSplitSource(file,text.replaceAll('\r\n','\n').replaceAll('\n','\r\n'));
+  const normalized=text.replaceAll('\r\n','\n');
+  const candidates=[...splitEdits[file].flatMap(([before,after])=>[normalized.replace(after,before),normalized.replace(after,after+after)]),normalized+'\n',normalized.replace('assert.equal','assert.notEqual'),normalized.replace('assertQuestingEnterpriseStable(','missingSourceStability('),normalized.replace('idempotent,','idempotent:0,'),normalized.replace('idempotent,2','idempotent,0')].filter(changed=>changed!==normalized);
+  if(file==='tools/task-puzzle-native-catalog.js')candidates.push(normalized.replace("if(operation==='full-reference-proof')","if(operation!=='full-reference-proof')"),normalized.replace("'caller-reference-comparison');","'full-reference-proof');"),normalized.replace("    }\n    await client.query(source.current);proof.verify(await readTaskPuzzleNativeMetadata(client));idempotent++;","    await client.query(source.current);proof.verify(await readTaskPuzzleNativeMetadata(client));idempotent++;\n    }"));
+  for(const changed of [...new Set(candidates)]){assert.throws(()=>restoreSplitSource(file,changed));splitConservationRefusals++;}
+  assert.throws(()=>restoreSplitSource(file,normalized.replace('\n','\r\n')));splitConservationRefusals++;
+}
+console.log(JSON.stringify({phase:'TASK_PUZZLE_REFERENCE_SPLIT_CONSERVATION',files:2,splitConservationRefusals,nativeAttempts:0}));
+
 // The current delta reader must avoid fetching unrelated catalog rows on each recheck.
 const scopedQuest=await import('../tools/questing-ux-release-phase2-native-catalog.js');
 assert.equal(typeof scopedQuest.readTaskPuzzleDeltaMetadata,'function','Current586 requires a scoped, uncached delta reader');
@@ -44,6 +114,7 @@ const compactEdits={
 const compactBase=new Map(Object.keys(compactEdits).map(file=>[file,execFileSync('git',['--no-replace-objects','show','8c448ee48934137d8d6c14cf80cc0d5d07118bed:'+file],{encoding:'utf8',windowsHide:true,maxBuffer:32e6})]));
 const restoreCompactSource=(file,input)=>{
   assert.equal(typeof input,'string');let text=input.replaceAll('\r\n','\n');assert(!text.includes('\r')&&(input===text||input===text.replaceAll('\n','\r\n')));
+  text=restoreSplitSource(file,text);
   assert(Object.hasOwn(compactEdits,file));
   for(const[before,after]of compactEdits[file].toReversed()){assert.equal(text.split(after).length,2,'One exact compact comparison edit');text=text.replace(after,()=>before);}
   assert.equal(text,compactBase.get(file),'Only compact assertion rendering changes; every original query, field, control and equality remains exact');return text;
@@ -145,10 +216,191 @@ for(const changed of [scopedSource.replace(scopedAddition,''),scopedSource.repla
     state=structuredClone(live);const restoredOffset=calls.length,restored=await scopedQuest.readTaskPuzzleDeltaMetadata(queryable);expectRead(restoredOffset,profile);reads++;
     assert.deepEqual(restored,expected,'A fresh reread observes restored fields and sequence, never the mutated snapshot');delta.verifyTaskPuzzleCatalogDelta(restored,version,profile,false);
   }
+  // Synthetic orchestration executes only exact CURRENT bodies with lexical doubles.
+  // Actual process.argv, source capture and public native admission are never forged.
+  // SQL boundaries are doubled; task metadata/projection/flags/sequence readers are real.
+  {
+    const path=await import('node:path'),nativeText=fs.readFileSync('tools/task-puzzle-native-catalog.js','utf8').replaceAll('\r\n','\n');
+    const nativeNodes=parse(nativeText,{ecmaVersion:'latest',sourceType:'module'}).body;
+    const exact=name=>{const found=nativeNodes.map(n=>n.type==='ExportNamedDeclaration'?n.declaration:n).filter(n=>n?.type==='FunctionDeclaration'&&n.id.name===name);assert.equal(found.length,1);return nativeText.slice(found[0].start,found[0].end);};
+    restoreSplitSource('tools/task-puzzle-native-catalog.js',nativeText);
+    const opNode=nativeNodes.find(n=>n.type==='FunctionDeclaration'&&n.id.name==='runTaskPuzzleNativeReferences');assert(opNode,'Private operation must not be exported');
+    assert(!Object.hasOwn(delta,'runTaskPuzzleNativeReferences'));
+    const raw=fs.readFileSync('schema.sql','utf8'),sources=delta.taskPuzzleCatalogSource(raw),root=process.cwd();
+    const owner='test/enterprise-release-phase2-migration-catalog.js --postgres',emptySequence={definition:[],ownership:[],bindings:[]};
+    const flagsFor=rows=>rows.map(({table_name,name,type})=>({table_name,name,no_inherit:['p','f','u'].includes(type),is_local:true,inheritance_count:0}));
+    const withFlags=value=>({...structuredClone(value),constraints:value.constraints.map((row,i)=>({...row,...flagsFor(value.constraints)[i]}))});
+    const tableNames=text=>[...text.matchAll(/^CREATE TABLE IF NOT EXISTS (\w+)/gm)].map(match=>match[1]).sort();
+    const tableInventory=(value,text)=>({...value,relations:[...tableNames(text).map(name=>({name,kind:'r',persistence:'p'})),...value.relations.filter(row=>row.kind==='S')]});
+    const samples=version=>{
+      const fresh=fixture(version,'fresh'),upgrade=fixture(version,'upgrade585');
+      const baseline={...tableInventory(withFlags(fresh.baseline),sources.predecessor),sequences:emptySequence};
+      const quest={...tableInventory(withFlags(fresh.baseline),sources.quest.baseline),sequences:emptySequence};
+      const archived=structuredClone({...quest});archived.columns[0].default_expression='archived-fixture';
+      return [baseline,quest,archived,tableInventory(withFlags(fresh.live),sources.current),tableInventory(withFlags(upgrade.live),sources.current)];
+    };
+    const flagsSql=sqlCalls(delta.readTaskPuzzleNativeMetadata)[0];
+    const ddls=delta.TASK_PUZZLE_DDL_CONTROLS;
+    const questDdlNode=nativeNodes.find(n=>n.type==='VariableDeclaration'&&n.declarations.some(d=>d.id.name==='questDdl'));assert(questDdlNode);
+    // These literal controls are separately pinned by whole-source conservation.
+    const questDdls=new Function(nativeText.slice(questDdlNode.start,questDdlNode.end)+';return questDdl;')();
+    const casinoDdls=(await import('../tools/questing-enterprise-catalog.js')).QUESTING_CASINO_DDL_CONTROLS;
+    assert.deepEqual([ddls.length,questDdls.length,casinoDdls.length],[47,13,14]);
+    const allDdls=[...ddls,...questDdls,...casinoDdls];
+    const entryBody=['ownedCompile','onlyPrior','readTaskPuzzleNativeMetadata','runTaskPuzzleNativeReferences','verifyTaskPuzzleNativeReferences','compileTaskPuzzleCallerReferences'].map(exact).join('\n');
+    let last;
+    const run=async(operation,{version=18,caller='phase2',mode='--definitions',failure=null,change=()=>{},extra=false}={})=>{
+      const trace=[],owned=new Set(),created=[],ended=[],dropped=[],clients=[],records=samples(version),capture={synthetic:true};
+      last={trace,owned,created,ended,dropped,clients};let serial=0;
+      const fail=stage=>{if(failure?.split('+').includes(stage))throw Error('injected '+stage);};
+      const endpoint='postgres://postgres:pgcheck@127.0.0.1:5432/'+(caller==='enterprise'?'enterprise_native_catalog_test_0123456789ab':'omerta_check');
+      const names={phase2:'phase2-postgres.js',director:'director-migration.js',enterprise:'enterprise-release-phase2-migration-catalog.js',unknown:'unknown.js'};
+      const localProcess={execArgv:[],argv:['node',path.join(root,'test',names[caller]),mode],env:{P2_TEST_SCHEMA:'p2_definitions_'+'a'.repeat(32),P2_TEST_CHILD:mode==='--definitions'?'upgrade':'lots-catalog',ENTERPRISE_NATIVE_CATALOG_TEST_DATABASE_URL:endpoint}};
+      const backend={role:'postgres',owner:'postgres',database:new URL(endpoint).pathname.slice(1),schema:caller==='enterprise'?'public':caller==='director'?'director_migration_'+'b'.repeat(16):localProcess.env.P2_TEST_SCHEMA,version:version===18?'18.4':'16.0',directory:'synthetic-only'};
+      const settings={localProcess,backend,endpoint,raw};change(settings);
+      const pool={query:async(sql,values)=>{
+        if(sql.startsWith('SELECT current_user AS role')){trace.push('backend');return {rows:[backend]};}
+        if(sql==='SELECT nspname FROM pg_namespace WHERE nspname=$1'){trace.push((owned.has(values[0])?'exists:':'absent:')+values[0]);return {rows:owned.has(values[0])?[{nspname:values[0]}]:[]};}
+        if(sql.startsWith('CREATE SCHEMA ')){const name=sql.slice(14);assert(!owned.has(name));owned.add(name);created.push(name);trace.push('create:'+name);return {rows:[]};}
+        if(sql==='SELECT nspowner=current_user::regrole AS mine FROM pg_namespace WHERE nspname=$1'){assert(owned.has(values[0]));trace.push('owner:'+values[0]);return {rows:[{mine:failure!=='owner'}]};}
+        if(sql.startsWith('DROP SCHEMA ')){const name=sql.slice(12,-8);assert(owned.has(name),'Never drop an unowned schema');trace.push('drop:'+name);fail('drop');owned.delete(name);dropped.push(name);return {rows:[]};}
+        assert.fail('Unexpected admin SQL: '+sql);
+      }};
+      class Client{
+        constructor({connectionString}){this.id=clients.length;this.url=new URL(connectionString);this.name=created[this.id];this.transaction=false;this.applied=[];this.state=null;clients.push(this);}
+        async connect(){trace.push(this.id+':connect');assert.equal(this.url.searchParams.get('options'),'-c search_path='+this.name+' -c statement_timeout=30000 -c lock_timeout=5000 -c idle_in_transaction_session_timeout=30000');fail('connect');}
+        async end(){trace.push(this.id+':end');ended.push(this.name);fail('end');}
+        async query(sql,values){
+          assert.equal(values,undefined);let rows=[];
+          if(sql.includes("current_setting('statement_timeout')")){trace.push(this.id+':context');rows=[{schema:this.name,database:backend.database,role:backend.role,timeout:'30s',lock_timeout:'5s',idle_timeout:'30s'}];}
+          else if([sources.predecessor,sources.quest.baseline,sources.quest.archivedBaseline,sources.current].includes(sql)){
+            const name=sql===sources.current?'current':sql===sources.predecessor?'baseline':sql===sources.quest.baseline?'quest':'archive';
+            trace.push(this.id+':apply:'+name);this.applied.push(sql);fail(this.id+':compile');if(this.id>=3&&this.applied.filter(s=>s===sources.current).length===2)fail('reapplication');
+            this.state=structuredClone(records[this.id]);
+          }else if(sql==='BEGIN'){trace.push(this.id+':BEGIN');assert(!this.transaction);this.transaction=true;this.rollback=structuredClone(this.state);fail('BEGIN');}
+          else if(sql==='ROLLBACK'){trace.push(this.id+':ROLLBACK');assert(this.transaction);this.transaction=false;this.state=this.rollback;fail('ROLLBACK');}
+          else if(allDdls.includes(sql)){assert(this.transaction);trace.push(this.id+':ddl:'+sql);fail('ddl');if(failure!=='unchanged')this.state.columns[0].default_expression='mutated';}
+          else{
+            const index=queries.indexOf(sql),sequence=sequenceQueries.indexOf(sql);
+            assert(index>=0||sequence>=0||sql===flagsSql,'Only the full reader, flags and sequence SQL');
+            const field=index===0?'context-read':index>0?['relations','constraints','columns','indexes'][index-1]:sequence>=0?['definition','ownership','bindings'][sequence]:'flags';
+            trace.push(this.id+':read:'+field);fail('read');fail(this.id+':read');
+            if(index===0)rows=[{schema:this.name,database:backend.database,role:backend.role}];
+            else if(sequence>=0)rows=this.state.sequences[field];
+            else if(sql===flagsSql)rows=flagsFor(this.state.constraints);
+            else rows=this.state[field].map(row=>field==='constraints'?Object.fromEntries(Object.entries(row).filter(([key])=>!['no_inherit','is_local','inheritance_count'].includes(key))):field==='indexes'?{...row,definition:row.definition.replace(' ON $self.',' ON '+this.name+'.')}:row);
+          }return {rows:structuredClone(rows)};
+        }
+      }
+      const strip=metadata=>{const {sequences,...rest}=metadata;return rest;};
+      const deps={assert,process:localProcess,path,root,taskPuzzleCatalogSource:value=>{trace.push('source');fail('source');return delta.taskPuzzleCatalogSource(value);},fs:{readFileSync(file,encoding){assert.equal(file,path.join(root,'schema.sql'));assert.equal(encoding,'utf8');trace.push('physical');return failure==='physical'?raw+'\n':raw;}},captureQuestingEnterpriseSource:()=>{trace.push('capture');fail('capture');return capture;},URL,
+        crypto:{randomBytes:size=>{assert.equal(size,8);return {toString:encoding=>{assert.equal(encoding,'hex');return (++serial).toString(16).padStart(16,'0');}};}},pg:{Client},compiler:original,
+        readTaskPuzzleSequenceMetadata:delta.readTaskPuzzleSequenceMetadata,shape:(value,keys)=>assert.deepEqual(Object.keys(value).sort(),[...keys].sort()),
+        taskPuzzleCatalogProjection:(metadata,baseline,v,profile,flags)=>{trace.push('projection:'+profile);assert.equal(v,version);assert.equal(flags,true);assert.deepEqual(baseline,strip(records[0]));const proof=delta.taskPuzzleCatalogProjection(metadata,baseline,v,profile,flags);return {...proof,verify:value=>{try{proof.verify(value);}catch(error){trace.push('reject:'+profile);throw error;}trace.push('verify:'+profile);return true;},projectMetadata:value=>{trace.push('project:'+profile);return proof.projectMetadata(value);}};},
+        questingCatalogProjection:(baseline,quest,v)=>{trace.push('priorQuest:construct');assert.equal(v,version);assert.deepEqual(baseline,strip(records[0]));assert.deepEqual(quest,strip(records[1]));return {causal:777,verify:value=>{trace.push('priorQuest:verify');assert.deepEqual(value,strip(records[0]));}};},
+        questingCasinoCatalogProjection:(quest,v,profile,flags)=>{trace.push('priorCasino:compare');assert.equal(v,version);assert.equal(profile,'fresh');assert.equal(flags,true);assert.deepEqual(quest,strip(records[1]));return strip(records[2]);},
+        TASK_PUZZLE_DDL_CONTROLS:ddls,questDdl:questDdls,QUESTING_CASINO_DDL_CONTROLS:casinoDdls,
+        assertQuestingEnterpriseStable:value=>{assert.equal(value,capture);trace.push('stable');fail('stable');},freeze:value=>{if(value&&typeof value==='object'){Object.values(value).forEach(deps.freeze);Object.freeze(value);}return value;}};
+      const api=new Function(...Object.keys(deps),entryBody+';return {verifyTaskPuzzleNativeReferences,compileTaskPuzzleCallerReferences,runTaskPuzzleNativeReferences};')(...Object.values(deps));
+      const fn=operation==='full-reference-proof'?api.verifyTaskPuzzleNativeReferences:operation==='caller-reference-comparison'?api.compileTaskPuzzleCallerReferences:api.runTaskPuzzleNativeReferences;
+      return fn(pool,settings.endpoint,settings.raw,...(extra?[operation]:operation==='invalid'?['invalid']:[]));
+    };
+    const expectedFields=['current','upgraded','baseline','questBaseline','archivedBaseline','actualTables','baselineTables','version','idempotent','priorQuestCausal','native','priorResultsTransferred'];
+    const reads=['context-read','relations','constraints','columns','indexes','flags','definition','ownership','bindings'];
+    const expectCompile=(id,applied,profile,full)=>[
+      'absent:release_phase2_ref_'+(id+1).toString(16).padStart(16,'0'),'create:release_phase2_ref_'+(id+1).toString(16).padStart(16,'0'),id+':connect',id+':context',...applied.map(name=>id+':apply:'+name),...reads.map(field=>id+':read:'+field),
+      ...(profile?['projection:'+profile,...(full?allDdls.flatMap(ddl=>[id+':BEGIN',id+':ddl:'+ddl,...reads.map(field=>id+':read:'+field),'reject:'+profile,id+':ROLLBACK',...reads.map(field=>id+':read:'+field),'verify:'+profile]):[]),id+':apply:current',...reads.map(field=>id+':read:'+field),'verify:'+profile]:[]),
+      id+':end','owner:release_phase2_ref_'+(id+1).toString(16).padStart(16,'0'),'drop:release_phase2_ref_'+(id+1).toString(16).padStart(16,'0'),'absent:release_phase2_ref_'+(id+1).toString(16).padStart(16,'0')];
+    const expectedTrace=full=>['source','physical','capture','backend',...expectCompile(0,['baseline']),...expectCompile(1,['quest']),...expectCompile(2,['archive']),'priorQuest:construct','priorCasino:compare',...expectCompile(3,['current'],'fresh',full),...expectCompile(4,['baseline','current'],'upgrade585',full),'projection:fresh','projection:upgrade585','project:fresh','project:upgrade585','priorQuest:verify','stable'];
+    let transcripts=0;
+    for(const version of [16,18])for(const full of [false,true]){
+      const result=await run(full?'full-reference-proof':'caller-reference-comparison',{version,caller:full?'enterprise':'phase2',mode:full?'--postgres':'--definitions'});
+      assert.deepEqual(last.trace,expectedTrace(full),'reference_operations_preserve_positive_transcript and exact ordered148 negatives');
+      assert.equal(last.created.length,5);assert.deepEqual(last.ended,last.created);assert.deepEqual(last.dropped,last.created);assert.equal(last.owned.size,0);
+      assert.equal(result.actualTables,586);assert.equal(result.baselineTables,585);assert.equal(result.idempotent,2);assert.equal(result.version,version);assert.equal(result.native,true);assert.equal(result.priorResultsTransferred,false);assert.equal(result.priorQuestCausal,777);assert(Object.isFrozen(result.current.columns));
+      assert.deepEqual(Object.keys(result).sort(),[...expectedFields,...(full?['puzzleDdlCausal','questDdlCausal','casinoDdlCausal']:['scope','referenceDdl'])].sort());
+      if(full)assert.deepEqual([result.puzzleDdlCausal,result.questDdlCausal,result.casinoDdlCausal],[94,26,28]);
+      else{assert.equal(result.scope,'independent-positive-current586-references');assert.deepEqual(result.referenceDdl,{status:'not-run',owner});assert(Object.isFrozen(result.referenceDdl));assert(!last.trace.some(row=>row.endsWith(':BEGIN')||row.includes(':ddl:')));}
+      transcripts++;
+    }
+    for(const [caller,mode]of [['phase2','--lots'],['director','--postgres']]){await run('caller-reference-comparison',{caller,mode});assert.deepEqual(last.trace,expectedTrace(false));transcripts++;}
+    let failurePaths=0;
+    for(const operation of ['full-reference-proof','caller-reference-comparison'])for(const failure of ['0:compile','1:compile','2:compile','3:compile','4:compile','read','3:read','4:read','reapplication','stable','end','drop','owner']){
+      await assert.rejects(()=>run(operation,{failure}),error=>failure==='end'||failure==='drop'||failure==='owner'?error instanceof AggregateError:error.message==='injected '+failure);
+      assert(last.created.length>0);assert.deepEqual(last.ended,last.created);assert(last.dropped.every(name=>last.created.includes(name)));
+      assert.equal(last.owned.size,['drop','owner'].includes(failure)?1:0);if(!['drop','owner'].includes(failure))assert.deepEqual(last.dropped,last.created);
+      failurePaths++;
+    }
+    for(const failure of ['unchanged','ddl','ROLLBACK']){await assert.rejects(()=>run('full-reference-proof',{failure}),error=>failure==='unchanged'?/Missing expected rejection/.test(error.message):error.message==='injected '+failure);assert.deepEqual(last.ended,last.created);assert.deepEqual(last.dropped,last.created);failurePaths++;}
+    for(const operation of ['full-reference-proof','caller-reference-comparison']){
+      await assert.rejects(()=>run(operation,{failure:'0:compile+end+drop'}),error=>{
+        assert.equal(error.message,'injected 0:compile');assert.deepEqual(error.cleanupFailures,['injected end','injected drop']);return true;
+      });assert.equal(last.owned.size,1);assert.equal(last.created.length,1);assert.deepEqual(last.ended,last.created);assert.equal(last.dropped.length,0);failurePaths++;
+    }
+    let admissionRefusals=0;
+    const rejected=async options=>{await assert.rejects(()=>run('caller-reference-comparison',options));assert.equal(last.created.length,0);assert.equal(last.trace.filter(step=>step==='backend').length,options.backendIO?1:0,'Refuse at the actual admission stage, never begin schema work');admissionRefusals++;};
+    for(const options of [{extra:true},{caller:'enterprise',mode:'--postgres'},{caller:'unknown'},{mode:'--postgres'},{caller:'director',mode:'--lots'},
+      {change:({localProcess})=>localProcess.execArgv.push('--inspect')},{change:({localProcess})=>localProcess.argv.push('extra')},
+      {change:settings=>settings.raw=sources.predecessor},{failure:'physical'},{failure:'capture'},
+      {change:settings=>settings.endpoint='postgres://postgres:pgcheck@example.com:5432/omerta_check'},
+      {change:settings=>settings.endpoint='postgres://postgres:pgcheck@127.0.0.1:5432/production'},
+      {backendIO:true,change:({backend})=>backend.role='wrong'},{backendIO:true,change:({backend})=>backend.owner='wrong'},{backendIO:true,change:({backend})=>backend.database='wrong'},
+      {backendIO:true,change:({backend})=>backend.version='17.0'},{backendIO:true,change:({backend})=>backend.schema='public'},
+      {backendIO:true,change:({localProcess})=>localProcess.env.P2_TEST_CHILD='wrong'},{backendIO:true,change:({localProcess})=>localProcess.env.P2_TEST_SCHEMA='wrong'}])await rejected(options);
+    await assert.rejects(()=>run('invalid'));assert.deepEqual(last.trace,[]);admissionRefusals++;
+    let nativeAttempts=0;const forbidden={query(){nativeAttempts++;assert.fail('Public refusal must precede I/O');}};
+    for(const fn of [delta.verifyTaskPuzzleNativeReferences,delta.compileTaskPuzzleCallerReferences])for(const args of [[],[forbidden],[forbidden,'invalid'],[forbidden,'invalid',raw],[forbidden,'invalid',raw,'full-reference-proof']])await assert.rejects(()=>fn(...args));
+    assert.equal(nativeAttempts,0);
+    console.log(JSON.stringify({phase:'TASK_PUZZLE_REFERENCE_OPERATIONS',transcripts,ownedCompiles:5,fullReferenceNegatives:148,callerReferenceNegatives:0,reapplications:2,failurePaths,admissionRefusals,nativeAttempts}));
+  }
   // Isolate exact current function bodies only for otherwise unreachable private contracts.
   // The native entrypoint is never reconstructed. All positive readers/verifiers above are real imports.
   const nodes=parse(scopedSource,{ecmaVersion:'latest',sourceType:'module'}).body;
   const body=name=>{const node=nodes.map(n=>n.type==='ExportNamedDeclaration'?n.declaration:n).find(n=>n?.type==='FunctionDeclaration'&&n.id.name===name);assert(node);return scopedSource.slice(node.start,node.end);};
+  // Both real current wrappers select the narrow operation, then retain their live path.
+  {
+    const inputs=delta.taskPuzzleCatalogSource(fs.readFileSync('schema.sql','utf8')),current=fixture(18,'phase2').live;
+    const references={scope:'independent-positive-current586-references',referenceDdl:{status:'not-run',owner:'test/enterprise-release-phase2-migration-catalog.js --postgres'},actualTables:586,baselineTables:585,idempotent:2};
+    const trace=[],prior={phase:'prior-live',verifyMetadata:()=>{trace.push('prior-verify');return true;}},states=new WeakMap();
+    const extend=new Function('assert','taskPuzzleComparisonMetadata','taskPuzzleComparisonConstraints','freeze','taskStates',body('extendTaskCatalog')+';return extendTaskCatalog;')(assert,delta.taskPuzzleComparisonMetadata,delta.taskPuzzleComparisonConstraints,Object.freeze,states);
+    const receipt=extend(prior,current,18,'phase2',true,{},references,47);
+    assert.equal(receipt.taskPuzzleReferences,references);assert.equal(receipt.taskPuzzleDdlCausal,47);assert(states.has(receipt));
+    assert.match(receipt.phase,/independently compiled positive raw references; reference DDL adversarial proof is a separate Enterprise obligation/);
+    let receiptRefusals=0;
+    for(const changed of [{...references,scope:'full-reference-proof'},{...references,referenceDdl:{status:'passed',owner:references.referenceDdl.owner}},
+      {...references,referenceDdl:{...references.referenceDdl,owner:'elsewhere'}},{...references,actualTables:585},{...references,baselineTables:584},{...references,idempotent:1}]){
+      assert.throws(()=>extend(prior,current,18,'phase2',true,{},changed,47));receiptRefusals++;
+    }
+    assert.throws(()=>extend(prior,current,18,'phase2',true,{},references,46));receiptRefusals++;
+    const pool={},endpoint='synthetic',capture={},projected={};
+    for(const [fn,profile,includeNotNull]of [['createTaskPuzzleReleasePhase2MigrationCatalog','phase2',true],['createTaskPuzzleReleasePhase2MigrationCatalog','director',false],['verifyTaskPuzzleNativeBranches','fresh',true]]){
+      trace.length=0;const live=fixture(18,profile).live;
+      const deps={assert,taskActualInput:value=>{assert.equal(value,inputs.current);trace.push('source');return inputs;},assertNativeCaller:async(p,e,pr,n)=>{assert.equal(p,pool);assert.equal(e,endpoint);assert.equal(pr,profile);assert.equal(n,includeNotNull);trace.push('admit');},questVersion:async()=>18,
+        taskMetadata:async p=>{assert.equal(p,pool);trace.push('initial-live');return live;},verifyTaskPuzzleCatalogDelta:(m,v,p,f)=>{trace.push('initial-literal');return delta.verifyTaskPuzzleCatalogDelta(m,v,p,f);},
+        compileTaskPuzzleCallerReferences:async(p,e,raw)=>{assert.equal(p,pool);assert.equal(e,endpoint);assert.equal(raw,inputs.current);trace.push('positive-references');return references;},
+        taskDdlControls:async(p,v,pr)=>{assert.equal(p,pool);assert.equal(v,18);assert.equal(pr,profile);trace.push('live47');return 47;},
+        taskProjectedCaller:async(p,v,pr)=>{assert.equal(p,pool);assert.equal(v,18);assert.equal(pr,profile);trace.push('projection');return projected;},
+        createQuestCatalogComparison:async(p,e,source,options)=>{assert.equal(p,projected);assert.equal(e,endpoint);assert.equal(source,inputs.quest);assert.deepEqual(options,{legacyProfile:profile,includeNotNull});trace.push('retained-live');return prior;},
+        verifyQuestCatalogComparison:async(p,e,source)=>{assert.equal(p,projected);assert.equal(e,endpoint);assert.equal(source,inputs.quest);trace.push('retained-live');return prior;},
+        taskProfiles:{set:(p,pr)=>{assert.equal(p,pool);assert.equal(pr,profile);trace.push('profile');}},readTaskPuzzleReleasePhase2Metadata:async p=>{assert.equal(p,pool);trace.push('final-live');return live;},
+        assertQuestingEnterpriseStable:c=>{assert.equal(c,capture);trace.push('stable');},questSourceCapture:capture,extendTaskCatalog:extend,
+        fs:{readFileSync:()=>inputs.current},path:{join:()=>''},questRoot:''};
+      const invoke=new Function(...Object.keys(deps),body(fn)+';return '+fn+';')(...Object.values(deps));
+      const result=await invoke(pool,endpoint,...(fn==='createTaskPuzzleReleasePhase2MigrationCatalog'?[inputs.current,{legacyProfile:profile,includeNotNull}]:[]));
+      assert.equal(result.taskPuzzleReferences,references);assert.equal(result.taskPuzzleDdlCausal,47);
+      assert.deepEqual(trace,['source','admit','initial-live','initial-literal','positive-references','live47','projection','retained-live','profile','final-live','stable','prior-verify']);
+    }
+    for(const file of ['tools/task-puzzle-enterprise-catalog.js','test/enterprise-release-phase2-migration-catalog.js','test/phase2-postgres.js','test/director-migration.js','tools/enterprise-native-questing.js','schema.sql']){
+      assert.equal(fs.readFileSync(file,'utf8').replaceAll('\r\n','\n'),execFileSync('git',['--no-replace-objects','show','0a3b4aba5b0940bcbc70ef79ddabae53cb4a07c7:'+file],{encoding:'utf8',windowsHide:true,maxBuffer:32e6}),'Exact caller, Enterprise inventory/order/budgets and schema: '+file);
+    }
+    const enterpriseText=fs.readFileSync('test/enterprise-release-phase2-migration-catalog.js','utf8').replaceAll('\r\n','\n');
+    const first=enterpriseText.indexOf('      assert.equal(result.actualTables,586);'),end=enterpriseText.indexOf('      console.log(JSON.stringify({phase:result.phase',first);assert(first>0&&end>first);
+    const checkCounts=new Function('assert','result','taskPuzzleAdapter',enterpriseText.slice(first,end));
+    const full={actualTables:586,baselineTables:585,idempotent:2,questDdlCausal:26,casinoDdlCausal:28,puzzleDdlCausal:94};checkCounts(assert,full,delta);
+    for(const key of Object.keys(full))assert.throws(()=>checkCounts(assert,{...full,[key]:full[key]-1},delta));
+    assert.throws(()=>checkCounts(assert,references,delta),'Narrow receipt cannot satisfy Enterprise');
+    console.log(JSON.stringify({phase:'TASK_PUZZLE_REFERENCE_CALLERS',liveCallers:3,receiptRefusals,fullCounts:[94,26,28,2],nativeAttempts:0}));
+  }
   const readerWith=(read,fieldMap=catalogFields)=>new Function('assert','original','catalogQueries','catalogFields','readTaskPuzzleSequenceMetadata',body('readTaskPuzzleDeltaMetadata')+';return readTaskPuzzleDeltaMetadata;')(assert,{readCommerceReleasePhase2Metadata:read},queries,fieldMap,delta.readTaskPuzzleSequenceMetadata);
   let queryRefusals=0;
   const arityOffset=calls.length;await assert.rejects(()=>scopedQuest.readTaskPuzzleDeltaMetadata(backend('forbidden'),{}),error=>error?.code==='ERR_ASSERTION');assert.equal(calls.length,arityOffset);queryRefusals++;

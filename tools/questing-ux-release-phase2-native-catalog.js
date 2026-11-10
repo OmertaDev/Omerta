@@ -762,7 +762,7 @@ export async function verifyCommerceReleasePhase2CausalNegatives(pool, catalog, 
 
 // Distinct current586 admission; the old exported585 entrypoints above remain strict.
 import { taskPuzzleCatalogSource, verifyTaskPuzzleCatalogDelta, taskPuzzleComparisonMetadata,
-  taskPuzzleComparisonConstraints, readTaskPuzzleSequenceMetadata, verifyTaskPuzzleNativeReferences,
+  taskPuzzleComparisonConstraints, readTaskPuzzleSequenceMetadata, compileTaskPuzzleCallerReferences,
   TASK_PUZZLE_DDL_CONTROLS } from './task-puzzle-native-catalog.js';
 import { isDeepStrictEqual } from 'node:util';
 const taskStates=new WeakMap(),taskProfiles=new WeakMap();
@@ -815,6 +815,9 @@ async function taskDdlControls(pool,version,profile){
   }finally{client.release();}return causal;
 }
 function extendTaskCatalog(prior,current,version,profile,includeNotNull,projected,references,ddlCausal){
+  assert.equal(references.scope,'independent-positive-current586-references');
+  assert.deepEqual(references.referenceDdl,{status:'not-run',owner:'test/enterprise-release-phase2-migration-catalog.js --postgres'});
+  assert.equal(references.actualTables,586);assert.equal(references.baselineTables,585);assert.equal(references.idempotent,2);assert.equal(ddlCausal,47);
   const project=metadata=>taskPuzzleComparisonMetadata(metadata,version,profile,false);
   const verifyMetadata=metadata=>{const result=project(metadata);prior.verifyMetadata(result);assert.deepEqual(metadata,current,'Complete admitted current586 catalog');return true;};
   verifyMetadata(current);freeze(current);
@@ -822,7 +825,7 @@ function extendTaskCatalog(prior,current,version,profile,includeNotNull,projecte
     ...(prior.verify?{verify:verifyMetadata}:{}),
     ...(prior.normalize?{normalize:rows=>prior.normalize(taskPuzzleComparisonConstraints(rows,version,includeNotNull,profile))}:{}),
     actualTables:586,taskPuzzleReferences:references,taskPuzzleDdlCausal:ddlCausal,
-    phase:'Actual586 live catalog and independently compiled raw585 upgrade; '+prior.phase});
+    phase:'Actual586 live profile catalog with independently compiled positive raw references; reference DDL adversarial proof is a separate Enterprise obligation; '+prior.phase});
   taskStates.set(result,{prior,projected,version,profile,includeNotNull,current});return result;
 }
 export async function createTaskPuzzleReleasePhase2MigrationCatalog(pool,endpoint,input,options){
@@ -830,7 +833,7 @@ export async function createTaskPuzzleReleasePhase2MigrationCatalog(pool,endpoin
   await assertNativeCaller(pool,endpoint,options?.legacyProfile,options?.includeNotNull);
   const profile=options.legacyProfile;assert(['phase2','director'].includes(profile));const version=await questVersion(pool);
   const before=await taskMetadata(pool);verifyTaskPuzzleCatalogDelta(before,version,profile,false);
-  const references=await verifyTaskPuzzleNativeReferences(pool,endpoint,actual.current),ddlCausal=await taskDdlControls(pool,version,profile);
+  const references=await compileTaskPuzzleCallerReferences(pool,endpoint,actual.current),ddlCausal=await taskDdlControls(pool,version,profile);
   const projected=await taskProjectedCaller(pool,version,profile);
   const prior=await createQuestCatalogComparison(projected,endpoint,actual.quest,options);
   taskProfiles.set(pool,profile);const current=await readTaskPuzzleReleasePhase2Metadata(pool);assertQuestingEnterpriseStable(questSourceCapture);
@@ -840,7 +843,7 @@ export async function verifyTaskPuzzleNativeBranches(pool,endpoint){
   assert.equal(arguments.length,2);const actual=taskActualInput(fs.readFileSync(path.join(questRoot,'schema.sql'),'utf8'));
   await assertNativeCaller(pool,endpoint,'fresh',true);const version=await questVersion(pool);
   verifyTaskPuzzleCatalogDelta(await taskMetadata(pool),version,'fresh',false);
-  const references=await verifyTaskPuzzleNativeReferences(pool,endpoint,actual.current),ddlCausal=await taskDdlControls(pool,version,'fresh');
+  const references=await compileTaskPuzzleCallerReferences(pool,endpoint,actual.current),ddlCausal=await taskDdlControls(pool,version,'fresh');
   const projected=await taskProjectedCaller(pool,version,'fresh'),prior=await verifyQuestCatalogComparison(projected,endpoint,actual.quest);
   taskProfiles.set(pool,'fresh');const current=await readTaskPuzzleReleasePhase2Metadata(pool);assertQuestingEnterpriseStable(questSourceCapture);
   return extendTaskCatalog(prior,current,version,'fresh',true,projected,references,ddlCausal);

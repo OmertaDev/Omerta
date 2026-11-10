@@ -191,9 +191,17 @@ async function ownedCompile(pool,address,sources,inspect){
 }
 function onlyPrior(metadata){assert.deepEqual(metadata.sequences,{definition:[],ownership:[],bindings:[]},'Pinned585 contains no puzzle sequence or default');const {sequences,...prior}=metadata;return prior;}
 export async function verifyTaskPuzzleNativeReferences(pool,endpoint,raw){
-  assert.equal(arguments.length,3);assert.equal(process.execArgv.length,0);assert.equal(process.argv.length,3);
+  assert.equal(arguments.length,3);return runTaskPuzzleNativeReferences(pool,endpoint,raw,'full-reference-proof');
+}
+export async function compileTaskPuzzleCallerReferences(pool,endpoint,raw){
+  assert.equal(arguments.length,3);return runTaskPuzzleNativeReferences(pool,endpoint,raw,'caller-reference-comparison');
+}
+async function runTaskPuzzleNativeReferences(pool,endpoint,raw,operation){
+  assert.equal(arguments.length,4);assert(['full-reference-proof','caller-reference-comparison'].includes(operation));
+  assert.equal(process.execArgv.length,0);assert.equal(process.argv.length,3);
   const caller=path.resolve(process.argv[1]),enterprise=caller===path.join(root,'test','enterprise-release-phase2-migration-catalog.js'),phase2=caller===path.join(root,'test','phase2-postgres.js'),director=caller===path.join(root,'test','director-migration.js');
   assert(enterprise||phase2||director,'Only real canonical native callers');assert(phase2?['--definitions','--lots'].includes(process.argv[2]):process.argv[2]==='--postgres');
+  if(operation==='caller-reference-comparison')assert(!enterprise,'Only live Phase2 and Director reference callers');
   const source=taskPuzzleCatalogSource(raw),physical=fs.readFileSync(path.join(root,'schema.sql'),'utf8');assert.equal(source.current,physical.replaceAll('\r\n','\n'),'Complete raw physical586 input');
   const capture=captureQuestingEnterpriseSource(),address=new URL(endpoint);
   assert(['postgres:','postgresql:'].includes(address.protocol)&&address.hostname==='127.0.0.1'&&!address.search&&!address.hash);
@@ -214,9 +222,11 @@ export async function verifyTaskPuzzleNativeReferences(pool,endpoint,raw){
   let puzzleDdlCausal=0,questDdlCausal=0,casinoDdlCausal=0,idempotent=0;
   const inspect=profile=>async(client,metadata)=>{
     const proof=taskPuzzleCatalogProjection(metadata,baseline,version,profile,true);
+    if(operation==='full-reference-proof'){
     for(const [group,ddls]of [['puzzle',TASK_PUZZLE_DDL_CONTROLS],['quest',questDdl],['casino',QUESTING_CASINO_DDL_CONTROLS]])for(const ddl of ddls){
       await client.query('BEGIN');try{await client.query(ddl);await assert.rejects(async()=>proof.verify(await readTaskPuzzleNativeMetadata(client)),error=>error?.code==='ERR_ASSERTION');if(group==='puzzle')puzzleDdlCausal++;else if(group==='quest')questDdlCausal++;else casinoDdlCausal++;}finally{await client.query('ROLLBACK');}
       proof.verify(await readTaskPuzzleNativeMetadata(client));
+    }
     }
     await client.query(source.current);proof.verify(await readTaskPuzzleNativeMetadata(client));idempotent++;
   };
@@ -225,5 +235,7 @@ export async function verifyTaskPuzzleNativeReferences(pool,endpoint,raw){
   const freshProof=taskPuzzleCatalogProjection(current,baseline,version,'fresh',true),upgradeProof=taskPuzzleCatalogProjection(upgraded,baseline,version,'upgrade585',true);
   assert.deepEqual(freshProof.projectMetadata(current),upgradeProof.projectMetadata(upgraded),'Both independently validated profiles retain every585 field');
   priorQuest.verify(baseline);assertQuestingEnterpriseStable(capture);
+  if(operation==='caller-reference-comparison')return freeze({current,upgraded,baseline,questBaseline,archivedBaseline,actualTables:586,baselineTables:585,version,idempotent,priorQuestCausal:priorQuest.causal,native:true,priorResultsTransferred:false,
+    scope:'independent-positive-current586-references',referenceDdl:{status:'not-run',owner:'test/enterprise-release-phase2-migration-catalog.js --postgres'}});
   return freeze({current,upgraded,baseline,questBaseline,archivedBaseline,actualTables:586,baselineTables:585,version,puzzleDdlCausal,questDdlCausal,casinoDdlCausal,idempotent,priorQuestCausal:priorQuest.causal,native:true,priorResultsTransferred:false});
 }
