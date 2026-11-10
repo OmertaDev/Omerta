@@ -26,6 +26,36 @@ const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 const blob = text => crypto.createHash('sha1').update(`blob ${Buffer.byteLength(text)}\0`).update(text).digest('hex');
 const retainedDeedRelease = '3aaeaa97a102babf7f56dece03860964814fe313';
 const retainedDeedSource = file => git('show', retainedDeedRelease+':'+file);
+// The original Enterprise guard passes this one legacy basename. Only this exact
+// self identity may acquire a canonical key; no path normalization or schema alias.
+const selfKey='tools/deed-quest-source-transfer.js',selfBare='deed-quest-source-transfer.js';
+const selfBefore=git('show','a084f636b3ddd61de333b600f127e56bc4dfa98a:'+selfKey);
+assert.equal(blob(selfBefore),'5129b649ea2b4f1f6a706ff7aa229d22d04a85b2');
+const selfExpected='05bc98b2f26de7172675b0fb17d865ffa75d299a113807f4a5160beeb8fcfe9e';
+for(const key of [selfBare,selfKey])for(const input of [selfBefore,selfBefore.replaceAll('\n','\r\n')])
+  assert.equal(hash(deedQuestSourceBaseline(key,input)),selfExpected,'The exact original self basename reaches its unchanged whole protected pin');
+let selfKeyRefusals=0;
+for(const key of ['./'+selfKey,'../'+selfKey,'tools\\'+selfBare,'other/'+selfBare,selfBare.toUpperCase(),selfBare+'.extra','schema.sql','enterprise-deed-release-phase2-migration-catalog.js','__proto__']){
+  assert.notEqual(hash(deedQuestSourceBaseline(key,selfBefore)),selfExpected);selfKeyRefusals++;
+}
+for(const input of [selfBefore+'\n',selfBefore.slice(1),'\ufeff'+selfBefore,selfBefore+'\0',selfBefore.replace('\n','\r\n'),selfBefore.replace('assert.equal','assert.notEqual')]){
+  assert.notEqual(hash(deedQuestSourceBaseline(selfBare,input)),selfExpected);selfKeyRefusals++;
+}
+const selfEdits=[
+  ["import { economyHardeningSourceBaseline } from './economy-hardening-source-transfer.js';", "import { economyHardeningSourceBaseline } from './economy-hardening-source-transfer.js';\nimport { ageRemovalHistoricalInput } from './age-removal-source-transfer.js';"],
+  ["export function deedQuestSourceBaseline(file, input) {\n", "export function deedQuestSourceBaseline(file, input) {\n  if (typeof input === 'string' && (file === 'deed-quest-source-transfer.js' || file === 'tools/deed-quest-source-transfer.js')) {\n    file = 'tools/deed-quest-source-transfer.js';\n    input = ageRemovalHistoricalInput(file, input);\n  }\n"],
+];
+const restoreSelf=input=>{
+  assert.equal(typeof input,'string');let text=lf(input);assert(!text.includes('\r')&&(input===text||input===text.replaceAll('\n','\r\n')));
+  for(const [before,after]of selfEdits.toReversed()){assert.equal(text.split(after).length,2);text=text.replace(after,()=>before);}
+  assert.equal(text,selfBefore,'Every original source domain, inverse, constant and qualifier byte survives the exact self-only comparison branch');
+};
+const selfCurrent=lf(fs.readFileSync(selfKey,'utf8'));restoreSelf(selfCurrent);restoreSelf(selfCurrent.replaceAll('\n','\r\n'));
+let selfConservationRefusals=0;
+for(const input of [selfCurrent+'\n',selfCurrent.slice(1),'\ufeff'+selfCurrent,selfCurrent.replace('\n','\r\n'),selfCurrent.replace('assert.equal','assert.notEqual'),...selfEdits.map(([before,after])=>selfCurrent.replace(after,()=>before)),...selfEdits.map(([,after])=>selfCurrent.replace(after,()=>after+after))]){
+  assert.notEqual(input,selfCurrent);assert.throws(()=>restoreSelf(input));selfConservationRefusals++;
+}
+console.log(JSON.stringify({phase:'DEED_EXACT_SELF_KEY',positives:4,selfKeyRefusals,selfConservationRefusals,nativeAttempts:0}));
 // Exercise the real Enterprise guard, not a reconstruction of its implementation.
 // Only protected-file reads are substituted to test drift without changing checkout bytes.
 const protectedModules = {

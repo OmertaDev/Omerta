@@ -3,6 +3,7 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { economyHardeningSourceBaseline } from './economy-hardening-source-transfer.js';
+import { ageRemovalHistoricalInput } from './age-removal-source-transfer.js';
 export const DEED_QUEST_SOURCE_PREDECESSOR = "2c8eaacf104e8555d5140136b5ed19027ecd4766";
 export const DEED_QUEST_SOURCE_PHASE = 'exact-source-transfer-only; no historical runtime, native, migration, financial, genesis or deployment clearance';
 export const DEED_QUEST_SOURCE_DOMAINS = {
@@ -339,6 +340,10 @@ export function assertDeedQuestSourceTransfer(file, input) {
     inverseChunks: pin.inverses.length, phase: DEED_QUEST_SOURCE_PHASE, sourceOnly: true };
 }
 export function deedQuestSourceBaseline(file, input) {
+  if (typeof input === 'string' && (file === 'deed-quest-source-transfer.js' || file === 'tools/deed-quest-source-transfer.js')) {
+    file = 'tools/deed-quest-source-transfer.js';
+    input = ageRemovalHistoricalInput(file, input);
+  }
   input = economyHardeningSourceBaseline(file, input);
   if (!Object.hasOwn(DEED_QUEST_SOURCE_DOMAINS, file) || typeof input !== 'string' || !uniform(input)) return input;
   return hash(lf(input)) === DEED_QUEST_SOURCE_DOMAINS[file].currentSha256

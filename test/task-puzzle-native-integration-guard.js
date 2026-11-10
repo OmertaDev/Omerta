@@ -8,37 +8,39 @@ import { commerceCurrentDeedSources } from '../tools/commerce-deed-release-phase
 import { ageRemovalHistoricalInput } from '../tools/age-removal-source-transfer.js';
 import { deedQuestSourceBaseline } from '../tools/deed-quest-source-transfer.js';
 import { questingCatalogSource } from '../tools/questing-enterprise-catalog.js';
-// Native round1 reached this public source reader after the current586 proof. Missing its
-// outer historical view must fail here without connecting to PostgreSQL or changing files.
+import { ENTERPRISE_NATIVE_UX_INPUTS as immutablePredecessor, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as immutablePredecessorHash } from '../tools/enterprise-native-contract-release-inputs.js';
+// Historical source comparison may evolve only above the unchanged native helpers.
+// Verify all60 original immutable records before the public reader regression.
 const roundGit=(...args)=>execFileSync('git',['--no-replace-objects',...args],{encoding:'utf8',windowsHide:true,maxBuffer:32e6});
 const commerceFile='tools/commerce-deed-release-phase2-native-catalog.js';
+const immutableFile='tools/enterprise-native-contract-release-inputs.js';
+assert.equal(fs.readFileSync(immutableFile,'utf8').replaceAll('\r\n','\n'),roundGit('show','0992cf178fdd31144cc9758b22e06ac847e1000f:'+immutableFile),'The complete original immutable definition, including its pin set, is retained');
+const immutableSha=value=>crypto.createHash('sha256').update(value).digest('hex');
+assert.equal(immutableSha(JSON.stringify(immutablePredecessor)),immutablePredecessorHash);
+const immutableInputs=immutablePredecessor.files.filter(({file})=>/^tools\/[^/]*native[^/]*\.js$/.test(file)||/^test\/lib\/[^/]*native[^/]*\.js$/.test(file)||file==='test/enterprise-native-guard.js');
+assert.equal(immutableInputs.length,60,'The original closed predecessor protection is not reduced');
+const immutableRecord=(pin,input)=>{
+  assert.equal(input.head,pin.mode+' blob '+pin.blob+'\t'+pin.file,'Original immutable HEAD record: '+pin.file);
+  assert.equal(input.index,pin.mode+' '+pin.blob+' 0\t'+pin.file,'Original immutable index record: '+pin.file);
+  assert.equal(input.regular,true);assert.equal(input.symbolic,false);
+  const lf=input.physical.replaceAll('\r\n','\n');assert(!lf.includes('\r')&&(input.physical===lf||input.physical===lf.replaceAll('\n','\r\n')));
+  assert.equal(immutableSha(lf),pin.sha256,'Original immutable physical SHA: '+pin.file);
+  assert.equal(crypto.createHash('sha1').update('blob '+Buffer.byteLength(lf)+'\0').update(lf).digest('hex'),pin.blob);
+};
+let immutableRefusals=0;
+for(const pin of [...immutableInputs,{file:'tools/enterprise-deed-release-phase2-migration-catalog.js',mode:'100644',blob:'f72928e9f6db7c23601bdffdfe842a8a82124962',sha256:'d9ce65cc618b419f7be1efca0c7926d7f72cd28a21abbdc4e7f86a0f14672ef7'}]){
+  const stat=fs.lstatSync(pin.file),input={head:roundGit('ls-tree','HEAD','--',pin.file).trim(),index:roundGit('ls-files','--stage','--',pin.file).trim(),physical:fs.readFileSync(pin.file,'utf8'),regular:stat.isFile(),symbolic:stat.isSymbolicLink()};
+  immutableRecord(pin,input);immutableRecord(pin,{...input,physical:input.physical.replaceAll('\r\n','\n').replaceAll('\n','\r\n')});
+  for(const changed of [{...input,physical:input.physical+'\n'},{...input,head:input.head.replace(pin.blob,'0'.repeat(40))},{...input,index:input.index.replace(pin.mode,'120000')},{...input,symbolic:true}]){assert.throws(()=>immutableRecord(pin,changed));immutableRefusals++;}
+}
+assert.equal(fs.readFileSync('tools/questing-ux-release-phase2-native-catalog.js','utf8').replaceAll('\r\n','\n'),roundGit('show','0992cf178fdd31144cc9758b22e06ac847e1000f:tools/questing-ux-release-phase2-native-catalog.js'),'Undo only the obsolete round1 enclosing view; every reviewed current586 byte is retained');
+console.log(JSON.stringify({phase:'TASK_PUZZLE_ORIGINAL_NATIVE_RECORDS',immutableRecords:immutableInputs.length,restoredHelpers:2,immutableRefusals,nativeAttempts:0}));
 const commerceSource=roundGit('show','52c582d7859843e02f45ed5d5c2377c996dd43da:schema.sql');
 assert.equal(crypto.createHash('sha256').update(commerceSource).digest('hex'),'833373245ddb1ce5a3c9ed386a9b3245d81ddb0bdb51e75d1e5ffee2a7684335');
 for(const input of [commerceSource,commerceSource.replaceAll('\n','\r\n')])assert.equal(commerceCurrentDeedSources(input).current,commerceSource);
 let commerceSourceRefusals=0;
 for(const input of [commerceSource+'\n',commerceSource.slice(1),'\ufeff'+commerceSource,commerceSource.replace('\n','\r\n'),commerceSource.replace('DEFAULT 0','DEFAULT 42'),fs.readFileSync('schema.sql','utf8'),roundGit('cat-file','blob','86b671c5d6f6928ff3e66f1ad0fca5f46a7364e3'),null]){
   assert.throws(()=>commerceCurrentDeedSources(input),error=>error?.code==='ERR_ASSERTION');commerceSourceRefusals++;
-}
-const commerceOuterEdits=[
-  ["import {deedQuestSourceBaseline} from './deed-quest-source-transfer.js';", "import {deedQuestSourceBaseline} from './deed-quest-source-transfer.js';\nimport {ageRemovalHistoricalInput} from './age-removal-source-transfer.js';"],
-  ["hash(deedQuestSourceBaseline(file,text)),pin,'Whole protected original module: '", "hash(deedQuestSourceBaseline(file,ageRemovalHistoricalInput(file,text))),pin,'Whole protected original module: '"],
-];
-const questOuterEdits=[
-  ["import * as original from './commerce-deed-release-phase2-native-catalog.js';", "import * as original from './commerce-deed-release-phase2-native-catalog.js';\nimport { ageRemovalHistoricalInput } from './age-removal-source-transfer.js';"],
-  ["const commerceDeedRaw = fs.readFileSync(new URL('./commerce-deed-release-phase2-native-catalog.js', import.meta.url), 'utf8');", "const commerceDeedRaw = ageRemovalHistoricalInput(commerceDeedHelper, fs.readFileSync(new URL('./commerce-deed-release-phase2-native-catalog.js', import.meta.url), 'utf8'));"],
-];
-let roundConservationRefusals=0;
-for(const [file,edits] of [[commerceFile,commerceOuterEdits],['tools/questing-ux-release-phase2-native-catalog.js',questOuterEdits]]){
-  const before=roundGit('show','0992cf178fdd31144cc9758b22e06ac847e1000f:'+file),actual=fs.readFileSync(file,'utf8').replaceAll('\r\n','\n');
-  const restore=input=>{
-    assert.equal(typeof input,'string');let text=input.replaceAll('\r\n','\n');assert(!text.includes('\r')&&(input===text||input===text.replaceAll('\n','\r\n')));
-    for(const [old,current] of edits.toReversed()){assert.equal(text.split(current).length,2);text=text.replace(current,()=>old);}
-    assert.equal(text,before,'Every byte of the complete native helper survives only the two literal comparison edits');
-  };
-  restore(actual);restore(actual.replaceAll('\n','\r\n'));
-  for(const bad of [actual+'\n',actual.slice(1),'\ufeff'+actual,actual.replace('\n','\r\n'),actual.replace('assert.equal','assert.notEqual'),...edits.map(([old,current])=>actual.replace(current,()=>old)),...edits.map(([,current])=>actual.replace(current,()=>current+'\n'+current))]){
-    assert.notEqual(bad,actual);assert.throws(()=>restore(bad));roundConservationRefusals++;
-  }
 }
 // Execute the actual private comparison with a read-only file double for mutation controls.
 // Its complete source is conserved above; imports, raw SQL and native admission are untouched.
@@ -52,7 +54,7 @@ const protectedUrls=new Map(Object.keys(protectedPins).map(file=>[new URL('../'+
 const runProtected=(target,transform)=>{
   const readOnly={readFileSync(url,encoding){assert.equal(encoding,'utf8');const file=protectedUrls.get(url.href);assert(file,'Only the eight exact protected source reads');const value=fs.readFileSync(file,encoding);return file===target?transform(value.replaceAll('\r\n','\n')):value;}};
   const body=commerceText.slice(uniformNode.start,uniformNode.end)+'\n'+commerceText.slice(protectedNode.start,protectedNode.end).replaceAll('import.meta.url',JSON.stringify(new URL('../'+commerceFile,import.meta.url).href))+'\nassertCommerceDeedProtectedSources();';
-  new Function('assert','COMMERCE_DEED_PROTECTED','fs','URL','hash','deedQuestSourceBaseline','ageRemovalHistoricalInput',body)(assert,protectedPins,readOnly,URL,value=>crypto.createHash('sha256').update(value).digest('hex'),deedQuestSourceBaseline,ageRemovalHistoricalInput);
+  new Function('assert','COMMERCE_DEED_PROTECTED','fs','URL','hash','deedQuestSourceBaseline',body)(assert,protectedPins,readOnly,URL,value=>crypto.createHash('sha256').update(value).digest('hex'),deedQuestSourceBaseline);
 };
 runProtected();let protectedSourceRefusals=0;
 for(const file of Object.keys(protectedPins)){
@@ -61,7 +63,7 @@ for(const file of Object.keys(protectedPins)){
     assert.throws(()=>runProtected(file,transform),error=>error?.code==='ERR_ASSERTION');protectedSourceRefusals++;
   }
 }
-console.log(JSON.stringify({phase:'TASK_PUZZLE_COMMERCE_READER_REGRESSION',publicPositives:2,commerceSourceRefusals,conservedHelpers:2,roundConservationRefusals,protectedInputs:8,protectedSourceRefusals,nativeAttempts:0}));
+console.log(JSON.stringify({phase:'TASK_PUZZLE_COMMERCE_READER_REGRESSION',publicPositives:2,commerceSourceRefusals,immutableRecords:immutableInputs.length,restoredHelpers:2,immutableRefusals,protectedInputs:8,protectedSourceRefusals,nativeAttempts:0}));
 // Keep the public regression independently observable before metadata-dependent module checks.
 const quest=await import('../tools/questing-ux-release-phase2-native-catalog.js');
 const raw=fs.readFileSync('schema.sql','utf8');assert.throws(()=>questingCatalogSource(raw));
@@ -87,7 +89,6 @@ const git=(...args)=>execFileSync('git',['--no-replace-objects',...args],{encodi
 const sha=value=>crypto.createHash('sha256').update(value).digest('hex');
 const helperFile='tools/questing-ux-release-phase2-native-catalog.js';
 const helperEdits=[
-  ...questOuterEdits,
   ["export function assertQuestingPhase2SourceInputs() {\n  assert.equal(arguments.length, 0);", "export function assertQuestingPhase2SourceInputs() {\n  assert.equal(arguments.length, 0); return phase2SourceInputs(false);\n}\nexport function assertTaskPuzzlePhase2SourceInputs() {\n  assert.equal(arguments.length, 0); return phase2SourceInputs(true);\n}\nfunction phase2SourceInputs(taskPuzzle) {"],
   ["'tools/questing-enterprise-catalog.js', 'test/questing-ux-release-phase2-native-catalog-guard.js', caller];", "'tools/questing-enterprise-catalog.js', 'test/questing-ux-release-phase2-native-catalog-guard.js', caller,\n    ...(taskPuzzle ? ['tools/task-puzzle-native-catalog.js', 'tools/task-puzzle-enterprise-catalog.js',\n      'test/task-puzzle-native-catalog-guard.js', 'test/task-puzzle-native-integration-guard.js'] : [])];"],
   ['  assert.equal(questSha(raw), QUESTING_CATALOG_SOURCE.sha256);','  if (taskPuzzle) taskPuzzleCatalogSource(raw);\n  else assert.equal(questSha(raw), QUESTING_CATALOG_SOURCE.sha256);'],

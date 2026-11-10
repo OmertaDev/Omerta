@@ -111,7 +111,6 @@ const generated = new Set([metadata, 'tools/enterprise-native-questing-inputs.js
 ]);
 const allowed = new Set([
   // Exact current586 native catalog integration; historical source views only.
-  'tools/commerce-deed-release-phase2-native-catalog.js',
   'tools/task-puzzle-native-catalog.js', 'tools/task-puzzle-enterprise-catalog.js',
   'test/task-puzzle-native-catalog-guard.js', 'test/task-puzzle-native-integration-guard.js',
   'tools/questing-ux-release-phase2-native-catalog.js',
@@ -138,8 +137,8 @@ const allowed = new Set([
   // Reviewed playthrough truth repair; no game/runtime change or execution transfer.
   'tools/playthrough.js', 'test/playthrough-truth.js',
   'test/playthrough-firstblood-truth.js', 'test/firstblood.js',
-  // Reviewed protected-source identity repair and its refusing regression controls.
-  'tools/enterprise-deed-release-phase2-migration-catalog.js', 'test/deed-quest-source-compatibility.js',
+  // Exact self-source key comparison; original historical helpers stay unchanged.
+  'tools/deed-quest-source-transfer.js', 'test/deed-quest-source-compatibility.js',
   // Reviewed PR #208 reconciliation: shadow-only scheduling and its tests/documentation.
   'src/businesspolicy.js', 'tools/business-agent.js', 'test/businesspolicy.js', 'test/business-agent.js',
   'docs/agent-business-shadow.md', 'docs/superpowers/plans/2026-11-09-business-deadlines.md',
