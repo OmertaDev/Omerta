@@ -777,9 +777,21 @@ export async function readTaskPuzzleReleasePhase2Metadata(pool){
   const profile=taskProfiles.get(pool);assert(profile,'Only a pool admitted by a current586 native catalog');
   const metadata=await taskMetadata(pool);verifyTaskPuzzleCatalogDelta(metadata,await questVersion(pool),profile,false);return metadata;
 }
+export async function readTaskPuzzleDeltaMetadata(queryable){
+  assert.equal(arguments.length,1);
+  const restricted={query:async(sql,values)=>{
+    assert(values===undefined||Array.isArray(values)&&values.length===0,'Closed task delta query parameters');
+    if(sql===catalogQueries[0])return queryable.query(sql,values);
+    const field=catalogFields.get(sql);assert(field,'Closed task delta metadata query');
+    const anchor='WHERE n.nspname=current_schema()';assert.equal(sql.split(anchor).length,2);
+    return queryable.query(sql.replace(anchor,anchor+' AND '+(field==='relations'?'c':'t')+'.relname IN ($1,$2,$3)'),
+      ['characters','task_puzzles','task_puzzles_issue_order_seq']);
+  }};
+  return {...await original.readCommerceReleasePhase2Metadata(restricted),sequences:await readTaskPuzzleSequenceMetadata(queryable)};
+}
 async function taskProjectedCaller(pool,version,profile){
   const wrap=async queryable=>{
-    const qualify=async()=>{const metadata={...await original.readCommerceReleasePhase2Metadata(queryable),sequences:await readTaskPuzzleSequenceMetadata(queryable)};verifyTaskPuzzleCatalogDelta(metadata,version,profile,false);return metadata;};
+    const qualify=async()=>{const metadata=await readTaskPuzzleDeltaMetadata(queryable);verifyTaskPuzzleCatalogDelta(metadata,version,profile,false);return metadata;};
     await qualify();const context=(await queryable.query(catalogQueries[0])).rows[0];
     return {query:async(sql,values)=>{
       const field=catalogFields.get(sql),metadata=field||sql===catalogQueries[0]?await qualify():null;
