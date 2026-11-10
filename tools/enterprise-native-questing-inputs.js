@@ -4,7 +4,7 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "ACTUAL_CURRENT_QUESTING_ENTERPRISE_NATIVE_INPUTS",
-  "authoredRevision": "aebd97a7368d527a22f132d3853248336439900c",
+  "authoredRevision": "9252036e026d6485928e578b0e5a34479fda13a7",
   "predecessorDefinitionSha256": "6b9128d3311945fc511748f852803354ac415a23082b6b5ce017980a2b7596bf",
   "proofInventorySha256": "3fd878600cd363ebdd9d89bb59b7cc3de7650f895062d83711b2bd1774c298e9",
   "files": [
@@ -7613,8 +7613,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/gates.js",
       "mode": "100644",
-      "blob": "74e58c116322180cccd2c00c85341b366258fcb5",
-      "sha256": "c18166f32b5b03d431e33d6e2ea441f87e40f28268e44b4e4e1dff6a716ded2a"
+      "blob": "5e8a574a5af9d8022b984cc4a248cdce21c42199",
+      "sha256": "1915d2d8afbc62a16d012827ee750f014e43ea08ebf3392b7b5982a6294739a2"
     },
     {
       "file": "test/graph.js",
@@ -10913,8 +10913,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/pgquery.js",
       "mode": "100644",
-      "blob": "40f24c96132606a3ffa4986790ed00606a702089",
-      "sha256": "9d5ced1d591ab0d5328b686a0f1f0b5937148c721b626c73b6cebf5833a861c6"
+      "blob": "c9187f19aa83fe3a691523add9ace7848d984235",
+      "sha256": "c8d7eeddb573e4ab6abf437a981daba849eae02c965ece6c0025c3a46a6cb644"
     },
     {
       "file": "tools/public-ui.js",
@@ -11339,8 +11339,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/age-removal-source-data.js",
       "mode": "100644",
-      "blob": "640779240c4be1915a7f690c1647095716b9b040",
-      "sha256": "3c3376f425e476a4044c9ea02a56a1e03d8f15194566212be95c8c76569e17f6"
+      "blob": "cde54cd296768e429e60d5e806e8f8a9493aa713",
+      "sha256": "0e1a13664142d011da0576e207b4a93bbe419f1df1177940f0c3c7b420e08473"
     },
     {
       "file": "tools/age-removal-source-transfer.js",
@@ -12099,8 +12099,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       "after": {
         "file": "test/gates.js",
         "mode": "100644",
-        "blob": "74e58c116322180cccd2c00c85341b366258fcb5",
-        "sha256": "c18166f32b5b03d431e33d6e2ea441f87e40f28268e44b4e4e1dff6a716ded2a"
+        "blob": "5e8a574a5af9d8022b984cc4a248cdce21c42199",
+        "sha256": "1915d2d8afbc62a16d012827ee750f014e43ea08ebf3392b7b5982a6294739a2"
       }
     },
     {
@@ -12764,6 +12764,21 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       }
     },
     {
+      "file": "tools/pgquery.js",
+      "before": {
+        "file": "tools/pgquery.js",
+        "mode": "100644",
+        "blob": "40f24c96132606a3ffa4986790ed00606a702089",
+        "sha256": "9d5ced1d591ab0d5328b686a0f1f0b5937148c721b626c73b6cebf5833a861c6"
+      },
+      "after": {
+        "file": "tools/pgquery.js",
+        "mode": "100644",
+        "blob": "c9187f19aa83fe3a691523add9ace7848d984235",
+        "sha256": "c8d7eeddb573e4ab6abf437a981daba849eae02c965ece6c0025c3a46a6cb644"
+      }
+    },
+    {
       "file": "tools/public-ui.js",
       "before": {
         "file": "tools/public-ui.js",
@@ -13053,8 +13068,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/age-removal-source-data.js",
       "mode": "100644",
-      "blob": "640779240c4be1915a7f690c1647095716b9b040",
-      "sha256": "3c3376f425e476a4044c9ea02a56a1e03d8f15194566212be95c8c76569e17f6"
+      "blob": "cde54cd296768e429e60d5e806e8f8a9493aa713",
+      "sha256": "0e1a13664142d011da0576e207b4a93bbe419f1df1177940f0c3c7b420e08473"
     },
     {
       "file": "tools/age-removal-source-transfer.js",
@@ -13142,4 +13157,4 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     }
   ]
 });
-export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "1dbdd3ce1a51e36f393d68ccbbbd51f173bc197b7196e48af4705d4537ab7823";
+export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "e058f7c1d0311ec9e5ffdb315fb5bcf0c450f13703a641c77a95c8fe54874fdf";
