@@ -15,7 +15,7 @@ const items = (value, max = 100) => {
 const amount = value => bounded(value ?? 0, 'amount');
 const DEFAULTS = Object.freeze({ duty: 'general', providerId: null, maxOutputTokens: 256, targetMarginBps: 2500,
   minimumMarginUsdMicros: 10000, operatingCostPerJobUsdMicros: 0, paymentFeeBps: 0, maxActiveJobs: 3, minimumReserveUsdMicros: 0,
-  maxProposals: 5, minimumRenewalAcceptedJobs: 2 });
+  maxProposals: 5, minimumRenewalAcceptedJobs: 2, workSecondsPerJob: 300, planningHorizonSeconds: 3600 });
 export function normalizeBusinessPolicy(input = {}) {
   if (!input || Array.isArray(input) || typeof input !== 'object'
       || Object.keys(input).some(key => !Object.hasOwn(DEFAULTS, key))) throw new Error('Invalid business policy');
@@ -32,9 +32,34 @@ export function normalizeBusinessPolicy(input = {}) {
   bounded(policy.minimumReserveUsdMicros, 'reserve', 0, 1000000000000);
   bounded(policy.maxProposals, 'proposal limit', 1, 10);
   bounded(policy.minimumRenewalAcceptedJobs, 'renewal threshold', 1, 100);
+  bounded(policy.workSecondsPerJob, 'work duration estimate', 60, 3600);
+  bounded(policy.planningHorizonSeconds, 'planning horizon', 60, 86400);
   return policy;
 }
 function estimatePaymentFee(price, bps) { return Number((BigInt(price) * BigInt(bps) + 99999999n) / 100000000n * 10000n); }
+function workSchedule(jobs, active, pendingAwardBids, now, policy) {
+  const visibleActive = jobs.filter(job => ['open','claimed','submitted','disputed'].includes(job.state)).length;
+  const deadline = job => Number.isFinite(Date.parse(job.expiresAt)) ? Date.parse(job.expiresAt) : Infinity;
+  const pending = jobs.filter(job => ['open','claimed'].includes(job.state))
+    .sort((a,b) => deadline(a) - deadline(b) || a.id.localeCompare(b.id));
+  const reservedWorkSeconds = pending.length * policy.workSecondsPerJob;
+  if (!Number.isFinite(new Date(now + Math.max(reservedWorkSeconds, policy.planningHorizonSeconds) * 1000).getTime()))
+    throw new Error('Invalid business snapshot time range');
+  const commitments = pending.map((job, index) => {
+    const start = now + index * policy.workSecondsPerJob * 1000;
+    const finish = start + policy.workSecondsPerJob * 1000;
+    return { jobId: job.id, plannedStartAt: new Date(start).toISOString(), plannedFinishAt: new Date(finish).toISOString(),
+      estimatedSeconds: policy.workSecondsPerJob,
+      feasibleByDeadline: Number.isFinite(Date.parse(job.expiresAt)) && finish < Date.parse(job.expiresAt) };
+  });
+  const pendingSeconds = pendingAwardBids === null ? null : BigInt(pendingAwardBids) * BigInt(policy.workSecondsPerJob);
+  const pendingAwardWorkSeconds = pendingSeconds !== null && pendingSeconds + BigInt(reservedWorkSeconds) <= BigInt(MAX)
+    ? Number(pendingSeconds) : null;
+  return { commitments, reservedWorkSeconds, pendingAwardWorkSeconds,
+    remainingWorkSeconds: pendingAwardWorkSeconds === null ? null : Math.max(0, policy.planningHorizonSeconds - reservedWorkSeconds - pendingAwardWorkSeconds),
+    deadlineRisk: commitments.some(job => !job.feasibleByDeadline), activeDetailsIncomplete: visibleActive !== active,
+    assumption: 'Sequential work using operator duration estimates and immediate award; not a delivery guarantee or live reservation' };
+}
 function metrics(totals = {}) {
   return { settledCustomerRevenueUsdMicros: amount(totals.settledCustomerRevenueUsdMicros),
     settledPaidComputeCostsUsdMicros: amount(totals.settledPaidComputeCostsUsdMicros),
@@ -62,6 +87,7 @@ export function evaluateBusiness(snapshot, input = {}) {
       netProfitKnown: false };
   });
   if (new Set(jobs.map(job => job.id)).size !== jobs.length) throw new Error('Invalid business duplicate jobs');
+  const schedule = workSchedule(jobs, active, pendingAwardBids, now, policy);
   const riskFlags = ['outside_costs_incomplete'];
   if (pendingAwardBids === null) riskFlags.push('pending_bid_commitments_unknown');
   if (jobs.filter(job => ['open','claimed','submitted','disputed'].includes(job.state)).length !== active) riskFlags.push('active_job_detail_mismatch');
@@ -141,22 +167,36 @@ export function evaluateBusiness(snapshot, input = {}) {
   if (snapshot.treasury?.frozen) riskFlags.push('treasury_frozen');
   if (!authorityValid) riskFlags.push('owner_authority_unavailable');
   if (!slots) riskFlags.push('capacity_full');
+  if (schedule.deadlineRisk) riskFlags.push('awarded_work_deadline_risk');
+  if (schedule.activeDetailsIncomplete) riskFlags.push('active_work_details_incomplete');
+  if (pendingAwardBids !== null && schedule.pendingAwardWorkSeconds === null) riskFlags.push('pending_bid_work_outside_exact_bounds');
+  if (schedule.remainingWorkSeconds !== null && schedule.remainingWorkSeconds < policy.workSecondsPerJob) riskFlags.push('work_time_capacity_full');
+  let plannedSeconds = schedule.pendingAwardWorkSeconds === null ? null : schedule.reservedWorkSeconds + schedule.pendingAwardWorkSeconds;
+  if (authorityValid && plannedSeconds !== null
+      && (plannedSeconds + policy.workSecondsPerJob) * 1000 >= Date.parse(authority.expiresAt) - now) riskFlags.push('owner_authority_window_insufficient');
   if (quote !== null && quote > available - reserve) riskFlags.push('compute_funds_insufficient');
   if (quote !== null && quote > daily) riskFlags.push('daily_compute_budget_insufficient');
   const canBid = suggestedPrice !== null && snapshot.service?.enabled === true && id(policy.providerId)
     && Number.isSafeInteger(snapshot.service.revision) && snapshot.service.revision >= 1 && snapshot.service.revision <= 2147483647
     && snapshot.treasury?.frozen === false && authorityValid && quote <= amount(authority?.maxPerCallUsdMicros)
-    && totals.unresolvedPaidCalls === 0 && deliveryDetailsSafe && protectedCompute !== null && protectedBidCompute !== null;
+    && totals.unresolvedPaidCalls === 0 && deliveryDetailsSafe && protectedCompute !== null && protectedBidCompute !== null
+    && !schedule.deadlineRisk && !schedule.activeDetailsIncomplete && plannedSeconds !== null;
   const price = suggestedPrice === null ? null : Math.max(suggestedPrice, amount(snapshot.service?.priceUsdMicros));
   let allocated = 0;
   for (const bounty of [...bounties].sort((a,b) => Date.parse(a.expiresAt) - Date.parse(b.expiresAt))) {
-    if (!canBid || allocated >= slots || quote > available - reserve || quote > daily) break;
+    if (!canBid || allocated >= slots || quote > available - reserve || quote > daily
+        || plannedSeconds + policy.workSecondsPerJob > policy.planningHorizonSeconds
+        || now + (plannedSeconds + policy.workSecondsPerJob) * 1000 >= Date.parse(authority.expiresAt)) break;
     if (!id(bounty.id) || bounty.buyerAccountId === snapshot.accountId || amount(bounty.budgetUsdMicros) < price
         || !Number.isFinite(Date.parse(bounty.expiresAt)) || Date.parse(bounty.expiresAt) < now + 60000) continue;
     if (!propose({ kind: 'bid', bountyId: bounty.id, priceUsdMicros: price, expectedServiceRevision: snapshot.service.revision, providerId: policy.providerId, maxOutputTokens: policy.maxOutputTokens, computeReserveUsdMicros: quote,
       expectedKnownMarginUsdMicros: price - quote, estimatedPaymentFeeUsdMicros: estimatePaymentFee(price, policy.paymentFeeBps),
-      estimatedContributionUsdMicros: price - costBasis - policy.operatingCostPerJobUsdMicros - estimatePaymentFee(price, policy.paymentFeeBps), deliverySeconds: 3600, reason: 'funded_capacity_and_target_margin', requiresOwnerApproval: true })) break;
-    allocated++; available -= quote; daily -= quote;
+      estimatedContributionUsdMicros: price - costBasis - policy.operatingCostPerJobUsdMicros - estimatePaymentFee(price, policy.paymentFeeBps),
+      deliverySeconds: Math.max(3600, plannedSeconds + policy.workSecondsPerJob + 1), estimatedWorkSeconds: policy.workSecondsPerJob,
+      plannedStartAt: new Date(now + plannedSeconds * 1000).toISOString(),
+      plannedFinishAt: new Date(now + (plannedSeconds + policy.workSecondsPerJob) * 1000).toISOString(),
+      reason: 'funded_capacity_and_target_margin', requiresOwnerApproval: true })) break;
+    allocated++; plannedSeconds += policy.workSecondsPerJob; available -= quote; daily -= quote;
   }
   if (suggestedPrice !== null && snapshot.service?.enabled === true && suggestedPrice !== snapshot.service.priceUsdMicros) {
     propose({ kind: 'service_price', priceUsdMicros: suggestedPrice, expectedServiceRevision: snapshot.service.revision, reason: 'conservative_cost_and_margin', requiresOwnerApproval: true });
@@ -177,6 +217,9 @@ export function evaluateBusiness(snapshot, input = {}) {
       feeRoundingReserveUsdMicros: policy.paymentFeeBps ? 10000 : 0, basis: 'Operator estimates, not reconciled bills' },
     proposals, deliveryBudget, bidCommitmentBudget, capacity: { activeJobs: active, reservedSlots: active,
       pendingAwardSlots: pendingAwardBids, availableSlots: slots, proposedWorkSlots: allocated },
+    scheduling: { ...schedule, planningHorizonSeconds: policy.planningHorizonSeconds,
+      proposedWorkSeconds: allocated * policy.workSecondsPerJob,
+      remainingAfterProposalsSeconds: plannedSeconds === null ? null : Math.max(0, policy.planningHorizonSeconds - plannedSeconds) },
     computeValue: { providerOutcomes, causalEffect: null, measurement: 'Descriptive outcomes; stronger models require controlled comparison.' },
     riskFlags, outsideCostsComplete: false, profitabilityKnown: false };
 }

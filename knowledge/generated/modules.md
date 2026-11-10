@@ -33,7 +33,7 @@
 | [src/business.js](../../src/business.js) | 701 | enterprise-logistics | 7 / 11 | 13 | 7 | 5 |
 | [src/businessdesk.js](../../src/businessdesk.js) | 74 | platform-core | 1 / 2 | 0 | 2 | 1 |
 | [src/businesspartnerships.js](../../src/businesspartnerships.js) | 87 | platform-core | 3 / 12 | 3 | 10 | 10 |
-| [src/businesspolicy.js](../../src/businesspolicy.js) | 209 | platform-core | 1 / 3 | 0 | 1 | 1 |
+| [src/businesspolicy.js](../../src/businesspolicy.js) | 252 | platform-core | 1 / 3 | 0 | 1 | 1 |
 | [src/businessrelocation-contracts.js](../../src/businessrelocation-contracts.js) | 582 | platform-core | 0 / 2 | 0 | 1 | 1 |
 | [src/businessrelocation.js](../../src/businessrelocation.js) | 136 | platform-core | 6 / 4 | 0 | 3 | 2 |
 | [src/businessrelocationhistory.js](../../src/businessrelocationhistory.js) | 29 | platform-core | 0 / 4 | 0 | 4 | 2 |
