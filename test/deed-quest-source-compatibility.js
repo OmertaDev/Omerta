@@ -55,7 +55,27 @@ let selfConservationRefusals=0;
 for(const input of [selfCurrent+'\n',selfCurrent.slice(1),'\ufeff'+selfCurrent,selfCurrent.replace('\n','\r\n'),selfCurrent.replace('assert.equal','assert.notEqual'),...selfEdits.map(([before,after])=>selfCurrent.replace(after,()=>before)),...selfEdits.map(([,after])=>selfCurrent.replace(after,()=>after+after))]){
   assert.notEqual(input,selfCurrent);assert.throws(()=>restoreSelf(input));selfConservationRefusals++;
 }
-console.log(JSON.stringify({phase:'DEED_EXACT_SELF_KEY',positives:4,selfKeyRefusals,selfConservationRefusals,nativeAttempts:0}));
+const currentSelfInverseMutations = text => {
+  const mutations = [];
+  // The two conserved self-only additions split the original inverse contexts.
+  // Expand each exact context to its current bytes before deleting or duplicating it.
+  for (const [index, inverse] of ECONOMY_HARDENING_SOURCE_DOMAINS[selfKey].inverses.entries()) {
+    const [before, after] = selfEdits[index];
+    assert.equal(inverse.current.split(before).length, 2, 'Each original inverse contains its one conserved self edit');
+    const current = inverse.current.replace(before, () => after);
+    assert.equal(text.split(current).length, 2, 'The complete current inverse region occurs exactly once');
+    mutations.push(text.replace(current, ''), text.replace(current, () => current + current));
+  }
+  return mutations;
+};
+const selfInverseMutations = currentSelfInverseMutations(selfCurrent);
+assert.equal(selfInverseMutations.length, 4, 'Delete and duplicate both protected inverse regions');
+assert.equal(new Set(selfInverseMutations).size, 4, 'All four current-source mutations are distinct');
+for (const changed of selfInverseMutations) {
+  assert.notEqual(changed, selfCurrent, 'Every refusal changes actual protected bytes');
+  for (const key of [selfBare, selfKey]) assert.notEqual(hash(deedQuestSourceBaseline(key, changed)), selfExpected);
+}
+console.log(JSON.stringify({phase:'DEED_EXACT_SELF_KEY',positives:4,selfKeyRefusals,selfConservationRefusals,selfInverseMutations:selfInverseMutations.length,nativeAttempts:0}));
 // Exercise the real Enterprise guard, not a reconstruction of its implementation.
 // Only protected-file reads are substituted to test drift without changing checkout bytes.
 const protectedModules = {
@@ -99,8 +119,7 @@ try {
       const url = new URL('../tools/' + file, import.meta.url).href, text = protectedInputs.get(url);
       const mutations = [text + '\n// unknown protected source\n', text.slice(1), '\ufeff' + text, text + '\0',
         text.replace('\n', '\r\n'), text.replace('\n', '\r')];
-      if (file === 'deed-quest-source-transfer.js') for (const inverse of ECONOMY_HARDENING_SOURCE_DOMAINS['tools/' + file].inverses)
-        mutations.push(text.replace(inverse.current, ''), text.replace(inverse.current, () => inverse.current + inverse.current));
+      if (file === 'deed-quest-source-transfer.js') mutations.push(...currentSelfInverseMutations(text));
       for (const changed of mutations) {
         assert.notEqual(changed, text, 'Every refusal changes actual protected bytes');
         changedFile = url; changedInput = changed;
