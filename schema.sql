@@ -9822,3 +9822,22 @@ CREATE TABLE IF NOT EXISTS quest_reading_room (
   solved_at TIMESTAMPTZ,
   PRIMARY KEY (account_id,day_ordinal)
 );
+
+-- Durable gameplay task puzzles. Private payloads and consumed receipts are retained;
+-- trusted adapters bind occurrences and consume under the job's character transaction.
+CREATE TABLE IF NOT EXISTS task_puzzles (
+  id TEXT PRIMARY KEY,
+  issue_order BIGSERIAL NOT NULL,
+  character_id TEXT NOT NULL REFERENCES characters(id),
+  scope TEXT NOT NULL,
+  target_id TEXT NOT NULL,
+  context_key TEXT NOT NULL,
+  version INT NOT NULL CHECK (version >= 1),
+  kind TEXT NOT NULL,
+  structural_signature TEXT NOT NULL,
+  puzzle JSONB NOT NULL,
+  issued_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  consumed_at TIMESTAMPTZ,
+  UNIQUE (character_id, scope, target_id, context_key)
+);
+CREATE INDEX IF NOT EXISTS ix_task_puzzles_recent ON task_puzzles(character_id, issue_order DESC);
