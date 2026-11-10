@@ -764,6 +764,7 @@ export async function verifyCommerceReleasePhase2CausalNegatives(pool, catalog, 
 import { taskPuzzleCatalogSource, verifyTaskPuzzleCatalogDelta, taskPuzzleComparisonMetadata,
   taskPuzzleComparisonConstraints, readTaskPuzzleSequenceMetadata, verifyTaskPuzzleNativeReferences,
   TASK_PUZZLE_DDL_CONTROLS } from './task-puzzle-native-catalog.js';
+import { isDeepStrictEqual } from 'node:util';
 const taskStates=new WeakMap(),taskProfiles=new WeakMap();
 function taskActualInput(input){
   const physical=assertTaskPuzzlePhase2SourceInputs(),actual=taskPuzzleCatalogSource(input);
@@ -808,7 +809,7 @@ async function taskDdlControls(pool,version,profile){
   try{
     const originalMetadata=await taskMetadata(client);verifyTaskPuzzleCatalogDelta(originalMetadata,version,profile,false);
     for(const ddl of TASK_PUZZLE_DDL_CONTROLS){
-      await client.query('BEGIN');try{await client.query(ddl);await assert.rejects(async()=>assert.deepEqual(await taskMetadata(client),originalMetadata),error=>error?.code==='ERR_ASSERTION');causal++;}finally{await client.query('ROLLBACK');}
+      await client.query('BEGIN');try{await client.query(ddl);await assert.rejects(async()=>assert(isDeepStrictEqual(await taskMetadata(client),originalMetadata),'Complete current task DDL metadata'),error=>error?.code==='ERR_ASSERTION');causal++;}finally{await client.query('ROLLBACK');}
       const restored=await taskMetadata(client);verifyTaskPuzzleCatalogDelta(restored,version,profile,false);assert.deepEqual(restored,originalMetadata,'Exact same-client task DDL rollback reread');
     }
   }finally{client.release();}return causal;

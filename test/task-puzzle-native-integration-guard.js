@@ -1,5 +1,6 @@
 // Current entrypoints must refuse unauthorized callers before touching a backend.
 import assert from 'node:assert/strict';
+import { isDeepStrictEqual } from 'node:util';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
@@ -29,8 +30,38 @@ const scopedBefore='const metadata={...await original.readCommerceReleasePhase2M
   scopedAfter='const metadata=await readTaskPuzzleDeltaMetadata(queryable);';
 const scopedSource=fs.readFileSync('tools/questing-ux-release-phase2-native-catalog.js','utf8').replaceAll('\r\n','\n');
 const scopedPredecessor=execFileSync('git',['--no-replace-objects','show','0992cf178fdd31144cc9758b22e06ac847e1000f:tools/questing-ux-release-phase2-native-catalog.js'],{encoding:'utf8',windowsHide:true,maxBuffer:32e6});
+// Undo only the two measured formatting edits before any existing historical conservation.
+const compactEdits={
+  'tools/task-puzzle-native-catalog.js':[
+    ["import assert from 'node:assert/strict';\n","import assert from 'node:assert/strict';\nimport { isDeepStrictEqual } from 'node:util';\n"],
+    ["assert.deepEqual(metadata,reference,'Complete current586 catalog')","assert(isDeepStrictEqual(metadata,reference),'Complete current586 catalog')"],
+  ],
+  'tools/questing-ux-release-phase2-native-catalog.js':[
+    ["  TASK_PUZZLE_DDL_CONTROLS } from './task-puzzle-native-catalog.js';\nconst taskStates","  TASK_PUZZLE_DDL_CONTROLS } from './task-puzzle-native-catalog.js';\nimport { isDeepStrictEqual } from 'node:util';\nconst taskStates"],
+    ["assert.deepEqual(await taskMetadata(client),originalMetadata)","assert(isDeepStrictEqual(await taskMetadata(client),originalMetadata),'Complete current task DDL metadata')"],
+  ],
+};
+const compactBase=new Map(Object.keys(compactEdits).map(file=>[file,execFileSync('git',['--no-replace-objects','show','8c448ee48934137d8d6c14cf80cc0d5d07118bed:'+file],{encoding:'utf8',windowsHide:true,maxBuffer:32e6})]));
+const restoreCompactSource=(file,input)=>{
+  assert.equal(typeof input,'string');let text=input.replaceAll('\r\n','\n');assert(!text.includes('\r')&&(input===text||input===text.replaceAll('\n','\r\n')));
+  assert(Object.hasOwn(compactEdits,file));
+  for(const[before,after]of compactEdits[file].toReversed()){assert.equal(text.split(after).length,2,'One exact compact comparison edit');text=text.replace(after,()=>before);}
+  assert.equal(text,compactBase.get(file),'Only compact assertion rendering changes; every original query, field, control and equality remains exact');return text;
+};
+let compactConservationRefusals=0;
+for(const file of Object.keys(compactEdits)){
+  const text=fs.readFileSync(file,'utf8').replaceAll('\r\n','\n');restoreCompactSource(file,text);restoreCompactSource(file,text.replaceAll('\n','\r\n'));
+  const edits=compactEdits[file],candidates=[...edits.flatMap(([before,after])=>[text.replace(after,before),text.replace(after,after+after)]),
+    text.replace('assert(isDeepStrictEqual(','assert(!isDeepStrictEqual('),text.replace('assert(isDeepStrictEqual(','assert(Boolean('),
+    text.replace('import { isDeepStrictEqual }', 'import { isDeepStrictEqual as unknown }'),text+'\n',text.replace('\n','\r\n')];
+  assert.equal(new Set(candidates).size,candidates.length,'Every compact conservation candidate is distinct');
+  for(const changed of candidates){assert.notEqual(changed,text);assert.throws(()=>restoreCompactSource(file,changed));compactConservationRefusals++;}
+}
+console.log(JSON.stringify({phase:'TASK_PUZZLE_COMPACT_CONSERVATION',files:2,compactConservationRefusals,nativeAttempts:0}));
+
 const restoreScopedHelper=input=>{
   assert.equal(typeof input,'string');let text=input.replaceAll('\r\n','\n');assert(!text.includes('\r')&&(input===text||input===text.replaceAll('\n','\r\n')));
+  text=restoreCompactSource('tools/questing-ux-release-phase2-native-catalog.js',text);
   assert.equal(text.split(scopedAddition).length,2,'One complete scoped reader insertion');
   assert.equal(text.split(scopedAfter).length,2,'One scoped acquisition replacement');assert.equal(text.split(scopedBefore).length,1);
   text=text.replace(scopedAddition,'').replace(scopedAfter,scopedBefore);
@@ -136,6 +167,68 @@ for(const changed of [scopedSource.replace(scopedAddition,''),scopedSource.repla
   offset=calls.length;const transaction=await projected.connect();assert.equal(calls.length-offset,9);assert(calls.slice(offset).every(row=>row.id==='transaction'));
   state.sequences.definition[0].cache='2';offset=calls.length;await assert.rejects(()=>transaction.query(queries[1]),error=>error?.code==='ERR_ASSERTION');expectRead(offset,'transaction');
   await transaction.query('ROLLBACK');offset=calls.length;assert.deepEqual(await original.readCommerceReleasePhase2Metadata(transaction),baseline);assert.equal(calls.length-offset,45);assert(calls.slice(offset).every(row=>row.id==='transaction'));transaction.release();assert.equal(releases,1);
+  // Execute the exact private control body with a SQL-only backend, never native admission.
+  const makeTaskDdl=assertions=>new Function('assert','taskMetadata','verifyTaskPuzzleCatalogDelta','TASK_PUZZLE_DDL_CONTROLS','isDeepStrictEqual',
+    body('taskDdlControls')+';return taskDdlControls;')(assertions,readDdlMetadata,verifyDdlDelta,delta.TASK_PUZZLE_DDL_CONTROLS,isDeepStrictEqual);
+  assert.equal(delta.TASK_PUZZLE_DDL_CONTROLS.length,47);
+  let ddlState,ddlOriginal,ddlClient,ddlTrace,ddlIndex,ddlTransaction,ddlFailure,ddlRejections,ddlReads,ddlVerifications,ddlReleases;
+  const readDdlMetadata=async client=>{
+    assert.equal(client,ddlClient,'Every metadata read stays on the connected transaction client');
+    const stage=ddlTransaction?'mutated':ddlIndex<0?'before':'restored';ddlTrace.push('read:'+stage);ddlReads++;
+    if(ddlFailure==='read:'+stage)throw Error('injected '+ddlFailure);
+    return structuredClone(ddlState);
+  };
+  const verifyDdlDelta=(metadata,version,profile,flags)=>{
+    ddlTrace.push('verify');ddlVerifications++;
+    return delta.verifyTaskPuzzleCatalogDelta(metadata,version,profile,flags);
+  };
+  const ddlAssert=Object.assign((...args)=>assert(...args),assert,{rejects:async(fn,predicate)=>{
+    let refusal;await assert.rejects(async()=>{try{return await fn();}catch(error){refusal=error;throw error;}},predicate);
+    assert.equal(refusal.code,'ERR_ASSERTION');assert.equal(refusal.actual,false,'Live DDL refusals must not render whole catalog objects');assert.equal(refusal.expected,true);
+    ddlTrace.push('reject');ddlRejections++;
+  }});
+  const runDdl=async(version,profile,failure=null)=>{
+    ddlOriginal=fixture(version,profile).live;ddlState=structuredClone(ddlOriginal);ddlTrace=[];ddlIndex=-1;ddlTransaction=false;ddlFailure=failure;
+    ddlRejections=ddlReads=ddlVerifications=ddlReleases=0;
+    if(failure==='initial-delta')ddlState.sequences.definition[0].cache='2';
+    ddlClient={query:async(sql,values)=>{
+      assert.equal(values,undefined);ddlTrace.push(sql);
+      if(failure===sql)throw Error('injected '+sql);
+      if(sql==='BEGIN'){assert.equal(ddlTransaction,false);ddlTransaction=true;}
+      else if(sql==='ROLLBACK'){assert.equal(ddlTransaction,true);ddlTransaction=false;ddlState=structuredClone(ddlOriginal);
+        if(failure==='rollback-drift')ddlState.columns.find(row=>row.column_name==='generation').default_expression='42';}
+      else{assert(ddlTransaction);ddlIndex++;assert.equal(sql,delta.TASK_PUZZLE_DDL_CONTROLS[ddlIndex]);
+        if(failure==='ddl')throw Error('injected ddl');
+        if(failure!=='unchanged')ddlState.columns.find(row=>row.column_name==='generation').default_expression='changed:'+ddlIndex;}
+      return {rows:[]};
+    },release:()=>{ddlTrace.push('release');ddlReleases++;}};
+    const pool={connect:async()=>{ddlTrace.push('connect');return ddlClient;},query:()=>assert.fail('No pool query may replace the same client')};
+    return makeTaskDdl(ddlAssert)(pool,version,profile);
+  };
+  let ddlProfiles=0;
+  for(const version of [16,18])for(const profile of ['fresh','upgrade585','phase2','director']){
+    assert.equal(await runDdl(version,profile),47);ddlProfiles++;
+    assert.equal(ddlRejections,47);assert.equal(ddlReads,95);assert.equal(ddlVerifications,48);assert.equal(ddlReleases,1);assert.equal(ddlTransaction,false);
+    assert.deepEqual(ddlState,ddlOriginal);
+    assert.deepEqual(ddlTrace,['connect','read:before','verify',...delta.TASK_PUZZLE_DDL_CONTROLS.flatMap(sql=>
+      ['BEGIN',sql,'read:mutated','reject','ROLLBACK','read:restored','verify']),'release'],'All47 original controls, rejection and rollback rereads run in exact order');
+  }
+  let ddlFailurePaths=0;
+  for(const failure of ['read:before','initial-delta','BEGIN','ddl','read:mutated','unchanged','ROLLBACK','read:restored','rollback-drift']){
+    let caught;try{await runDdl(18,'fresh',failure);}catch(error){caught=error;}assert(caught,'Injected failure must not pass: '+failure);
+    assert.equal(ddlReleases,1);assert.equal(ddlTrace.at(-1),'release');
+    const entered=!['read:before','initial-delta','BEGIN'].includes(failure);
+    assert.equal(ddlTrace.filter(value=>value==='ROLLBACK').length,entered?1:0);
+    if(failure!=='ROLLBACK')assert.equal(ddlTransaction,false);
+    if(failure==='unchanged')assert.match(caught.message,/Missing expected rejection/);
+    else if(failure==='rollback-drift'){assert.equal(caught.code,'ERR_ASSERTION');assert.equal(typeof caught.actual,'object','Positive full rollback equality remains unchanged');}
+    else if(failure==='initial-delta')assert.equal(caught.code,'ERR_ASSERTION');
+    else if(failure==='read:mutated'){assert.equal(caught.code,'ERR_ASSERTION');assert.match(caught.message,/Error: injected read:mutated/);}
+    else assert.equal(caught.message,'injected '+failure);
+    ddlFailurePaths++;
+  }
+  console.log(JSON.stringify({phase:'TASK_PUZZLE_COMPACT_DDL',ddlProfiles,controlsPerProfile:47,metadataReadsPerProfile:95,ddlFailurePaths,sameClientRollback:true,nativeAttempts:0}));
+
   console.log(JSON.stringify({phase:'TASK_PUZZLE_SCOPED_READER',profiles:8,reads,queriesPerRead:8,queryRefusals,scopedConservationRefusals,projectedQueriesPerRead:45,sameClientRollback:true,nativeAttempts:0}));
 }
 // Historical source comparison may evolve only above the unchanged native helpers.

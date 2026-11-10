@@ -1,5 +1,6 @@
 // Exact task-puzzle586 source and catalog delta. Historical585 admission stays separate.
 import assert from 'node:assert/strict';
+import { isDeepStrictEqual } from 'node:util';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
@@ -101,7 +102,7 @@ export function taskPuzzleCatalogProjection(reference,baseline,version,profile,f
   assert.equal(arguments.length,5);shape(baseline,fields);
   assert.deepEqual(taskPuzzleComparisonMetadata(reference,version,profile,flags),baseline,'Every retained585 field equals independently compiled reference');
   freeze(reference);freeze(baseline);
-  return Object.freeze({reference,baseline,verify:metadata=>{verifyTaskPuzzleCatalogDelta(metadata,version,profile,flags);assert.deepEqual(metadata,reference,'Complete current586 catalog');return true;},projectMetadata:metadata=>{const result=taskPuzzleComparisonMetadata(metadata,version,profile,flags);assert.deepEqual(result,baseline,'Every retained585 field remains exact');return result;},projectConstraints:rows=>taskPuzzleComparisonConstraints(rows,version,true,profile),sourceOnly:true,nativeAdmission:false,priorResultsTransferred:false});
+  return Object.freeze({reference,baseline,verify:metadata=>{verifyTaskPuzzleCatalogDelta(metadata,version,profile,flags);assert(isDeepStrictEqual(metadata,reference),'Complete current586 catalog');return true;},projectMetadata:metadata=>{const result=taskPuzzleComparisonMetadata(metadata,version,profile,flags);assert.deepEqual(result,baseline,'Every retained585 field remains exact');return result;},projectConstraints:rows=>taskPuzzleComparisonConstraints(rows,version,true,profile),sourceOnly:true,nativeAdmission:false,priorResultsTransferred:false});
 }
 export async function readTaskPuzzleSequenceMetadata(queryable){
   const definition=(await queryable.query(`SELECT c.relname::text AS name,format_type(s.seqtypid,NULL) AS type,

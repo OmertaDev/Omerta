@@ -1,5 +1,6 @@
 // Independent pure fixtures. These prove validators, not PostgreSQL execution.
 import assert from 'node:assert/strict';
+import { isDeepStrictEqual } from 'node:util';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { questingCatalogSource } from '../tools/questing-enterprise-catalog.js';
@@ -46,10 +47,40 @@ function fixture(version,profile,flags){
   for(const[name,cols,unique,primary]of[['task_puzzles_pkey','id',true,true],['task_puzzles_character_id_scope_target_id_context_key_key','character_id, scope, target_id, context_key',true,false],['ix_task_puzzles_recent','character_id, issue_order DESC',false,false]])live.indexes.push({table_name:'task_puzzles',name,definition:`CREATE ${unique?'UNIQUE ':''}INDEX ${name} ON $self.task_puzzles USING btree (${cols})`,unique,primary,valid:true,ready:true,live:true,nulls_not_distinct:false,predicate:null});
   return {baseline,live:sort(live)};
 }
+// Both forms use strict structural equality; only expected-failure diagnostics become compact.
+const captureAssertion=fn=>{let error;try{fn();}catch(caught){error=caught;}return error;};
+let strictParity=0,compactRefusals=0;
+const assertParity=(actual,expected)=>{
+  const old=captureAssertion(()=>assert.deepEqual(actual,expected));
+  const compact=captureAssertion(()=>assert(isDeepStrictEqual(actual,expected)));
+  assert.equal(Boolean(compact),Boolean(old),'Strict predicate keeps the complete original equality decision');
+  if(old){assert.equal(old.code,'ERR_ASSERTION');assert.equal(compact.code,'ERR_ASSERTION');}
+  strictParity++;
+};
+{
+  const {baseline,live}=fixture(18,'fresh',false),proof=taskPuzzleCatalogProjection(live,baseline,18,'fresh',false);
+  const changed=structuredClone(live);changed.columns.find(row=>row.column_name==='generation').default_expression='42';
+  verifyTaskPuzzleCatalogDelta(changed,18,'fresh',false);
+  const error=captureAssertion(()=>proof.verify(changed));assert.equal(error?.code,'ERR_ASSERTION');
+  assert.equal(error.actual,false,'Complete current catalog refusals must not render whole catalog objects');assert.equal(error.expected,true);compactRefusals++;
+}
+// Prototypes and value types remain significant, even when JSON would erase their differences.
+for(const [actual,expected]of [[0,-0],[NaN,NaN],[1,'1'],[undefined,null],[[undefined],Array(1)],
+  [Object.assign(Object.create(null),{a:1}),{a:1}],[new Date(0),new Date(1)],[new Date(0),new Date(0)],
+  [new Set([1]),new Set(['1'])],[new Map([[1,'a']]),new Map([['1','a']])],
+  [new Uint8Array([1]),new Uint8Array([2])],[{a:undefined},{}],[[1,2],[2,1]],[Object.setPrototypeOf({a:1},{}),{a:1}]])assertParity(actual,expected);
+
 let profiles=0;
 for(const version of [16,18])for(const profile of ['fresh','upgrade585','phase2','director'])for(const flags of [false,true]){
   const {baseline,live}=fixture(version,profile,flags), proof=taskPuzzleCatalogProjection(live,baseline,version,profile,flags);
   assert(proof.verify(structuredClone(live)));assert.deepEqual(proof.projectMetadata(live),baseline);verifyTaskPuzzleCatalogDelta(live,version,profile,flags);profiles++;
+  const verifyParity=metadata=>{
+    const previous=captureAssertion(()=>{verifyTaskPuzzleCatalogDelta(metadata,version,profile,flags);assert.deepEqual(metadata,live);});
+    const actual=captureAssertion(()=>proof.verify(metadata));
+    assert.equal(Boolean(actual),Boolean(previous),'Actual current verifier keeps every original mutation decision');
+    if(previous){assert.equal(previous.code,'ERR_ASSERTION');assert.equal(actual.code,'ERR_ASSERTION');}strictParity++;
+  };
+  verifyParity(structuredClone(live));
   for(const includeNotNull of [true,false]){
     const retained={table_name:'accounts',name:'accounts_pkey',definition:'PRIMARY KEY (id)'},rows=[retained,...live.constraints.filter(row=>includeNotNull||row.type!=='n').map(({table_name,name,definition})=>({table_name,name,definition}))];
     assert.deepEqual(taskPuzzleComparisonConstraints(rows,version,includeNotNull,profile),[retained]);
@@ -60,16 +91,23 @@ for(const version of [16,18])for(const profile of ['fresh','upgrade585','phase2'
     const relevant=field==='relations'?row.name.startsWith('task_puzzles'):row.table_name==='task_puzzles'||row.column_name==='crime_puzzle_revision'||row.name==='characters_crime_puzzle_revision_not_null';
     if(!relevant)continue;
     for(const mutate of [v=>v[field].splice(i,1),v=>v[field].push({...row}),v=>{v[field][i].unknown=true;},...Object.keys(row).map(key=>v=>{v[field][i][key]=typeof row[key]==='boolean'?!row[key]:typeof row[key]==='number'?row[key]+1:'changed';})]){
-      const bad=structuredClone(live);mutate(bad);reject(()=>proof.verify(bad));reject(()=>verifyTaskPuzzleCatalogDelta(bad,version,profile,flags));
+      const bad=structuredClone(live);mutate(bad);verifyParity(bad);reject(()=>proof.verify(bad));reject(()=>verifyTaskPuzzleCatalogDelta(bad,version,profile,flags));
     }
   }
   for(const section of ['definition','ownership','bindings'])for(const key of Object.keys(live.sequences[section][0])){
-    const bad=structuredClone(live);bad.sequences[section][0][key]=typeof bad.sequences[section][0][key]==='boolean'?!bad.sequences[section][0][key]:'changed';reject(()=>proof.verify(bad));reject(()=>verifyTaskPuzzleSequenceMetadata(bad.sequences));
+    const bad=structuredClone(live);bad.sequences[section][0][key]=typeof bad.sequences[section][0][key]==='boolean'?!bad.sequences[section][0][key]:'changed';verifyParity(bad);reject(()=>proof.verify(bad));reject(()=>verifyTaskPuzzleSequenceMetadata(bad.sequences));
   }
   for(const section of ['definition','ownership','bindings'])for(const mutate of [v=>v[section].pop(),v=>v[section].push({...v[section][0]}),v=>{v[section][0].unknown=true;}]){const bad=sequence();mutate(bad);reject(()=>verifyTaskPuzzleSequenceMetadata(bad));}
   for(const other of ['fresh','upgrade585','phase2','director'].filter(x=>x!==profile&&!['phase2','director'].every(y=>[x,profile].includes(y))))reject(()=>verifyTaskPuzzleCatalogDelta(live,version,other,flags));
-  for(const mutate of [v=>{v.columns[0].ordinal++;},v=>{v.columns[0].type='unknown';},v=>v.columns.push(column('characters','unknown',120,'text',false,null)),v=>v.relations.push({name:'unknown',kind:'S',persistence:'p'})]){const bad=structuredClone(live);mutate(bad);reject(()=>proof.verify(bad));}
+  for(const mutate of [v=>{v.columns[0].ordinal++;},v=>{v.columns[0].type='unknown';},v=>v.columns.push(column('characters','unknown',120,'text',false,null)),v=>v.relations.push({name:'unknown',kind:'S',persistence:'p'})]){const bad=structuredClone(live);mutate(bad);verifyParity(bad);reject(()=>proof.verify(bad));}
+  for(const mutate of [v=>Object.setPrototypeOf(v,null),v=>Object.setPrototypeOf(v.columns[0],null),
+    v=>{v.columns[0].default_expression=undefined;},v=>{delete v.columns[0].default_expression;},
+    v=>{v.columns[0].unknown=true;},v=>{v.columns[0].not_null='true';},v=>v.columns.reverse(),
+    v=>v.relations.splice(0,1),v=>v.relations.push({...v.relations[0]}),v=>v.relations.reverse()]){
+    const bad=structuredClone(live);mutate(bad);assert(!isDeepStrictEqual(bad,live),'New strict mutation must change data: '+mutate.toString());verifyParity(bad);reject(()=>proof.verify(bad));
+  }
   reject(()=>taskPuzzleCatalogProjection(live,{...baseline,columns:baseline.columns.slice(1)},version,profile,flags));
   reject(()=>verifyTaskPuzzleCatalogDelta(live,version===16?18:16,profile,flags));
 }
+console.log(JSON.stringify({phase:'TASK_PUZZLE_STRICT_COMPARISON',strictParity,compactRefusals,nativeAttempts:0}));
 console.log(JSON.stringify({phase:'TASK_PUZZLE586_PURE_CATALOG',profiles,refusals,nativeAttempts:0,priorResultsTransferred:false}));
