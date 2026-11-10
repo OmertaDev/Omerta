@@ -1842,8 +1842,10 @@ export async function buildServer() {
     G.withCharacter(pool, req.user.sub, (ch, client, h) => crimeWithDecisionContext(ch, req.params.id, client, h, req.body?.approach, req.body?.puzzle)));
   app.post('/v1/task-puzzles', { preHandler: auth }, async req =>
     G.withCharacter(pool, req.user.sub, (ch, client) => jobTaskPuzzle(ch, req.body, client, true)));
-  app.get('/v1/task-puzzles', { preHandler: auth }, async req =>
-    G.readCharacter(pool, req.user.sub, (ch, client) => jobTaskPuzzle(ch, req.query, client)));
+  app.get('/v1/task-puzzles', { preHandler: auth }, async req => {
+    const { puzzle } = await G.readCharacter(pool, req.user.sub, (ch, client) => jobTaskPuzzle(ch, req.query, client));
+    return { puzzle };
+  });
   app.post('/v1/train/:stat', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => G.train(ch, req.params.stat, client, h)));
   // THE REGIMEN — the expanded gym: five disciplines on the SAME train_at clock + NPC trainer drills

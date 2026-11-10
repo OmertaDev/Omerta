@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
+import Ajv from 'ajv/dist/2020.js';
+import addFormats from 'ajv-formats';
 import { buildServer } from './server-fixture.js';
 import { withCharacter, doCrime } from '../src/game.js';
 import { doMission } from '../src/growth.js';
@@ -41,6 +43,16 @@ try {
   assert.equal((await call('POST', '/v1/task-puzzles', null, { scope: 'mission', targetId: 'm2' })).code, 401);
   assert.equal((await call('GET', '/v1/task-puzzles?scope=mission&targetId=m2')).code, 401);
   const a = await actor('Task Jobs'), b = await actor('Other Tasks');
+  const api = (await call('GET', '/openapi.json')).body;
+  const ajv = new Ajv({ strict: false, allErrors: true }); addFormats(ajv);
+  const validatePuzzleRead = ajv.compile({
+    ...api.paths['/v1/task-puzzles'].get.responses['200'].content['application/json'].schema,
+    components: api.components,
+  });
+  const emptyRead = await call('GET', '/v1/task-puzzles?scope=mission&targetId=m2', a.token);
+  assert.equal(emptyRead.code, 200);
+  assert.equal(validatePuzzleRead(emptyRead.body), true, `Null puzzle GET must satisfy published response schema: ${ajv.errorsText(validatePuzzleRead.errors)}`);
+  assert.deepEqual(emptyRead.body, { puzzle: null });
   const before = await snapshot(a);
   // Removing the authoritative guard would make this direct-call bypass pay out.
   await rejects(as(a, (ch, c, h) => doMission(ch, 'm2', c, h)), 'task_puzzle_required');
@@ -53,6 +65,10 @@ try {
     { scope: 'mission', targetId: 'm2', contextKey: 'forged' }, { scope: 'mission', targetId: 'm2', characterId: b.id }])
     assert.equal((await call('POST', '/v1/task-puzzles', a.token, body)).code, 400);
   const p = await issue(a, 'mission', 'm2'), answer = solveTaskPuzzle(p);
+  const issuedRead = await call('GET', '/v1/task-puzzles?scope=mission&targetId=m2', a.token);
+  assert.equal(issuedRead.code, 200);
+  assert.equal(validatePuzzleRead(issuedRead.body), true, `Issued puzzle GET must satisfy published response schema: ${ajv.errorsText(validatePuzzleRead.errors)}`);
+  assert.deepEqual(issuedRead.body, { puzzle: p });
   assert.deepEqual(await issue(a, 'mission', 'm2'), p);
   assert.doesNotMatch(JSON.stringify(p), /"(?:seed|answer|contextKey|structuralSignature)"\s*:/);
   await rejects(as(a, (ch, c, h) => doMission(ch, 'm2', c, h, { id: p.id, answer: {} })), 'bad_task_puzzle_answer');
@@ -146,7 +162,6 @@ try {
   }
   const rules = (await call('GET', '/v1/rules', a.token)).body;
   assert.deepEqual(rules.missions.filter(m => m.puzzle?.required).map(m => m.id).sort(), ['m11', 'm12', 'm2']);
-  const api = (await call('GET', '/openapi.json')).body;
   assert(api.paths['/v1/task-puzzles'].post.requestBody.content['application/json'].schema.required.includes('scope'));
   assert(api.paths['/v1/task-puzzles'].get.parameters.some(p => p.name === 'targetId' && p.required));
   assert(api.paths['/v1/missions/{id}'].post.requestBody.content['application/json'].schema.properties.puzzle);
