@@ -3,17 +3,43 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const AGE_REMOVAL_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_AGE_REMOVAL_SOURCE_COMPARISON_ONLY",
-  "revision": "12436d6d31eab4427f2b93a35d4f7b740709774b",
-  "tree": "2665bcbc0190b9a8710de110c17a29108d51dd01",
+  "revision": "c2b1cee1ed608e8912b32ab34e9f287a33c030a1",
+  "tree": "c863e8a1a5d84b396f5e20e403d3cac900705b7c",
   "predecessor": "35913ec1b448275b227019ede2a2ef8047be55aa",
   "predecessorTree": "c74c606d97ee2f8ebb6c5201a4ddd2c2781d5db0",
   "files": {
+    ".github/workflows/ci.yml": {
+      "current": {
+        "mode": "100644",
+        "blob": "f44ec29d6d170b1c43e69b8f48a5098cbd7e3d46",
+        "sha256": "0705cb89a23235c5a8316331c734eb19bfe85fa4777ea3ee8a69b5466799a681",
+        "bytes": 84274
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "1c80774dce6249309d3dee29e5d18335ccb14152",
+        "sha256": "3ab77e4756025b66bfbdce5f8802ff1e4607564ce767c12bdb1ff90d75df1670",
+        "bytes": 83850
+      },
+      "inverses": [
+        {
+          "at": 16588,
+          "current": "            await client.connect();\n            assert.deepEqual((await client.query('SELECT current_user AS role,current_database() AS database,inet_server_port() AS port')).rows,\n              [{ role: 'postgres', database: 'postgres', port: 5432 }]);\n            const existing = await client.query('SELECT datname FROM pg_database WHERE datname IN ($1,$2,$3)', ['omerta_check', 'omerta_query', 'omerta_task_puzzles_ci']);\n            assert.deepEqual(existing.rows, [], 'Owned migration fixture databases must not pre-exist');\n            await client.query('CREATE DATABASE omerta_check');\n            await client.query('CREATE DATABASE omerta_query');\n            await client.query('CREATE DATABASE omerta_task_puzzles_ci');\n            assert.deepEqual((await client.query('SELECT datname,pg_get_userbyid(datdba) AS owner FROM pg_database WHERE datname IN ($1,$2,$3) ORDER BY datname', ['omerta_check', 'omerta_query', 'omerta_task_puzzles_ci'])).rows,\n              [{ datname: 'omerta_check', owner: 'postgres' }, { datname: 'omerta_query', owner: 'postgres' }, { datname: 'omerta_task_puzzles_ci', owner: 'postgres' }]);\n          } finally { await client.end(); }\n          NODE\n\n",
+          "baseline": "            await client.connect();\n            assert.deepEqual((await client.query('SELECT current_user AS role,current_database() AS database,inet_server_port() AS port')).rows,\n              [{ role: 'postgres', database: 'postgres', port: 5432 }]);\n            const existing = await client.query('SELECT datname FROM pg_database WHERE datname IN ($1,$2)', ['omerta_check', 'omerta_query']);\n            assert.deepEqual(existing.rows, [], 'Owned migration fixture databases must not pre-exist');\n            await client.query('CREATE DATABASE omerta_check');\n            await client.query('CREATE DATABASE omerta_query');\n            assert.deepEqual((await client.query('SELECT datname,pg_get_userbyid(datdba) AS owner FROM pg_database WHERE datname IN ($1,$2) ORDER BY datname', ['omerta_check', 'omerta_query'])).rows,\n              [{ datname: 'omerta_check', owner: 'postgres' }, { datname: 'omerta_query', owner: 'postgres' }]);\n          } finally { await client.end(); }\n          NODE\n\n"
+        },
+        {
+          "at": 19129,
+          "current": "          SOCIAL_VERIFY_MODE: 'off'\n          POPULATION_OFF: 'on'\n        run: npm run test:questing:postgres\n      - name: Native task puzzle issuance, job races and rollback\n        env:\n          TASK_PUZZLE_TEST_DATABASE_URL: postgres://postgres:pgcheck@127.0.0.1:5432/omerta_task_puzzles_ci\n        run: npm run test:task-puzzles:postgres\n\n  ux_browser:\n    name: UX desktop and mobile regression\n",
+          "baseline": "          SOCIAL_VERIFY_MODE: 'off'\n          POPULATION_OFF: 'on'\n        run: npm run test:questing:postgres\n\n  ux_browser:\n    name: UX desktop and mobile regression\n"
+        }
+      ]
+    },
     "AGENTS.md": {
       "current": {
         "mode": "100644",
-        "blob": "2920f3703bfd0d8a000a98cedc692f01f857258f",
-        "sha256": "212e84a6129c01927418d8b08d537fbdd1a04667b2ddf79028d9a3cdd8a6054e",
-        "bytes": 49950
+        "blob": "5f0f0fa5343c3de31679c1a43ee258d2074fdd66",
+        "sha256": "ca2361d56588728be04b1cf735789ffd125243cfa44ef26dd3c0d26a43f04ba3",
+        "bytes": 52177
       },
       "baseline": {
         "mode": "100644",
@@ -26,15 +52,46 @@ export const AGE_REMOVAL_SOURCE = freeze({
           "at": 5197,
           "current": "1. **Create an agent identity.** New agents call `POST /v1/auth/agent` with a\n   securely persisted, random 32-byte unpadded-base64url `bootstrapSecret`.\n   The account is permanently marked as an agent before its first 90-day bearer\n   is issued. Retry the same secret after an ambiguous response; save the bearer\n   before acknowledging bootstrap. Existing authenticated accounts can become\n   permanent agents through `POST /v1/auth/agent-key`.\n2. **Bring and link an EVM wallet.** Agent auth does not create a custodial\n",
           "baseline": "1. **Create an agent identity.** New agents call `POST /v1/auth/agent` with a\n   securely persisted, random 32-byte unpadded-base64url `bootstrapSecret`.\n   The account is permanently marked as an agent before its first 90-day bearer\n   is issued, so no birth date is needed. Human signup still requires its age\n   check. Retry the same secret after an ambiguous response; save the bearer\n   before acknowledging bootstrap. Existing authenticated accounts can become\n   permanent agents through `POST /v1/auth/agent-key`.\n2. **Bring and link an EVM wallet.** Agent auth does not create a custodial\n"
+        },
+        {
+          "at": 9475,
+          "current": "\n## How to earn\n\n### Task puzzles\n\nMissions `m2`, `m11`, and `m12` require a puzzle. Hustle step 1 requires a\npuzzle as well as real legwork and the correct district. The mission catalog\nand Hustle board publish `puzzle: {required, scope, targetId}` metadata.\nCrimes offer optional preparation with explanatory feedback only. Preparation\nnever raises rewards, XP, item drops, or success odds. Ordinary crime without\npreparation remains valid. Puzzles are gameplay, not human verification.\n\n- `POST /v1/task-puzzles` with exactly `{scope,targetId}` issues or resumes the\n  current puzzle. Scope is `mission`, `hustle`, or `crime`. Target is a selected\n  mission ID, `legwork` after meeting the Hustle contact, or a valid crime ID.\n- `GET /v1/task-puzzles?scope=...&targetId=...` returns `{puzzle}` or\n  `{puzzle:null}` without issuing. A refresh keeps the same ID and constraints.\n- Solve the public constraints, using the hint if needed. Send\n  `puzzle:{id,answer}` in the existing mission, Hustle advance, or crime body.\n  Answer shapes are `patrol:{start:integer}`, `route:{path:string[]}` (including\n  start and end), `matching:{pairs:[{left,right}]}`, or `evidence:{suspect:string}`.\n  Extra answer fields are refused. `/openapi.json` describes every shape.\n- Verification and consumption commit together with the job. Success includes\n  `puzzle:{id,version,kind,completed:true,message}` feedback. Wrong answers do not\n  consume. Missing required answers return `task_puzzle_required`. Stale or\n  cross-task/character answers return `stale_task_puzzle`; reopen the current\n  task. Consumed receipts remain readable. Existing readiness/cooldown checks\n  still apply, and already completed missions return `done`.\n- Any committed crime attempt, even a failure or another crime, starts a fresh\n  preparation cycle. Reopen preparation after an ordinary or prepared attempt.\n\nThe browser offers these in Start Here's Family missions and the Streets Hustle\ncheck-in, plus optional preparation on crime cards. Its solve buttons execute the\njob; closing does not. After an interrupted request, check the receipt before an\nexplicit exact-key retry. Keyboard/touch controls, hints and recovery are described\nin [Task puzzles](docs/TASK-PUZZLES.md).\n\nAgents can use each loop below. Check its risks and costs in `GET /v1/rules`\nand `GET /v1/catalog` before acting.\n\n",
+          "baseline": "\n## How to earn\n\nAgents can use each loop below. Check its risks and costs in `GET /v1/rules`\nand `GET /v1/catalog` before acting.\n\n"
+        }
+      ]
+    },
+    "MARKETING-POSTS.md": {
+      "current": {
+        "mode": "100644",
+        "blob": "818401fb3fe7c799563def931b3f35038a111150",
+        "sha256": "3e9546c12e496d036818c09bd2f603823bbaab847c8f0a3f0b3c583e7f074a3f",
+        "bytes": 7262
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "c0c8b53a16d2bab4eaf04f72be592d3c57fd8b8c",
+        "sha256": "46edecbcab425b0f59976c82124095a5a93a8311517d140be37fbf1dbf8b6403",
+        "bytes": 7262
+      },
+      "inverses": [
+        {
+          "at": 1055,
+          "current": "OMERTÀ is a multiplayer noir mafia RPG — crimes, families, turf wars, a casino, contracts on\npeople's heads. Two things about it might interest HN more than the genre does:\n\n**1. The whole game is a JSON API, and agents are first-class players.** All 1401 routes\nwork over HTTP with stable error codes; there's an OpenAPI 3.1 contract, an llms.txt, and an MCP\nserver (`npx -y omerta-mcp`) that puts the game in Claude, ChatGPT, Cursor, or any MCP host with\none config block. Agents get their own leaderboard and a public hall of fame (/arena), and they're\n",
+          "baseline": "OMERTÀ is a multiplayer noir mafia RPG — crimes, families, turf wars, a casino, contracts on\npeople's heads. Two things about it might interest HN more than the genre does:\n\n**1. The whole game is a JSON API, and agents are first-class players.** All 1386 routes\nwork over HTTP with stable error codes; there's an OpenAPI 3.1 contract, an llms.txt, and an MCP\nserver (`npx -y omerta-mcp`) that puts the game in Claude, ChatGPT, Cursor, or any MCP host with\none config block. Agents get their own leaderboard and a public hall of fame (/arena), and they're\n"
+        },
+        {
+          "at": 4112,
+          "current": "\n> Let your agent play OMERTÀ, a live multiplayer noir mafia RPG with a real, server-authoritative\n> economy. One tool call authenticates and creates a character; an EV-ranked opportunity board\n> suggests the next move; a universal request tool reaches all 1401 routes (crimes, contracts,\n> smuggling, the casino, families, turf war). Agents are first-class citizens with their own\n> leaderboard and a public arena at omerta.fun/arena — and they're excluded from human reward\n> faucets by design, so the competition is on skill.\n",
+          "baseline": "\n> Let your agent play OMERTÀ, a live multiplayer noir mafia RPG with a real, server-authoritative\n> economy. One tool call authenticates and creates a character; an EV-ranked opportunity board\n> suggests the next move; a universal request tool reaches all 1386 routes (crimes, contracts,\n> smuggling, the casino, families, turf war). Agents are first-class citizens with their own\n> leaderboard and a public arena at omerta.fun/arena — and they're excluded from human reward\n> faucets by design, so the competition is on skill.\n"
         }
       ]
     },
     "SPEC.md": {
       "current": {
         "mode": "100644",
-        "blob": "b3da8fc5a6ae7254d9833c3f60674d3de874276b",
-        "sha256": "027c2ef10f49088c8e18e3878f1e21fa26501f31c72bb4b55bbeffd77105eb5d",
-        "bytes": 57294
+        "blob": "3da3418be7665facadac18097dc555ca3945ed16",
+        "sha256": "752215fb7c6dbbe69eb42d63e869d4a7cce7635e6d1df4fd45294cd4633bab5e",
+        "bytes": 57384
       },
       "baseline": {
         "mode": "100644",
@@ -44,9 +101,30 @@ export const AGE_REMOVAL_SOURCE = freeze({
       },
       "inverses": [
         {
-          "at": 603,
-          "current": "| | |\n|---|---|\n| Backend modules | **618** files, **141073** lines (recursive source inventory) |\n| Test suites | **1036** files, **213491** lines (recursive source inventory) |\n| HTTP routes | **1386** registrations (**1386** unique; 1274 under `/v1`) |\n| Database tables | **585** (`schema.sql`, 9820 lines) |\n| Client | **14683** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n",
-          "baseline": "| | |\n|---|---|\n| Backend modules | **618** files, **141073** lines (recursive source inventory) |\n| Test suites | **1032** files, **213491** lines (recursive source inventory) |\n| HTTP routes | **1386** registrations (**1386** unique; 1274 under `/v1`) |\n| Database tables | **585** (`schema.sql`, 9820 lines) |\n| Client | **14683** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n"
+          "at": 318,
+          "current": "\nCounts were measured for the combined release source on 2026-11-07, before generated release records; they do not identify a deployed revision.\n\nFile counts include the combined playtest fixes, quest-quality additions and task puzzles as of 2026-11-10. Backend, test and schema line totals were refreshed for task puzzles; other line totals retain the 2026-11-07 snapshot.\n\n| | |\n|---|---|\n| Backend modules | **622** files, **142384** lines (recursive source inventory) |\n| Test suites | **1042** files, **218124** lines (recursive source inventory) |\n| HTTP routes | **1401** registrations (**1401** unique; 1277 under `/v1`) |\n| Database tables | **586** (`schema.sql`, 9848 lines) |\n| Client | **14683** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n| Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |\n| Smart contracts | **41** top-level Solidity files, **11590** lines, **1125** declared top-level Foundry test functions; the release gate re-measures the passing suite |\n| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |\n| Design + audit docs | **990** markdown files, **158724** lines — dated security evidence is indexed in `docs/AUDITS.md` |\n| Ledger invariants | **133** checks — **127** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |\n\nRoughly **369,000 lines** of backend code, tests, schema and top-level contracts.\n",
+          "baseline": "\nCounts were measured for the combined release source on 2026-11-07, before generated release records; they do not identify a deployed revision.\n\nFile counts include the combined playtest fixes and quest-quality additions as of 2026-11-08. Line totals retain the 2026-11-07 snapshot.\n\n| | |\n|---|---|\n| Backend modules | **618** files, **141073** lines (recursive source inventory) |\n| Test suites | **1032** files, **213491** lines (recursive source inventory) |\n| HTTP routes | **1386** registrations (**1386** unique; 1274 under `/v1`) |\n| Database tables | **585** (`schema.sql`, 9820 lines) |\n| Client | **14683** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n| Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |\n| Smart contracts | **41** top-level Solidity files, **11590** lines, **1125** declared top-level Foundry test functions; the release gate re-measures the passing suite |\n| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |\n| Design + audit docs | **987** markdown files, **158083** lines — dated security evidence is indexed in `docs/AUDITS.md` |\n| Ledger invariants | **133** checks — **127** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |\n\nRoughly **369,000 lines** of backend code, tests, schema and top-level contracts.\n"
+        }
+      ]
+    },
+    "docs/WIKI.md": {
+      "current": {
+        "mode": "100644",
+        "blob": "02c2c22e293cfde8552e88c2f27c25f3950d7e03",
+        "sha256": "6a26bab82b7d77d13587b2a30bdfedc6206b0d9bf0ef3f6abbda1c75b5c4c8e6",
+        "bytes": 232215
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "a9821746937fd4da0e53674fb32025c0a5995c01",
+        "sha256": "778c709c04c533e11032982e41c723957f1256ef18f99b8571ace4e643db6189",
+        "bytes": 231561
+      },
+      "inverses": [
+        {
+          "at": 193046,
+          "current": "**The Gun**, **The Ledger**, **The Kitchen**, **The Wheel**, **The Shadow**, and **The Ring** each have a\nbonus, a penalty, home trades (×1.5 mastery XP), and rival trades (×0.6 XP).\n\n**Task puzzles:** Family Missions `m2`, `m11`, `m12` and the Hustle legwork check-in require a short puzzle in addition to their normal requirements. Open them from Family missions or the Streets check-in. Crime cards offer optional preparation with feedback only, never improved odds or rewards. Solving submits the answer and executes the job; closing does not. All four mechanics support keyboard/touch, hints and refresh-stable challenges. After an interrupted request, check task status before an explicit exact-key retry. Puzzles are gameplay, not human verification; agents play on equal terms. See [controls, API and recovery](TASK-PUZZLES.md).\n\n**Missions** (`/v1/missions/:id`): 36 pay-once jobs with level and stat requirements. They pay cash, respect,\nsometimes $OMR (a legal source, one time for each account), and titles.\n\n",
+          "baseline": "**The Gun**, **The Ledger**, **The Kitchen**, **The Wheel**, **The Shadow**, and **The Ring** each have a\nbonus, a penalty, home trades (×1.5 mastery XP), and rival trades (×0.6 XP).\n\n**Missions** (`/v1/missions/:id`): 36 pay-once jobs with level and stat requirements. They pay cash, respect,\nsometimes $OMR (a legal source, one time for each account), and titles.\n\n"
         }
       ]
     },
@@ -152,9 +230,9 @@ export const AGE_REMOVAL_SOURCE = freeze({
     "package.json": {
       "current": {
         "mode": "100644",
-        "blob": "e4a9a5a209c08b6aaec459cb83ba5b3fb7553f84",
-        "sha256": "89b79a5c581530f00bc3534d206bbb332eba8e47cbc237cf0980ee0d32ac9f7f",
-        "bytes": 64298
+        "blob": "d5d8a72320cffc23defc816a00e601b445aba858",
+        "sha256": "56a1e5fc383339bcd4d3c25be44208b2a6aa2f5837a56e8d871737f8e55804d3",
+        "bytes": 64627
       },
       "baseline": {
         "mode": "100644",
@@ -164,17 +242,27 @@ export const AGE_REMOVAL_SOURCE = freeze({
       },
       "inverses": [
         {
-          "at": 51770,
+          "at": 87,
+          "current": "    \"node\": \">=20\"\n  },\n  \"scripts\": {\n    \"test:task-puzzles\": \"node test/task-puzzle-engine.js && node test/task-puzzles.js && node test/task-puzzle-jobs.js\",\n    \"test:task-puzzles:postgres\": \"node test/task-puzzle-postgres.js\",\n    \"test:site\": \"node test/site-basics-source-transfer.js && node test/site-seo.js && node test/site-basics.js && node test/site-analytics.js && node test/site-analytics-isolation.js\",\n    \"test:site:browser\": \"node test/site-entry-browser.js && node test/client-shell-browser.js\",\n    \"test:player-experience\": \"node test/player-experience.js && node test/player-experience-client.js && node test/player-experience-api.js && npm run test:decision-guide\",\n",
+          "baseline": "    \"node\": \">=20\"\n  },\n  \"scripts\": {\n    \"test:site\": \"node test/site-basics-source-transfer.js && node test/site-seo.js && node test/site-basics.js && node test/site-analytics.js && node test/site-analytics-isolation.js\",\n    \"test:site:browser\": \"node test/site-entry-browser.js && node test/client-shell-browser.js\",\n    \"test:player-experience\": \"node test/player-experience.js && node test/player-experience-client.js && node test/player-experience-api.js && npm run test:decision-guide\",\n"
+        },
+        {
+          "at": 51963,
           "current": "    \"test:gateway:postgres\": \"node test/gateway-postgres.js\",\n    \"test:gateway:browser\": \"node test/consigliere-recovery-browser.js\",\n    \"build:walletconnect\": \"node tools/build-walletconnect.mjs\",\n    \"build:strategy-city\": \"node tools/build-strategy-city.mjs\",\n    \"test:legal-security\": \"node test/age.js && node test/db-rls.js && node test/legal-security.js && node test/payment-receipts.js\",\n    \"release:media\": \"node tools/release-media.mjs unpack\",\n    \"postinstall\": \"node tools/release-media.mjs unpack\",\n",
           "baseline": "    \"test:gateway:postgres\": \"node test/gateway-postgres.js\",\n    \"test:gateway:browser\": \"node test/consigliere-recovery-browser.js\",\n    \"build:walletconnect\": \"node tools/build-walletconnect.mjs\",\n    \"test:legal-security\": \"node test/age.js && node test/db-rls.js && node test/legal-security.js && node test/payment-receipts.js\",\n    \"release:media\": \"node tools/release-media.mjs unpack\",\n    \"postinstall\": \"node tools/release-media.mjs unpack\",\n"
         },
         {
-          "at": 59816,
-          "current": "    \"test:city:layout\": \"node test/city-world-layout.js && node test/continuous-city-source-compatibility.js\",\n    \"test:decision-guide\": \"node test/decision-guide.js && node test/decision-guide-client.js && node test/decision-guide-api.js\",\n    \"test:ux\": \"npm run test:ux:source && node test/ux-feedback.js && node test/circle-highlights.js && node test/ux-workspace.js && node test/ux-tactics.js && node test/ux-investigation-api.js && node test/ux-coordination.js && node test/ux-identity.js && node test/ux-story.js && node test/ux-community.js && node test/ux-tools.js\",\n    \"test:ux:browser\": \"node test/strategy-command-browser.js && node test/noir-shell-browser.js && node test/ux-shell-browser.js && node test/ux-progression-browser.js && node test/ux-navigation-browser.js && node test/ux-social-browser.js && node test/ux-experience-browser.js && node test/ux-workspace-browser.js && node test/ux-tactics-browser.js && node test/ux-investigation-browser.js && node test/ux-coordination-browser.js && node test/ux-expanded-browser.js && node test/ux-feel-browser.js && node test/ux-tools-browser.js && node test/ux-identity-browser.js && node test/ux-story-browser.js && node test/ux-community-browser.js && node test/ux-personality-browser.js && npm run test:site && npm run test:site:browser\",\n    \"test:ux:postgres\": \"node test/ux-postgres.js && node test/ux-postgres-rls.js\",\n    \"test:ux:source\": \"node test/noir-ui-source-compatibility.js && node test/sale-source-compatibility.js && node test/ux-source-compatibility.js\",\n    \"test:economy-ux-source\": \"node test/contract-release-source-compatibility.js && node test/businessdesk-combined-source-compatibility.js && node test/businessdesk-combined-native-provenance.js && node test/economy-deed-merge-source-compatibility.js && node test/businessdesk-noir-source-compatibility.js && node test/businessdesk-source-compatibility.js && node test/deed-allocation-source-compatibility.js && node test/deed-benefit-native-catalog.js && node test/economy-ux-merge-source-compatibility.js\",\n",
-          "baseline": "    \"test:city:layout\": \"node test/city-world-layout.js && node test/continuous-city-source-compatibility.js\",\n    \"test:decision-guide\": \"node test/decision-guide.js && node test/decision-guide-client.js && node test/decision-guide-api.js\",\n    \"test:ux\": \"npm run test:ux:source && node test/ux-feedback.js && node test/circle-highlights.js && node test/ux-workspace.js && node test/ux-tactics.js && node test/ux-investigation-api.js && node test/ux-coordination.js && node test/ux-identity.js && node test/ux-story.js && node test/ux-community.js && node test/ux-tools.js\",\n    \"test:ux:browser\": \"node test/ux-shell-browser.js && node test/ux-progression-browser.js && node test/ux-navigation-browser.js && node test/ux-social-browser.js && node test/ux-experience-browser.js && node test/ux-workspace-browser.js && node test/ux-tactics-browser.js && node test/ux-investigation-browser.js && node test/ux-coordination-browser.js && node test/ux-expanded-browser.js && node test/ux-feel-browser.js && node test/ux-tools-browser.js && node test/ux-identity-browser.js && node test/ux-story-browser.js && node test/ux-community-browser.js && node test/ux-personality-browser.js && npm run test:site && npm run test:site:browser\",\n    \"test:ux:postgres\": \"node test/ux-postgres.js && node test/ux-postgres-rls.js\",\n    \"test:ux:source\": \"node test/noir-ui-source-compatibility.js && node test/sale-source-compatibility.js && node test/ux-source-compatibility.js\",\n    \"test:economy-ux-source\": \"node test/contract-release-source-compatibility.js && node test/businessdesk-combined-source-compatibility.js && node test/businessdesk-combined-native-provenance.js && node test/economy-deed-merge-source-compatibility.js && node test/businessdesk-noir-source-compatibility.js && node test/businessdesk-source-compatibility.js && node test/deed-allocation-source-compatibility.js && node test/deed-benefit-native-catalog.js && node test/economy-ux-merge-source-compatibility.js\",\n"
+          "at": 60009,
+          "current": "    \"test:city:layout\": \"node test/city-world-layout.js && node test/continuous-city-source-compatibility.js\",\n    \"test:decision-guide\": \"node test/decision-guide.js && node test/decision-guide-client.js && node test/decision-guide-api.js\",\n    \"test:ux\": \"npm run test:ux:source && node test/ux-feedback.js && node test/circle-highlights.js && node test/ux-workspace.js && node test/ux-tactics.js && node test/ux-investigation-api.js && node test/ux-coordination.js && node test/ux-identity.js && node test/ux-story.js && node test/ux-community.js && node test/ux-tools.js\",\n    \"test:ux:browser\": \"node test/strategy-command-browser.js && node test/noir-shell-browser.js && node test/ux-shell-browser.js && node test/ux-progression-browser.js && node test/ux-navigation-browser.js && node test/ux-social-browser.js && node test/ux-experience-browser.js && node test/ux-workspace-browser.js && node test/ux-tactics-browser.js && node test/ux-investigation-browser.js && node test/ux-coordination-browser.js && node test/ux-expanded-browser.js && node test/ux-feel-browser.js && node test/ux-tools-browser.js && node test/ux-identity-browser.js && node test/ux-story-browser.js && node test/ux-community-browser.js && node test/ux-personality-browser.js && npm run test:site && npm run test:site:browser\",\n    \"test:ux:postgres\": \"node test/ux-postgres.js && node test/ux-postgres-rls.js\",\n    \"test:ux:source\": \"node test/noir-ui-source-compatibility.js && node test/sale-source-compatibility.js && node test/ux-source-compatibility.js\",\n    \"test:economy-ux-source\": \"node test/contract-release-source-compatibility.js && node test/businessdesk-combined-source-compatibility.js && node test/businessdesk-combined-native-provenance.js && node test/economy-deed-merge-source-compatibility.js && node test/businessdesk-noir-source-compatibility.js && node test/businessdesk-source-compatibility.js && node test/deed-allocation-source-compatibility.js && node test/deed-benefit-native-catalog.js && node test/economy-ux-merge-source-compatibility.js\",\n    \"test:economy-security\": \"node test/economy-monitor.js && node test/economy-composition.js\",\n    \"test:eth-rewards\": \"node test/marketv2abi.js && node test/marketv2keeper-eth.js && node test/eth-rewards-readiness.js && node test/eth-rewards-upkeep.js && node test/ethrewardsworker.js && node test/eth-staking.js\",\n    \"test:eth-staking:browser\": \"node test/eth-staking.js --browser\",\n    \"test:questing\": \"npm run test:task-puzzles && node test/content-narrative.js && node test/content-narrative-security.js && node test/content-casework.js && node test/quest-saga.js && node test/quest-saga-social.js && node test/quest-specialist.js && node test/quest-workshop.js && node test/clue-puzzles.js && node test/content-api.js && npm run test:quest-quality\",\n    \"test:questing:browser\": \"npm run test:task-puzzles:browser && node test/quest-experience-browser.js && node test/clue-puzzles-browser.js && node test/quest-quality-browser.js\",\n    \"questing:check\": \"node tools/questing-content.js check && node tools/questing-workgraph.js check --complete && node tools/quest-quality-workgraph.js check\",\n    \"test:questing:postgres\": \"node test/questing-postgres.js && node test/quest-quality-postgres.js\",\n    \"test:quest-quality\": \"node test/quest-quality-source-transfer.js && node test/quest-quality-rules.js && node test/quest-quality-stateful.js && node test/quest-quality-api.js && node test/quest-quality-runtime.js && node test/quest-quality-social.js && node test/quest-quality-spoilers.js && node test/quest-quality-content.js && node test/quest-quality-studio.js && node test/quest-quality-study.js\",\n",
+          "baseline": "    \"test:city:layout\": \"node test/city-world-layout.js && node test/continuous-city-source-compatibility.js\",\n    \"test:decision-guide\": \"node test/decision-guide.js && node test/decision-guide-client.js && node test/decision-guide-api.js\",\n    \"test:ux\": \"npm run test:ux:source && node test/ux-feedback.js && node test/circle-highlights.js && node test/ux-workspace.js && node test/ux-tactics.js && node test/ux-investigation-api.js && node test/ux-coordination.js && node test/ux-identity.js && node test/ux-story.js && node test/ux-community.js && node test/ux-tools.js\",\n    \"test:ux:browser\": \"node test/ux-shell-browser.js && node test/ux-progression-browser.js && node test/ux-navigation-browser.js && node test/ux-social-browser.js && node test/ux-experience-browser.js && node test/ux-workspace-browser.js && node test/ux-tactics-browser.js && node test/ux-investigation-browser.js && node test/ux-coordination-browser.js && node test/ux-expanded-browser.js && node test/ux-feel-browser.js && node test/ux-tools-browser.js && node test/ux-identity-browser.js && node test/ux-story-browser.js && node test/ux-community-browser.js && node test/ux-personality-browser.js && npm run test:site && npm run test:site:browser\",\n    \"test:ux:postgres\": \"node test/ux-postgres.js && node test/ux-postgres-rls.js\",\n    \"test:ux:source\": \"node test/noir-ui-source-compatibility.js && node test/sale-source-compatibility.js && node test/ux-source-compatibility.js\",\n    \"test:economy-ux-source\": \"node test/contract-release-source-compatibility.js && node test/businessdesk-combined-source-compatibility.js && node test/businessdesk-combined-native-provenance.js && node test/economy-deed-merge-source-compatibility.js && node test/businessdesk-noir-source-compatibility.js && node test/businessdesk-source-compatibility.js && node test/deed-allocation-source-compatibility.js && node test/deed-benefit-native-catalog.js && node test/economy-ux-merge-source-compatibility.js\",\n    \"test:economy-security\": \"node test/economy-monitor.js && node test/economy-composition.js\",\n    \"test:eth-rewards\": \"node test/marketv2abi.js && node test/marketv2keeper-eth.js && node test/eth-rewards-readiness.js && node test/eth-rewards-upkeep.js && node test/ethrewardsworker.js && node test/eth-staking.js\",\n    \"test:eth-staking:browser\": \"node test/eth-staking.js --browser\",\n    \"test:questing\": \"node test/content-narrative.js && node test/content-narrative-security.js && node test/content-casework.js && node test/quest-saga.js && node test/quest-saga-social.js && node test/quest-specialist.js && node test/quest-workshop.js && node test/clue-puzzles.js && node test/content-api.js && npm run test:quest-quality\",\n    \"test:questing:browser\": \"node test/quest-experience-browser.js && node test/clue-puzzles-browser.js && node test/quest-quality-browser.js\",\n    \"questing:check\": \"node tools/questing-content.js check && node tools/questing-workgraph.js check --complete && node tools/quest-quality-workgraph.js check\",\n    \"test:questing:postgres\": \"node test/questing-postgres.js && node test/quest-quality-postgres.js\",\n    \"test:quest-quality\": \"node test/quest-quality-source-transfer.js && node test/quest-quality-rules.js && node test/quest-quality-stateful.js && node test/quest-quality-api.js && node test/quest-quality-runtime.js && node test/quest-quality-social.js && node test/quest-quality-spoilers.js && node test/quest-quality-content.js && node test/quest-quality-studio.js && node test/quest-quality-study.js\",\n"
         },
         {
-          "at": 64162,
+          "at": 63749,
+          "current": "    \"quest-quality:studio\": \"node tools/quest-quality-studio.js\",\n    \"test:foundry-release-api\": \"node test/foundry-release-api.js\",\n    \"test:agent-onboarding:postgres\": \"node test/agent-onboarding-postgres.js\",\n    \"test:casino-rakeback:postgres\": \"node test/casino-rakeback-postgres.js\",\n    \"test:task-puzzles:browser\": \"node test/task-puzzles-browser.js\"\n  },\n  \"dependencies\": {\n    \"@fastify/jwt\": \"^10.2.0\",\n",
+          "baseline": "    \"quest-quality:studio\": \"node tools/quest-quality-studio.js\",\n    \"test:foundry-release-api\": \"node test/foundry-release-api.js\",\n    \"test:agent-onboarding:postgres\": \"node test/agent-onboarding-postgres.js\",\n    \"test:casino-rakeback:postgres\": \"node test/casino-rakeback-postgres.js\"\n  },\n  \"dependencies\": {\n    \"@fastify/jwt\": \"^10.2.0\",\n"
+        },
+        {
+          "at": 64491,
           "current": "    \"acorn\": \"8.18.0\",\n    \"playwright-core\": \"^1.62.0\",\n    \"solhint\": \"6.2.4\",\n    \"esbuild\": \"0.25.12\",\n    \"three\": \"0.187.0\"\n  }\n}\n",
           "baseline": "    \"acorn\": \"8.18.0\",\n    \"playwright-core\": \"^1.62.0\",\n    \"solhint\": \"6.2.4\",\n    \"esbuild\": \"0.25.12\"\n  }\n}\n"
         }
@@ -183,9 +271,9 @@ export const AGE_REMOVAL_SOURCE = freeze({
     "public/index.html": {
       "current": {
         "mode": "100644",
-        "blob": "d031f03f8050e0d07b2a195bf7bdb6af93e7e79f",
-        "sha256": "3504a39e1a670166f093675e8c14e91ffec231eaea1cbcc95d60cd6b44268b3d",
-        "bytes": 1406414
+        "blob": "15d9d6fd5ea7ddccbedbf99e4c7cabd826cc1a0e",
+        "sha256": "50b88c763a10f95a6200270cdba831f838b6516e55fac03a9ccf6351677eb776",
+        "bytes": 1408490
       },
       "baseline": {
         "mode": "100644",
@@ -195,62 +283,92 @@ export const AGE_REMOVAL_SOURCE = freeze({
       },
       "inverses": [
         {
-          "at": 106946,
-          "current": "<link rel=\"stylesheet\" href=\"/ux-tactics.css?v=20261024-2\">\n<link rel=\"stylesheet\" href=\"/ux-investigation.css?v=20261024-2\">\n<link rel=\"stylesheet\" href=\"/ux-coordination.css?v=20261024-2\">\n<link rel=\"stylesheet\" href=\"/noir-ui.css?v=20261108-1\">\n<link rel=\"stylesheet\" href=\"/noir-landing.css?v=20261108-1\">\n<link rel=\"stylesheet\" href=\"/strategy-command.css?v=20261108-1\">\n</head>\n<body>\n<svg style=\"display:none\" aria-hidden=\"true\"><defs>\n",
-          "baseline": "<link rel=\"stylesheet\" href=\"/ux-tactics.css?v=20261024-2\">\n<link rel=\"stylesheet\" href=\"/ux-investigation.css?v=20261024-2\">\n<link rel=\"stylesheet\" href=\"/ux-coordination.css?v=20261024-2\">\n</head>\n<body>\n<svg style=\"display:none\" aria-hidden=\"true\"><defs>\n"
+          "at": 106701,
+          "current": "<link rel=\"stylesheet\" href=\"/ux-quests.css?v=20261106-1\">\n<link rel=\"stylesheet\" href=\"/ux-quest-quality.css?v=20261107-1\">\n<link rel=\"stylesheet\" href=\"/ux-clues.css?v=20261106-1\">\n<link rel=\"stylesheet\" href=\"/ux-task-puzzles.css?v=20261110-1\">\n<link rel=\"stylesheet\" href=\"/ux-community.css?v=20261025-1\">\n<link rel=\"stylesheet\" href=\"/ux-tactics.css?v=20261024-2\">\n<link rel=\"stylesheet\" href=\"/ux-investigation.css?v=20261024-2\">\n<link rel=\"stylesheet\" href=\"/ux-coordination.css?v=20261024-2\">\n<link rel=\"stylesheet\" href=\"/noir-ui.css?v=20261108-1\">\n<link rel=\"stylesheet\" href=\"/noir-landing.css?v=20261108-1\">\n<link rel=\"stylesheet\" href=\"/strategy-command.css?v=20261108-1\">\n</head>\n<body>\n<svg style=\"display:none\" aria-hidden=\"true\"><defs>\n",
+          "baseline": "<link rel=\"stylesheet\" href=\"/ux-quests.css?v=20261106-1\">\n<link rel=\"stylesheet\" href=\"/ux-quest-quality.css?v=20261107-1\">\n<link rel=\"stylesheet\" href=\"/ux-clues.css?v=20261106-1\">\n<link rel=\"stylesheet\" href=\"/ux-community.css?v=20261025-1\">\n<link rel=\"stylesheet\" href=\"/ux-tactics.css?v=20261024-2\">\n<link rel=\"stylesheet\" href=\"/ux-investigation.css?v=20261024-2\">\n<link rel=\"stylesheet\" href=\"/ux-coordination.css?v=20261024-2\">\n</head>\n<body>\n<svg style=\"display:none\" aria-hidden=\"true\"><defs>\n"
         },
         {
-          "at": 143203,
+          "at": 143268,
           "current": "  <div id=\"status-strips\"><div id=\"vitals\" aria-label=\"Current resources\"></div></div>\n  <div id=\"layout\">\n    <aside id=\"city-sidebar\" aria-label=\"City navigation and character\">\n      <details id=\"city-directory\">\n        <summary>Explore the city</summary>\n        <div class=\"city-directory-body\">\n          <div class=\"city-nav-label\">THE CITY</div>\n",
           "baseline": "  <div id=\"status-strips\"><div id=\"vitals\" aria-label=\"Current resources\"></div></div>\n  <div id=\"layout\">\n    <aside id=\"city-sidebar\" aria-label=\"City navigation and character\">\n      <details id=\"city-directory\" open>\n        <summary>Explore the city</summary>\n        <div class=\"city-directory-body\">\n          <div class=\"city-nav-label\">THE CITY</div>\n"
         },
         {
-          "at": 144774,
+          "at": 144839,
           "current": "      <div id=\"tabart\" class=\"hidden\"><span></span></div>\n      <div id=\"coachwrap\"></div>\n      <details id=\"ux-screen-tools\" class=\"ux-screen-tools\"><summary>Screen tools <span>Shortcuts, reading &amp; workspace</span></summary><div id=\"screen-tool-content\" class=\"ux-screen-tools-body\"><nav id=\"action-readiness\" class=\"hidden\" aria-label=\"Activity timers and options\"></nav></div></details>\n      <!-- #introwrap stays INSIDE #tabbodies but OUTSIDE the per-tab divs. The shell places\n           first-visit reference below the playable content; screen renderers cannot resurrect\n           a dismissed introduction when they refresh their own #tab-<id>. -->\n      <div id=\"tabbodies\"><div id=\"introwrap\"></div></div>\n    </div>\n\n",
           "baseline": "      <div id=\"tabart\" class=\"hidden\"><span></span></div>\n      <div id=\"coachwrap\"></div>\n      <details id=\"ux-screen-tools\" class=\"ux-screen-tools\"><summary>Screen tools <span>Shortcuts, reading &amp; workspace</span></summary><div id=\"screen-tool-content\" class=\"ux-screen-tools-body\"><nav id=\"action-readiness\" class=\"hidden\" aria-label=\"Activity timers and options\"></nav></div></details>\n      <!-- #introwrap lives INSIDE #tabbodies (first child) but OUTSIDE the per-tab divs: the\n           first-visit card counts as the screen's own content (it explains the screen you just\n           tapped), while renderers — which rewrite only their #tab-<id> — can never resurrect a\n           dismissed card mid-visit. -->\n      <div id=\"tabbodies\"><div id=\"introwrap\"></div></div>\n    </div>\n\n"
         },
         {
-          "at": 158121,
-          "current": "<script src=\"/ux-tactics.js?v=20261105-noir-release\"></script>\n<script src=\"/ux-investigation.js?v=20261024-2\"></script>\n<script src=\"/ux-coordination.js?v=20261024-2\"></script>\n<script src=\"/noir-shell.js?v=20261108-1\"></script>\n<script src=\"/strategy-command.js?v=20261108-1\"></script>\n<script>\n(() => {\n  // Optional guidance must not stop core play if its separate script cannot load.\n",
-          "baseline": "<script src=\"/ux-tactics.js?v=20261105-noir-release\"></script>\n<script src=\"/ux-investigation.js?v=20261024-2\"></script>\n<script src=\"/ux-coordination.js?v=20261024-2\"></script>\n<script>\n(() => {\n  // Optional guidance must not stop core play if its separate script cannot load.\n"
+          "at": 157973,
+          "current": "<script src=\"/ux-quest-quality.js?v=20261107-1\"></script>\n<script src=\"/ux-quests.js?v=20261107-1\"></script>\n<script src=\"/ux-clues.js?v=20261106-1\"></script>\n<script src=\"/ux-task-puzzles.js?v=20261110-1\"></script>\n<script src=\"/ux-community.js?v=20261025-1\"></script>\n<script src=\"/ux-tactics.js?v=20261105-noir-release\"></script>\n<script src=\"/ux-investigation.js?v=20261024-2\"></script>\n<script src=\"/ux-coordination.js?v=20261024-2\"></script>\n<script src=\"/noir-shell.js?v=20261108-1\"></script>\n<script src=\"/strategy-command.js?v=20261108-1\"></script>\n<script>\n(() => {\n  // Optional guidance must not stop core play if its separate script cannot load.\n",
+          "baseline": "<script src=\"/ux-quest-quality.js?v=20261107-1\"></script>\n<script src=\"/ux-quests.js?v=20261107-1\"></script>\n<script src=\"/ux-clues.js?v=20261106-1\"></script>\n<script src=\"/ux-community.js?v=20261025-1\"></script>\n<script src=\"/ux-tactics.js?v=20261105-noir-release\"></script>\n<script src=\"/ux-investigation.js?v=20261024-2\"></script>\n<script src=\"/ux-coordination.js?v=20261024-2\"></script>\n<script>\n(() => {\n  // Optional guidance must not stop core play if its separate script cannot load.\n"
         },
         {
-          "at": 584455,
+          "at": 584577,
           "current": "    if (h.get('token') || h.get('claimed') || h.get('autherr')) history.replaceState(null, '', location.pathname);\n  })();\n  const startXOAuth = async () => {\n    const inviteCode = $('#invite-code')?.value?.trim();\n    const r = await api('POST', '/v1/auth/x/start', inviteCode ? { inviteCode } : {});\n    if (r.body?.url) location.href = r.body.url;\n",
           "baseline": "    if (h.get('token') || h.get('claimed') || h.get('autherr')) history.replaceState(null, '', location.pathname);\n  })();\n  const startXOAuth = async () => {\n    if (!token && !await verifyAge()) return;\n    const inviteCode = $('#invite-code')?.value?.trim();\n    const r = await api('POST', '/v1/auth/x/start', inviteCode ? { inviteCode } : {});\n    if (r.body?.url) location.href = r.body.url;\n"
         },
         {
-          "at": 589395,
+          "at": 589517,
           "current": "    else toast(r.body?.message || r.body?.error || 'no dice', true);\n    return false;\n  };\n  let guestPending = false;\n  const enterAsGhost = async () => {\n    if (guestPending) return;\n",
           "baseline": "    else toast(r.body?.message || r.body?.error || 'no dice', true);\n    return false;\n  };\n  let ageChecked = 0;\n  async function verifyAge() {\n    if (ageChecked > Date.now()) return true;\n    if (sessionStorage.getItem('omerta_age_blocked')) {\n      toast('Account creation is unavailable. See the privacy page for help.', true);\n      return false;\n    }\n    return new Promise((resolve) => {\n      const dialog = document.createElement('dialog');\n      dialog.className = 'modal';\n      dialog.setAttribute('aria-labelledby', 'age-title');\n      dialog.innerHTML = `<h2 id=\"age-title\">Your birth date</h2><p>Enter your complete birth date to continue. We check it without saving it.</p><form><label for=\"age-date\">Birth date</label><input id=\"age-date\" name=\"birthDate\" type=\"date\" required min=\"${new Date().getFullYear() - 120}-01-01\" max=\"${new Date().toISOString().slice(0, 10)}\"><p id=\"age-error\" role=\"alert\"></p><p><a href=\"/privacy\">Privacy policy and help</a></p><button class=\"act\" type=\"submit\">Continue</button><button class=\"act\" type=\"button\" id=\"age-cancel\">Cancel</button></form>`;\n      document.body.append(dialog);\n      const finish = (ok) => { dialog.close(); dialog.remove(); resolve(ok); };\n      dialog.addEventListener('cancel', (event) => { event.preventDefault(); finish(false); });\n      dialog.querySelector('#age-cancel').onclick = () => finish(false);\n      dialog.querySelector('form').onsubmit = async (event) => {\n        event.preventDefault();\n        const input = dialog.querySelector('input');\n        const birthDate = input.value;\n        input.value = '';\n        const result = await api('POST', '/v1/age-check', { birthDate });\n        if (result.code < 400) { ageChecked = Date.now() + 14 * 60 * 1000; finish(true); }\n        else if (result.body?.error === 'age_ineligible') {\n          sessionStorage.setItem('omerta_age_blocked', '1');\n          dialog.querySelector('form').innerHTML = '<p role=\"alert\">Account creation is unavailable. No birth date was saved.</p><p><a href=\"/privacy\">Privacy policy and help</a></p><button type=\"button\" class=\"act\">Close</button>';\n          dialog.querySelector('button').onclick = () => finish(false);\n        } else dialog.querySelector('#age-error').textContent = result.body?.message || 'Please try again.';\n      };\n      dialog.showModal();\n      dialog.querySelector('input').focus();\n    });\n  }\n  let guestPending = false;\n  const enterAsGhost = async () => {\n    if (guestPending) return;\n"
         },
         {
-          "at": 589607,
+          "at": 589729,
           "current": "    const controls = ['#btn-guest', '#btn-guest2'].map(selector => $(selector)).filter(Boolean);\n    const labels = controls.map(button => button.textContent);\n    const status = $('#guest-status');\n    status.hidden = false; status.textContent = 'Opening your street…';\n    controls.forEach(button => { button.disabled = true; button.setAttribute('aria-busy', 'true'); button.textContent = 'Entering the city…'; });\n    try {\n      const inviteCode = undefined;\n      const result = await api('POST', '/v1/auth/guest', inviteCode ? { inviteCode } : {});\n      globalThis.OmertaSiteAnalytics?.signupResult?.(result);\n",
           "baseline": "    const controls = ['#btn-guest', '#btn-guest2'].map(selector => $(selector)).filter(Boolean);\n    const labels = controls.map(button => button.textContent);\n    const status = $('#guest-status');\n    status.hidden = false; status.textContent = 'Checking eligibility…';\n    controls.forEach(button => { button.disabled = true; button.setAttribute('aria-busy', 'true'); button.textContent = 'Entering the city…'; });\n    try {\n      if (!await verifyAge()) { status.textContent = ''; status.hidden = true; return; }\n      status.textContent = 'Opening your street…';\n      const inviteCode = undefined;\n      const result = await api('POST', '/v1/auth/guest', inviteCode ? { inviteCode } : {});\n      globalThis.OmertaSiteAnalytics?.signupResult?.(result);\n"
         },
         {
-          "at": 593556,
+          "at": 593678,
           "current": "  $('#btn-provider').onclick = async () => {\n    const provider = $('#auth-provider').value, tok = $('#auth-token').value.trim();\n    if (!tok) return toast('paste a provider token first', true);\n    const inviteCode = undefined;\n    landToken(await api(`POST`, `/v1/auth/${provider}`, { token: tok, ...(inviteCode ? { inviteCode } : {}) }));\n  };\n",
           "baseline": "  $('#btn-provider').onclick = async () => {\n    const provider = $('#auth-provider').value, tok = $('#auth-token').value.trim();\n    if (!tok) return toast('paste a provider token first', true);\n    if (!await verifyAge()) return;\n    const inviteCode = undefined;\n    landToken(await api(`POST`, `/v1/auth/${provider}`, { token: tok, ...(inviteCode ? { inviteCode } : {}) }));\n  };\n"
         },
         {
-          "at": 958490,
+          "at": 819911,
+          "current": "      `<button class=\"act ${style}\" data-operation-label=\"${esc(crime.name)}: ${approach}\" aria-describedby=\"${termsId}\" ${compact\n        ? `data-city-crime=\"${crime.id}\" data-city-approach=\"${approach}\"`\n        : `data-do=\"POST /v1/crimes/${crime.id}\" data-body='{\"approach\":\"${approach}\"}'`}${blocked || !approaches[approach] ? ` disabled aria-disabled=\"true\" title=\"${esc(blocked || 'Refresh to load job terms.')}\"` : ''}>${label}${compact ? `<small>${approach === 'quiet' ? 'safer · smaller win' : approach === 'loud' ? '+' + Number(loud.heat || 0) + ' heat' : 'baseline'}</small>` : ''}</button>`).join('');\n    const preparation = crime.puzzle ? `<button type=\"button\" class=\"act\" data-task-crime=\"${crime.id}\"${blocked ? ' disabled' : ''}>Prepare ${esc(crime.name)} (optional puzzle)</button>` : '';\n    return { terms, choices: choices + preparation, blocked };\n  }\n\n  function cityActorScope() {\n",
+          "baseline": "      `<button class=\"act ${style}\" data-operation-label=\"${esc(crime.name)}: ${approach}\" aria-describedby=\"${termsId}\" ${compact\n        ? `data-city-crime=\"${crime.id}\" data-city-approach=\"${approach}\"`\n        : `data-do=\"POST /v1/crimes/${crime.id}\" data-body='{\"approach\":\"${approach}\"}'`}${blocked || !approaches[approach] ? ` disabled aria-disabled=\"true\" title=\"${esc(blocked || 'Refresh to load job terms.')}\"` : ''}>${label}${compact ? `<small>${approach === 'quiet' ? 'safer · smaller win' : approach === 'loud' ? '+' + Number(loud.heat || 0) + ' heat' : 'baseline'}</small>` : ''}</button>`).join('');\n    return { terms, choices, blocked };\n  }\n\n  function cityActorScope() {\n"
+        },
+        {
+          "at": 930930,
+          "current": "        return `<div class=\"card\"><span class=\"t\">${esc(m.name)}</span>\n          <div class=\"d\">${m.brief || ''}</div>\n          <div class=\"d\">needs lvl ${m.req?.lvl || 1}${statReq ? ` · ${statReq}` : ''} · pays $${fmt(m.reward?.cash || 0)}${m.reward?.omr ? ` + ${m.reward.omr} $OMR` : ''}${m.reward?.title ? ' + a title' : ''}</div>\n          <button class=\"act\" data-mission=\"${m.id}\"${meets && !missionCd ? '' : ' disabled'}>${m.puzzle?.required ? 'open task puzzle' : 'attempt'}${\n            !meets ? ' (train up first)' : missionCd ? ` (next job in ${mins(missionCd)})` : ''}</button></div>`;\n      }).join('') || '<span class=\"d\" style=\"color:var(--dim)\">level up to unlock your first mission</span>'}</div>`;\n    const remainingTasks = obTasks.filter((x) => x !== next);\n",
+          "baseline": "        return `<div class=\"card\"><span class=\"t\">${esc(m.name)}</span>\n          <div class=\"d\">${m.brief || ''}</div>\n          <div class=\"d\">needs lvl ${m.req?.lvl || 1}${statReq ? ` · ${statReq}` : ''} · pays $${fmt(m.reward?.cash || 0)}${m.reward?.omr ? ` + ${m.reward.omr} $OMR` : ''}${m.reward?.title ? ' + a title' : ''}</div>\n          <button class=\"act\" data-mission=\"${m.id}\"${meets && !missionCd ? '' : ' disabled'}>attempt${\n            !meets ? ' (train up first)' : missionCd ? ` (next job in ${mins(missionCd)})` : ''}</button></div>`;\n      }).join('') || '<span class=\"d\" style=\"color:var(--dim)\">level up to unlock your first mission</span>'}</div>`;\n    const remainingTasks = obTasks.filter((x) => x !== next);\n"
+        },
+        {
+          "at": 941794,
+          "current": "    t.querySelectorAll('[data-crgo]').forEach((b) => b.onclick = () => { setTab(b.dataset.crgo); spotlight(SPOT[b.dataset.crgo]); });\n    const ht = t.querySelector('#howto-tour'); if (ht) ht.onclick = (e) => { e.preventDefault(); openTour(); };\n    wireSects(t);\n    t.querySelectorAll('[data-mission]').forEach((b) => b.onclick = () => {\n      const mission = rules?.missions?.find(m => m.id === b.dataset.mission);\n      if (mission?.puzzle?.required) openTaskPuzzle({ selector: { scope: 'mission', targetId: mission.id }, path: `/v1/missions/${mission.id}`, label: mission.name, submitLabel: 'Solve and attempt mission', trigger: b });\n      else act('POST', `/v1/missions/${b.dataset.mission}`, {}).then(() => renderStart());\n    });\n    t.querySelectorAll('[data-swclaim]').forEach((b) => b.onclick = () => {\n      const inp = t.querySelector(`.sw-proof[data-for=\"${b.dataset.swclaim}\"]`);\n      const proof = inp ? inp.value.trim() : '';\n",
+          "baseline": "    t.querySelectorAll('[data-crgo]').forEach((b) => b.onclick = () => { setTab(b.dataset.crgo); spotlight(SPOT[b.dataset.crgo]); });\n    const ht = t.querySelector('#howto-tour'); if (ht) ht.onclick = (e) => { e.preventDefault(); openTour(); };\n    wireSects(t);\n    t.querySelectorAll('[data-mission]').forEach((b) => b.onclick = () => act('POST', `/v1/missions/${b.dataset.mission}`, {}).then(() => renderStart()));\n    t.querySelectorAll('[data-swclaim]').forEach((b) => b.onclick = () => {\n      const inp = t.querySelector(`.sw-proof[data-for=\"${b.dataset.swclaim}\"]`);\n      const proof = inp ? inp.value.trim() : '';\n"
+        },
+        {
+          "at": 959196,
           "current": "    // but draws law heat + a harder bust. Same cash EV — the choice is your risk appetite.\n    const crimeCard = (c) => {\n      const { terms, choices } = coreCrimeMarkup(c);\n      return `<article class=\"card noir-job-card\">${aart('crime', c.id)}<div class=\"noir-job-content\">\n        <div class=\"noir-job-eyebrow\">Street job · Level ${c.lvl}</div><span class=\"t\">${esc(c.name)}</span>\n        ${terms}<div class=\"verbrow\">${choices}</div></div></article>`;\n    };\n    const allCrimes = [...(rules?.crimes || [])].sort((a, b) => a.lvl - b.lvl);\n    const lvl = me?.level || 1;\n",
           "baseline": "    // but draws law heat + a harder bust. Same cash EV — the choice is your risk appetite.\n    const crimeCard = (c) => {\n      const { terms, choices } = coreCrimeMarkup(c);\n      return `<div class=\"card\">${aart('crime', c.id)}<span class=\"t\">${esc(c.name)}</span>${terms}<div class=\"verbrow\">${choices}</div></div>`;\n    };\n    const allCrimes = [...(rules?.crimes || [])].sort((a, b) => a.lvl - b.lvl);\n    const lvl = me?.level || 1;\n"
         },
         {
-          "at": 973694,
+          "at": 974400,
           "current": "    // jobs + the bank/map lead the screen; everything else is a labeled drawer that stays how you\n    // left it. One glance = act; the depth is a click away, not a scroll away.\n    t.innerHTML = `\n      <div class=\"noir-jobs-heading\"><h2>Find your next score</h2><span>${best.length} available · Level ${lvl}</span></div>\n      ${streetActionClock()}\n      <div class=\"grid noir-job-grid\">${crimes || restCrimes && '<span class=\"d\" style=\"color:var(--dim)\">no jobs at your level yet — open the full book below</span>' || ''}</div>\n      ${rest.length ? sect('crimes-all', 'The Full Book', `every job in the city (${allCrimes.length})`, `<div class=\"grid noir-job-grid\">${restCrimes}</div>`) : ''}\n\n${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [`Pocket: ${guideMoney(b.pocket)}. Bank total: ${guideMoney(b.total)}.`, `Cleared: ${guideMoney(b.cleared)}. In transit: ${guideMoney(b.transit)}. Clearing: ${b.seconds == null ? 'unknown' : minsTxt(b.seconds)}.`, 'A killer can loot pocket cash and deposits in transit. Cleared cash avoids that cut. All bank cash is lost on death.'];})())}\n      <div class=\"card\" style=\"display:flex;flex-wrap:wrap;gap:8px;align-items:center\">\n",
           "baseline": "    // jobs + the bank/map lead the screen; everything else is a labeled drawer that stays how you\n    // left it. One glance = act; the depth is a click away, not a scroll away.\n    t.innerHTML = `\n      <h2 style=\"margin-top:14px\">Crimes <span class=\"d\" style=\"color:var(--dim);font-size:12.5px\">— your best jobs at level ${lvl}</span></h2>\n      ${streetActionClock()}\n      <div class=\"grid\">${crimes || restCrimes && '<span class=\"d\" style=\"color:var(--dim)\">no jobs at your level yet — open the full book below</span>' || ''}</div>\n      ${rest.length ? sect('crimes-all', 'The Full Book', `every job in the city (${allCrimes.length})`, `<div class=\"grid\">${restCrimes}</div>`) : ''}\n\n${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [`Pocket: ${guideMoney(b.pocket)}. Bank total: ${guideMoney(b.total)}.`, `Cleared: ${guideMoney(b.cleared)}. In transit: ${guideMoney(b.transit)}. Clearing: ${b.seconds == null ? 'unknown' : minsTxt(b.seconds)}.`, 'A killer can loot pocket cash and deposits in transit. Cleared cash avoids that cut. All bank cash is lost on death.'];})())}\n      <div class=\"card\" style=\"display:flex;flex-wrap:wrap;gap:8px;align-items:center\">\n"
         },
         {
-          "at": 1389861,
+          "at": 977015,
+          "current": "        <span class=\"d\" style=\"margin-left:6px\">${['◉', '◉', '◉'].map((d, i) => `<span style=\"color:${i < hu.step ? 'var(--ok)' : 'var(--dim)'}\">${d}</span>`).join('​')}</span>\n        <div class=\"d\">${esc(hu.what || '')}</div>\n        ${hu.done ? '' : `<div style=\"margin-top:6px\">\n          ${hu.here ? `<button class=\"act prime\" id=\"hu-go\"${hu.legworkDone === false ? ' disabled' : ''}>${hu.puzzle?.required ? 'OPEN CHECK-IN PUZZLE' : 'CHECK IN'}${hu.step === 2 ? ` — collect $${fmt(hu.pay || 0)}` : ''}</button>${hu.legworkDone === false ? ` <span class=\"d\" style=\"font-size:11px\">the contact wants the work done first — ${esc(hu.legwork || 'pull a job')}</span>` : ''}`\n            : `<button class=\"act\" data-do=\"POST /v1/travel/${hu.district}\">travel to ${esc(hu.districtName || '')}</button> <span class=\"d\" style=\"font-size:11px\">then check in there</span>`}\n        </div>`}\n      </div>` : ''}\n",
+          "baseline": "        <span class=\"d\" style=\"margin-left:6px\">${['◉', '◉', '◉'].map((d, i) => `<span style=\"color:${i < hu.step ? 'var(--ok)' : 'var(--dim)'}\">${d}</span>`).join('​')}</span>\n        <div class=\"d\">${esc(hu.what || '')}</div>\n        ${hu.done ? '' : `<div style=\"margin-top:6px\">\n          ${hu.here ? `<button class=\"act prime\" id=\"hu-go\"${hu.legworkDone === false ? ' disabled' : ''}>CHECK IN${hu.step === 2 ? ` — collect $${fmt(hu.pay || 0)}` : ''}</button>${hu.legworkDone === false ? ` <span class=\"d\" style=\"font-size:11px\">the contact wants the work done first — ${esc(hu.legwork || 'pull a job')}</span>` : ''}`\n            : `<button class=\"act\" data-do=\"POST /v1/travel/${hu.district}\">travel to ${esc(hu.districtName || '')}</button> <span class=\"d\" style=\"font-size:11px\">then check in there</span>`}\n        </div>`}\n      </div>` : ''}\n"
+        },
+        {
+          "at": 985310,
+          "current": "        if (dg) dg.onclick = () => act('POST', '/v1/clues/dig', {}).then(() => renderStreets());\n      } }\n    // THE HUSTLE — check in at the current stop\n    { const hg = t.querySelector('#hu-go'); if (hg) hg.onclick = () => hu.puzzle?.required\n      ? openTaskPuzzle({ selector: { scope: 'hustle', targetId: 'legwork' }, path: '/v1/hustle/advance', label: 'Hustle legwork check-in', submitLabel: 'Solve and check in', trigger: hg })\n      : act('POST', '/v1/hustle/advance', {}).then(() => renderStreets()); }\n    t.querySelectorAll('[data-corner-take]').forEach((b) => b.onclick = () =>\n      act('POST', `/v1/corner/${b.dataset.cornerTake}/accept`, {}).then(() => renderStreets()));\n    t.querySelectorAll('[data-corner-claim]').forEach((b) => b.onclick = () =>\n",
+          "baseline": "        if (dg) dg.onclick = () => act('POST', '/v1/clues/dig', {}).then(() => renderStreets());\n      } }\n    // THE HUSTLE — check in at the current stop\n    { const hg = t.querySelector('#hu-go'); if (hg) hg.onclick = () => act('POST', '/v1/hustle/advance', {}).then(() => renderStreets()); }\n    t.querySelectorAll('[data-corner-take]').forEach((b) => b.onclick = () =>\n      act('POST', `/v1/corner/${b.dataset.cornerTake}/accept`, {}).then(() => renderStreets()));\n    t.querySelectorAll('[data-corner-claim]').forEach((b) => b.onclick = () =>\n"
+        },
+        {
+          "at": 1340980,
+          "current": "      act('POST', '/v1/pen/talk', {}).then(() => renderPen()); }\n  }\n\n  let taskPuzzleUI = null;\n  function openTaskPuzzle(options) {\n    taskPuzzleUI ||= window.createOmertaTaskPuzzles({ read: api, issue: api, action: act,\n      getActor: () => `${me?.id}:${me?.generation}`, refresh: async () => { await refresh(); renderActive({ afterAction: true }); },\n      focusFallback: () => { const panel = document.getElementById(`tab-${currentTab}`); const control = [...(panel?.querySelectorAll('button:not(:disabled), summary') || [])].find(node => node.getClientRects().length); (control || panel)?.focus(); } });\n    taskPuzzleUI.open(options);\n  }\n  document.addEventListener('click', event => {\n    const button = event.target?.closest?.('[data-task-crime]');\n    if (!button || button.disabled) return;\n    const crime = rules?.crimes?.find(c => c.id === button.dataset.taskCrime);\n    if (crime) openTaskPuzzle({ selector: { scope: 'crime', targetId: crime.id }, path: `/v1/crimes/${crime.id}`,\n      label: `Prepare ${crime.name}`, submitLabel: 'Solve and attempt crime', trigger: button, body: { approach: 'standard' }, approaches: rules?.crimeApproaches });\n  });\n\n  // data-do buttons (POST/GET; an optional data-body='{...}' rides along).\n  // A button may also carry data-confirm=\"Title|the consequence\" — most of the irreversible verbs\n  // in the game are declarative data-do buttons, so the guard has to live here rather than being\n",
+          "baseline": "      act('POST', '/v1/pen/talk', {}).then(() => renderPen()); }\n  }\n\n  // data-do buttons (POST/GET; an optional data-body='{...}' rides along).\n  // A button may also carry data-confirm=\"Title|the consequence\" — most of the irreversible verbs\n  // in the game are declarative data-do buttons, so the guard has to live here rather than being\n"
+        },
+        {
+          "at": 1391937,
           "current": "  if (workspaceUX) uxModules.push(workspaceUX);\n  for (const factory of [window.createOmertaFeedback, window.createOmertaProgression, window.createOmertaSocial, window.createOmertaNavigation,\n    window.createOmertaTactics, window.createOmertaInvestigation, window.createOmertaCoordination,\n    window.createOmertaFeel, window.createOmertaTools, window.createOmertaIdentity, window.createOmertaStory, window.createOmertaQuests, window.createOmertaCommunity, window.createOmertaWorld, window.createOmertaNoirShell, window.createOmertaStrategyCommand]) {\n    if (!factory) continue;\n    try { const module = factory(uxContext); uxModules.push(module); if (factory === window.createOmertaFeedback) feedbackUX = module; }\n    catch (error) { console.warn('UI enhancement unavailable', error); }\n",
           "baseline": "  if (workspaceUX) uxModules.push(workspaceUX);\n  for (const factory of [window.createOmertaFeedback, window.createOmertaProgression, window.createOmertaSocial, window.createOmertaNavigation,\n    window.createOmertaTactics, window.createOmertaInvestigation, window.createOmertaCoordination,\n    window.createOmertaFeel, window.createOmertaTools, window.createOmertaIdentity, window.createOmertaStory, window.createOmertaQuests, window.createOmertaCommunity, window.createOmertaWorld]) {\n    if (!factory) continue;\n    try { const module = factory(uxContext); uxModules.push(module); if (factory === window.createOmertaFeedback) feedbackUX = module; }\n    catch (error) { console.warn('UI enhancement unavailable', error); }\n"
         },
         {
-          "at": 1390656,
+          "at": 1392732,
           "current": "  // The shell reveals optional controls without replacing their original action handlers.\n  const gameMenu = $('#game-menu'), cityDirectory = $('#city-directory');\n  const wideNavigation = matchMedia('(min-width: 1001px)');\n  const syncDirectory = () => { cityDirectory.open = false; };\n  syncDirectory(); wideNavigation.addEventListener('change', syncDirectory);\n  function closeGameMenu(focus = false) {\n    if (!gameMenu.open) return;\n",
           "baseline": "  // The shell reveals optional controls without replacing their original action handlers.\n  const gameMenu = $('#game-menu'), cityDirectory = $('#city-directory');\n  const wideNavigation = matchMedia('(min-width: 1001px)');\n  const syncDirectory = () => { cityDirectory.open = wideNavigation.matches; };\n  syncDirectory(); wideNavigation.addEventListener('change', syncDirectory);\n  function closeGameMenu(focus = false) {\n    if (!gameMenu.open) return;\n"
         }
@@ -349,12 +467,59 @@ export const AGE_REMOVAL_SOURCE = freeze({
         }
       ]
     },
+    "public/wiki.html": {
+      "current": {
+        "mode": "100644",
+        "blob": "8660ac659f336ffaa4b2d3cf3aa2ec98da5cceba",
+        "sha256": "0f5236174c06c330cdaa53eb8475110cfda07883c4328a96decb34998fd52c80",
+        "bytes": 253971
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "e68cd78e93077bc31a4b0d48401ed34065299977",
+        "sha256": "5fcd9826e5cfa5beb6b7330d50fc41cc319e5647734111c2479104efd72f4673",
+        "bytes": 252178
+      },
+      "inverses": [
+        {
+          "at": 20361,
+          "current": "  return `${from ? '…' : ''}${escText(before)}<mark>${escText(match)}</mark>${escText(after)}${to < clean.length ? '…' : ''}`;\n};\nconst SECTIONS = [\n  { id: 'task-puzzles', group: 'Start', title: 'Task puzzles', tag: 'missions, Hustle and optional preparation',\n    html: `<p>Family Missions <code>m2</code>, <code>m11</code>, <code>m12</code> and the Hustle legwork check-in require a short puzzle as well as their normal requirements. Open Family missions on Start Here or the check-in on Streets. The Hustle still needs real legwork and the correct district.</p>\n      <p>Crime cards offer optional preparation with feedback only, never improved odds or rewards. Choose an approach before submitting. <b>Solving and submitting executes the job</b> with its usual resources and risks; closing does not.</p>\n      <p>Choose a patrol start time, build an ordered courier route, match parcels to contacts, or deduce a suspect from evidence. Use touch or Tab, arrow keys, Space and Enter, with hints, visible focus and no dragging or fast reactions. Close with the button or Escape.</p>\n      <p>Refresh and reopening keep the issued challenge and a local answer draft when storage is available. After a lost response, use <b>Check task status</b> to read the receipt without resending. If needed, explicitly retry the exact original submission and request key. A changed occurrence requires <b>Reopen current task</b>; any committed crime attempt invalidates previous preparation.</p>\n      <p>Agents solve the same public constraints: <code>POST /v1/task-puzzles</code> with <code>{scope,targetId}</code>, or read with <code>GET /v1/task-puzzles?scope=…&amp;targetId=…</code>. Submit <code>puzzle:{id,answer}</code> with the existing job request. Verification and consumption commit with the job. See <code>/openapi.json</code> and the <a href=\"/agents#task-puzzles\">agent guide</a>. Puzzles are gameplay, not human verification.</p>` },\n  { id: 'welcome', group: 'Start', title: 'The city', tag: 'rules and reference',\n    html: `<p class=\"lead\">OMERTÀ is a persistent multiplayer mafia RPG. The server runs the rules. You start in the Docks with $500 and share the city with human and autonomous players. Other players can kill your character; your account and bloodline records survive.</p>\n      <p>Use the search box to find a system, risk, or route. The numbers here are the current settings and can change. \"Level N\" is your\n",
+          "baseline": "  return `${from ? '…' : ''}${escText(before)}<mark>${escText(match)}</mark>${escText(after)}${to < clean.length ? '…' : ''}`;\n};\nconst SECTIONS = [\n  { id: 'welcome', group: 'Start', title: 'The city', tag: 'rules and reference',\n    html: `<p class=\"lead\">OMERTÀ is a persistent multiplayer mafia RPG. The server runs the rules. You start in the Docks with $500 and share the city with human and autonomous players. Other players can kill your character; your account and bloodline records survive.</p>\n      <p>Use the search box to find a system, risk, or route. The numbers here are the current settings and can change. \"Level N\" is your\n"
+        }
+      ]
+    },
+    "schema.sql": {
+      "current": {
+        "mode": "100755",
+        "blob": "511950e2a68d50cebebe6139098a5dbb609117c9",
+        "sha256": "b5c66d128de9b730bac19b135a8d13791f3bc70ba4a27818abec7de5141564de",
+        "bytes": 627053
+      },
+      "baseline": {
+        "mode": "100755",
+        "blob": "86b671c5d6f6928ff3e66f1ad0fca5f46a7364e3",
+        "sha256": "659235a1735d24dbebc5f9b4dfcff8a58ed766a27fd3ae32fc6c6d2ec77006dc",
+        "bytes": 625914
+      },
+      "inverses": [
+        {
+          "at": 135965,
+          "current": "  outcome TEXT NOT NULL\n);\n\n-- A durable crime occurrence, including failed attempts. Direct SQL prevents a\n-- stale character snapshot from clobbering it; prepared answers never bind to clocks.\nALTER TABLE characters ADD COLUMN IF NOT EXISTS crime_puzzle_revision BIGINT NOT NULL DEFAULT 0;\n\n-- ── Indexes & integrity (audit hardening) — after all tables exist ──\n-- No two LIVING characters may share a name (referral codes resolve by name, §7.13).\nCREATE UNIQUE INDEX IF NOT EXISTS ux_char_name_alive ON characters (name) WHERE alive;\n",
+          "baseline": "  outcome TEXT NOT NULL\n);\n\n-- ── Indexes & integrity (audit hardening) — after all tables exist ──\n-- No two LIVING characters may share a name (referral codes resolve by name, §7.13).\nCREATE UNIQUE INDEX IF NOT EXISTS ux_char_name_alive ON characters (name) WHERE alive;\n"
+        },
+        {
+          "at": 623203,
+          "current": "  solved_at TIMESTAMPTZ,\n  PRIMARY KEY (account_id,day_ordinal)\n);\n\n-- Durable gameplay task puzzles. Private payloads and consumed receipts are retained;\n-- trusted adapters bind occurrences and consume under the job's character transaction.\n-- Issuance history survives estate cleanup under its original character ID, never as heir authority.\nCREATE TABLE IF NOT EXISTS task_puzzles (\n  id TEXT PRIMARY KEY,\n  issue_order BIGSERIAL NOT NULL,\n  character_id TEXT NOT NULL REFERENCES characters(id),\n  scope TEXT NOT NULL,\n  target_id TEXT NOT NULL,\n  context_key TEXT NOT NULL,\n  version INT NOT NULL CHECK (version >= 1),\n  kind TEXT NOT NULL,\n  structural_signature TEXT NOT NULL,\n  puzzle JSONB NOT NULL,\n  issued_at TIMESTAMPTZ NOT NULL DEFAULT now(),\n  consumed_at TIMESTAMPTZ,\n  UNIQUE (character_id, scope, target_id, context_key)\n);\nCREATE INDEX IF NOT EXISTS ix_task_puzzles_recent ON task_puzzles(character_id, issue_order DESC);\n",
+          "baseline": "  solved_at TIMESTAMPTZ,\n  PRIMARY KEY (account_id,day_ordinal)\n);\n"
+        }
+      ]
+    },
     "src/agentgateway.js": {
       "current": {
         "mode": "100644",
-        "blob": "b453f64df26b4a4a42adaf8352e4a1e2a00556b3",
-        "sha256": "1f17ee1bb1550ec60a0d862df77b029c5966d3a4447638dfe89a7e83bf461d50",
-        "bytes": 160952
+        "blob": "a5587d593e9468e8b026de46c578bc3ad6cce516",
+        "sha256": "8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f",
+        "bytes": 161832
       },
       "baseline": {
         "mode": "100644",
@@ -364,29 +529,49 @@ export const AGE_REMOVAL_SOURCE = freeze({
       },
       "inverses": [
         {
-          "at": 4418,
+          "at": 3848,
+          "current": "import { EQUIPMENT_ECONOMY_CONTRACTS, EQUIPMENT_ECONOMY_SCHEMAS } from './equipment-economy-contracts.js';\nimport { COMPANY_WORKFORCE_CONTRACTS, COMPANY_WORKFORCE_SCHEMAS } from './company-workforce-contracts.js';\nimport { DISTRICTS, GOODS } from './rules.js';\nimport { TASK_PUZZLE_CONTRACTS, TASK_PUZZLE_SCHEMAS, TASK_PUZZLE_SUBMISSION } from './task-puzzle-contract.js';\n\n// Routes reachable WITHOUT a player token (the discovery + auth surface). Everything else under\n// /v1 needs the bearer JWT; anything under /v1/mod/ needs the x-mod-key header instead.\n",
+          "baseline": "import { EQUIPMENT_ECONOMY_CONTRACTS, EQUIPMENT_ECONOMY_SCHEMAS } from './equipment-economy-contracts.js';\nimport { COMPANY_WORKFORCE_CONTRACTS, COMPANY_WORKFORCE_SCHEMAS } from './company-workforce-contracts.js';\nimport { DISTRICTS, GOODS } from './rules.js';\n\n// Routes reachable WITHOUT a player token (the discovery + auth surface). Everything else under\n// /v1 needs the bearer JWT; anything under /v1/mod/ needs the x-mod-key header instead.\n"
+        },
+        {
+          "at": 4530,
           "current": "  '/v1/rules', '/v1/catalog', '/v1/arena', '/v1/depots',\n  '/v1/resources/catalog', '/v1/resources/services', '/v1/resources/auctions', '/v1/resources/payments/webhook',\n  '/v1/auth/guest', '/v1/auth/agent', '/v1/auth/x', '/v1/auth/privy',\n  '/v1/access/redeem', '/v1/access/logout', '/privacy', '/terms', '/dmca', '/resources', '/vendor/walletconnect.js',\n]);\n\n// Human/asset routes we don't advertise in the machine API contract (they serve HTML/markdown).\n",
           "baseline": "  '/v1/rules', '/v1/catalog', '/v1/arena', '/v1/depots',\n  '/v1/resources/catalog', '/v1/resources/services', '/v1/resources/auctions', '/v1/resources/payments/webhook',\n  '/v1/auth/guest', '/v1/auth/agent', '/v1/auth/x', '/v1/auth/privy',\n  '/v1/access/redeem', '/v1/access/logout', '/v1/age-check', '/privacy', '/terms', '/dmca', '/resources', '/vendor/walletconnect.js',\n]);\n\n// Human/asset routes we don't advertise in the machine API contract (they serve HTML/markdown).\n"
         },
         {
-          "at": 30621,
+          "at": 23485,
+          "current": "// COMPLETE path discovery; these overlays replace its generic object body where the server itself\n// emits an action that an agent is expected to send back verbatim.\nconst OPERATION_CONTRACTS = {\n  ...TASK_PUZZLE_CONTRACTS,\n  ...QUESTING_CONTRACTS,\n  'GET /v1/deeds/discovery': {\n    operationId: 'getDeedDiscovery',\n",
+          "baseline": "// COMPLETE path discovery; these overlays replace its generic object body where the server itself\n// emits an action that an agent is expected to send back verbatim.\nconst OPERATION_CONTRACTS = {\n  ...QUESTING_CONTRACTS,\n  'GET /v1/deeds/discovery': {\n    operationId: 'getDeedDiscovery',\n"
+        },
+        {
+          "at": 30761,
           "current": "    } },\n    responseSchema: { type: 'object', required: ['token', 'agent'], properties: {\n      token: { type: 'string', description: '90-day agent bearer.' },\n      agent: { const: true, description: 'Permanently classified at creation; excluded from human-only rewards.' },\n    } },\n  },\n  'POST /v1/access/redeem': {\n",
           "baseline": "    } },\n    responseSchema: { type: 'object', required: ['token', 'agent'], properties: {\n      token: { type: 'string', description: '90-day agent bearer.' },\n      agent: { const: true, description: 'Permanently classified at creation; excluded from human-only rewards. No birth date is needed.' },\n    } },\n  },\n  'POST /v1/access/redeem': {\n"
         },
         {
-          "at": 30981,
+          "at": 31121,
           "current": "    requestSchema: { type: 'object', required: ['bootstrapSecret'], properties: {\n      inviteCode: { type: 'string', maxLength: 128, description: 'Unused launch invitation. Reuse the same bootstrapSecret after an ambiguous response.' },\n      bootstrapSecret: { type: 'string', pattern: '^[A-Za-z0-9_-]{43}$', description: 'Persist 32 cryptographically random bytes encoded as unpadded base64url before submitting.' },\n    } },\n  },\n  'POST /v1/access/session': { operationId: 'restoreBrowserAccess', requestSchema: { type: 'object' } },\n  'POST /v1/access/logout': { operationId: 'clearBrowserAccess', requestSchema: { type: 'object' } },\n  'GET /v1/invites': { operationId: 'getLaunchInvites' },\n",
           "baseline": "    requestSchema: { type: 'object', required: ['bootstrapSecret'], properties: {\n      inviteCode: { type: 'string', maxLength: 128, description: 'Unused launch invitation. Reuse the same bootstrapSecret after an ambiguous response.' },\n      bootstrapSecret: { type: 'string', pattern: '^[A-Za-z0-9_-]{43}$', description: 'Persist 32 cryptographically random bytes encoded as unpadded base64url before submitting.' },\n      birthDate: { type: 'string', format: 'date', description: 'Human/operator-supplied date for first account creation; omitted with a valid age-check cookie or existing bootstrap recovery. Never infer a date.' },\n    } },\n  },\n  'POST /v1/age-check': {\n    operationId: 'checkAgeEligibility',\n    requestSchema: { type: 'object', required: ['birthDate'], properties: {\n      birthDate: { type: 'string', format: 'date', description: 'Complete birth date, processed transiently and never saved in account records.' },\n    } },\n    extraResponses: { 403: { description: 'Account creation is unavailable; use the privacy contact for help.' } },\n  },\n  'POST /v1/access/session': { operationId: 'restoreBrowserAccess', requestSchema: { type: 'object' } },\n  'POST /v1/access/logout': { operationId: 'clearBrowserAccess', requestSchema: { type: 'object' } },\n  'GET /v1/invites': { operationId: 'getLaunchInvites' },\n"
         },
         {
-          "at": 152578,
+          "at": 64394,
+          "current": "    operationId: 'commitCrime',\n    requestSchema: { type: 'object', additionalProperties: false, properties: {\n      approach: { type: 'string', enum: ['quiet', 'standard', 'loud'], default: 'standard' },\n      puzzle: { ...TASK_PUZZLE_SUBMISSION, description: 'Optional preparation, feedback only. Issue/resume with scope crime and this crime ID. Any committed crime attempt invalidates previous preparations. Omit for ordinary crime; never changes odds or rewards.' },\n    } },\n  },\n  'POST /v1/market/:id/fill': {\n",
+          "baseline": "    operationId: 'commitCrime',\n    requestSchema: { type: 'object', additionalProperties: false, properties: {\n      approach: { type: 'string', enum: ['quiet', 'standard', 'loud'], default: 'standard' },\n    } },\n  },\n  'POST /v1/market/:id/fill': {\n"
+        },
+        {
+          "at": 81982,
+          "current": "};\n\nconst AGENT_SCHEMAS = {\n  ...TASK_PUZZLE_SCHEMAS,\n  ...QUESTING_SCHEMAS,\n  DeedDiscovery: {\n    type: 'object', required: ['config', 'primaryClaimed', 'currentDistrict', 'questEligible', 'actorEligible', 'buildings'],\n",
+          "baseline": "};\n\nconst AGENT_SCHEMAS = {\n  ...QUESTING_SCHEMAS,\n  DeedDiscovery: {\n    type: 'object', required: ['config', 'primaryClaimed', 'currentDistrict', 'questEligible', 'actorEligible', 'buildings'],\n"
+        },
+        {
+          "at": 153010,
           "current": "      description: 'Autonomous agents are first-class players. New accounts need no invitation. '\n        + 'See /agents for the quickstart, '\n        + '/v1/rules for the machine rulebook, and /llms.txt for the discovery index. New agents use '\n        + 'POST /v1/auth/agent; existing accounts use POST /v1/auth/agent-key. Agents need a linked EVM wallet and a minted character '\n        + 'before on-chain extraction can open for them. Errors are stable string codes: { error, message }.',\n      contact: { url: baseUrl },\n    },\n",
           "baseline": "      description: 'Autonomous agents are first-class players. New accounts need no invitation. '\n        + 'See /agents for the quickstart, '\n        + '/v1/rules for the machine rulebook, and /llms.txt for the discovery index. New agents use '\n        + 'POST /v1/auth/agent without a birth date; existing accounts use POST /v1/auth/agent-key. Agents need a linked EVM wallet and a minted character '\n        + 'before on-chain extraction can open for them. Errors are stable string codes: { error, message }.',\n      contact: { url: baseUrl },\n    },\n"
         },
         {
-          "at": 155512,
-          "current": "- Execute a turn: POST ${baseUrl}/v1/agent/act with the latest \\`{turnId, actionId}\\`; success returns the post-action turn, while \\`409 stale_turn\\` returns a replacement snapshot without executing.\n- Agent Alpha is the owner-operated bounded runner in \\`tools/agent-alpha.js\\`: one durable identity, default one action, finite 1–50 attempts, at least 3100 ms between mutations, no reset, and no fleet, PvP, borrowing, human-faucet, wallet, mint, withdrawal, or replacement automation.\n- [OpenAPI 3.1 spec](${baseUrl}/openapi.json): every route, for your tool framework.\n- New agents: POST ${baseUrl}/v1/auth/agent with a durably saved random 32-byte base64url bootstrapSecret (permanent 🤖 flag, 90-day token). Save the bearer before acknowledging bootstrap; retry the same secret after an ambiguous response. Existing accounts use POST ${baseUrl}/v1/auth/agent-key.\n- Before extraction: link a wallet through POST ${baseUrl}/v1/wallet/challenge and POST ${baseUrl}/v1/wallet/verify, then mint the character through POST ${baseUrl}/v1/character/mint. Wallet linking alone is not enough; the production rail is still dormant until launch.\n\n## Machine rulebook\n",
-          "baseline": "- Execute a turn: POST ${baseUrl}/v1/agent/act with the latest \\`{turnId, actionId}\\`; success returns the post-action turn, while \\`409 stale_turn\\` returns a replacement snapshot without executing.\n- Agent Alpha is the owner-operated bounded runner in \\`tools/agent-alpha.js\\`: one durable identity, default one action, finite 1–50 attempts, at least 3100 ms between mutations, no reset, and no fleet, PvP, borrowing, human-faucet, wallet, mint, withdrawal, or replacement automation.\n- [OpenAPI 3.1 spec](${baseUrl}/openapi.json): every route, for your tool framework.\n- New agents: POST ${baseUrl}/v1/auth/agent with a durably saved random 32-byte base64url bootstrapSecret (permanent 🤖 flag, no birth date, 90-day token). Save the bearer before acknowledging bootstrap; retry the same secret after an ambiguous response. Human signup requires an age check. Existing accounts use POST ${baseUrl}/v1/auth/agent-key.\n- Before extraction: link a wallet through POST ${baseUrl}/v1/wallet/challenge and POST ${baseUrl}/v1/wallet/verify, then mint the character through POST ${baseUrl}/v1/character/mint. Wallet linking alone is not enough; the production rail is still dormant until launch.\n\n## Machine rulebook\n"
+          "at": 155944,
+          "current": "- Execute a turn: POST ${baseUrl}/v1/agent/act with the latest \\`{turnId, actionId}\\`; success returns the post-action turn, while \\`409 stale_turn\\` returns a replacement snapshot without executing.\n- Agent Alpha is the owner-operated bounded runner in \\`tools/agent-alpha.js\\`: one durable identity, default one action, finite 1–50 attempts, at least 3100 ms between mutations, no reset, and no fleet, PvP, borrowing, human-faucet, wallet, mint, withdrawal, or replacement automation.\n- [OpenAPI 3.1 spec](${baseUrl}/openapi.json): every route, for your tool framework.\n- New agents: POST ${baseUrl}/v1/auth/agent with a durably saved random 32-byte base64url bootstrapSecret (permanent 🤖 flag, 90-day token). Save the bearer before acknowledging bootstrap; retry the same secret after an ambiguous response. Existing accounts use POST ${baseUrl}/v1/auth/agent-key.\n- Before extraction: link a wallet through POST ${baseUrl}/v1/wallet/challenge and POST ${baseUrl}/v1/wallet/verify, then mint the character through POST ${baseUrl}/v1/character/mint. Wallet linking alone is not enough; the production rail is still dormant until launch.\n\n## Machine rulebook\n- [Rules](${baseUrl}/v1/rules): crimes, districts, guns, drugs, goods, catalogs, thresholds, paths.\n- Task puzzles: POST /v1/task-puzzles with {scope,targetId} issues or resumes the current puzzle; GET with the same query reads it without issuing. Required for missions m2/m11/m12 and Hustle legwork (targetId legwork, step 1). Submit puzzle:{id,answer} with the existing job action. Crime preparation is optional feedback only. Hints and all constraints are public; agents remain first-class players. Puzzles are gameplay, not human verification.\n- [Capability catalog](${baseUrl}/v1/catalog): level-gated fronts plus direct Phase 1 world-graph route pointers.\n\n## Phase 1 world graph: direct play\n",
+          "baseline": "- Execute a turn: POST ${baseUrl}/v1/agent/act with the latest \\`{turnId, actionId}\\`; success returns the post-action turn, while \\`409 stale_turn\\` returns a replacement snapshot without executing.\n- Agent Alpha is the owner-operated bounded runner in \\`tools/agent-alpha.js\\`: one durable identity, default one action, finite 1–50 attempts, at least 3100 ms between mutations, no reset, and no fleet, PvP, borrowing, human-faucet, wallet, mint, withdrawal, or replacement automation.\n- [OpenAPI 3.1 spec](${baseUrl}/openapi.json): every route, for your tool framework.\n- New agents: POST ${baseUrl}/v1/auth/agent with a durably saved random 32-byte base64url bootstrapSecret (permanent 🤖 flag, no birth date, 90-day token). Save the bearer before acknowledging bootstrap; retry the same secret after an ambiguous response. Human signup requires an age check. Existing accounts use POST ${baseUrl}/v1/auth/agent-key.\n- Before extraction: link a wallet through POST ${baseUrl}/v1/wallet/challenge and POST ${baseUrl}/v1/wallet/verify, then mint the character through POST ${baseUrl}/v1/character/mint. Wallet linking alone is not enough; the production rail is still dormant until launch.\n\n## Machine rulebook\n- [Rules](${baseUrl}/v1/rules): crimes, districts, guns, drugs, goods, catalogs, thresholds, paths.\n- [Capability catalog](${baseUrl}/v1/catalog): level-gated fronts plus direct Phase 1 world-graph route pointers.\n\n## Phase 1 world graph: direct play\n"
         }
       ]
     },
@@ -437,6 +622,145 @@ export const AGE_REMOVAL_SOURCE = freeze({
         }
       ]
     },
+    "src/game.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "c833190107a3f378e3513718d92ea02dbc04b347",
+        "sha256": "f027bfa3c314c9d045a2446e9fef755fe8e4b67ac7ba49ceb0661302bac78654",
+        "bytes": 231839
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "01e36158e5398dc8da427affd8363ee8457d7869",
+        "sha256": "f8058d0890ab0d2bf226b0f1c645f95e756f9ac86cad4528c134c1fe7abb7a28",
+        "bytes": 231036
+      },
+      "inverses": [
+        {
+          "at": 2241,
+          "current": "import { accrue } from './accrual.js';\nimport { captureAccrualEconomy, accrualEconomyIssues } from './economy-monitor.js';\nimport { consumeStreetActionCooldown } from './actioncooldown.js';\nimport { taskPuzzleContext } from './task-puzzle-jobs.js';\nimport { consumeTaskPuzzle } from './task-puzzles.js';\nimport { resolvedBoundedClaimIds, takeAccountDailyClaim } from './accountdaily.js';\nimport { logCollect } from './collection.js';\nimport { claimFirst, firstTaken, __setAnnouncer } from './firsts.js';\n",
+          "baseline": "import { accrue } from './accrual.js';\nimport { captureAccrualEconomy, accrualEconomyIssues } from './economy-monitor.js';\nimport { consumeStreetActionCooldown } from './actioncooldown.js';\nimport { resolvedBoundedClaimIds, takeAccountDailyClaim } from './accountdaily.js';\nimport { logCollect } from './collection.js';\nimport { claimFirst, firstTaken, __setAnnouncer } from './firsts.js';\n"
+        },
+        {
+          "at": 175840,
+          "current": "}\n\n// ── §7.2 CRIME ──\nexport async function doCrime(ch, crimeId, client, h, approach, puzzle) {\n  const c = CRIMES.find((x) => x.id === crimeId);\n  if (!c) throw new GameError('bad_crime', 'No such job.');\n  const lvl = levelOf(Number(ch.respect));\n  if (jailed(ch)) throw new GameError('jailed', 'You are in lockup.');\n  if (lvl < c.lvl) throw new GameError('level', `That job needs level ${c.lvl}.`);\n  if (Number(ch.nerve) < c.nerve) throw new GameError('nerve', `Takes ${c.nerve} nerve.`);\n  // Retain cooldown error priority, but do not consume prep before a known refusal.\n  const streetCool = coolLeft(ch.street_action_at);\n  if (streetCool) throw new GameError('cooldown', `Let the street settle. Next job or deal in ${coolWait(streetCool)}.`, { cooldownSeconds: streetCool });\n  const puzzleFeedback = puzzle !== undefined\n    ? await consumeTaskPuzzle(ch, await taskPuzzleContext(ch, { scope: 'crime', targetId: crimeId }, client), puzzle, client) : null;\n  await consumeStreetActionCooldown(ch, client);\n  await client.query('UPDATE characters SET crime_puzzle_revision=crime_puzzle_revision+1 WHERE id=$1', [ch.id]);\n  // D6a — THE APPROACH: the per-job risk/reward choice. An unknown/omitted approach falls back to\n  // 'standard' (the signed baseline, byte-identical to the old single-click behaviour). Cash EV is\n  // held ~flat by payMult ≈ 1/successMult, so the §7.2 cash faucet is untouched; the choice moves the\n",
+          "baseline": "}\n\n// ── §7.2 CRIME ──\nexport async function doCrime(ch, crimeId, client, h, approach) {\n  const c = CRIMES.find((x) => x.id === crimeId);\n  if (!c) throw new GameError('bad_crime', 'No such job.');\n  const lvl = levelOf(Number(ch.respect));\n  if (jailed(ch)) throw new GameError('jailed', 'You are in lockup.');\n  if (lvl < c.lvl) throw new GameError('level', `That job needs level ${c.lvl}.`);\n  if (Number(ch.nerve) < c.nerve) throw new GameError('nerve', `Takes ${c.nerve} nerve.`);\n  await consumeStreetActionCooldown(ch, client);\n  // D6a — THE APPROACH: the per-job risk/reward choice. An unknown/omitted approach falls back to\n  // 'standard' (the signed baseline, byte-identical to the old single-click behaviour). Cash EV is\n  // held ~flat by payMult ≈ 1/successMult, so the §7.2 cash faucet is untouched; the choice moves the\n"
+        },
+        {
+          "at": 179203,
+          "current": "  const chance = Math.min(0.97, (c.base + statEdge\n    + gangLevel * 0.02 + (held.includes('brick') ? 0.02 : 0) + (rIdx >= 9 ? 0.02 : 0)) * ap.successMult);\n  const roll = Math.random();\n  const outcome = await (async () => {\n    // SOLDIERS: the assigned, fit second rides along (assists + takes a cut + carries the risk)\n    const second = await assignedSoldier(client, ch.id);\n    // THE MARK (founder: \"crimes can't just be committed against nobody\") — every job names a\n",
+          "baseline": "  const chance = Math.min(0.97, (c.base + statEdge\n    + gangLevel * 0.02 + (held.includes('brick') ? 0.02 : 0) + (rIdx >= 9 ? 0.02 : 0)) * ap.successMult);\n  const roll = Math.random();\n  return (async () => {\n    // SOLDIERS: the assigned, fit second rides along (assists + takes a cut + carries the risk)\n    const second = await assignedSoldier(client, ch.id);\n    // THE MARK (founder: \"crimes can't just be committed against nobody\") — every job names a\n"
+        },
+        {
+          "at": 188908,
+          "current": "    return { ok: true, success: false, approach: ap.id, jailSeconds: jailS, victim: mark, soldier,\n      cooldownMs: PACING.STREET_ACTION_CD_MS };\n  })();\n  return { ...outcome, ...(puzzleFeedback ? { puzzle: puzzleFeedback } : {}) };\n}\n\n// ── §7.3 TRAIN ──\n",
+          "baseline": "    return { ok: true, success: false, approach: ap.id, jailSeconds: jailS, victim: mark, soldier,\n      cooldownMs: PACING.STREET_ACTION_CD_MS };\n  })();\n}\n\n// ── §7.3 TRAIN ──\n"
+        }
+      ]
+    },
+    "src/gateway/context.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "082bae0a3d426c12c949c42c496f82cbb0b13bf5",
+        "sha256": "7516534f6b3e426efe6c92136aa1bc9d599925fce15a89f4ce57cace35be466f",
+        "bytes": 43315
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "8e1203e0812192e64b349369eea0181406c40c24",
+        "sha256": "1b3dfaa49711d8b83824a1edbfb3bb7d554a24d8496d35c3ec47b72058fe6edf",
+        "bytes": 43218
+      },
+      "inverses": [
+        {
+          "at": 761,
+          "current": "import { clueBoard } from '../clues.js';\nimport { territoryOf } from '../territory.js';\nimport { missionReadiness } from '../growth.js';\nimport { missionPuzzle } from '../task-puzzle-jobs.js';\nimport { dynastyBoard } from '../dynasty.js';\nimport { diplomacyBoard } from '../diplomacy.js';\nimport { MISSIONS, GOODS, DISTRICTS, BONDS, goodPriceOf, priceBlock } from '../rules.js';\n",
+          "baseline": "import { clueBoard } from '../clues.js';\nimport { territoryOf } from '../territory.js';\nimport { missionReadiness } from '../growth.js';\nimport { dynastyBoard } from '../dynasty.js';\nimport { diplomacyBoard } from '../diplomacy.js';\nimport { MISSIONS, GOODS, DISTRICTS, BONDS, goodPriceOf, priceBlock } from '../rules.js';\n"
+        },
+        {
+          "at": 13114,
+          "current": "      const remaining = MISSIONS.filter((row) => !completed.includes(row.id)).map((row) => {\n        const readiness = missionReadiness(ch, row, owned);\n        return { id: row.id, title: row.name, brief: row.brief, requirements: row.req,\n          puzzle: missionPuzzle(row.id),\n          ...(has('economy.read') ? { publishedBaseRewards: row.reward } : {}),\n          available: readiness.available, missing: readiness.missing, cooldownSeconds: readiness.cooldownSeconds };\n      });\n",
+          "baseline": "      const remaining = MISSIONS.filter((row) => !completed.includes(row.id)).map((row) => {\n        const readiness = missionReadiness(ch, row, owned);\n        return { id: row.id, title: row.name, brief: row.brief, requirements: row.req,\n          ...(has('economy.read') ? { publishedBaseRewards: row.reward } : {}),\n          available: readiness.available, missing: readiness.missing, cooldownSeconds: readiness.cooldownSeconds };\n      });\n"
+        }
+      ]
+    },
+    "src/growth.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "4b839e63f9a1e0e813249ae928b9581e5bfb1df7",
+        "sha256": "32f6733d566505eeb5407da8dfb65c9cdfd115f717f9890ed329153b62067298",
+        "bytes": 87231
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "298eb91c65c96bf957e0bcb8f2e39a6d863f1900",
+        "sha256": "a56eef048988290bcab08966e9874b74dd84d1275e062e84b1d26c5d1097657b",
+        "bytes": 86847
+      },
+      "inverses": [
+        {
+          "at": 1107,
+          "current": "  takeBoundedAccountDailyClaim } from './accountdaily.js';\nimport { dbCaps } from './db.js';\nimport { normalizeLegacyPaidSocialPostProof } from './socialproof.js';\nimport { missionPuzzle, taskPuzzleContext } from './task-puzzle-jobs.js';\nimport { consumeTaskPuzzle } from './task-puzzles.js';\n\n\n// ── PATHS (§5.1): first pick $10,000 at level ≥5; switching burns PATH_SWITCH_OMR ──\n",
+          "baseline": "  takeBoundedAccountDailyClaim } from './accountdaily.js';\nimport { dbCaps } from './db.js';\nimport { normalizeLegacyPaidSocialPostProof } from './socialproof.js';\n\n\n// ── PATHS (§5.1): first pick $10,000 at level ≥5; switching burns PATH_SWITCH_OMR ──\n"
+        },
+        {
+          "at": 9011,
+          "current": "}\n\n// ── MISSIONS (§5.1): validate reqs (eff stats, fp, trade), pay once ──\nexport async function doMission(ch, missionId, client, h, puzzle) {\n  const m = MISSIONS.find((x) => x.id === missionId);\n  if (!m) throw new GameError('bad_mission', 'No such job on the books.');\n  const done = (await client.query('SELECT 1 FROM missions_done WHERE character_id=$1 AND mission_id=$2', [ch.id, missionId])).rows.length;\n",
+          "baseline": "}\n\n// ── MISSIONS (§5.1): validate reqs (eff stats, fp, trade), pay once ──\nexport async function doMission(ch, missionId, client, h) {\n  const m = MISSIONS.find((x) => x.id === missionId);\n  if (!m) throw new GameError('bad_mission', 'No such job on the books.');\n  const done = (await client.query('SELECT 1 FROM missions_done WHERE character_id=$1 AND mission_id=$2', [ch.id, missionId])).rows.length;\n"
+        },
+        {
+          "at": 11790,
+          "current": "  // persistCharacter's positional UPDATE — the active_at pattern), so it can't be clobbered.\n  if (missionCool)\n    throw new GameError('cooldown', `The family gives you one job at a time. Next one in ${coolWait(missionCool)}.`, { cooldownSeconds: missionCool });\n  const puzzleFeedback = missionPuzzle(missionId)\n    ? await consumeTaskPuzzle(ch, await taskPuzzleContext(ch, { scope: 'mission', targetId: missionId }, client), puzzle, client) : null;\n  await client.query('INSERT INTO missions_done (character_id, mission_id) VALUES ($1,$2)', [ch.id, missionId]);\n  const missionAt = new Date(Date.now() + missionCd);\n  await client.query('UPDATE characters SET mission_at=$2 WHERE id=$1', [ch.id, missionAt]);\n",
+          "baseline": "  // persistCharacter's positional UPDATE — the active_at pattern), so it can't be clobbered.\n  if (missionCool)\n    throw new GameError('cooldown', `The family gives you one job at a time. Next one in ${coolWait(missionCool)}.`, { cooldownSeconds: missionCool });\n  await client.query('INSERT INTO missions_done (character_id, mission_id) VALUES ($1,$2)', [ch.id, missionId]);\n  const missionAt = new Date(Date.now() + missionCd);\n  await client.query('UPDATE characters SET mission_at=$2 WHERE id=$1', [ch.id, missionAt]);\n"
+        },
+        {
+          "at": 15613,
+          "current": "  // it is an object rather than a bare id so nothing else can collide with it. Absence is not a\n  // discriminator — this reply had no marker only until it needed one.\n  return { ok: true, mission: { id: m.id, name: m.name },\n    ...(puzzleFeedback ? { puzzle: puzzleFeedback } : {}),\n    reward: { ...m.reward, respect: missionRep, omr: omrPaid, mintCredit: creditPaid }, title: m.title || null,\n    nextMissionSeconds: missionCd > 0 ? Math.ceil(missionCd / 1000) : 0 };\n}\n",
+          "baseline": "  // it is an object rather than a bare id so nothing else can collide with it. Absence is not a\n  // discriminator — this reply had no marker only until it needed one.\n  return { ok: true, mission: { id: m.id, name: m.name },\n    reward: { ...m.reward, respect: missionRep, omr: omrPaid, mintCredit: creditPaid }, title: m.title || null,\n    nextMissionSeconds: missionCd > 0 ? Math.ceil(missionCd / 1000) : 0 };\n}\n"
+        }
+      ]
+    },
+    "src/hustle.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "71904e94e6297a607c0896349b540b30abd268b4",
+        "sha256": "57f1bf9d918f3dda31991af7cbc6a4f0c3c890cd69d43ff514f721f12e48c9c2",
+        "bytes": 6840
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "9d2e89553aec80799bd0e4314ca7eaf15103d25c",
+        "sha256": "66b1853107b1e727e1fb4de4114133f9d4138af3ab629c3ae01666fde3db7833",
+        "bytes": 6416
+      },
+      "inverses": [
+        {
+          "at": 1048,
+          "current": "import { HUSTLE, hustleOf, dayOf, levelOf, DISTRICTS, jailed, districtName } from './rules.js';\nimport { GameError, dailyCounterAdvanced } from './game.js';\nimport { accountDailyClaims, takeAccountDailyClaim } from './accountdaily.js';\nimport { hustlePuzzle, taskPuzzleContext } from './task-puzzle-jobs.js';\nimport { consumeTaskPuzzle } from './task-puzzles.js';\n\n\nasync function countersOf(client, chId, day) {\n",
+          "baseline": "import { HUSTLE, hustleOf, dayOf, levelOf, DISTRICTS, jailed, districtName } from './rules.js';\nimport { GameError, dailyCounterAdvanced } from './game.js';\nimport { accountDailyClaims, takeAccountDailyClaim } from './accountdaily.js';\n\n\nasync function countersOf(client, chId, day) {\n"
+        },
+        {
+          "at": 3592,
+          "current": "  const legworkDone = cur.step === 1 ? legworkSatisfied(h, row, await countersOf(client, ch.id, day)) : true;\n  return {\n    legworkDone,\n    puzzle: cur.step === 1 ? hustlePuzzle() : null,\n    day,\n    contact: h.contact,\n    stops: h.stops.map((id) => ({ id, name: districtName(id) })),\n",
+          "baseline": "  const legworkDone = cur.step === 1 ? legworkSatisfied(h, row, await countersOf(client, ch.id, day)) : true;\n  return {\n    legworkDone,\n    day,\n    contact: h.contact,\n    stops: h.stops.map((id) => ({ id, name: districtName(id) })),\n"
+        },
+        {
+          "at": 4191,
+          "current": "\n// ── advance the chain: claim the CURRENT stop (location-gated; the legwork stop also needs the\n// drawn action done SINCE the contact meeting — a counter delta, never a re-countable total) ──\nexport async function advanceHustle(ch, client, h2, puzzle) {\n  if (jailed(ch)) throw new GameError('jailed', 'No working the streets from lockup.');\n  const day = dayOf();\n  if ((await accountDailyClaims(client, ch.account_id, day, 'hustle')).has('payoff'))\n",
+          "baseline": "\n// ── advance the chain: claim the CURRENT stop (location-gated; the legwork stop also needs the\n// drawn action done SINCE the contact meeting — a counter delta, never a re-countable total) ──\nexport async function advanceHustle(ch, client, h2) {\n  if (jailed(ch)) throw new GameError('jailed', 'No working the streets from lockup.');\n  const day = dayOf();\n  if ((await accountDailyClaims(client, ch.account_id, day, 'hustle')).has('payoff'))\n"
+        },
+        {
+          "at": 5116,
+          "current": "  const counters = await countersOf(client, ch.id, day);\n  if (cur.step === 1 && !legworkSatisfied(h, row, counters))\n    throw new GameError('legwork', `The contact wants the work done first — ${h.leg.how}.`);\n  const puzzleFeedback = cur.step === 1\n    ? await consumeTaskPuzzle(ch, await taskPuzzleContext(ch, { scope: 'hustle', targetId: 'legwork' }, client), puzzle, client) : null;\n  const next = cur.step + 1;\n  // the baseline snapshots the counters at the moment the LEGWORK stop opens, so only work done\n  // AFTER meeting the contact counts (a morning's stockpiled jobs can't pre-pay the chain)\n",
+          "baseline": "  const counters = await countersOf(client, ch.id, day);\n  if (cur.step === 1 && !legworkSatisfied(h, row, counters))\n    throw new GameError('legwork', `The contact wants the work done first — ${h.leg.how}.`);\n  const next = cur.step + 1;\n  // the baseline snapshots the counters at the moment the LEGWORK stop opens, so only work done\n  // AFTER meeting the contact counts (a morning's stockpiled jobs can't pre-pay the chain)\n"
+        },
+        {
+          "at": 6546,
+          "current": "  }\n  const after = stepOf(h, { step: next });\n  return { ok: true, step: next, of: 3, pay: pay || undefined,\n    ...(puzzleFeedback ? { puzzle: puzzleFeedback } : {}),\n    what: after.what, district: after.district, contact: h.contact };\n}\n",
+          "baseline": "  }\n  const after = stepOf(h, { step: next });\n  return { ok: true, step: next, of: 3, pay: pay || undefined,\n    what: after.what, district: after.district, contact: h.contact };\n}\n"
+        }
+      ]
+    },
     "src/legal.js": {
       "current": {
         "mode": "100644",
@@ -466,9 +790,9 @@ export const AGE_REMOVAL_SOURCE = freeze({
     "src/server.js": {
       "current": {
         "mode": "100644",
-        "blob": "61e0b3528c278dda73efb796ff754756ed5256d9",
-        "sha256": "ed760c9f8ba6337491c9758745edf82db5b80a17a8a18d2a09e84c56197bacc6",
-        "bytes": 311174
+        "blob": "0cc69dcc0d6e46ff54c699e3b6091eea4c088020",
+        "sha256": "0eec1fe0dc4797c823f07460c2da2e2de9c4f47d56dbc7fbcdc5067ac1736048",
+        "bytes": 311862
       },
       "baseline": {
         "mode": "100644",
@@ -483,29 +807,95 @@ export const AGE_REMOVAL_SOURCE = freeze({
           "baseline": "import crypto from 'node:crypto';\nimport { rescueQuote } from './rescue-quote.js';\nimport { clientIpContextForRequest } from './client-ip.js';\nimport { MINIMUM_AGE, eligibleBirthDate, ageCookie, ageStatus, requireAge } from './age.js';\nimport zlib from 'node:zlib';\nimport { makeDb } from './db.js';\nimport { createCityActivityRegistry, readCityActivityActor, cityOwnerActivityCategory } from './city-activity.js';\n"
         },
         {
-          "at": 47917,
+          "at": 14149,
+          "current": "import { register as registerUxCoordination } from './ux-coordination.js';\nimport { register as registerUxInvestigation } from './ux-investigation.js';\nimport { registerTacticsRoutes, crimeWithDecisionContext } from './ux-tactics.js';\nimport { jobTaskPuzzle, missionPuzzle, crimePuzzle } from './task-puzzle-jobs.js';\nimport * as Duels from './duels.js';\nimport * as Clues from './clues.js';\nimport * as Estate from './estate.js';\n",
+          "baseline": "import { register as registerUxCoordination } from './ux-coordination.js';\nimport { register as registerUxInvestigation } from './ux-investigation.js';\nimport { registerTacticsRoutes, crimeWithDecisionContext } from './ux-tactics.js';\nimport * as Duels from './duels.js';\nimport * as Clues from './clues.js';\nimport * as Estate from './estate.js';\n"
+        },
+        {
+          "at": 48000,
           "current": "    .header('cache-control', 'no-cache').send(uiCss));\n  // City scenes are optional local assets; gameplay remains authoritative through the API.\n  for (const [file, type] of [\n    ['noir-ui.css', 'text/css'], ['noir-landing.css', 'text/css'], ['noir-shell.js', 'application/javascript'],\n    ['strategy-command.css', 'text/css'], ['strategy-command.js', 'application/javascript'],\n    ['vendor/strategy-city-renderer.js', 'application/javascript'], ['vendor/strategy-city-renderer.js.LEGAL.txt', 'text/plain'],\n    ['vendor/strategy-city-renderer.LICENSE.txt', 'text/plain'],\n    ['site-analytics.js', 'application/javascript'],\n    ['city-scene.js', 'application/javascript'], ['city-scene.css', 'text/css'], ['city-world-layout.js', 'application/javascript'],\n    ['city-world-ui.js', 'application/javascript'], ['city-world-ui.css', 'text/css'],\n",
           "baseline": "    .header('cache-control', 'no-cache').send(uiCss));\n  // City scenes are optional local assets; gameplay remains authoritative through the API.\n  for (const [file, type] of [\n    ['site-analytics.js', 'application/javascript'],\n    ['city-scene.js', 'application/javascript'], ['city-scene.css', 'text/css'], ['city-world-layout.js', 'application/javascript'],\n    ['city-world-ui.js', 'application/javascript'], ['city-world-ui.css', 'text/css'],\n"
         },
         {
-          "at": 112841,
+          "at": 49231,
+          "current": "    ['ux-progression.js', 'application/javascript'], ['ux-progression.css', 'text/css'],\n    ['ux-social.js', 'application/javascript'], ['ux-social.css', 'text/css'],\n    ['ux-navigation.js', 'application/javascript'], ['ux-navigation.css', 'text/css'],\n    ...['feel', 'tools', 'identity', 'story', 'community', 'quests', 'clues', 'task-puzzles'].flatMap(name => [[`ux-${name}.js`, 'application/javascript'], [`ux-${name}.css`, 'text/css']]),\n    ['ux-quest-quality.js', 'application/javascript'], ['ux-quest-quality.css', 'text/css'],\n    ['ux-workspace.js', 'application/javascript'], ['ux-world.js', 'application/javascript'], ['ux-world.css', 'text/css'],\n    ['ux-tactics.js', 'application/javascript'], ['ux-tactics.css', 'text/css'],\n",
+          "baseline": "    ['ux-progression.js', 'application/javascript'], ['ux-progression.css', 'text/css'],\n    ['ux-social.js', 'application/javascript'], ['ux-social.css', 'text/css'],\n    ['ux-navigation.js', 'application/javascript'], ['ux-navigation.css', 'text/css'],\n    ...['feel', 'tools', 'identity', 'story', 'community', 'quests', 'clues'].flatMap(name => [[`ux-${name}.js`, 'application/javascript'], [`ux-${name}.css`, 'text/css']]),\n    ['ux-quest-quality.js', 'application/javascript'], ['ux-quest-quality.css', 'text/css'],\n    ['ux-workspace.js', 'application/javascript'], ['ux-world.js', 'application/javascript'], ['ux-world.css', 'text/css'],\n    ['ux-tactics.js', 'application/javascript'], ['ux-tactics.css', 'text/css'],\n"
+        },
+        {
+          "at": 112940,
           "current": "    return { ok: true };\n  });\n\n  const guestLogin = async (req) => {\n    if (req.body && typeof req.body === 'object' && !Array.isArray(req.body) &&\n        Object.prototype.hasOwnProperty.call(req.body, 'bootstrapSecret')) {\n      const { accountId, tokenVersion } = await A.accountForGuestBootstrap(\n        pool, req.body.bootstrapSecret, req.clientIp, req.body.inviteCode,\n        req.clientIpAuthority,\n      );\n      return { token: await signFor(accountId, {}, '30d', tokenVersion) };\n    }\n    const id = await A.createGuestAccount(pool, req.clientIp, req.body?.inviteCode, req.clientIpAuthority);\n    return { token: await signFor(id, {}, '30d', 0) };\n  };\n  app.post('/v1/auth/guest', guestLogin);\n  app.post('/v1/auth/agent', async (req) => {\n    const { accountId, tokenVersion } = await A.accountForAgentBootstrap(\n      pool, req.body?.bootstrapSecret, req.clientIp, req.body?.inviteCode, req.clientIpAuthority,\n    );\n",
           "baseline": "    return { ok: true };\n  });\n\n  app.post('/v1/age-check', async (req, reply) => {\n    reply.header('Cache-Control', 'no-store');\n    const eligible = ageStatus(app, req) === false ? false : eligibleBirthDate(req.body?.birthDate);\n    const cookie = app.jwt.sign({ purpose: 'age-check', minimumAge: MINIMUM_AGE, eligible }, { expiresIn: '15m' });\n    reply.header('Set-Cookie', ageCookie(cookie));\n    if (!eligible) return reply.code(403).send({ error: 'age_ineligible', message: 'Account creation is unavailable. See /privacy for help.' });\n    return { ok: true };\n  });\n  const guestLogin = async (req) => {\n    // Recovery authority does not override a known-ineligible browser or an\n    // explicitly supplied birth date. Existing eligible recovery needs no DOB.\n    if (ageStatus(app, req) === false || req.body?.birthDate !== undefined) requireAge(app, req);\n    if (req.body && typeof req.body === 'object' && !Array.isArray(req.body) &&\n        Object.prototype.hasOwnProperty.call(req.body, 'bootstrapSecret')) {\n      const { accountId, tokenVersion } = await A.accountForGuestBootstrap(\n        pool, req.body.bootstrapSecret, req.clientIp, req.body.inviteCode, () => requireAge(app, req),\n        req.clientIpAuthority,\n      );\n      return { token: await signFor(accountId, {}, '30d', tokenVersion) };\n    }\n    requireAge(app, req);\n    const id = await A.createGuestAccount(pool, req.clientIp, req.body?.inviteCode, req.clientIpAuthority);\n    return { token: await signFor(id, {}, '30d', 0) };\n  };\n  app.post('/v1/auth/guest', guestLogin);\n  app.post('/v1/auth/agent', async (req) => {\n    requireAge(app, req, { agent: true });\n    const { accountId, tokenVersion } = await A.accountForAgentBootstrap(\n      pool, req.body?.bootstrapSecret, req.clientIp, req.body?.inviteCode, req.clientIpAuthority,\n    );\n"
         },
         {
-          "at": 115289,
+          "at": 115388,
           "current": "  app.post('/v1/auth/guest/bootstrap/ack', { preHandler: auth }, async (req) =>\n    A.acknowledgeGuestBootstrap(pool, req.user.sub));\n  const providerLogin = (verify) => async (req) => {\n    const identity = await verify(req.body?.token);\n    // (B2) the invite is consumed ATOMICALLY inside accountForIdentity's create txn — one invite per\n    // new account, gate held even under a concurrent same-identity race (no separate pre-consume).\n",
           "baseline": "  app.post('/v1/auth/guest/bootstrap/ack', { preHandler: auth }, async (req) =>\n    A.acknowledgeGuestBootstrap(pool, req.user.sub));\n  const providerLogin = (verify) => async (req) => {\n    requireAge(app, req);\n    const identity = await verify(req.body?.token);\n    // (B2) the invite is consumed ATOMICALLY inside accountForIdentity's create txn — one invite per\n    // new account, gate held even under a concurrent same-identity race (no separate pre-consume).\n"
         },
         {
-          "at": 118508,
+          "at": 118607,
           "current": "      const revoked = req.user.tv !== undefined && Number(req.user.tv) !== Number(a?.token_version);\n      if (!a || a.status === 'banned' || revoked) accountId = null;\n    }\n    const { url, state } = await A.xOAuthStart(pool, { accountId, invite: req.body?.inviteCode });\n    // BROWSER-BIND the state (anti account-linking CSRF): the callback must present the same cookie,\n    // so an attacker who leaks their authorize URL can't have a victim's X identity bound to the\n",
           "baseline": "      const revoked = req.user.tv !== undefined && Number(req.user.tv) !== Number(a?.token_version);\n      if (!a || a.status === 'banned' || revoked) accountId = null;\n    }\n    if (!accountId) requireAge(app, req);\n    const { url, state } = await A.xOAuthStart(pool, { accountId, invite: req.body?.inviteCode });\n    // BROWSER-BIND the state (anti account-linking CSRF): the callback must present the same cookie,\n    // so an attacker who leaks their authorize URL can't have a victim's X identity bound to the\n"
         },
         {
-          "at": 120117,
+          "at": 120216,
           "current": "        return reply.redirect('/#claimed=x');\n      }\n      // (B2) invite consumed atomically inside accountForIdentity's create txn — gate held under races\n      const { accountId } = await A.accountForIdentity(\n        pool, r.identity, req.clientIp, r.invite, req.clientIpAuthority,\n      );\n",
           "baseline": "        return reply.redirect('/#claimed=x');\n      }\n      // (B2) invite consumed atomically inside accountForIdentity's create txn — gate held under races\n      requireAge(app, req);\n      const { accountId } = await A.accountForIdentity(\n        pool, r.identity, req.clientIp, r.invite, req.clientIpAuthority,\n      );\n"
+        },
+        {
+          "at": 130226,
+          "current": "\n  // ── M1 actions (crimes/gym/doc/checkin/bank/travel) ──\n  app.post('/v1/crimes/:id', { preHandler: auth }, async (req) =>\n    G.withCharacter(pool, req.user.sub, (ch, client, h) => crimeWithDecisionContext(ch, req.params.id, client, h, req.body?.approach, req.body?.puzzle)));\n  app.post('/v1/task-puzzles', { preHandler: auth }, async req =>\n    G.withCharacter(pool, req.user.sub, (ch, client) => jobTaskPuzzle(ch, req.body, client, true)));\n  app.get('/v1/task-puzzles', { preHandler: auth }, async req => {\n    const { puzzle } = await G.readCharacter(pool, req.user.sub, (ch, client) => jobTaskPuzzle(ch, req.query, client));\n    return { puzzle };\n  });\n  app.post('/v1/train/:stat', { preHandler: auth }, async (req) =>\n    G.withCharacter(pool, req.user.sub, (ch, client, h) => G.train(ch, req.params.stat, client, h)));\n  // THE REGIMEN — the expanded gym: five disciplines on the SAME train_at clock + NPC trainer drills\n",
+          "baseline": "\n  // ── M1 actions (crimes/gym/doc/checkin/bank/travel) ──\n  app.post('/v1/crimes/:id', { preHandler: auth }, async (req) =>\n    G.withCharacter(pool, req.user.sub, (ch, client, h) => crimeWithDecisionContext(ch, req.params.id, client, h, req.body?.approach)));\n  app.post('/v1/train/:stat', { preHandler: auth }, async (req) =>\n    G.withCharacter(pool, req.user.sub, (ch, client, h) => G.train(ch, req.params.stat, client, h)));\n  // THE REGIMEN — the expanded gym: five disciplines on the SAME train_at clock + NPC trainer drills\n"
+        },
+        {
+          "at": 131780,
+          "current": "  app.get('/v1/hustle', { preHandler: auth }, async (req) =>\n    G.readCharacter(pool, req.user.sub, (ch, client) => Hustle.hustleBoard(ch, client)));\n  app.post('/v1/hustle/advance', { preHandler: auth }, async (req) =>\n    G.withCharacter(pool, req.user.sub, (ch, client, h) => Hustle.advanceHustle(ch, client, h, req.body?.puzzle)));\n  // WORD ON THE STREET — each district's seed-drawn daily quest board (accept where you stand,\n  // do the work, claim the envelope; the counter DELTA proves it — the hustle rule)\n  app.get('/v1/corner', { preHandler: auth }, async (req) =>\n",
+          "baseline": "  app.get('/v1/hustle', { preHandler: auth }, async (req) =>\n    G.readCharacter(pool, req.user.sub, (ch, client) => Hustle.hustleBoard(ch, client)));\n  app.post('/v1/hustle/advance', { preHandler: auth }, async (req) =>\n    G.withCharacter(pool, req.user.sub, (ch, client, h) => Hustle.advanceHustle(ch, client, h)));\n  // WORD ON THE STREET — each district's seed-drawn daily quest board (accept where you stand,\n  // do the work, claim the envelope; the counter DELTA proves it — the hustle rule)\n  app.get('/v1/corner', { preHandler: auth }, async (req) =>\n"
+        },
+        {
+          "at": 146284,
+          "current": "  app.get('/v1/rules', async (req, reply) => {\n    reply.header('cache-control', 'public, max-age=300, stale-while-revalidate=3600');\n    return jsonEtag(req, reply, {\n    crimes: CRIMES.map((c) => ({ id: c.id, name: c.name, lvl: c.lvl, nerve: c.nerve, cash: c.cash, base: c.base, jail: c.jail, puzzle: crimePuzzle(c.id) })),\n    respecOmr: M8.RESPEC_OMR, // stat respec cost — so The Life tab can price the tradeoff before you commit\n    respecStatMin: M8.RESPEC_STAT_MIN,\n    respecCdHours: Math.round(M8.RESPEC_CD_MS / 3600000), // ...and the CADENCE, which the card priced nowhere\n",
+          "baseline": "  app.get('/v1/rules', async (req, reply) => {\n    reply.header('cache-control', 'public, max-age=300, stale-while-revalidate=3600');\n    return jsonEtag(req, reply, {\n    crimes: CRIMES.map((c) => ({ id: c.id, name: c.name, lvl: c.lvl, nerve: c.nerve, cash: c.cash, base: c.base, jail: c.jail })),\n    respecOmr: M8.RESPEC_OMR, // stat respec cost — so The Life tab can price the tradeoff before you commit\n    respecStatMin: M8.RESPEC_STAT_MIN,\n    respecCdHours: Math.round(M8.RESPEC_CD_MS / 3600000), // ...and the CADENCE, which the card priced nowhere\n"
+        },
+        {
+          "at": 148755,
+          "current": "    regimen: { disciplines: REGIMEN.DISCIPLINES, cap: REGIMEN.CAP,\n      drillXp: REGIMEN.DRILL_XP, trainers: REGIMEN.TRAINERS, energy: REGIMEN.ENERGY },\n    // THE HUSTLE — the daily three-stop chain's config (the live chain is GET /v1/hustle)\n    hustle: { payPerLvl: HUSTLE.PAY_PER_LVL, payMin: HUSTLE.PAY_MIN, puzzle: { required: true, scope: 'hustle', targetId: 'legwork', step: 1 } },\n    // WORD ON THE STREET — the district quest boards' config (the live board is GET /v1/corner)\n    corner: { perDay: CORNER.PER_DAY, maxDay: CORNER.MAX_DAY, cash: CORNER.CASH, respect: CORNER.RESPECT,\n      chainSteps: CORNER.CHAIN_STEPS, chainBonus: CORNER.CHAIN_BONUS, chainRespect: CORNER.CHAIN_RESPECT },\n",
+          "baseline": "    regimen: { disciplines: REGIMEN.DISCIPLINES, cap: REGIMEN.CAP,\n      drillXp: REGIMEN.DRILL_XP, trainers: REGIMEN.TRAINERS, energy: REGIMEN.ENERGY },\n    // THE HUSTLE — the daily three-stop chain's config (the live chain is GET /v1/hustle)\n    hustle: { payPerLvl: HUSTLE.PAY_PER_LVL, payMin: HUSTLE.PAY_MIN },\n    // WORD ON THE STREET — the district quest boards' config (the live board is GET /v1/corner)\n    corner: { perDay: CORNER.PER_DAY, maxDay: CORNER.MAX_DAY, cash: CORNER.CASH, respect: CORNER.RESPECT,\n      chainSteps: CORNER.CHAIN_STEPS, chainBonus: CORNER.CHAIN_BONUS, chainRespect: CORNER.CHAIN_RESPECT },\n"
+        },
+        {
+          "at": 160477,
+          "current": "      // BUSINESS EMPIRE Tier-4 — the launderer legend + the front specializations + the takeover surface\n      launderer: BUSINESS_EMPIRE.LAUNDERER_RANKS, specs: BUSINESS_EMPIRE.SPECS, specOmr: BUSINESS_EMPIRE.SPEC_OMR,\n      takeover: { fee: BUSINESS_EMPIRE.TAKEOVER.FEE, minLevel: BUSINESS_EMPIRE.TAKEOVER.MIN_LEVEL } },\n    missions: MISSIONS.map((m) => ({ id: m.id, name: m.name, req: m.req, reward: m.reward, brief: m.brief, puzzle: missionPuzzle(m.id) })),\n    seals: { ladder: GANG_SEALS, colorOmr: VANITY.GANG_COLOR_OMR, renameOmr: VANITY.GANG_RENAME_OMR },\n    // the shop's own price list, so the console never restates a lever (the terms ride with the price)\n    vanity: { nameOmr: VANITY.NAME_CHANGE_OMR, titleOmr: VANITY.TITLE_OMR, plateOmr: VANITY.PLATE_OMR },\n",
+          "baseline": "      // BUSINESS EMPIRE Tier-4 — the launderer legend + the front specializations + the takeover surface\n      launderer: BUSINESS_EMPIRE.LAUNDERER_RANKS, specs: BUSINESS_EMPIRE.SPECS, specOmr: BUSINESS_EMPIRE.SPEC_OMR,\n      takeover: { fee: BUSINESS_EMPIRE.TAKEOVER.FEE, minLevel: BUSINESS_EMPIRE.TAKEOVER.MIN_LEVEL } },\n    missions: MISSIONS.map((m) => ({ id: m.id, name: m.name, req: m.req, reward: m.reward, brief: m.brief })),\n    seals: { ladder: GANG_SEALS, colorOmr: VANITY.GANG_COLOR_OMR, renameOmr: VANITY.GANG_RENAME_OMR },\n    // the shop's own price list, so the console never restates a lever (the terms ride with the price)\n    vanity: { nameOmr: VANITY.NAME_CHANGE_OMR, titleOmr: VANITY.TITLE_OMR, plateOmr: VANITY.PLATE_OMR },\n"
+        },
+        {
+          "at": 219624,
+          "current": "  const performAgentAction = async (action, ch, client, h, lender = null, policy = null) => {\n    const tail = (prefix) => action.path.startsWith(prefix) ? action.path.slice(prefix.length) : null;\n    switch (action.kind) {\n      case 'crime': return G.doCrime(ch, tail('/v1/crimes/'), client, h, action.body?.approach, action.body?.puzzle);\n      case 'business_buy': return Business.buyBusiness(ch, tail('/v1/business/').replace(/\\/buy$/, ''), client, h);\n      case 'business_upkeep': return Business.payBusinessUpkeep(ch, client, h,\n        { maxCash: action.cost.cash, minimumReserve: policy.cashReserve });\n",
+          "baseline": "  const performAgentAction = async (action, ch, client, h, lender = null, policy = null) => {\n    const tail = (prefix) => action.path.startsWith(prefix) ? action.path.slice(prefix.length) : null;\n    switch (action.kind) {\n      case 'crime': return G.doCrime(ch, tail('/v1/crimes/'), client, h, action.body?.approach);\n      case 'business_buy': return Business.buyBusiness(ch, tail('/v1/business/').replace(/\\/buy$/, ''), client, h);\n      case 'business_upkeep': return Business.payBusinessUpkeep(ch, client, h,\n        { maxCash: action.cost.cash, minimumReserve: policy.cashReserve });\n"
+        },
+        {
+          "at": 275573,
+          "current": "  app.post('/v1/heist', { preHandler: auth }, async (req) =>\n    G.withCharacter(pool, req.user.sub, (ch, client, h) => W.heist(ch, client, h)));\n  app.post('/v1/missions/:id', { preHandler: auth }, async (req) =>\n    G.withCharacter(pool, req.user.sub, (ch, client, h) => W.doMission(ch, req.params.id, client, h, req.body?.puzzle)));\n  app.get('/v1/daily', { preHandler: auth }, async (req) => {\n    const me = (await pool.query('SELECT id FROM characters WHERE account_id=$1 AND alive', [req.user.sub])).rows[0];\n    if (!me) throw new G.GameError('no_character', 'Create a character first.');\n",
+          "baseline": "  app.post('/v1/heist', { preHandler: auth }, async (req) =>\n    G.withCharacter(pool, req.user.sub, (ch, client, h) => W.heist(ch, client, h)));\n  app.post('/v1/missions/:id', { preHandler: auth }, async (req) =>\n    G.withCharacter(pool, req.user.sub, (ch, client, h) => W.doMission(ch, req.params.id, client, h)));\n  app.get('/v1/daily', { preHandler: auth }, async (req) => {\n    const me = (await pool.query('SELECT id FROM characters WHERE account_id=$1 AND alive', [req.user.sub])).rows[0];\n    if (!me) throw new G.GameError('no_character', 'Create a character first.');\n"
+        }
+      ]
+    },
+    "src/ux-tactics.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "9e44659e39f2bacffaba47679053d6c12fbab64a",
+        "sha256": "7eb343cc77c970c9e71032c2bc25be9a02e80abc481c87773a40be403568b393",
+        "bytes": 19004
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "84f8a92eff7c02e071041016c13b9c1ef2cd13bd",
+        "sha256": "c92cfabb6f5786aa4e8656afbe9e3b51a8ce30ca67546ca2c71ffef7d9d44850",
+        "bytes": 18980
+      },
+      "inverses": [
+        {
+          "at": 17947,
+          "current": "  app.get('/v1/ux/tactics', { preHandler: auth }, req => readCharacter(pool, req.user.sub, (ch, client, h) => tacticsBoard(ch, client, h, req.query)));\n}\n\nexport async function crimeWithDecisionContext(ch, crimeId, client, h, approach, puzzle) {\n  const crime = CRIMES.find(entry => entry.id === crimeId);\n  // Preserve the original validation/error contract for unknown actions.\n  if (!crime) return doCrime(ch, crimeId, client, h, approach, puzzle);\n  const projection = quoteCrime(ch, h, crime, approach, await assignedSoldier(client, ch.id));\n  const projectedAt = new Date().toISOString();\n  const result = await doCrime(ch, crimeId, client, h, approach, puzzle);\n  return { ...result, decisionContext: { crimeId: crime.id, cost: { ...projection.cost },\n    probability: projection.probability, modifiers: projection.modifiers,\n    jailSecondsOnFailure: projection.jailSeconds, projectedAt, source: projection.formula.source,\n",
+          "baseline": "  app.get('/v1/ux/tactics', { preHandler: auth }, req => readCharacter(pool, req.user.sub, (ch, client, h) => tacticsBoard(ch, client, h, req.query)));\n}\n\nexport async function crimeWithDecisionContext(ch, crimeId, client, h, approach) {\n  const crime = CRIMES.find(entry => entry.id === crimeId);\n  // Preserve the original validation/error contract for unknown actions.\n  if (!crime) return doCrime(ch, crimeId, client, h, approach);\n  const projection = quoteCrime(ch, h, crime, approach, await assignedSoldier(client, ch.id));\n  const projectedAt = new Date().toISOString();\n  const result = await doCrime(ch, crimeId, client, h, approach);\n  return { ...result, decisionContext: { crimeId: crime.id, cost: { ...projection.cost },\n    probability: projection.probability, modifiers: projection.modifiers,\n    jailSecondsOnFailure: projection.jailSeconds, projectedAt, source: projection.formula.source,\n"
         }
       ]
     },
@@ -623,6 +1013,37 @@ export const AGE_REMOVAL_SOURCE = freeze({
         }
       ]
     },
+    "test/client.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "cde6049be9a07ccca511687546808b08aded515f",
+        "sha256": "52bbbba86aed3a9e759a588393273b62bd2c80252c18df7466be32a1b655cc64",
+        "bytes": 764783
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "7d2baa55480cf76964962be1c9c398388305bddf",
+        "sha256": "9cb4f9873ad8a5c315df076d267a357768f1689edb163f93e67a279b68a2c841",
+        "bytes": 764043
+      },
+      "inverses": [
+        {
+          "at": 33513,
+          "current": "      catch (e) { assert.fail(`${path}: the <script> has a SYNTAX ERROR — the whole page is DEAD in a browser: ${e.message}`); }\n    }\n  }\n  for (const name of ['feedback','progression','social','navigation','workspace','world','tactics','investigation','coordination','feel','tools','identity','story','community','task-puzzles']) {\n    const path = 'public/ux-' + name + '.js';\n    new vm.Script(readFileSync(new URL('../' + path, import.meta.url), 'utf8'), { filename: path });\n  }\n",
+          "baseline": "      catch (e) { assert.fail(`${path}: the <script> has a SYNTAX ERROR — the whole page is DEAD in a browser: ${e.message}`); }\n    }\n  }\n  for (const name of ['feedback','progression','social','navigation','workspace','world','tactics','investigation','coordination','feel','tools','identity','story','community']) {\n    const path = 'public/ux-' + name + '.js';\n    new vm.Script(readFileSync(new URL('../' + path, import.meta.url), 'utf8'), { filename: path });\n  }\n"
+        },
+        {
+          "at": 38372,
+          "current": "for (const m of admin.matchAll(/\\bj\\(\\s*'(GET|POST|PUT|DELETE)'\\s*,\\s*/g)) addCall(admin, m, '/admin');\n\n// UX dynamic choices have dedicated API/browser proofs; retain their finite mounted contracts.\nfor (const method of ['GET', 'POST']) addRef(method, '/v1/task-puzzles', 'Task puzzle protocol; real page/API/browser proofs');\nfor (const [method,path] of [[\"GET\",\"/v1/ux/workspace\"],[\"PUT\",\"/v1/ux/workspace\"],[\"GET\",\"/v1/ux/tactics\"],[\"GET\",\"/v1/ux/crew-workspace\"],[\"POST\",\"/v1/ux/crew-workspace\"],[\"GET\",\"/v1/ux/investigations\"],[\"GET\",\"/v1/ux/investigations/:p\"],[\"GET\",\"/v1/ux/investigations/:p/nodes/:p/hints/:p\"],[\"GET\",\"/v1/ux/investigation-items\"],[\"GET\",\"/v1/ux/story\"],[\"GET\",\"/v1/ux/story/:p\"],[\"GET\",\"/v1/ux/community\"],[\"POST\",\"/v1/ux/community\"],[\"GET\",\"/v1/ux/community/operations/:p/playback\"],[\"GET\",\"/v1/ux/community/portraits/:p\"],[\"GET\",\"/v1/ux/mentor-subjects\"],[\"POST\",\"/v1/ux/mentor-subjects\"]]) addRef(method,path,'UX route contract');\n\nassert.equal(unreadable, 0, `${unreadable} api()/act() call site(s) name their path in a way this ` +\n",
+          "baseline": "for (const m of admin.matchAll(/\\bj\\(\\s*'(GET|POST|PUT|DELETE)'\\s*,\\s*/g)) addCall(admin, m, '/admin');\n\n// UX dynamic choices have dedicated API/browser proofs; retain their finite mounted contracts.\nfor (const [method,path] of [[\"GET\",\"/v1/ux/workspace\"],[\"PUT\",\"/v1/ux/workspace\"],[\"GET\",\"/v1/ux/tactics\"],[\"GET\",\"/v1/ux/crew-workspace\"],[\"POST\",\"/v1/ux/crew-workspace\"],[\"GET\",\"/v1/ux/investigations\"],[\"GET\",\"/v1/ux/investigations/:p\"],[\"GET\",\"/v1/ux/investigations/:p/nodes/:p/hints/:p\"],[\"GET\",\"/v1/ux/investigation-items\"],[\"GET\",\"/v1/ux/story\"],[\"GET\",\"/v1/ux/story/:p\"],[\"GET\",\"/v1/ux/community\"],[\"POST\",\"/v1/ux/community\"],[\"GET\",\"/v1/ux/community/operations/:p/playback\"],[\"GET\",\"/v1/ux/community/portraits/:p\"],[\"GET\",\"/v1/ux/mentor-subjects\"],[\"POST\",\"/v1/ux/mentor-subjects\"]]) addRef(method,path,'UX route contract');\n\nassert.equal(unreadable, 0, `${unreadable} api()/act() call site(s) name their path in a way this ` +\n"
+        },
+        {
+          "at": 44494,
+          "current": "    `a catalog resolved to ${[...set].slice(0, 4).join(',')} — the id extraction is wrong, not the client`);\n  return set;\n};\nconst taskPuzzleRules = (await app.inject({ method: 'GET', url: '/v1/rules' })).json();\nconst taskPuzzleSelectors = [...taskPuzzleRules.missions.map(m => m.puzzle), ...taskPuzzleRules.crimes.map(c => c.puzzle), taskPuzzleRules.hustle.puzzle].filter(Boolean);\nassert.equal(new Set(taskPuzzleSelectors.map(p => p.scope)).size, 3, 'All task puzzle scopes are published in the actual rules.');\nconst CATALOGS = {\n  scope: new Set(taskPuzzleSelectors.map(p => p.scope)),\n  targetId: new Set(taskPuzzleSelectors.map(p => p.targetId)), // union for the three scopes; exact binding is verified by task-puzzle jobs/API tests\n  approach: ids(M3.CRIME_APPROACHES),          // the crime verb\n  intent: ids(M3.JUMP_INTENTS),                // the jump verb\n  play: ids(M4.DEAL_PLAYS),                    // the corner verb\n",
+          "baseline": "    `a catalog resolved to ${[...set].slice(0, 4).join(',')} — the id extraction is wrong, not the client`);\n  return set;\n};\nconst CATALOGS = {\n  approach: ids(M3.CRIME_APPROACHES),          // the crime verb\n  intent: ids(M3.JUMP_INTENTS),                // the jump verb\n  play: ids(M4.DEAL_PLAYS),                    // the corner verb\n"
+        }
+      ]
+    },
     "test/customerlayaway-integration.js": {
       "current": {
         "mode": "100644",
@@ -649,12 +1070,38 @@ export const AGE_REMOVAL_SOURCE = freeze({
         }
       ]
     },
+    "test/daily-lineage.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "b43317a6c99d81253599450bcd41e6c887b03a54",
+        "sha256": "91632aed1916143da41da04a4ee1c7ffe38104a38eab19da63ea92ad4c0d5298",
+        "bytes": 31524
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "7372720d43e14dd0315ac6148d7e95d62881eea1",
+        "sha256": "f67c6ac5b90eb2fbd25e52f3b3710fef05cd707a8e3006e78966186241dae764",
+        "bytes": 31260
+      },
+      "inverses": [
+        {
+          "at": 0,
+          "current": "// Character death must not reset same-day cash/token reward ceilings. Work progress may die with the\n// street, but the account's right to be paid for Daily Contracts, Corner jobs, and the Hustle does not.\nimport assert from 'node:assert/strict';\nimport { solveTaskPuzzle } from './lib/task-puzzle-solver.js';\n\n// Default to pg-mem, but allow an explicit disposable loopback PostgreSQL run for the\n// concurrency/death replay proof. Never inherit DATABASE_URL implicitly from a developer shell.\n",
+          "baseline": "// Character death must not reset same-day cash/token reward ceilings. Work progress may die with the\n// street, but the account's right to be paid for Daily Contracts, Corner jobs, and the Hustle does not.\nimport assert from 'node:assert/strict';\n\n// Default to pg-mem, but allow an explicit disposable loopback PostgreSQL run for the\n// concurrency/death replay proof. Never inherit DATABASE_URL implicitly from a developer shell.\n"
+        },
+        {
+          "at": 21168,
+          "current": "  counters[hustle.leg.kind] = Number(counters[hustle.leg.kind] || 0) + 1;\n  await setCounters(player.id, counters);\n  await pool.query('UPDATE characters SET loc=$2 WHERE id=$1', [player.id, hustle.stops[1]]);\n  const legworkPuzzle = (await call('POST', '/v1/task-puzzles', { token: player.token, body: { scope: 'hustle', targetId: 'legwork' } })).body.puzzle;\n  assert.equal((await call('POST', '/v1/hustle/advance', { token: player.token, body: { puzzle: solveTaskPuzzle(legworkPuzzle) } })).code, 200);\n  await pool.query('UPDATE characters SET loc=$2 WHERE id=$1', [player.id, hustle.stops[2]]);\n  const hustlePaid = await call('POST', '/v1/hustle/advance', { token: player.token });\n  assert.equal(hustlePaid.code, 200, JSON.stringify(hustlePaid.body));\n",
+          "baseline": "  counters[hustle.leg.kind] = Number(counters[hustle.leg.kind] || 0) + 1;\n  await setCounters(player.id, counters);\n  await pool.query('UPDATE characters SET loc=$2 WHERE id=$1', [player.id, hustle.stops[1]]);\n  assert.equal((await call('POST', '/v1/hustle/advance', { token: player.token })).code, 200);\n  await pool.query('UPDATE characters SET loc=$2 WHERE id=$1', [player.id, hustle.stops[2]]);\n  const hustlePaid = await call('POST', '/v1/hustle/advance', { token: player.token });\n  assert.equal(hustlePaid.code, 200, JSON.stringify(hustlePaid.body));\n"
+        }
+      ]
+    },
     "test/gates.js": {
       "current": {
         "mode": "100644",
-        "blob": "3bb133e1baba86ccc5423060f90800d2427735ed",
-        "sha256": "e6bcaf8a8df43c5f9feb12c9a16193f0cbe21d2810cf724c708706af21ddbf32",
-        "bytes": 500935
+        "blob": "74e58c116322180cccd2c00c85341b366258fcb5",
+        "sha256": "c18166f32b5b03d431e33d6e2ea441f87e40f28268e44b4e4e1dff6a716ded2a",
+        "bytes": 501995
       },
       "baseline": {
         "mode": "100644",
@@ -664,9 +1111,55 @@ export const AGE_REMOVAL_SOURCE = freeze({
       },
       "inverses": [
         {
-          "at": 338640,
+          "at": 155379,
+          "current": "    'combat.js:intent':     'published on /v1/rules; compared, never rendered (the approach precedent)',\n    'rules.tail.js:rarity': 'a catalog helper return — its callers attach the display name',\n    'graph.js:kind': 'bounded declarative prerequisite discriminator from the Coordination compiler; server predicates branch on it, and player projection labels are separately authored',\n    'task-puzzles.js:kind': 'closed patrol/route/matching/evidence protocol discriminator in completion feedback; the issued puzzle supplies its readable title and the acknowledgement supplies a human message, never raw-kind prose',\n    'companyspecialization.js:kind': 'closed volume/quality/speed/niche production-profile discriminator, validated against COMPANY_SPECIALIZATION and a native CHECK; a machine admission setting, never a narrative catalog rung',\n    'operations.js:subjectKey': 'server-private Family prerequisite plan key for a declared role; never rendered as a role display name',\n    // ── the `.kind` half. The rule was widened from `X.id` to `X.id|X.kind` after the business\n",
+          "baseline": "    'combat.js:intent':     'published on /v1/rules; compared, never rendered (the approach precedent)',\n    'rules.tail.js:rarity': 'a catalog helper return — its callers attach the display name',\n    'graph.js:kind': 'bounded declarative prerequisite discriminator from the Coordination compiler; server predicates branch on it, and player projection labels are separately authored',\n    'companyspecialization.js:kind': 'closed volume/quality/speed/niche production-profile discriminator, validated against COMPANY_SPECIALIZATION and a native CHECK; a machine admission setting, never a narrative catalog rung',\n    'operations.js:subjectKey': 'server-private Family prerequisite plan key for a declared role; never rendered as a role display name',\n    // ── the `.kind` half. The rule was widened from `X.id` to `X.id|X.kind` after the business\n"
+        },
+        {
+          "at": 338873,
           "current": "    'test/economicintelligence-fixture.js': 'Import-only actual authenticated GIN/forecast fixture; economic intelligence and default autonomy DTO memory/native proofs execute its exported factory.',\n    'test/fundedexternalwork-fixture.js': 'Import-only actual F11 gameplay and explicitly simulated external-work fixture; required memory/native lifecycle suite executes it, public finance remains unavailable.',\n    'test/managementteams-fixture.js': 'Import-only actual original-party governance/management fixture; required memory/native team suite executes it, no standalone runner.',\n    'test/auth-fixture.js': 'Import-only shared auth request helper used by gameplay suites; it exports no standalone assertions.',\n    'test/server-fixture.js': 'Import-only wrapper around the real server for gameplay suites; it exports no standalone assertions.',\n    'test/economy-composition-restart.js': 'Fresh-process child probe executed by the required native economy-composition suite; it requires an owned disposable PostgreSQL schema and bounded synthetic stdin, so it cannot run standalone.',\n    'test/commercialnegotiation-fixture.js': 'Import-only real authenticated gameplay fixture executed by negotiation and equipment-contract memory/native suites; exports no standalone test runner.',\n    'test/equipmentinsurance-fixture.js': 'Import-only real physical wear and canonical repair fixture executed by insurance memory/native suites; no standalone runner.',\n",
           "baseline": "    'test/economicintelligence-fixture.js': 'Import-only actual authenticated GIN/forecast fixture; economic intelligence and default autonomy DTO memory/native proofs execute its exported factory.',\n    'test/fundedexternalwork-fixture.js': 'Import-only actual F11 gameplay and explicitly simulated external-work fixture; required memory/native lifecycle suite executes it, public finance remains unavailable.',\n    'test/managementteams-fixture.js': 'Import-only actual original-party governance/management fixture; required memory/native team suite executes it, no standalone runner.',\n    'test/auth-fixture.js': 'Import-only synthetic-adult request fixture used by gameplay suites; the independent age suite exercises missing and ineligible birth dates against the real server.',\n    'test/server-fixture.js': 'Import-only wrapper around the real server for unrelated gameplay suites; it supplies synthetic-adult auth bodies and exports no standalone assertions.',\n    'test/economy-composition-restart.js': 'Fresh-process child probe executed by the required native economy-composition suite; it requires an owned disposable PostgreSQL schema and bounded synthetic stdin, so it cannot run standalone.',\n    'test/commercialnegotiation-fixture.js': 'Import-only real authenticated gameplay fixture executed by negotiation and equipment-contract memory/native suites; exports no standalone test runner.',\n    'test/equipmentinsurance-fixture.js': 'Import-only real physical wear and canonical repair fixture executed by insurance memory/native suites; no standalone runner.',\n"
+        },
+        {
+          "at": 355863,
+          "current": "  const nativeShape = block => block.replaceAll('\\r\\n', '\\n').split('\\n')\n    .filter(line => line.trim() && !/^\\s*#/.test(line)).map(line => line.trimEnd()).join('\\n');\n  const expectedQuestBrowser = \"  questing_browser:\\n    name: Quest acceptance and browser playthroughs\\n    runs-on: ubuntu-latest\\n    timeout-minutes: 15\\n    steps:\\n      - uses: actions/checkout@v7\\n        with:\\n          fetch-depth: 0\\n      - uses: actions/setup-node@v7\\n        with:\\n          node-version: '22'\\n          cache: npm\\n      - run: npm ci\\n      - run: npx playwright-core install --with-deps chromium\\n      - name: Quest source and current native admission guards\\n        run: |\\n          node test/questing-source-transfer.js\\n          node test/enterprise-native-questing-guard.js\\n          node test/questing-enterprise-catalog-guard.js\\n          node test/questing-ux-release-phase2-native-catalog-guard.js\\n          node test/rc1-npc-retirement-journal.js\\n          node test/genesis-fee-readiness-source-transfer.js\\n      - name: Quest runtime, cases and community workshop\\n        run: npm run test:questing\\n      - name: Production quest and clue interfaces\\n        run: |\\n          export CHROMIUM_PATH=\\\"$(node --input-type=module -e 'import { chromium } from \\\"playwright-core\\\"; process.stdout.write(chromium.executablePath());')\\\"\\n          npm run test:questing:browser\\n      - run: npm run questing:check\";\n  const expectedQuestNative = \"  questing_native:\\n    name: Quest authority and concurrency (PostgreSQL)\\n    runs-on: ubuntu-latest\\n    timeout-minutes: 30\\n    services:\\n      postgres:\\n        image: postgres:18.4\\n        env:\\n          POSTGRES_PASSWORD: pgcheck\\n          POSTGRES_DB: omerta_questing_ci\\n        ports:\\n          - 5432:5432\\n        options: >-\\n          --health-cmd \\\"pg_isready -U postgres\\\"\\n          --health-interval 5s\\n          --health-timeout 5s\\n          --health-retries 12\\n    steps:\\n      - uses: actions/checkout@v7\\n        with:\\n          fetch-depth: 0\\n      - uses: actions/setup-node@v7\\n        with:\\n          node-version: '22'\\n          cache: npm\\n      - run: npm ci\\n      - name: Set owned test PostgreSQL lock capacity for populated migrations\\n        timeout-minutes: 3\\n        shell: bash\\n        env:\\n          POSTGRES_SERVICE_ID: ${{ job.services.postgres.id }}\\n        run: |\\n          set -euo pipefail\\n          [[ \\\"$POSTGRES_SERVICE_ID\\\" =~ ^[0-9a-f]{64}$ ]] || { echo 'Missing owned PostgreSQL service container ID' >&2; exit 1; }\\n          timeout 15s docker exec \\\"$POSTGRES_SERVICE_ID\\\" psql -X -U postgres -d postgres -v ON_ERROR_STOP=1 -c 'ALTER SYSTEM SET max_locks_per_transaction = 512;'\\n          timeout 45s docker restart --timeout 30 \\\"$POSTGRES_SERVICE_ID\\\"\\n          ready=0\\n          deadline=$((SECONDS + 60))\\n          while (( SECONDS < deadline )); do\\n            if timeout 3s docker exec \\\"$POSTGRES_SERVICE_ID\\\" pg_isready -q -t 1 -U postgres -d postgres; then\\n              ready=1\\n              break\\n            fi\\n            sleep 1\\n          done\\n          [[ \\\"$ready\\\" == 1 ]] || { echo 'Owned PostgreSQL service did not become ready within 60 seconds' >&2; exit 1; }\\n          actual=\\\"$(timeout 10s docker exec \\\"$POSTGRES_SERVICE_ID\\\" psql -X -U postgres -d postgres -v ON_ERROR_STOP=1 -Atc 'SHOW max_locks_per_transaction;')\\\"\\n          [[ \\\"$actual\\\" == 512 ]] || { echo \\\"Unexpected test max_locks_per_transaction: $actual\\\" >&2; exit 1; }\\n      - name: Create fresh owned migration fixture databases\\n        timeout-minutes: 1\\n        run: |\\n          node --input-type=module <<'NODE'\\n          import assert from 'node:assert/strict';\\n          import pg from 'pg';\\n          const client = new pg.Client({ connectionString: 'postgres://postgres:pgcheck@127.0.0.1:5432/postgres', connectionTimeoutMillis: 10000, query_timeout: 30000 });\\n          try {\\n            await client.connect();\\n            assert.deepEqual((await client.query('SELECT current_user AS role,current_database() AS database,inet_server_port() AS port')).rows,\\n              [{ role: 'postgres', database: 'postgres', port: 5432 }]);\\n            const existing = await client.query('SELECT datname FROM pg_database WHERE datname IN ($1,$2,$3)', ['omerta_check', 'omerta_query', 'omerta_task_puzzles_ci']);\\n            assert.deepEqual(existing.rows, [], 'Owned migration fixture databases must not pre-exist');\\n            await client.query('CREATE DATABASE omerta_check');\\n            await client.query('CREATE DATABASE omerta_query');\\n            await client.query('CREATE DATABASE omerta_task_puzzles_ci');\\n            assert.deepEqual((await client.query('SELECT datname,pg_get_userbyid(datdba) AS owner FROM pg_database WHERE datname IN ($1,$2,$3) ORDER BY datname', ['omerta_check', 'omerta_query', 'omerta_task_puzzles_ci'])).rows,\\n              [{ datname: 'omerta_check', owner: 'postgres' }, { datname: 'omerta_query', owner: 'postgres' }, { datname: 'omerta_task_puzzles_ci', owner: 'postgres' }]);\\n          } finally { await client.end(); }\\n          NODE\\n      - name: Populated phase2 and Director migration regression\\n        run: |\\n          set -euo pipefail\\n          (\\n            export TEST_DATABASE_URL=postgres://postgres:pgcheck@127.0.0.1:5432/omerta_check\\n            phase2_status=0\\n            npm run phase2:definitions:postgres || phase2_status=1\\n            npm run phase2:lots:postgres || phase2_status=1\\n            exit \\\"$phase2_status\\\"\\n          ) > \\\"$RUNNER_TEMP/questing-phase2-migrations.log\\\" 2>&1 &\\n          phase2_pid=$!\\n          (\\n            export COORDINATION_TEST_DATABASE_URL=postgres://postgres:pgcheck@127.0.0.1:5432/omerta_query\\n            node test/director-migration.js --postgres\\n          ) > \\\"$RUNNER_TEMP/questing-director-migration.log\\\" 2>&1 &\\n          director_pid=$!\\n          result=0\\n          wait \\\"$phase2_pid\\\" || result=1\\n          wait \\\"$director_pid\\\" || result=1\\n          cat \\\"$RUNNER_TEMP/questing-phase2-migrations.log\\\"\\n          cat \\\"$RUNNER_TEMP/questing-director-migration.log\\\"\\n          exit \\\"$result\\\"\\n      - name: Native invitation, handoff and receipt races\\n        env:\\n          QUESTING_TEST_DATABASE_URL: postgres://postgres:pgcheck@127.0.0.1:5432/omerta_questing_ci\\n          JWT_SECRET: ci-questing-jwt-not-a-real-secret\\n          MOD_KEY: ci-questing-mod-not-a-real-secret\\n          MARKET_SEED: ciQuestingMarketSeed7Qx2mVb9PwLn4\\n          SOCIAL_VERIFY_MODE: 'off'\\n          POPULATION_OFF: 'on'\\n        run: npm run test:questing:postgres\\n      - name: Native task puzzle issuance, job races and rollback\\n        env:\\n          TASK_PUZZLE_TEST_DATABASE_URL: postgres://postgres:pgcheck@127.0.0.1:5432/omerta_task_puzzles_ci\\n        run: npm run test:task-puzzles:postgres\";\n  const assertQuestJobs = (browserBlock, nativeBlock) => {\n    assert.equal(nativeShape(browserBlock), expectedQuestBrowser, 'The quest browser job retains complete pure guards, cases and real browser commands without database authority');\n    assert.equal(nativeShape(nativeBlock), expectedQuestNative, 'The quest authority job retains its isolated PostgreSQL18 service, owned lock setup and real native endpoint/command');\n",
+          "baseline": "  const nativeShape = block => block.replaceAll('\\r\\n', '\\n').split('\\n')\n    .filter(line => line.trim() && !/^\\s*#/.test(line)).map(line => line.trimEnd()).join('\\n');\n  const expectedQuestBrowser = \"  questing_browser:\\n    name: Quest acceptance and browser playthroughs\\n    runs-on: ubuntu-latest\\n    timeout-minutes: 15\\n    steps:\\n      - uses: actions/checkout@v7\\n        with:\\n          fetch-depth: 0\\n      - uses: actions/setup-node@v7\\n        with:\\n          node-version: '22'\\n          cache: npm\\n      - run: npm ci\\n      - run: npx playwright-core install --with-deps chromium\\n      - name: Quest source and current native admission guards\\n        run: |\\n          node test/questing-source-transfer.js\\n          node test/enterprise-native-questing-guard.js\\n          node test/questing-enterprise-catalog-guard.js\\n          node test/questing-ux-release-phase2-native-catalog-guard.js\\n          node test/rc1-npc-retirement-journal.js\\n          node test/genesis-fee-readiness-source-transfer.js\\n      - name: Quest runtime, cases and community workshop\\n        run: npm run test:questing\\n      - name: Production quest and clue interfaces\\n        run: |\\n          export CHROMIUM_PATH=\\\"$(node --input-type=module -e 'import { chromium } from \\\"playwright-core\\\"; process.stdout.write(chromium.executablePath());')\\\"\\n          npm run test:questing:browser\\n      - run: npm run questing:check\";\n  const expectedQuestNative = \"  questing_native:\\n    name: Quest authority and concurrency (PostgreSQL)\\n    runs-on: ubuntu-latest\\n    timeout-minutes: 30\\n    services:\\n      postgres:\\n        image: postgres:18.4\\n        env:\\n          POSTGRES_PASSWORD: pgcheck\\n          POSTGRES_DB: omerta_questing_ci\\n        ports:\\n          - 5432:5432\\n        options: >-\\n          --health-cmd \\\"pg_isready -U postgres\\\"\\n          --health-interval 5s\\n          --health-timeout 5s\\n          --health-retries 12\\n    steps:\\n      - uses: actions/checkout@v7\\n        with:\\n          fetch-depth: 0\\n      - uses: actions/setup-node@v7\\n        with:\\n          node-version: '22'\\n          cache: npm\\n      - run: npm ci\\n      - name: Set owned test PostgreSQL lock capacity for populated migrations\\n        timeout-minutes: 3\\n        shell: bash\\n        env:\\n          POSTGRES_SERVICE_ID: ${{ job.services.postgres.id }}\\n        run: |\\n          set -euo pipefail\\n          [[ \\\"$POSTGRES_SERVICE_ID\\\" =~ ^[0-9a-f]{64}$ ]] || { echo 'Missing owned PostgreSQL service container ID' >&2; exit 1; }\\n          timeout 15s docker exec \\\"$POSTGRES_SERVICE_ID\\\" psql -X -U postgres -d postgres -v ON_ERROR_STOP=1 -c 'ALTER SYSTEM SET max_locks_per_transaction = 512;'\\n          timeout 45s docker restart --timeout 30 \\\"$POSTGRES_SERVICE_ID\\\"\\n          ready=0\\n          deadline=$((SECONDS + 60))\\n          while (( SECONDS < deadline )); do\\n            if timeout 3s docker exec \\\"$POSTGRES_SERVICE_ID\\\" pg_isready -q -t 1 -U postgres -d postgres; then\\n              ready=1\\n              break\\n            fi\\n            sleep 1\\n          done\\n          [[ \\\"$ready\\\" == 1 ]] || { echo 'Owned PostgreSQL service did not become ready within 60 seconds' >&2; exit 1; }\\n          actual=\\\"$(timeout 10s docker exec \\\"$POSTGRES_SERVICE_ID\\\" psql -X -U postgres -d postgres -v ON_ERROR_STOP=1 -Atc 'SHOW max_locks_per_transaction;')\\\"\\n          [[ \\\"$actual\\\" == 512 ]] || { echo \\\"Unexpected test max_locks_per_transaction: $actual\\\" >&2; exit 1; }\\n      - name: Create fresh owned migration fixture databases\\n        timeout-minutes: 1\\n        run: |\\n          node --input-type=module <<'NODE'\\n          import assert from 'node:assert/strict';\\n          import pg from 'pg';\\n          const client = new pg.Client({ connectionString: 'postgres://postgres:pgcheck@127.0.0.1:5432/postgres', connectionTimeoutMillis: 10000, query_timeout: 30000 });\\n          try {\\n            await client.connect();\\n            assert.deepEqual((await client.query('SELECT current_user AS role,current_database() AS database,inet_server_port() AS port')).rows,\\n              [{ role: 'postgres', database: 'postgres', port: 5432 }]);\\n            const existing = await client.query('SELECT datname FROM pg_database WHERE datname IN ($1,$2)', ['omerta_check', 'omerta_query']);\\n            assert.deepEqual(existing.rows, [], 'Owned migration fixture databases must not pre-exist');\\n            await client.query('CREATE DATABASE omerta_check');\\n            await client.query('CREATE DATABASE omerta_query');\\n            assert.deepEqual((await client.query('SELECT datname,pg_get_userbyid(datdba) AS owner FROM pg_database WHERE datname IN ($1,$2) ORDER BY datname', ['omerta_check', 'omerta_query'])).rows,\\n              [{ datname: 'omerta_check', owner: 'postgres' }, { datname: 'omerta_query', owner: 'postgres' }]);\\n          } finally { await client.end(); }\\n          NODE\\n      - name: Populated phase2 and Director migration regression\\n        run: |\\n          set -euo pipefail\\n          (\\n            export TEST_DATABASE_URL=postgres://postgres:pgcheck@127.0.0.1:5432/omerta_check\\n            phase2_status=0\\n            npm run phase2:definitions:postgres || phase2_status=1\\n            npm run phase2:lots:postgres || phase2_status=1\\n            exit \\\"$phase2_status\\\"\\n          ) > \\\"$RUNNER_TEMP/questing-phase2-migrations.log\\\" 2>&1 &\\n          phase2_pid=$!\\n          (\\n            export COORDINATION_TEST_DATABASE_URL=postgres://postgres:pgcheck@127.0.0.1:5432/omerta_query\\n            node test/director-migration.js --postgres\\n          ) > \\\"$RUNNER_TEMP/questing-director-migration.log\\\" 2>&1 &\\n          director_pid=$!\\n          result=0\\n          wait \\\"$phase2_pid\\\" || result=1\\n          wait \\\"$director_pid\\\" || result=1\\n          cat \\\"$RUNNER_TEMP/questing-phase2-migrations.log\\\"\\n          cat \\\"$RUNNER_TEMP/questing-director-migration.log\\\"\\n          exit \\\"$result\\\"\\n      - name: Native invitation, handoff and receipt races\\n        env:\\n          QUESTING_TEST_DATABASE_URL: postgres://postgres:pgcheck@127.0.0.1:5432/omerta_questing_ci\\n          JWT_SECRET: ci-questing-jwt-not-a-real-secret\\n          MOD_KEY: ci-questing-mod-not-a-real-secret\\n          MARKET_SEED: ciQuestingMarketSeed7Qx2mVb9PwLn4\\n          SOCIAL_VERIFY_MODE: 'off'\\n          POPULATION_OFF: 'on'\\n        run: npm run test:questing:postgres\";\n  const assertQuestJobs = (browserBlock, nativeBlock) => {\n    assert.equal(nativeShape(browserBlock), expectedQuestBrowser, 'The quest browser job retains complete pure guards, cases and real browser commands without database authority');\n    assert.equal(nativeShape(nativeBlock), expectedQuestNative, 'The quest authority job retains its isolated PostgreSQL18 service, owned lock setup and real native endpoint/command');\n"
+        },
+        {
+          "at": 365980,
+          "current": "    expectedQuestNative.replace('job.services.postgres.id', 'inputs.container_id'),\n    expectedQuestNative.replace('test:questing:postgres', 'test:questing:postgres -- --partial'),\n    expectedQuestNative.replace('npm run test:questing:postgres', 'node -e \"process.exit(0)\"'),\n    expectedQuestNative.replace('npm run test:task-puzzles:postgres', 'node -e \"process.exit(0)\"'),\n    expectedQuestNative.replace('test:task-puzzles:postgres', 'test:task-puzzles:postgres -- --partial'),\n    expectedQuestNative.replaceAll('omerta_task_puzzles_ci', 'production'),\n    expectedQuestNative.replace(\"            await client.query('CREATE DATABASE omerta_task_puzzles_ci');\\n\", ''),\n    expectedQuestNative.replace('POSTGRES_PASSWORD: pgcheck', 'POSTGRES_PASSWORD: questing'),\n    expectedQuestNative.replace(\"assert.deepEqual(existing.rows, [], 'Owned migration fixture databases must not pre-exist');\", 'void existing;'),\n    expectedQuestNative.replace('export COORDINATION_TEST_DATABASE_URL=postgres://postgres:pgcheck@127.0.0.1:5432/omerta_query', 'export COORDINATION_TEST_DATABASE_URL=postgres://postgres:pgcheck@127.0.0.1:5432/omerta_check'),\n",
+          "baseline": "    expectedQuestNative.replace('job.services.postgres.id', 'inputs.container_id'),\n    expectedQuestNative.replace('test:questing:postgres', 'test:questing:postgres -- --partial'),\n    expectedQuestNative.replace('npm run test:questing:postgres', 'node -e \"process.exit(0)\"'),\n    expectedQuestNative.replace('POSTGRES_PASSWORD: pgcheck', 'POSTGRES_PASSWORD: questing'),\n    expectedQuestNative.replace(\"assert.deepEqual(existing.rows, [], 'Owned migration fixture databases must not pre-exist');\", 'void existing;'),\n    expectedQuestNative.replace('export COORDINATION_TEST_DATABASE_URL=postgres://postgres:pgcheck@127.0.0.1:5432/omerta_query', 'export COORDINATION_TEST_DATABASE_URL=postgres://postgres:pgcheck@127.0.0.1:5432/omerta_check'),\n"
+        },
+        {
+          "at": 487290,
+          "current": "    const normalized=source.replaceAll('\\r\\n','\\n');\n    if(file!=='src/growth.js'||source.split(original).length!==4||normalized.includes('\\r')\n      ||(source!==normalized&&source!==normalized.replaceAll('\\n','\\r\\n'))\n      ||createHash('sha256').update(normalized).digest('hex')!=='32f6733d566505eeb5407da8dfb65c9cdfd115f717f9890ed329153b62067298')return source;\n    // These three refusals read the permanent provider/post receipt, not a refillable allowance.\n    // Mask only the reviewed error token; a same-named counter or changed claim path remains visible.\n    return source.replaceAll(original,original.replace(\"'proof_used'\",\"'proof'\"));\n",
+          "baseline": "    const normalized=source.replaceAll('\\r\\n','\\n');\n    if(file!=='src/growth.js'||source.split(original).length!==4||normalized.includes('\\r')\n      ||(source!==normalized&&source!==normalized.replaceAll('\\n','\\r\\n'))\n      ||createHash('sha256').update(normalized).digest('hex')!=='a56eef048988290bcab08966e9874b74dd84d1275e062e84b1d26c5d1097657b')return source;\n    // These three refusals read the permanent provider/post receipt, not a refillable allowance.\n    // Mask only the reviewed error token; a same-named counter or changed claim path remains visible.\n    return source.replaceAll(original,original.replace(\"'proof_used'\",\"'proof'\"));\n"
+        }
+      ]
+    },
+    "test/gateway-context.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "d7c0a5e4e6e85dabf65e803b26812dc1c7addc48",
+        "sha256": "5826d478a250ccd2432182d4f06639a14ad98d825663b0337875c2e0a9d703a5",
+        "bytes": 19431
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "4f420b5e556aab70ea9576536917184b0d571572",
+        "sha256": "1c75703a9e278d43759654632ebf0c6d1184f3a5b2914b2200aa46d59ba38b27",
+        "bytes": 19074
+      },
+      "inverses": [
+        {
+          "at": 16762,
+          "current": "  assert.doesNotMatch(JSON.stringify(fullPaths), /foreign-car/);\n  assertNoNumericSecrets(fullPaths, /98765|987/);\n\n  const missionMetadata = await run('get_available_missions');\n  assert.deepEqual([...missionMetadata.missions, ...missionMetadata.blockedMissions]\n    .filter(mission => mission.puzzle?.required).map(mission => mission.id).sort(), ['m11', 'm12', 'm2']);\n  // Every published mission's readiness preview must match its requirements and\n  // cooldown. Selected jobs then stop at the required puzzle gate, before writes.\n  const oldCooldown = process.env.MISSION_CD_MS;\n  process.env.MISSION_CD_MS = '60000';\n  try {\n",
+          "baseline": "  assert.doesNotMatch(JSON.stringify(fullPaths), /foreign-car/);\n  assertNoNumericSecrets(fullPaths, /98765|987/);\n\n  // Every published mission's preview must match its actual refusal/acceptance gate.\n  // The fake query stops exactly at the first write, so no reward is executed here.\n  const oldCooldown = process.env.MISSION_CD_MS;\n  process.env.MISSION_CD_MS = '60000';\n  try {\n"
+        },
+        {
+          "at": 17898,
+          "current": "      const client = { async query(sql) { if (/^SELECT/.test(sql)) return { rows: [] }; throw Object.assign(new Error('mutation boundary'), { code: 'accepted_at_write' }); } };\n      let refusal;\n      try { await doMission(ch, mission.id, client, { owned: { assets: [], gear: [] } }); } catch (error) { refusal = error; }\n      assert.equal(refusal.code, readiness.missing.length ? 'reqs' : readiness.cooldownSeconds ? 'cooldown' :\n        ['m2', 'm11', 'm12'].includes(mission.id) ? 'task_puzzle_required' : 'accepted_at_write');\n      assert.equal(readiness.available, ['accepted_at_write', 'task_puzzle_required'].includes(refusal.code));\n      if (refusal.code === 'reqs') assert.deepEqual(refusal.data.need, Object.fromEntries(readiness.missing.map(({ k, need }) => [k, need])));\n    }\n  } finally {\n",
+          "baseline": "      const client = { async query(sql) { if (/^SELECT/.test(sql)) return { rows: [] }; throw Object.assign(new Error('mutation boundary'), { code: 'accepted_at_write' }); } };\n      let refusal;\n      try { await doMission(ch, mission.id, client, { owned: { assets: [], gear: [] } }); } catch (error) { refusal = error; }\n      assert.equal(refusal.code, readiness.missing.length ? 'reqs' : readiness.cooldownSeconds ? 'cooldown' : 'accepted_at_write');\n      assert.equal(readiness.available, refusal.code === 'accepted_at_write');\n      if (refusal.code === 'reqs') assert.deepEqual(refusal.data.need, Object.fromEntries(readiness.missing.map(({ k, need }) => [k, need])));\n    }\n  } finally {\n"
         }
       ]
     },
@@ -703,6 +1196,32 @@ export const AGE_REMOVAL_SOURCE = freeze({
           "at": 23999,
           "current": "  assert.throws(() => fixtureComparison(fixture, raw, actualEntry)); currentRefusals++;\n  assert.throws(() => fixtureComparison(fixture, raw, actualEntry, actualIndex, {})); currentRefusals++;\n  assert.throws(() => { comparison.proof.native = true; }, TypeError); currentRefusals++;\n  assert.equal(currentPositives, 2); assert.equal(currentRefusals, 31);\n  let siteRefusals = 0;\n  const questCurrent = QUESTING_SOURCE.files[fixture].current;\n  const oldTree = questCurrent.mode + ' blob ' + questCurrent.blob + '\\t' + fixture;\n",
           "baseline": "  assert.throws(() => fixtureComparison(fixture, raw, actualEntry)); currentRefusals++;\n  assert.throws(() => fixtureComparison(fixture, raw, actualEntry, actualIndex, {})); currentRefusals++;\n  assert.throws(() => { comparison.proof.native = true; }, TypeError); currentRefusals++;\n  assert.equal(currentPositives, 2); assert.equal(currentRefusals, 30);\n  let siteRefusals = 0;\n  const questCurrent = QUESTING_SOURCE.files[fixture].current;\n  const oldTree = questCurrent.mode + ' blob ' + questCurrent.blob + '\\t' + fixture;\n"
+        }
+      ]
+    },
+    "test/growth.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "0e1f99df1dd0f5adc07119534a3412ee5c9affa3",
+        "sha256": "e9f98498fc333845ed31c34c9ae1ad06e361dd858a4d163a8f3d59de308e6768",
+        "bytes": 219883
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "4a41b57e05be9421a99666e6bf8ed5146299657a",
+        "sha256": "e153853b12018c5e2e487e67d4fc6507f99a1d53eaff0e436f2606ca0ca8b9bd",
+        "bytes": 219622
+      },
+      "inverses": [
+        {
+          "at": 799,
+          "current": "import { accrue } from '../src/accrual.js';\nimport { sweepGrandReferrals, gainRespect, maybeSparkReferral } from '../src/game.js';\nimport { GOODS_MARKET } from '../src/goodsmarket.js';\nimport { solveTaskPuzzle } from './lib/task-puzzle-solver.js';\n\n// The City Standing / recruiters boards are CACHED in production (standing.js — they were the most\n// expensive polled reads in the game). This suite reads boards it has just written, so it pins the\n",
+          "baseline": "import { accrue } from '../src/accrual.js';\nimport { sweepGrandReferrals, gainRespect, maybeSparkReferral } from '../src/game.js';\nimport { GOODS_MARKET } from '../src/goodsmarket.js';\n\n// The City Standing / recruiters boards are CACHED in production (standing.js — they were the most\n// expensive polled reads in the game). This suite reads boards it has just written, so it pins the\n"
+        },
+        {
+          "at": 188551,
+          "current": "  assert.equal((await call('POST', '/v1/hustle/advance', { token: hus.token })).body.error, 'district',\n    'the work counts, but the CHECK-IN is still location-gated — you have to bring it to the stop');\n  await seedCh(hus.id, `loc='${b1.district}'`);\n  const legworkPuzzle = (await call('POST', '/v1/task-puzzles', { token: hus.token, body: { scope: 'hustle', targetId: 'legwork' } })).body.puzzle;\n  r = await call('POST', '/v1/hustle/advance', { token: hus.token, body: { puzzle: solveTaskPuzzle(legworkPuzzle) } });\n  assert.equal(r.body.step, 2, `the legwork done (${b1.legwork}) advances the chain`);\n  // the payoff: on location, ledgered, level-scaled, once a day\n  const b2 = (await call('GET', '/v1/hustle', { token: hus.token })).body;\n",
+          "baseline": "  assert.equal((await call('POST', '/v1/hustle/advance', { token: hus.token })).body.error, 'district',\n    'the work counts, but the CHECK-IN is still location-gated — you have to bring it to the stop');\n  await seedCh(hus.id, `loc='${b1.district}'`);\n  r = await call('POST', '/v1/hustle/advance', { token: hus.token });\n  assert.equal(r.body.step, 2, `the legwork done (${b1.legwork}) advances the chain`);\n  // the payoff: on location, ledgered, level-scaled, once a day\n  const b2 = (await call('GET', '/v1/hustle', { token: hus.token })).body;\n"
         }
       ]
     },
@@ -905,6 +1424,27 @@ export const AGE_REMOVAL_SOURCE = freeze({
           "at": 8291,
           "current": "    assert.match(await opening(page, 'empire').locator('.ux-opening-complete').innerText(), /Journey complete/);\n    assert.deepEqual(mutations, ['/v1/crimes/pick', '/v1/assets/beater/buy']);\n    assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 2), 'The real opening journey fits a 390px phone.');\n    await openDetails(opening(page, 'empire'));\n    await opening(page, 'empire').scrollIntoViewIfNeeded();\n    await page.screenshot({ path: path.join(artifacts, 'opening-complete-mobile.png'), fullPage: false });\n    await opening(page, 'empire').screenshot({ path: path.join(artifacts, 'opening-complete-panel.png') });\n",
           "baseline": "    assert.match(await opening(page, 'empire').locator('.ux-opening-complete').innerText(), /Journey complete/);\n    assert.deepEqual(mutations, ['/v1/crimes/pick', '/v1/assets/beater/buy']);\n    assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 2), 'The real opening journey fits a 390px phone.');\n    await opening(page, 'empire').scrollIntoViewIfNeeded();\n    await page.screenshot({ path: path.join(artifacts, 'opening-complete-mobile.png'), fullPage: false });\n    await opening(page, 'empire').screenshot({ path: path.join(artifacts, 'opening-complete-panel.png') });\n"
+        }
+      ]
+    },
+    "test/migrate.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "35576bd87ce5ad52904ae5fb3ac87b8c8c3c970f",
+        "sha256": "f68042c5d074b5afc36b433e1be0ee4dbe004abe2a7009560c78659c0d74424a",
+        "bytes": 102284
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "f4fe85900eceda1a420e2503b6849c6cbea4b005",
+        "sha256": "c0490da287e43ae591b91b4fb31171ae56640653244de2d6ac657aae8946cad1",
+        "bytes": 102102
+      },
+      "inverses": [
+        {
+          "at": 34077,
+          "current": "// resolve with a `*:death` burn — deliberately NOT wiped so the frozen field resolves), ledger/log\n// (immutable §10.4/audit/historical rows — intentionally never wiped; a dead id is a valid historical ref).\nconst DISPOSITION = {\n  task_puzzles: 'ledger', // issued constraints and consumed receipts retain the original dead character; current-character lookup grants an heir no completion or recovery authority\n  // Original character/generation-bound consent and private puzzle outcomes are\n  // historical. Room/host lifecycle closes active rounds; heirs never inherit a\n  // member's participation or its private history.\n",
+          "baseline": "// resolve with a `*:death` burn — deliberately NOT wiped so the frozen field resolves), ledger/log\n// (immutable §10.4/audit/historical rows — intentionally never wiped; a dead id is a valid historical ref).\nconst DISPOSITION = {\n  // Original character/generation-bound consent and private puzzle outcomes are\n  // historical. Room/host lifecycle closes active rounds; heirs never inherit a\n  // member's participation or its private history.\n"
         }
       ]
     },
@@ -1627,6 +2167,24 @@ export const AGE_REMOVAL_SOURCE = freeze({
     }
   },
   "additions": {
+    "docs/TASK-PUZZLES.md": {
+      "mode": "100644",
+      "blob": "7090e5664f79742fc53e235d785f0fa66196c520",
+      "sha256": "d4fcac0a9957ec686b327aea3fe836dec74ec00032cfb1337025daffccadb6c4",
+      "bytes": 5393
+    },
+    "docs/superpowers/plans/2026-11-10-task-puzzles.md": {
+      "mode": "100644",
+      "blob": "b71850687d0b96c02bbb9301eea0108d2ab11e90",
+      "sha256": "5ad2b0f12bf414b89885ad86e27a75207fce4cc144a084c2d2047af71c61743e",
+      "bytes": 8847
+    },
+    "docs/superpowers/specs/2026-11-10-task-puzzles.md": {
+      "mode": "100644",
+      "blob": "fe2ed28739ecba509bd2106b67c5f94941b532ce",
+      "sha256": "709d57fb021606c04f1ad01fd855c6fbb0a4a1926895ff0935f1dbf9113ce18a",
+      "bytes": 1576
+    },
     "public/noir-landing.css": {
       "mode": "100644",
       "blob": "fb53d550d414a89528ffb901763d30a38a450d6b",
@@ -1657,6 +2215,18 @@ export const AGE_REMOVAL_SOURCE = freeze({
       "sha256": "c78e8e2cd8d5ee8e566efb0b26452624384b8d41c30f21a4354cdb822325c500",
       "bytes": 17672
     },
+    "public/ux-task-puzzles.css": {
+      "mode": "100644",
+      "blob": "af5f4a9baa675b23b4e060655db2152d44b8e634",
+      "sha256": "b023117f75af1230983073758e5fefdcc06e0d7623b759f68c7f83ec8ff775c1",
+      "bytes": 2889
+    },
+    "public/ux-task-puzzles.js": {
+      "mode": "100644",
+      "blob": "29f011bd0a8cdaabc1dd10d34c0087ba0f62c80b",
+      "sha256": "98e9943994e77e20f621297fc84d658c0b12c9de053b6b6ae167e2db214b363e",
+      "bytes": 16300
+    },
     "public/vendor/strategy-city-renderer.LICENSE.txt": {
       "mode": "100644",
       "blob": "eb5f126d7a44f8b8851cda126679fcc8991421ce",
@@ -1675,11 +2245,41 @@ export const AGE_REMOVAL_SOURCE = freeze({
       "sha256": "cc7cc7e2f53d5db0235ab2226e85fc6e91655161573b39813b41bb00e5919674",
       "bytes": 188
     },
+    "src/task-puzzle-contract.js": {
+      "mode": "100644",
+      "blob": "153a1a976a5091b31b5a3ab650ca5d6786434cca",
+      "sha256": "10805e0a58ccff1ebaffef3ff06879cdd7ff26b5ed83168dde03a953324315ca",
+      "bytes": 3527
+    },
+    "src/task-puzzle-engine.js": {
+      "mode": "100644",
+      "blob": "5b19916e75a1b8e3ca883003e22015ee05ba169e",
+      "sha256": "63f27241f4c1b3682ee93b483b5c746308fc020751897d07042c65081d53cf1c",
+      "bytes": 11339
+    },
+    "src/task-puzzle-jobs.js": {
+      "mode": "100644",
+      "blob": "a17d1d71346691206d2e38a210469135f01b868c",
+      "sha256": "a500eeadb12330d8a7d364231526663851916fe897f3497e7e5049b4d6792551",
+      "bytes": 2302
+    },
+    "src/task-puzzles.js": {
+      "mode": "100644",
+      "blob": "e5d9fc3a21eade98fd71e37a317a89bff242592d",
+      "sha256": "730fdce2e07b47de81f83d90d201c6ac3d8f588c5d9ff20b1d203ba742aaa6ca",
+      "bytes": 5609
+    },
     "test/lib/age-removal-source-transfer-proof.js": {
       "mode": "100644",
       "blob": "914db9dc5a5dd0d848a1da75f667786c30ec067c",
       "sha256": "eba04ba9ee8a53ae55d31cc394b7c88c66948e902ee736b65c82c09c99173d41",
       "bytes": 15106
+    },
+    "test/lib/task-puzzle-solver.js": {
+      "mode": "100644",
+      "blob": "1c635b6cdbbc265990db632ef28d490985bcd65a",
+      "sha256": "86d4a767da41178c5c0b3e0e17cb4f030a7b6c1b9b6736dc0d5e9a219368866f",
+      "bytes": 1685
     },
     "test/lib/ux-disclosure-browser.js": {
       "mode": "100644",
@@ -1699,11 +2299,41 @@ export const AGE_REMOVAL_SOURCE = freeze({
       "sha256": "20628b023bc0ba02069c6e46cc685fc0d3497d54ee3f74c9b4400948ab88c7c7",
       "bytes": 16507
     },
+    "test/task-puzzle-engine.js": {
+      "mode": "100644",
+      "blob": "4e807e5888e22bb7d38ab5ff6ea00707cf56106a",
+      "sha256": "056c57025c55dbc9bc50bc987aab1f17aab197f5d1167184cb2002ee8525d8cf",
+      "bytes": 6499
+    },
+    "test/task-puzzle-jobs.js": {
+      "mode": "100644",
+      "blob": "8ee0b2fddb43cf33cfbf02396ba9c1ddcca9d7ee",
+      "sha256": "6b80ba7c3a1016daecb63e07b5c57dfa529ea4acf22c70293271c97ef12b0c4b",
+      "bytes": 14612
+    },
+    "test/task-puzzle-postgres.js": {
+      "mode": "100644",
+      "blob": "75bf18f388431f5076f4b3a4e24032f0cc2ef702",
+      "sha256": "3fb0df0a12894567e5a08c1b9208ed49dbc4f532939d775f6cdd54176ac47113",
+      "bytes": 12064
+    },
+    "test/task-puzzles-browser.js": {
+      "mode": "100644",
+      "blob": "049a6f2c4a9503fa1b7d7751ad50b83a6954ee32",
+      "sha256": "0011fcfa2b5ece16526952cdefbdb2b7a4b4837fb11a634c15ff44cb766f1519",
+      "bytes": 22734
+    },
+    "test/task-puzzles.js": {
+      "mode": "100644",
+      "blob": "e799df73ab8be8793068b99bcebe7dfd671de8c7",
+      "sha256": "aec1182cf38684f913c1df855722a9dbfd3a11dba1d8a672aab664bd7f4e33e7",
+      "bytes": 7498
+    },
     "tools/age-removal-source-seal.js": {
       "mode": "100644",
-      "blob": "e83d84df6bc6e80b580dc3eefb91e12c6d6b826f",
-      "sha256": "bd6bfc74f8dfad3a042c3276076916880e19221895d6b082d38e6c5cedb5286a",
-      "bytes": 13844
+      "blob": "6d1812c92e515b59ef3cc6eee8bba45695e6b3ef",
+      "sha256": "434388cbbe5e7046ec02f316e40430dbaaee0b0ae702acb30ec8a1829a4ed4c0",
+      "bytes": 14807
     },
     "tools/age-removal-source-transfer.js": {
       "mode": "100644",
@@ -1725,4 +2355,4 @@ export const AGE_REMOVAL_SOURCE = freeze({
     }
   }
 });
-export const AGE_REMOVAL_SOURCE_SHA256 = '3ffa26cf8858536202250be4fad5153a48d88aa881f186350bef348fdea37562';
+export const AGE_REMOVAL_SOURCE_SHA256 = '6ed668edda47f8f647f72c120d2a9aceb79ba2b5cea2a8183d16dc81c02fcd17';
