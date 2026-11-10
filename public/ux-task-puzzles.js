@@ -5,9 +5,28 @@
   window.createOmertaTaskPuzzles = function ({ read, action, issue, getActor, refresh, focusFallback }) {
     let active = null;
     const inflight = new Set();
+    const pendingByTask = new Map();
     const key = v => `omerta_task_puzzle:${v.actor}:${v.puzzle.id}`;
+    const taskKey = v => `omerta_task_pending:${v.actor}:${v.selector.scope}:${v.selector.targetId}`;
     const stored = v => { try { return JSON.parse(localStorage.getItem(key(v)) || '{}'); } catch { return {}; } };
-    const save = v => { try { localStorage.setItem(key(v), JSON.stringify({ draft: v.draft, attempt: v.attempt })); } catch { /* Play remains available without browser storage. */ } };
+    const unresolved = v => {
+      const name = taskKey(v);
+      if (pendingByTask.has(name)) return pendingByTask.get(name);
+      try {
+        const record = JSON.parse(localStorage.getItem(name) || 'null');
+        return record?.puzzle?.id && record.puzzle.id === record.attempt?.body?.puzzle?.id && typeof record.attempt.key === 'string' ? record : null;
+      } catch { return null; }
+    };
+    const save = v => {
+      const name = taskKey(v), previous = unresolved(v), clear = !v.attempt && previous?.puzzle.id === v.puzzle.id;
+      const record = v.attempt ? { puzzle: v.puzzle, draft: v.draft, attempt: v.attempt } : null;
+      if (record) pendingByTask.set(name, record); else if (clear) pendingByTask.delete(name);
+      try {
+        // Find an unresolved task before its occurrence changes, not only by its old UUID.
+        if (record) localStorage.setItem(name, JSON.stringify(record)); else if (clear) localStorage.removeItem(name);
+        localStorage.setItem(key(v), JSON.stringify({ draft: v.draft, attempt: v.attempt }));
+      } catch { /* In-memory recovery remains available when browser storage is unavailable. */ }
+    };
     const current = v => active === v && getActor() === v.actor && v.dialog.open;
     const query = v => '/v1/task-puzzles?' + new URLSearchParams(v.selector);
     const blank = p => p.kind === 'route' ? { path: [p.constraints.start] } : p.kind === 'matching' ? { pairs: [] } : {};
@@ -45,7 +64,11 @@
       v.dialog.setAttribute('data-task-puzzle', p?.kind || 'loading');
       v.dialog.innerHTML = `<header><p class="task-puzzle-eyebrow">${esc(v.label)}</p><h2 id="task-puzzle-title">Task puzzle${p ? ': ' + esc(p.title) : ''}</h2><button type="button" class="act" data-close>Close puzzle</button></header><div role="status" aria-live="polite" aria-atomic="true" tabindex="-1">${esc(v.message || '')}</div>${p ? `<p>${esc(p.instructions)}</p><p class="task-puzzle-terms">${v.selector.scope === 'crime' ? 'Optional preparation gives feedback only, with no odds or reward bonus. Solving and submitting attempts the crime, spends its usual resources and can fail.' : 'Solving and submitting executes this job with its usual requirements, costs and rewards.'} Closing never executes a job. There is no timer or fast-reaction test.</p><form aria-busy="${!!v.pending}"><fieldset class="task-puzzle-edit"${locked ? ' disabled' : ''}>${controls(v)}${v.selector.scope === 'crime' ? `<label class="task-puzzle-match">Crime approach<select name="approach" data-approach>${v.approaches.map(a => `<option value="${esc(a.id)}"${a.id === v.body.approach ? ' selected' : ''}>${esc(a.name || a.id)}</option>`).join('')}</select></label>` : ''}<details class="task-puzzle-hint"${v.hint ? ' open' : ''}><summary>A hint, if you need it</summary><p>${esc(p.hint)}</p></details><div class="task-puzzle-actions"><button class="act prime" type="submit">${esc(v.submitLabel)}</button><button class="act" type="button" data-clear>Clear answer</button></div></fieldset></form>${v.uncertain ? '<button type="button" class="act prime" data-check>Check task status</button>' : ''}${v.retry ? '<button type="button" class="act" data-retry>Retry same submission</button>' : ''}${v.stale ? '<button type="button" class="act prime" data-reopen>Reopen current task</button>' : ''}` : '<button type="button" class="act" data-reopen>Retry opening puzzle</button>'}`;
       v.dialog.querySelector('[data-close]').onclick = () => close(v);
-      v.dialog.querySelector('[data-reopen]')?.addEventListener('click', () => load(v));
+      v.dialog.querySelector('[data-reopen]')?.addEventListener('click', () => {
+        if (v.pending) return;
+        if (v.stale && v.attempt) { v.attempt = null; save(v); }
+        load(v);
+      });
       v.dialog.querySelector('[data-check]')?.addEventListener('click', () => check(v));
       v.dialog.querySelector('[data-retry]')?.addEventListener('click', () => submit(v, true));
       v.dialog.querySelector('form')?.addEventListener('submit', e => { e.preventDefault(); submit(v); });
@@ -68,6 +91,14 @@
     }
     async function load(v) {
       if (!current(v) || v.pending) return;
+      const recovery = unresolved(v);
+      if (recovery) {
+        v.puzzle = recovery.puzzle; v.draft = recovery.draft || blank(v.puzzle); v.attempt = recovery.attempt;
+        if (v.attempt.body.approach) v.body.approach = v.attempt.body.approach;
+        v.done = false; v.stale = false; v.retry = false; v.uncertain = true;
+        await check(v); // Reconcile the existing attempt through GET before any new issuance.
+        return;
+      }
       v.pending = true; v.puzzle = null; v.message = 'Opening the current task puzzle…'; paint(v);
       try {
         const result = await issue('POST', '/v1/task-puzzles', v.selector, { isCurrent: () => current(v) });

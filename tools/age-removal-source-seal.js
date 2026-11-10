@@ -109,6 +109,19 @@ const generated = new Set([metadata, 'tools/enterprise-native-questing-inputs.js
   "output/quest-quality-verification/quality-mw95h79m-quest-quality-study.log",
 ]);
 const allowed = new Set([
+  // Task puzzles: the exact 30 additional paths measured from approved base
+  // 0a45705bb34acb5a0a9b620802e042eaa4609259; no runtime/native result transfer.
+  '.github/workflows/ci.yml', 'MARKETING-POSTS.md',
+  'docs/TASK-PUZZLES.md', 'docs/WIKI.md',
+  'docs/superpowers/plans/2026-11-10-task-puzzles.md',
+  'docs/superpowers/specs/2026-11-10-task-puzzles.md',
+  'public/ux-task-puzzles.css', 'public/ux-task-puzzles.js', 'public/wiki.html',
+  'schema.sql', 'src/game.js', 'src/gateway/context.js', 'src/growth.js', 'src/hustle.js',
+  'src/task-puzzle-contract.js', 'src/task-puzzle-engine.js', 'src/task-puzzle-jobs.js', 'src/task-puzzles.js',
+  'src/ux-tactics.js', 'test/client.js', 'test/daily-lineage.js', 'test/gateway-context.js',
+  'test/growth.js', 'test/lib/task-puzzle-solver.js', 'test/migrate.js',
+  'test/task-puzzle-engine.js', 'test/task-puzzle-jobs.js', 'test/task-puzzle-postgres.js',
+  'test/task-puzzles-browser.js', 'test/task-puzzles.js',
   // Release-gate regression repair: native quest disclosure state survives refetch repaint.
   'public/ux-quests.js', 'test/quest-experience-browser.js',
   // The approved combined release includes the complete noir UI source and build inputs.

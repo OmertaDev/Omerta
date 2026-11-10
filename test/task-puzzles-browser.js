@@ -213,6 +213,41 @@ try {
   assert.deepEqual(retryAttempt, originalAttempt, 'Uncertain retry uses the exact original request key, answer and approach.');
   await dialog().getByRole('status').filter({ hasText: 'recorded' }).waitFor(); await page.keyboard.press('Escape');
   assert.equal(Number((await app.pool.query('SELECT crime_puzzle_revision FROM characters WHERE id=$1', [ch.id])).rows[0].crime_puzzle_revision), revisionBefore + 1, 'One committed prepared attempt after failed dispatch and reload.');
+  for (const recovery of ['dismissal', 'reload']) {
+    await app.pool.query('UPDATE characters SET street_action_at=NULL,jail_until=NULL,nerve=50 WHERE id=$1', [ch.id]);
+    await page.reload({ waitUntil: 'domcontentloaded' }); await page.locator('#screen-main:not(.hidden)').waitFor(); await navigate('streets'); await crimeBook();
+    await page.locator('[data-task-crime="pick"]').click(); await dialog().getByRole('button', { name: 'Solve and attempt crime' }).waitFor();
+    const pendingPuzzle = await puzzleOf('crime', 'pick', token); await choose(pendingPuzzle);
+    const revision = Number((await app.pool.query('SELECT crime_puzzle_revision FROM characters WHERE id=$1', [ch.id])).rows[0].crime_puzzle_revision);
+    const crimeRequests = requests.filter(r => r.url === '/v1/crimes/pick').length;
+    await page.route('**/v1/crimes/pick', async route => {
+      const committed = await route.fetch();
+      assert.equal(committed.status(), 200); assert.equal((await committed.json()).puzzle.completed, true);
+      await route.abort('failed');
+    });
+    await dialog().getByRole('button', { name: 'Solve and attempt crime' }).click();
+    await dialog().getByRole('button', { name: 'Check task status' }).waitFor();
+    await page.unroute('**/v1/crimes/pick');
+    // Only readiness changes: the committed attempt's occurrence revision is deliberately retained.
+    await app.pool.query('UPDATE characters SET street_action_at=NULL,jail_until=NULL,nerve=50 WHERE id=$1', [ch.id]);
+    const issues = requests.filter(r => r.url === '/v1/task-puzzles').length;
+    if (recovery === 'reload') {
+      await page.reload({ waitUntil: 'domcontentloaded' }); await page.locator('#screen-main:not(.hidden)').waitFor(); await navigate('streets'); await crimeBook();
+    } else await page.keyboard.press('Escape');
+    await page.locator('[data-task-crime="pick"]').click(); await dialog().waitFor(); await page.waitForLoadState('networkidle');
+    assert.equal(requests.filter(r => r.url === '/v1/task-puzzles').length, issues,
+      `${recovery}: unresolved committed crime is discovered by task selector before issuing any new puzzle.`);
+    await dialog().getByRole('status').filter({ hasText: 'occurrence changed' }).waitFor();
+    assert.equal(await dialog().getByRole('button', { name: 'Solve and attempt crime' }).isDisabled(), true);
+    assert.equal(await puzzleOf('crime', 'pick', token), null, 'Receipt reconciliation must not itself issue the new occurrence.');
+    assert.equal(requests.filter(r => r.url === '/v1/crimes/pick').length, crimeRequests + 1, 'Recovery never resends the committed crime.');
+    assert.equal(Number((await app.pool.query('SELECT crime_puzzle_revision FROM characters WHERE id=$1', [ch.id])).rows[0].crime_puzzle_revision), revision + 1);
+    await dialog().getByRole('button', { name: 'Reopen current task' }).click();
+    await dialog().getByRole('button', { name: 'Solve and attempt crime' }).waitFor();
+    assert.equal(await dialog().getByRole('button', { name: 'Solve and attempt crime' }).isDisabled(), false);
+    assert.notEqual((await puzzleOf('crime', 'pick', token)).id, pendingPuzzle.id, 'Only explicit reopening issues the next occurrence.');
+    await page.keyboard.press('Escape');
+  }
   await app.pool.query('UPDATE characters SET street_action_at=NULL,jail_until=NULL,nerve=50 WHERE id=$1', [ch.id]);
   await page.reload({ waitUntil: 'domcontentloaded' }); await page.locator('#screen-main:not(.hidden)').waitFor(); await navigate('streets');
   const ordinary = page.waitForResponse(r => r.url().endsWith('/v1/crimes/pick') && r.request().method() === 'POST');
