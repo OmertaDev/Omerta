@@ -14,6 +14,7 @@ const generated = new Set([metadata, 'tools/enterprise-native-questing-inputs.js
   'knowledge/generated/graph-summary.md', 'knowledge/generated/graph.json',
   'knowledge/generated/graph.mmd', 'knowledge/generated/inventory.md',
   'knowledge/generated/modules.md', 'knowledge/generated/routes.md',
+  'knowledge/generated/schema.md',
   'docs/questing-workgraph.json',
   'docs/quest-quality-workgraph.json',
   'output/quest-quality-verification/quality-mw8vf9xg-quest-quality-content.log',
