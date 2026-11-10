@@ -1,5 +1,4 @@
 import assert from 'node:assert/strict';
-import crypto from 'node:crypto';
 import Ajv from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import { buildServer } from './server-fixture.js';
@@ -7,12 +6,13 @@ import { withCharacter, doCrime } from '../src/game.js';
 import { doMission } from '../src/growth.js';
 import { advanceHustle } from '../src/hustle.js';
 import { CRIMES, MISSIONS, PACING, HUSTLE, hustleOf, dayOf } from '../src/rules.js';
-import { solveTaskPuzzle } from './task-puzzle-solver.js';
+import { solveTaskPuzzle } from './lib/task-puzzle-solver.js';
 import { taskPuzzlePostgresTarget } from './task-puzzle-postgres.js';
 import { issueTaskPuzzle } from '../src/task-puzzles.js';
 
 process.env.CLUE_DROP_P = '0'; // Hold optional random trail state equal for paired crime runs.
 
+process.env.MOD_KEY = 'task-puzzle-lifecycle-test';
 const app = await buildServer(), pool = app.pool;
 const call = async (method, url, token, body) => {
   const res = await app.inject({ method, url, payload: body, headers: token ? { authorization: `Bearer ${token}` } : {} });
@@ -167,8 +167,21 @@ try {
   assert(api.paths['/v1/missions/{id}'].post.requestBody.content['application/json'].schema.properties.puzzle);
   assert(rules.crimes.every(crime => crime.puzzle?.scope === 'crime' && crime.puzzle.required === false && crime.puzzle.benefit === 'feedback_only'));
   const oldLife = solveTaskPuzzle(await issue(b, 'mission', 'm11'));
-  await pool.query('UPDATE characters SET alive=false WHERE id=$1', [b.id]);
-  await pool.query('INSERT INTO characters (id,account_id,name,season,respect,cunning) VALUES ($1,$2,$3,1,10000,100)', [crypto.randomUUID(), b.account, 'Task Puzzle Heir']);
+  const history = (await pool.query('SELECT * FROM task_puzzles WHERE character_id=$1 ORDER BY issue_order', [b.id])).rows;
+  assert(history.some(row => row.consumed_at), 'The lifecycle fixture includes a consumed receipt.');
+  assert(history.some(row => !row.consumed_at), 'The lifecycle fixture includes an abandoned issuance.');
+  const death = await app.inject({ method: 'POST', url: '/v1/mod/kill', payload: { characterId: b.id }, headers: { 'x-mod-key': 'task-puzzle-lifecycle-test' } });
+  assert.equal(death.statusCode, 200, death.body);
+  const heir = (await call('GET', '/v1/me', b.token)).body.character;
+  assert.notEqual(heir.id, b.id, 'The canonical estate creates a new character.');
+  assert.deepEqual((await pool.query('SELECT * FROM task_puzzles WHERE character_id=$1 ORDER BY issue_order', [b.id])).rows, history,
+    'Canonical estate retains issued constraints, original ownership and consumed receipts unchanged.');
+  await pool.query('UPDATE characters SET respect=10000,cunning=100,mission_at=NULL WHERE id=$1', [heir.id]);
+  assert.equal((await call('GET', '/v1/task-puzzles?scope=mission&targetId=m11', b.token)).body.puzzle, null,
+    'The heir cannot discover the original character issuance as current authority.');
   assert.equal((await call('POST', '/v1/missions/m11', b.token, { puzzle: oldLife })).body.error, 'stale_task_puzzle');
+  assert.deepEqual((await pool.query('SELECT * FROM task_puzzles WHERE character_id=$1 ORDER BY issue_order', [b.id])).rows, history,
+    'A rejected heir submission cannot consume abandoned history or alter an old receipt.');
+  assert.notEqual((await issue(b, 'mission', 'm11')).id, oldLife.id, 'The heir receives a fresh character-bound issuance.');
   console.log('PASS task-puzzle jobs: authoritative gates, HTTP contracts, contexts, real legwork, rewards and RNG equivalence');
 } finally { await app.close(); }

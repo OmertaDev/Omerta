@@ -218,6 +218,12 @@ preparation remains valid. Puzzles are gameplay, not human verification.
 - Any committed crime attempt, even a failure or another crime, starts a fresh
   preparation cycle. Reopen preparation after an ordinary or prepared attempt.
 
+The browser offers these in Start Here's Family missions and the Streets Hustle
+check-in, plus optional preparation on crime cards. Its solve buttons execute the
+job; closing does not. After an interrupted request, check the receipt before an
+explicit exact-key retry. Keyboard/touch controls, hints and recovery are described
+in [Task puzzles](docs/TASK-PUZZLES.md).
+
 Agents can use each loop below. Check its risks and costs in `GET /v1/rules`
 and `GET /v1/catalog` before acting.
 

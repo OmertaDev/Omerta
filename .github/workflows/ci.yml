@@ -371,12 +371,13 @@ jobs:
             await client.connect();
             assert.deepEqual((await client.query('SELECT current_user AS role,current_database() AS database,inet_server_port() AS port')).rows,
               [{ role: 'postgres', database: 'postgres', port: 5432 }]);
-            const existing = await client.query('SELECT datname FROM pg_database WHERE datname IN ($1,$2)', ['omerta_check', 'omerta_query']);
+            const existing = await client.query('SELECT datname FROM pg_database WHERE datname IN ($1,$2,$3)', ['omerta_check', 'omerta_query', 'omerta_task_puzzles_ci']);
             assert.deepEqual(existing.rows, [], 'Owned migration fixture databases must not pre-exist');
             await client.query('CREATE DATABASE omerta_check');
             await client.query('CREATE DATABASE omerta_query');
-            assert.deepEqual((await client.query('SELECT datname,pg_get_userbyid(datdba) AS owner FROM pg_database WHERE datname IN ($1,$2) ORDER BY datname', ['omerta_check', 'omerta_query'])).rows,
-              [{ datname: 'omerta_check', owner: 'postgres' }, { datname: 'omerta_query', owner: 'postgres' }]);
+            await client.query('CREATE DATABASE omerta_task_puzzles_ci');
+            assert.deepEqual((await client.query('SELECT datname,pg_get_userbyid(datdba) AS owner FROM pg_database WHERE datname IN ($1,$2,$3) ORDER BY datname', ['omerta_check', 'omerta_query', 'omerta_task_puzzles_ci'])).rows,
+              [{ datname: 'omerta_check', owner: 'postgres' }, { datname: 'omerta_query', owner: 'postgres' }, { datname: 'omerta_task_puzzles_ci', owner: 'postgres' }]);
           } finally { await client.end(); }
           NODE
 
@@ -412,6 +413,10 @@ jobs:
           SOCIAL_VERIFY_MODE: 'off'
           POPULATION_OFF: 'on'
         run: npm run test:questing:postgres
+      - name: Native task puzzle issuance, job races and rollback
+        env:
+          TASK_PUZZLE_TEST_DATABASE_URL: postgres://postgres:pgcheck@127.0.0.1:5432/omerta_task_puzzles_ci
+        run: npm run test:task-puzzles:postgres
 
   ux_browser:
     name: UX desktop and mobile regression

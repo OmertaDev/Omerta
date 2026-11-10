@@ -13,7 +13,7 @@ import { socialRewardsLive } from '../src/growth.js';
 import { accrue } from '../src/accrual.js';
 import { sweepGrandReferrals, gainRespect, maybeSparkReferral } from '../src/game.js';
 import { GOODS_MARKET } from '../src/goodsmarket.js';
-import { solveTaskPuzzle } from './task-puzzle-solver.js';
+import { solveTaskPuzzle } from './lib/task-puzzle-solver.js';
 
 // The City Standing / recruiters boards are CACHED in production (standing.js — they were the most
 // expensive polled reads in the game). This suite reads boards it has just written, so it pins the

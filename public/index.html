@@ -1307,6 +1307,7 @@
 <link rel="stylesheet" href="/ux-quests.css?v=20261106-1">
 <link rel="stylesheet" href="/ux-quest-quality.css?v=20261107-1">
 <link rel="stylesheet" href="/ux-clues.css?v=20261106-1">
+<link rel="stylesheet" href="/ux-task-puzzles.css?v=20261110-1">
 <link rel="stylesheet" href="/ux-community.css?v=20261025-1">
 <link rel="stylesheet" href="/ux-tactics.css?v=20261024-2">
 <link rel="stylesheet" href="/ux-investigation.css?v=20261024-2">
@@ -1792,6 +1793,7 @@
 <script src="/ux-quest-quality.js?v=20261107-1"></script>
 <script src="/ux-quests.js?v=20261107-1"></script>
 <script src="/ux-clues.js?v=20261106-1"></script>
+<script src="/ux-task-puzzles.js?v=20261110-1"></script>
 <script src="/ux-community.js?v=20261025-1"></script>
 <script src="/ux-tactics.js?v=20261105-noir-release"></script>
 <script src="/ux-investigation.js?v=20261024-2"></script>
@@ -9068,7 +9070,8 @@
       `<button class="act ${style}" data-operation-label="${esc(crime.name)}: ${approach}" aria-describedby="${termsId}" ${compact
         ? `data-city-crime="${crime.id}" data-city-approach="${approach}"`
         : `data-do="POST /v1/crimes/${crime.id}" data-body='{"approach":"${approach}"}'`}${blocked || !approaches[approach] ? ` disabled aria-disabled="true" title="${esc(blocked || 'Refresh to load job terms.')}"` : ''}>${label}${compact ? `<small>${approach === 'quiet' ? 'safer · smaller win' : approach === 'loud' ? '+' + Number(loud.heat || 0) + ' heat' : 'baseline'}</small>` : ''}</button>`).join('');
-    return { terms, choices, blocked };
+    const preparation = crime.puzzle ? `<button type="button" class="act" data-task-crime="${crime.id}"${blocked ? ' disabled' : ''}>Prepare ${esc(crime.name)} (optional puzzle)</button>` : '';
+    return { terms, choices: choices + preparation, blocked };
   }
 
   function cityActorScope() {
@@ -10172,7 +10175,7 @@ async function renderStart() {
         return `<div class="card"><span class="t">${esc(m.name)}</span>
           <div class="d">${m.brief || ''}</div>
           <div class="d">needs lvl ${m.req?.lvl || 1}${statReq ? ` · ${statReq}` : ''} · pays $${fmt(m.reward?.cash || 0)}${m.reward?.omr ? ` + ${m.reward.omr} $OMR` : ''}${m.reward?.title ? ' + a title' : ''}</div>
-          <button class="act" data-mission="${m.id}"${meets && !missionCd ? '' : ' disabled'}>attempt${
+          <button class="act" data-mission="${m.id}"${meets && !missionCd ? '' : ' disabled'}>${m.puzzle?.required ? 'open task puzzle' : 'attempt'}${
             !meets ? ' (train up first)' : missionCd ? ` (next job in ${mins(missionCd)})` : ''}</button></div>`;
       }).join('') || '<span class="d" style="color:var(--dim)">level up to unlock your first mission</span>'}</div>`;
     const remainingTasks = obTasks.filter((x) => x !== next);
@@ -10274,7 +10277,11 @@ async function renderStart() {
     t.querySelectorAll('[data-crgo]').forEach((b) => b.onclick = () => { setTab(b.dataset.crgo); spotlight(SPOT[b.dataset.crgo]); });
     const ht = t.querySelector('#howto-tour'); if (ht) ht.onclick = (e) => { e.preventDefault(); openTour(); };
     wireSects(t);
-    t.querySelectorAll('[data-mission]').forEach((b) => b.onclick = () => act('POST', `/v1/missions/${b.dataset.mission}`, {}).then(() => renderStart()));
+    t.querySelectorAll('[data-mission]').forEach((b) => b.onclick = () => {
+      const mission = rules?.missions?.find(m => m.id === b.dataset.mission);
+      if (mission?.puzzle?.required) openTaskPuzzle({ selector: { scope: 'mission', targetId: mission.id }, path: `/v1/missions/${mission.id}`, label: mission.name, submitLabel: 'Solve and attempt mission', trigger: b });
+      else act('POST', `/v1/missions/${b.dataset.mission}`, {}).then(() => renderStart());
+    });
     t.querySelectorAll('[data-swclaim]').forEach((b) => b.onclick = () => {
       const inp = t.querySelector(`.sw-proof[data-for="${b.dataset.swclaim}"]`);
       const proof = inp ? inp.value.trim() : '';
@@ -10649,7 +10656,7 @@ ${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [
         <span class="d" style="margin-left:6px">${['◉', '◉', '◉'].map((d, i) => `<span style="color:${i < hu.step ? 'var(--ok)' : 'var(--dim)'}">${d}</span>`).join('​')}</span>
         <div class="d">${esc(hu.what || '')}</div>
         ${hu.done ? '' : `<div style="margin-top:6px">
-          ${hu.here ? `<button class="act prime" id="hu-go"${hu.legworkDone === false ? ' disabled' : ''}>CHECK IN${hu.step === 2 ? ` — collect $${fmt(hu.pay || 0)}` : ''}</button>${hu.legworkDone === false ? ` <span class="d" style="font-size:11px">the contact wants the work done first — ${esc(hu.legwork || 'pull a job')}</span>` : ''}`
+          ${hu.here ? `<button class="act prime" id="hu-go"${hu.legworkDone === false ? ' disabled' : ''}>${hu.puzzle?.required ? 'OPEN CHECK-IN PUZZLE' : 'CHECK IN'}${hu.step === 2 ? ` — collect $${fmt(hu.pay || 0)}` : ''}</button>${hu.legworkDone === false ? ` <span class="d" style="font-size:11px">the contact wants the work done first — ${esc(hu.legwork || 'pull a job')}</span>` : ''}`
             : `<button class="act" data-do="POST /v1/travel/${hu.district}">travel to ${esc(hu.districtName || '')}</button> <span class="d" style="font-size:11px">then check in there</span>`}
         </div>`}
       </div>` : ''}
@@ -10722,7 +10729,9 @@ ${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [
         if (dg) dg.onclick = () => act('POST', '/v1/clues/dig', {}).then(() => renderStreets());
       } }
     // THE HUSTLE — check in at the current stop
-    { const hg = t.querySelector('#hu-go'); if (hg) hg.onclick = () => act('POST', '/v1/hustle/advance', {}).then(() => renderStreets()); }
+    { const hg = t.querySelector('#hu-go'); if (hg) hg.onclick = () => hu.puzzle?.required
+      ? openTaskPuzzle({ selector: { scope: 'hustle', targetId: 'legwork' }, path: '/v1/hustle/advance', label: 'Hustle legwork check-in', submitLabel: 'Solve and check in', trigger: hg })
+      : act('POST', '/v1/hustle/advance', {}).then(() => renderStreets()); }
     t.querySelectorAll('[data-corner-take]').forEach((b) => b.onclick = () =>
       act('POST', `/v1/corner/${b.dataset.cornerTake}/accept`, {}).then(() => renderStreets()));
     t.querySelectorAll('[data-corner-claim]').forEach((b) => b.onclick = () =>
@@ -13969,6 +13978,21 @@ ${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [
     { const tk = t.querySelector('#pen-talk'); if (tk) tk.onclick = () =>
       act('POST', '/v1/pen/talk', {}).then(() => renderPen()); }
   }
+
+  let taskPuzzleUI = null;
+  function openTaskPuzzle(options) {
+    taskPuzzleUI ||= window.createOmertaTaskPuzzles({ read: api, issue: api, action: act,
+      getActor: () => `${me?.id}:${me?.generation}`, refresh: async () => { await refresh(); renderActive({ afterAction: true }); },
+      focusFallback: () => { const panel = document.getElementById(`tab-${currentTab}`); const control = [...(panel?.querySelectorAll('button:not(:disabled), summary') || [])].find(node => node.getClientRects().length); (control || panel)?.focus(); } });
+    taskPuzzleUI.open(options);
+  }
+  document.addEventListener('click', event => {
+    const button = event.target?.closest?.('[data-task-crime]');
+    if (!button || button.disabled) return;
+    const crime = rules?.crimes?.find(c => c.id === button.dataset.taskCrime);
+    if (crime) openTaskPuzzle({ selector: { scope: 'crime', targetId: crime.id }, path: `/v1/crimes/${crime.id}`,
+      label: `Prepare ${crime.name}`, submitLabel: 'Solve and attempt crime', trigger: button, body: { approach: 'standard' }, approaches: rules?.crimeApproaches });
+  });
 
   // data-do buttons (POST/GET; an optional data-body='{...}' rides along).
   // A button may also carry data-confirm="Title|the consequence" — most of the irreversible verbs

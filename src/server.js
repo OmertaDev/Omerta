@@ -704,7 +704,7 @@ export async function buildServer() {
     ['ux-progression.js', 'application/javascript'], ['ux-progression.css', 'text/css'],
     ['ux-social.js', 'application/javascript'], ['ux-social.css', 'text/css'],
     ['ux-navigation.js', 'application/javascript'], ['ux-navigation.css', 'text/css'],
-    ...['feel', 'tools', 'identity', 'story', 'community', 'quests', 'clues'].flatMap(name => [[`ux-${name}.js`, 'application/javascript'], [`ux-${name}.css`, 'text/css']]),
+    ...['feel', 'tools', 'identity', 'story', 'community', 'quests', 'clues', 'task-puzzles'].flatMap(name => [[`ux-${name}.js`, 'application/javascript'], [`ux-${name}.css`, 'text/css']]),
     ['ux-quest-quality.js', 'application/javascript'], ['ux-quest-quality.css', 'text/css'],
     ['ux-workspace.js', 'application/javascript'], ['ux-world.js', 'application/javascript'], ['ux-world.css', 'text/css'],
     ['ux-tactics.js', 'application/javascript'], ['ux-tactics.css', 'text/css'],

@@ -1,7 +1,7 @@
 // Character death must not reset same-day cash/token reward ceilings. Work progress may die with the
 // street, but the account's right to be paid for Daily Contracts, Corner jobs, and the Hustle does not.
 import assert from 'node:assert/strict';
-import { solveTaskPuzzle } from './task-puzzle-solver.js';
+import { solveTaskPuzzle } from './lib/task-puzzle-solver.js';
 
 // Default to pg-mem, but allow an explicit disposable loopback PostgreSQL run for the
 // concurrency/death replay proof. Never inherit DATABASE_URL implicitly from a developer shell.

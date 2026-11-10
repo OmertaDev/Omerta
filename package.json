@@ -320,7 +320,7 @@
     "test:eth-rewards": "node test/marketv2abi.js && node test/marketv2keeper-eth.js && node test/eth-rewards-readiness.js && node test/eth-rewards-upkeep.js && node test/ethrewardsworker.js && node test/eth-staking.js",
     "test:eth-staking:browser": "node test/eth-staking.js --browser",
     "test:questing": "npm run test:task-puzzles && node test/content-narrative.js && node test/content-narrative-security.js && node test/content-casework.js && node test/quest-saga.js && node test/quest-saga-social.js && node test/quest-specialist.js && node test/quest-workshop.js && node test/clue-puzzles.js && node test/content-api.js && npm run test:quest-quality",
-    "test:questing:browser": "node test/quest-experience-browser.js && node test/clue-puzzles-browser.js && node test/quest-quality-browser.js",
+    "test:questing:browser": "npm run test:task-puzzles:browser && node test/quest-experience-browser.js && node test/clue-puzzles-browser.js && node test/quest-quality-browser.js",
     "questing:check": "node tools/questing-content.js check && node tools/questing-workgraph.js check --complete && node tools/quest-quality-workgraph.js check",
     "test:questing:postgres": "node test/questing-postgres.js && node test/quest-quality-postgres.js",
     "test:quest-quality": "node test/quest-quality-source-transfer.js && node test/quest-quality-rules.js && node test/quest-quality-stateful.js && node test/quest-quality-api.js && node test/quest-quality-runtime.js && node test/quest-quality-social.js && node test/quest-quality-spoilers.js && node test/quest-quality-content.js && node test/quest-quality-studio.js && node test/quest-quality-study.js",
@@ -328,7 +328,8 @@
     "quest-quality:studio": "node tools/quest-quality-studio.js",
     "test:foundry-release-api": "node test/foundry-release-api.js",
     "test:agent-onboarding:postgres": "node test/agent-onboarding-postgres.js",
-    "test:casino-rakeback:postgres": "node test/casino-rakeback-postgres.js"
+    "test:casino-rakeback:postgres": "node test/casino-rakeback-postgres.js",
+    "test:task-puzzles:browser": "node test/task-puzzles-browser.js"
   },
   "dependencies": {
     "@fastify/jwt": "^10.2.0",

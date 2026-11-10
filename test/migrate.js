@@ -569,6 +569,7 @@ assert.equal(Number((await pool.query(
 // resolve with a `*:death` burn — deliberately NOT wiped so the frozen field resolves), ledger/log
 // (immutable §10.4/audit/historical rows — intentionally never wiped; a dead id is a valid historical ref).
 const DISPOSITION = {
+  task_puzzles: 'ledger', // issued constraints and consumed receipts retain the original dead character; current-character lookup grants an heir no completion or recovery authority
   // Original character/generation-bound consent and private puzzle outcomes are
   // historical. Room/host lifecycle closes active rounds; heirs never inherit a
   // member's participation or its private history.

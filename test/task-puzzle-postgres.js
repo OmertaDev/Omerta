@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { pathToFileURL } from 'node:url';
-import { solveTaskPuzzle } from './task-puzzle-solver.js';
+import { solveTaskPuzzle } from './lib/task-puzzle-solver.js';
 
 export function taskPuzzlePostgresTarget(raw) {
   if (!raw) throw new Error('Set TASK_PUZZLE_TEST_DATABASE_URL to a disposable loopback omerta_task_puzzles* PostgreSQL database.');

@@ -9829,6 +9829,7 @@ CREATE TABLE IF NOT EXISTS quest_reading_room (
 
 -- Durable gameplay task puzzles. Private payloads and consumed receipts are retained;
 -- trusted adapters bind occurrences and consume under the job's character transaction.
+-- Issuance history survives estate cleanup under its original character ID, never as heir authority.
 CREATE TABLE IF NOT EXISTS task_puzzles (
   id TEXT PRIMARY KEY,
   issue_order BIGSERIAL NOT NULL,
