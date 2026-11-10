@@ -37,12 +37,12 @@
 - Context values come only from trusted server adapters. issue/read must return identical issued IDs and constraints for the same character/scope/target/context. Service records bounded recent mechanics and structural signatures, with recent avoidance in generation.
 - Public shape includes id, version, kind, title, instructions, constraints, input controls or options and hint. Private answer, generator seed and solution internals never leave server. Keep generators independently solvable from public constraints.
 
-- [ ] Write tests that enumerate legal solutions independently for at least 500 seeds per mechanic, assert one solution, malformed-answer refusal, materially varied structural signatures and no answer leakage.
-- [ ] Run node test/task-puzzle-engine.js and observe missing-feature failure before implementing.
-- [ ] Implement four distinct mechanics: patrol timing, constrained route planning, one-to-one matching and evidence deduction. Use versioned immutable generation with deterministic seeds and exact shape validation.
-- [ ] Write failing service tests for refresh identity, recent-kind/pattern avoidance, owner/context binding, wrong answers, consume-once and unsupported versions.
-- [ ] Implement additive storage and service with server-issued UUID, bounded history lookup, exact context binding and consumed state; rely on the existing character lock and document this caller contract. Retain consumed receipts for replay refusal and diagnosis.
-- [ ] Run node test/task-puzzle-engine.js and node test/task-puzzles.js, plus node test/clue-puzzles.js. Commit only this task's files and report exact tests and interfaces.
+- [x] Write tests that enumerate legal solutions independently for at least 500 seeds per mechanic, assert one solution, malformed-answer refusal, materially varied structural signatures and no answer leakage.
+- [x] Run node test/task-puzzle-engine.js and observe missing-feature failure before implementing.
+- [x] Implement four distinct mechanics: patrol timing, constrained route planning, one-to-one matching and evidence deduction. Use versioned immutable generation with deterministic seeds and exact shape validation.
+- [x] Write failing service tests for refresh identity, recent-kind/pattern avoidance, owner/context binding, wrong answers, consume-once and unsupported versions.
+- [x] Implement additive storage and service with server-issued UUID, bounded history lookup, exact context binding and consumed state; rely on the existing character lock and document this caller contract. Retain consumed receipts for replay refusal and diagnosis.
+- [x] Run node test/task-puzzle-engine.js and node test/task-puzzles.js, plus node test/clue-puzzles.js. Commit only this task's files and report exact tests and interfaces.
 
 ### Task 2: Integrate required and optional job puzzles
 
@@ -71,3 +71,4 @@
 - [ ] Cover wrong answer then retry, reload, dismissal/reopen, repeated clicks, request failure and stale occurrence recovery in browser tests. Assert no horizontal overflow or page errors and that real job rewards arrive only once.
 - [ ] Run new browser tests, existing clue/quest browser tests, all feature unit/API/native tests and npm test on final code. Record failed/blocked/never-run checks accurately; do not call focused tests a full suite pass.
 - [ ] Perform independent final review and fix material findings with regression tests. Update plan evidence and commit tested changes. Leave isolated branch ready for user review; no publish/merge/deploy.
+
