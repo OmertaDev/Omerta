@@ -122,6 +122,8 @@ const allowed = new Set([
   'test/growth.js', 'test/lib/task-puzzle-solver.js', 'test/migrate.js',
   'test/task-puzzle-engine.js', 'test/task-puzzle-jobs.js', 'test/task-puzzle-postgres.js',
   'test/task-puzzles-browser.js', 'test/task-puzzles.js',
+  // Reviewed protected-source identity repair and its refusing regression controls.
+  'tools/enterprise-deed-release-phase2-migration-catalog.js', 'test/deed-quest-source-compatibility.js',
   // Reviewed PR #208 reconciliation: shadow-only scheduling and its tests/documentation.
   'src/businesspolicy.js', 'tools/business-agent.js', 'test/businesspolicy.js', 'test/business-agent.js',
   'docs/agent-business-shadow.md', 'docs/superpowers/plans/2026-11-09-business-deadlines.md',
