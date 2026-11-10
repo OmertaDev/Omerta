@@ -133,6 +133,8 @@ const generated = new Set([metadata, 'tools/enterprise-native-questing-inputs.js
   "output/quest-quality-verification/quality-mwarmp0t-quest-quality-study.log",
 ]);
 const allowed = new Set([
+  // Scoped cold-start puzzle reads; no runtime change or historical result transfer.
+  'test/coldstart.js',
   // Reviewed current-growth receipt SQL model repin; no historical/native result transfer.
   'tools/pgquery.js',
   // Exact current586 native catalog integration; historical source views only.
