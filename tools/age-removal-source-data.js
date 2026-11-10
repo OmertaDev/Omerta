@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const AGE_REMOVAL_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_AGE_REMOVAL_SOURCE_COMPARISON_ONLY",
-  "revision": "61c839ad607508c406fb08775236e433b2f87a39",
-  "tree": "bb7401540ad09dd53123c7be0a1a91e88662d9cb",
+  "revision": "e6237e97da086448d34356f141ce7d8bc0032d10",
+  "tree": "d0bce22af06a373e63cc6037dd1cd49a00c4d83e",
   "predecessor": "35913ec1b448275b227019ede2a2ef8047be55aa",
   "predecessorTree": "c74c606d97ee2f8ebb6c5201a4ddd2c2781d5db0",
   "files": {
@@ -94,8 +94,8 @@ export const AGE_REMOVAL_SOURCE = freeze({
     "SPEC.md": {
       "current": {
         "mode": "100644",
-        "blob": "bda743a1fda96bcbf471d93f8031ab58594ee968",
-        "sha256": "a7ab9b2cbb241c6e98b972548d08d45a0a00cb1728b05d9de9836f83a8b6e43b",
+        "blob": "ea579fb2a1429c83652ab49e929b8fc5da601f2d",
+        "sha256": "19b20f1ef55f3a728318b8cc1c80a87764eac0bb0b4ed4c6d049eaeb8366336d",
         "bytes": 57384
       },
       "baseline": {
@@ -107,7 +107,7 @@ export const AGE_REMOVAL_SOURCE = freeze({
       "inverses": [
         {
           "at": 318,
-          "current": "\nCounts were measured for the combined release source on 2026-11-07, before generated release records; they do not identify a deployed revision.\n\nFile counts include the combined playtest fixes, quest-quality additions and task puzzles as of 2026-11-10. Backend, test and schema line totals were refreshed for task puzzles; other line totals retain the 2026-11-07 snapshot.\n\n| | |\n|---|---|\n| Backend modules | **622** files, **142384** lines (recursive source inventory) |\n| Test suites | **1045** files, **218587** lines (recursive source inventory) |\n| HTTP routes | **1401** registrations (**1401** unique; 1277 under `/v1`) |\n| Database tables | **586** (`schema.sql`, 9848 lines) |\n| Client | **14683** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n| Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |\n| Smart contracts | **41** top-level Solidity files, **11590** lines, **1125** declared top-level Foundry test functions; the release gate re-measures the passing suite |\n| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |\n| Design + audit docs | **991** markdown files, **158775** lines — dated security evidence is indexed in `docs/AUDITS.md` |\n| Ledger invariants | **133** checks — **127** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |\n\nRoughly **369,000 lines** of backend code, tests, schema and top-level contracts.\n",
+          "current": "\nCounts were measured for the combined release source on 2026-11-07, before generated release records; they do not identify a deployed revision.\n\nFile counts include the combined playtest fixes, quest-quality additions and task puzzles as of 2026-11-10. Backend, test and schema line totals were refreshed for task puzzles; other line totals retain the 2026-11-07 snapshot.\n\n| | |\n|---|---|\n| Backend modules | **622** files, **142384** lines (recursive source inventory) |\n| Test suites | **1045** files, **218645** lines (recursive source inventory) |\n| HTTP routes | **1401** registrations (**1401** unique; 1277 under `/v1`) |\n| Database tables | **586** (`schema.sql`, 9848 lines) |\n| Client | **14683** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n| Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |\n| Smart contracts | **41** top-level Solidity files, **11590** lines, **1125** declared top-level Foundry test functions; the release gate re-measures the passing suite |\n| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |\n| Design + audit docs | **991** markdown files, **158775** lines — dated security evidence is indexed in `docs/AUDITS.md` |\n| Ledger invariants | **133** checks — **127** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |\n\nRoughly **369,000 lines** of backend code, tests, schema and top-level contracts.\n",
           "baseline": "\nCounts were measured for the combined release source on 2026-11-07, before generated release records; they do not identify a deployed revision.\n\nFile counts include the combined playtest fixes and quest-quality additions as of 2026-11-08. Line totals retain the 2026-11-07 snapshot.\n\n| | |\n|---|---|\n| Backend modules | **618** files, **141073** lines (recursive source inventory) |\n| Test suites | **1032** files, **213491** lines (recursive source inventory) |\n| HTTP routes | **1386** registrations (**1386** unique; 1274 under `/v1`) |\n| Database tables | **585** (`schema.sql`, 9820 lines) |\n| Client | **14683** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n| Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |\n| Smart contracts | **41** top-level Solidity files, **11590** lines, **1125** declared top-level Foundry test functions; the release gate re-measures the passing suite |\n| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |\n| Design + audit docs | **987** markdown files, **158083** lines — dated security evidence is indexed in `docs/AUDITS.md` |\n| Ledger invariants | **133** checks — **127** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |\n\nRoughly **369,000 lines** of backend code, tests, schema and top-level contracts.\n"
         }
       ]
@@ -2426,6 +2426,32 @@ export const AGE_REMOVAL_SOURCE = freeze({
         }
       ]
     },
+    "tools/commerce-deed-release-phase2-native-catalog.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "379eab9495ee372e99b3383d77e3f80f5307ed34",
+        "sha256": "e193daf24f23edd6bb4fa1523178d9e9702f9e9f4e760ae54fb5dacd77129f77",
+        "bytes": 489924
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "afd9a8a5f3c8a83f5c2227a989f266e3f2161aba",
+        "sha256": "65e3250ebd082d34cf167fc2f92f71423bb264ef73098e23217dc1823c7e5f78",
+        "bytes": 489816
+      },
+      "inverses": [
+        {
+          "at": 950,
+          "current": "import fs from 'node:fs';\nimport pg from 'pg';\nimport {deedQuestSourceBaseline} from './deed-quest-source-transfer.js';\nimport {ageRemovalHistoricalInput} from './age-removal-source-transfer.js';\nimport {ECONOMY_HARDENING_SOURCE_DOMAINS,ECONOMY_HARDENING_SOURCE_REVISION,\n  economyHardeningSourceBaseline} from './economy-hardening-source-transfer.js';\nimport {columnMigrations} from '../src/db.js';\n",
+          "baseline": "import fs from 'node:fs';\nimport pg from 'pg';\nimport {deedQuestSourceBaseline} from './deed-quest-source-transfer.js';\nimport {ECONOMY_HARDENING_SOURCE_DOMAINS,ECONOMY_HARDENING_SOURCE_REVISION,\n  economyHardeningSourceBaseline} from './economy-hardening-source-transfer.js';\nimport {columnMigrations} from '../src/db.js';\n"
+        },
+        {
+          "at": 446772,
+          "current": "const commerceDeedFields=['relations','columns','constraints','indexes'];\nconst commerceDeedUniform=input=>{assert.equal(typeof input,'string');const lf=input.replaceAll('\\r\\n','\\n');assert(!lf.includes('\\r')&&(input===lf||input===lf.replaceAll('\\n','\\r\\n')),'Only whole LF or uniform CRLF current source');return lf;};\nconst commerceDeedUndo=(text,inverses)=>{for(const h of inverses){assert.equal(text.split(h.current).length-1,1,'Unique exact current Commerce/Deed inverse');text=text.replace(h.current,()=>h.baseline);}return text;};\nfunction assertCommerceDeedProtectedSources(){for(const[file,pin]of Object.entries(COMMERCE_DEED_PROTECTED)){const text=commerceDeedUniform(fs.readFileSync(new URL('../'+file,import.meta.url),'utf8'));assert.equal(hash(deedQuestSourceBaseline(file,ageRemovalHistoricalInput(file,text))),pin,'Whole protected original module: '+file);}}\n\nconst ECONOMY_HARDENING_TABLES=Object.freeze(['account_daily_claims','economy_migrations']);\nconst ECONOMY_HARDENING_EXISTING_COLUMNS=Object.freeze([\n",
+          "baseline": "const commerceDeedFields=['relations','columns','constraints','indexes'];\nconst commerceDeedUniform=input=>{assert.equal(typeof input,'string');const lf=input.replaceAll('\\r\\n','\\n');assert(!lf.includes('\\r')&&(input===lf||input===lf.replaceAll('\\n','\\r\\n')),'Only whole LF or uniform CRLF current source');return lf;};\nconst commerceDeedUndo=(text,inverses)=>{for(const h of inverses){assert.equal(text.split(h.current).length-1,1,'Unique exact current Commerce/Deed inverse');text=text.replace(h.current,()=>h.baseline);}return text;};\nfunction assertCommerceDeedProtectedSources(){for(const[file,pin]of Object.entries(COMMERCE_DEED_PROTECTED)){const text=commerceDeedUniform(fs.readFileSync(new URL('../'+file,import.meta.url),'utf8'));assert.equal(hash(deedQuestSourceBaseline(file,text)),pin,'Whole protected original module: '+file);}}\n\nconst ECONOMY_HARDENING_TABLES=Object.freeze(['account_daily_claims','economy_migrations']);\nconst ECONOMY_HARDENING_EXISTING_COLUMNS=Object.freeze([\n"
+        }
+      ]
+    },
     "tools/enterprise-deed-release-phase2-migration-catalog.js": {
       "current": {
         "mode": "100644",
@@ -2600,9 +2626,9 @@ export const AGE_REMOVAL_SOURCE = freeze({
     "tools/questing-ux-release-phase2-native-catalog.js": {
       "current": {
         "mode": "100644",
-        "blob": "2ceeaa3db6470218fb6762871b30b2d457809449",
-        "sha256": "34d346de5b6f03a6caa95d4d00795b07e651693c7d5bc922838caaaaf0860e14",
-        "bytes": 62347
+        "blob": "b69ed84aede0e7115544c2d20a3ccfcbe0ded295",
+        "sha256": "4b238ef8b36adbb99986c8aae6abc7497c1e7449bc4a11d6fd736882389cc0f9",
+        "bytes": 62472
       },
       "baseline": {
         "mode": "100644",
@@ -2612,32 +2638,42 @@ export const AGE_REMOVAL_SOURCE = freeze({
       },
       "inverses": [
         {
-          "at": 35361,
+          "at": 251,
+          "current": "import { parse } from 'acorn';\nimport pg from 'pg';\nimport * as original from './commerce-deed-release-phase2-native-catalog.js';\nimport { ageRemovalHistoricalInput } from './age-removal-source-transfer.js';\nimport { economyHardeningSourceBaseline } from './economy-hardening-source-transfer.js';\nimport { economyUxMergeCandidateHistoricalInput,\n  economyUxMergeMainHistoricalInput } from './economy-ux-merge-source-compatibility.js';\n",
+          "baseline": "import { parse } from 'acorn';\nimport pg from 'pg';\nimport * as original from './commerce-deed-release-phase2-native-catalog.js';\nimport { economyHardeningSourceBaseline } from './economy-hardening-source-transfer.js';\nimport { economyUxMergeCandidateHistoricalInput,\n  economyUxMergeMainHistoricalInput } from './economy-ux-merge-source-compatibility.js';\n"
+        },
+        {
+          "at": 5636,
+          "current": "// The unchanged historical constructor also reads its caller's catalog internally. Only its four\n// exact, immutable catalog SELECTs get the validated UX projection; all other queries stay real.\nconst commerceDeedHelper = 'tools/commerce-deed-release-phase2-native-catalog.js';\nconst commerceDeedRaw = ageRemovalHistoricalInput(commerceDeedHelper, fs.readFileSync(new URL('./commerce-deed-release-phase2-native-catalog.js', import.meta.url), 'utf8'));\nconst commerceDeedCandidate = economyUxMergeCandidateHistoricalInput(commerceDeedHelper, commerceDeedRaw);\nconst commerceDeedMain = economyUxMergeMainHistoricalInput(commerceDeedHelper, commerceDeedRaw);\nassert.equal(economyHardeningSourceBaseline(commerceDeedHelper, commerceDeedCandidate), commerceDeedMain,\n",
+          "baseline": "// The unchanged historical constructor also reads its caller's catalog internally. Only its four\n// exact, immutable catalog SELECTs get the validated UX projection; all other queries stay real.\nconst commerceDeedHelper = 'tools/commerce-deed-release-phase2-native-catalog.js';\nconst commerceDeedRaw = fs.readFileSync(new URL('./commerce-deed-release-phase2-native-catalog.js', import.meta.url), 'utf8');\nconst commerceDeedCandidate = economyUxMergeCandidateHistoricalInput(commerceDeedHelper, commerceDeedRaw);\nconst commerceDeedMain = economyUxMergeMainHistoricalInput(commerceDeedHelper, commerceDeedRaw);\nassert.equal(economyHardeningSourceBaseline(commerceDeedHelper, commerceDeedCandidate), commerceDeedMain,\n"
+        },
+        {
+          "at": 35486,
           "current": "  return { type: 'blob', mode: match[1], blob: match[2] };\n}\nexport function assertQuestingPhase2SourceInputs() {\n  assert.equal(arguments.length, 0); return phase2SourceInputs(false);\n}\nexport function assertTaskPuzzlePhase2SourceInputs() {\n  assert.equal(arguments.length, 0); return phase2SourceInputs(true);\n}\nfunction phase2SourceInputs(taskPuzzle) {\n  assert.equal(process.execArgv.length, 0); assert.equal(process.argv.length, 3);\n  const main = path.resolve(process.argv[1]);\n  const caller = main === path.join(questRoot, 'test', 'phase2-postgres.js')\n",
           "baseline": "  return { type: 'blob', mode: match[1], blob: match[2] };\n}\nexport function assertQuestingPhase2SourceInputs() {\n  assert.equal(arguments.length, 0);\n  assert.equal(process.execArgv.length, 0); assert.equal(process.argv.length, 3);\n  const main = path.resolve(process.argv[1]);\n  const caller = main === path.join(questRoot, 'test', 'phase2-postgres.js')\n"
         },
         {
-          "at": 36284,
+          "at": 36409,
           "current": "  if (!questSourceCapture) questSourceCapture = captureQuestingEnterpriseSource();\n  else assertQuestingEnterpriseStable(questSourceCapture);\n  const inputs = ['schema.sql', 'tools/questing-ux-release-phase2-native-catalog.js',\n    'tools/questing-enterprise-catalog.js', 'test/questing-ux-release-phase2-native-catalog-guard.js', caller,\n    ...(taskPuzzle ? ['tools/task-puzzle-native-catalog.js', 'tools/task-puzzle-enterprise-catalog.js',\n      'test/task-puzzle-native-catalog-guard.js', 'test/task-puzzle-native-integration-guard.js'] : [])];\n  for (const file of inputs) {\n    const current = questEntry('HEAD', file), authored = questEntry(questDeclaration.authoredRevision, file);\n    assert.equal(questGit('ls-files', '--stage', '--', file).toString('utf8').trim(),\n",
           "baseline": "  if (!questSourceCapture) questSourceCapture = captureQuestingEnterpriseSource();\n  else assertQuestingEnterpriseStable(questSourceCapture);\n  const inputs = ['schema.sql', 'tools/questing-ux-release-phase2-native-catalog.js',\n    'tools/questing-enterprise-catalog.js', 'test/questing-ux-release-phase2-native-catalog-guard.js', caller];\n  for (const file of inputs) {\n    const current = questEntry('HEAD', file), authored = questEntry(questDeclaration.authoredRevision, file);\n    assert.equal(questGit('ls-files', '--stage', '--', file).toString('utf8').trim(),\n"
         },
         {
-          "at": 37700,
+          "at": 37825,
           "current": "    assertQuestingEnterpriseTrackedInput(file, current, authored, committed);\n  }\n  const raw = fs.readFileSync(path.join(questRoot, 'schema.sql'), 'utf8').replaceAll('\\r\\n', '\\n');\n  if (taskPuzzle) taskPuzzleCatalogSource(raw);\n  else assert.equal(questSha(raw), QUESTING_CATALOG_SOURCE.sha256);\n  return raw;\n}\nfunction archived582ComparisonSource() {\n",
           "baseline": "    assertQuestingEnterpriseTrackedInput(file, current, authored, committed);\n  }\n  const raw = fs.readFileSync(path.join(questRoot, 'schema.sql'), 'utf8').replaceAll('\\r\\n', '\\n');\n  assert.equal(questSha(raw), QUESTING_CATALOG_SOURCE.sha256);\n  return raw;\n}\nfunction archived582ComparisonSource() {\n"
         },
         {
-          "at": 51698,
+          "at": 51823,
           "current": "export async function createCommerceReleasePhase2MigrationCatalog(pool, endpoint, input, options) {\n  assert.equal(arguments.length, 4);\n  const actual = questActualInput(input);\n  return createQuestCatalogComparison(pool, endpoint, actual, options);\n}\nasync function createQuestCatalogComparison(pool, endpoint, actual, options) {\n  await assertNativeCaller(pool, endpoint, options?.legacyProfile, options?.includeNotNull);\n  const version = await questVersion(pool), compiled = await compileQuestReference(pool, endpoint, actual.addition, version);\n  const reference = freeze({ ...compiled, version });\n",
           "baseline": "export async function createCommerceReleasePhase2MigrationCatalog(pool, endpoint, input, options) {\n  assert.equal(arguments.length, 4);\n  const actual = questActualInput(input);\n  await assertNativeCaller(pool, endpoint, options?.legacyProfile, options?.includeNotNull);\n  const version = await questVersion(pool), compiled = await compileQuestReference(pool, endpoint, actual.addition, version);\n  const reference = freeze({ ...compiled, version });\n"
         },
         {
-          "at": 52992,
+          "at": 53117,
           "current": "export async function verifyCommerceNativeBranches(pool, endpoint) {\n  assert.equal(arguments.length, 2);\n  const actual = questActualInput(fs.readFileSync(path.join(questRoot, 'schema.sql'), 'utf8'));\n  return verifyQuestCatalogComparison(pool, endpoint, actual);\n}\nasync function verifyQuestCatalogComparison(pool, endpoint, actual) {\n  await assertNativeCaller(pool, endpoint, 'fresh', true);\n  const version = await questVersion(pool), compiled = await compileQuestReference(pool, endpoint, actual.addition, version);\n  const reference = freeze({ ...compiled, version });\n",
           "baseline": "export async function verifyCommerceNativeBranches(pool, endpoint) {\n  assert.equal(arguments.length, 2);\n  const actual = questActualInput(fs.readFileSync(path.join(questRoot, 'schema.sql'), 'utf8'));\n  await assertNativeCaller(pool, endpoint, 'fresh', true);\n  const version = await questVersion(pool), compiled = await compileQuestReference(pool, endpoint, actual.addition, version);\n  const reference = freeze({ ...compiled, version });\n"
         },
         {
-          "at": 55180,
+          "at": 55305,
           "current": "  assertQuestingEnterpriseStable(questSourceCapture);\n  return result;\n}\n\n// Distinct current586 admission; the old exported585 entrypoints above remain strict.\nimport { taskPuzzleCatalogSource, verifyTaskPuzzleCatalogDelta, taskPuzzleComparisonMetadata,\n  taskPuzzleComparisonConstraints, readTaskPuzzleSequenceMetadata, verifyTaskPuzzleNativeReferences,\n  TASK_PUZZLE_DDL_CONTROLS } from './task-puzzle-native-catalog.js';\nconst taskStates=new WeakMap(),taskProfiles=new WeakMap();\nfunction taskActualInput(input){\n  const physical=assertTaskPuzzlePhase2SourceInputs(),actual=taskPuzzleCatalogSource(input);\n  assert.equal(actual.current,physical,'Native current586 input is the complete actual physical schema');return actual;\n}\nasync function taskMetadata(client){\n  return {...await readCommerceReleasePhase2Metadata(client),sequences:await readTaskPuzzleSequenceMetadata(client)};\n}\nexport async function readTaskPuzzleReleasePhase2Metadata(pool){\n  assert.equal(arguments.length,1);assertTaskPuzzlePhase2SourceInputs();\n  const profile=taskProfiles.get(pool);assert(profile,'Only a pool admitted by a current586 native catalog');\n  const metadata=await taskMetadata(pool);verifyTaskPuzzleCatalogDelta(metadata,await questVersion(pool),profile,false);return metadata;\n}\nasync function taskProjectedCaller(pool,version,profile){\n  const wrap=async queryable=>{\n    const qualify=async()=>{const metadata={...await original.readCommerceReleasePhase2Metadata(queryable),sequences:await readTaskPuzzleSequenceMetadata(queryable)};verifyTaskPuzzleCatalogDelta(metadata,version,profile,false);return metadata;};\n    await qualify();const context=(await queryable.query(catalogQueries[0])).rows[0];\n    return {query:async(sql,values)=>{\n      const field=catalogFields.get(sql),metadata=field||sql===catalogQueries[0]?await qualify():null;\n      const result=await queryable.query(sql,values);if(!field)return result;\n      const rows=field==='indexes'?result.rows.map(row=>{const anchor=' ON '+context.schema+'.';assert.equal(row.definition.split(anchor).length,2);return {...row,definition:row.definition.replace(anchor,' ON $self.')};}):result.rows;\n      const projected=taskPuzzleComparisonMetadata({...metadata,[field]:rows},version,profile,false)[field];\n      return {...result,rows:field==='indexes'?projected.map(row=>({...row,definition:row.definition.replace(' ON $self.',' ON '+context.schema+'.')})):projected};\n    }};\n  };\n  return {...await wrap(pool),connect:async()=>{const client=await pool.connect();try{return {...await wrap(client),release:client.release.bind(client)};}catch(error){client.release();throw error;}}};\n}\nasync function taskDdlControls(pool,version,profile){\n  const client=await pool.connect();let causal=0;\n  try{\n    const originalMetadata=await taskMetadata(client);verifyTaskPuzzleCatalogDelta(originalMetadata,version,profile,false);\n    for(const ddl of TASK_PUZZLE_DDL_CONTROLS){\n      await client.query('BEGIN');try{await client.query(ddl);await assert.rejects(async()=>assert.deepEqual(await taskMetadata(client),originalMetadata),error=>error?.code==='ERR_ASSERTION');causal++;}finally{await client.query('ROLLBACK');}\n      const restored=await taskMetadata(client);verifyTaskPuzzleCatalogDelta(restored,version,profile,false);assert.deepEqual(restored,originalMetadata,'Exact same-client task DDL rollback reread');\n    }\n  }finally{client.release();}return causal;\n}\nfunction extendTaskCatalog(prior,current,version,profile,includeNotNull,projected,references,ddlCausal){\n  const project=metadata=>taskPuzzleComparisonMetadata(metadata,version,profile,false);\n  const verifyMetadata=metadata=>{const result=project(metadata);prior.verifyMetadata(result);assert.deepEqual(metadata,current,'Complete admitted current586 catalog');return true;};\n  verifyMetadata(current);freeze(current);\n  const result=Object.freeze({...prior,reference:current,...(prior.current?{current}:{}),verifyMetadata,\n    ...(prior.verify?{verify:verifyMetadata}:{}),\n    ...(prior.normalize?{normalize:rows=>prior.normalize(taskPuzzleComparisonConstraints(rows,version,includeNotNull,profile))}:{}),\n    actualTables:586,taskPuzzleReferences:references,taskPuzzleDdlCausal:ddlCausal,\n    phase:'Actual586 live catalog and independently compiled raw585 upgrade; '+prior.phase});\n  taskStates.set(result,{prior,projected,version,profile,includeNotNull,current});return result;\n}\nexport async function createTaskPuzzleReleasePhase2MigrationCatalog(pool,endpoint,input,options){\n  assert.equal(arguments.length,4);const actual=taskActualInput(input);\n  await assertNativeCaller(pool,endpoint,options?.legacyProfile,options?.includeNotNull);\n  const profile=options.legacyProfile;assert(['phase2','director'].includes(profile));const version=await questVersion(pool);\n  const before=await taskMetadata(pool);verifyTaskPuzzleCatalogDelta(before,version,profile,false);\n  const references=await verifyTaskPuzzleNativeReferences(pool,endpoint,actual.current),ddlCausal=await taskDdlControls(pool,version,profile);\n  const projected=await taskProjectedCaller(pool,version,profile);\n  const prior=await createQuestCatalogComparison(projected,endpoint,actual.quest,options);\n  taskProfiles.set(pool,profile);const current=await readTaskPuzzleReleasePhase2Metadata(pool);assertQuestingEnterpriseStable(questSourceCapture);\n  return extendTaskCatalog(prior,current,version,profile,options.includeNotNull,projected,references,ddlCausal);\n}\nexport async function verifyTaskPuzzleNativeBranches(pool,endpoint){\n  assert.equal(arguments.length,2);const actual=taskActualInput(fs.readFileSync(path.join(questRoot,'schema.sql'),'utf8'));\n  await assertNativeCaller(pool,endpoint,'fresh',true);const version=await questVersion(pool);\n  verifyTaskPuzzleCatalogDelta(await taskMetadata(pool),version,'fresh',false);\n  const references=await verifyTaskPuzzleNativeReferences(pool,endpoint,actual.current),ddlCausal=await taskDdlControls(pool,version,'fresh');\n  const projected=await taskProjectedCaller(pool,version,'fresh'),prior=await verifyQuestCatalogComparison(projected,endpoint,actual.quest);\n  taskProfiles.set(pool,'fresh');const current=await readTaskPuzzleReleasePhase2Metadata(pool);assertQuestingEnterpriseStable(questSourceCapture);\n  return extendTaskCatalog(prior,current,version,'fresh',true,projected,references,ddlCausal);\n}\nexport async function verifyTaskPuzzleReleasePhase2CausalNegatives(pool,catalog,rows,verifyRows){\n  assert.equal(arguments.length,4);const state=taskStates.get(catalog);assert(state,'Only this invocation\\'s actual current586 catalog');assertTaskPuzzlePhase2SourceInputs();\n  const {prior,projected,version,profile,includeNotNull,current}=state;\n  assert.deepEqual(await taskMetadata(pool),current);\n  const parentRows=taskPuzzleComparisonConstraints(rows,version,includeNotNull,profile),addedRows=rows.filter(row=>!parentRows.includes(row));\n  const result=await verifyCommerceReleasePhase2CausalNegatives(projected,prior,parentRows,candidate=>verifyRows(questOrder([...candidate,...addedRows])));\n  assert.deepEqual(await taskMetadata(pool),current);assertQuestingEnterpriseStable(questSourceCapture);return result;\n}\n",
           "baseline": "  assertQuestingEnterpriseStable(questSourceCapture);\n  return result;\n}\n"
         }
@@ -2866,9 +2902,9 @@ export const AGE_REMOVAL_SOURCE = freeze({
     },
     "test/task-puzzle-native-integration-guard.js": {
       "mode": "100644",
-      "blob": "355e56376c125dd7426fd0c253cfc748bb76012a",
-      "sha256": "7b22b55481ceb4cde4bd2f4f57c975eebc6c102e8048828d4893e5e1f8614eab",
-      "bytes": 8943
+      "blob": "9725e21ba313ea03b29c13b707f0c6ea008b454c",
+      "sha256": "93ad7b6b7197ca080a21b4d59e7629de61d0a8ed6349e6d7cc79be13d7f6e06e",
+      "bytes": 15172
     },
     "test/task-puzzle-postgres.js": {
       "mode": "100644",
@@ -2890,9 +2926,9 @@ export const AGE_REMOVAL_SOURCE = freeze({
     },
     "tools/age-removal-source-seal.js": {
       "mode": "100644",
-      "blob": "5e6c2355711ec1cd39c59222799addcb0c426b77",
-      "sha256": "bd3a84975764dee5aa62dd862072bc6c2ac1baf1a99f3c12cdccab6717dfd7f9",
-      "bytes": 16302
+      "blob": "90a2f13ade6433cc32f7e153c490e31c756e9257",
+      "sha256": "a6364f004e2c5e325dd18406cb1e9b0a3ca438d478179305a18d05aed26c0f41",
+      "bytes": 16360
     },
     "tools/age-removal-source-transfer.js": {
       "mode": "100644",
@@ -2926,4 +2962,4 @@ export const AGE_REMOVAL_SOURCE = freeze({
     }
   }
 });
-export const AGE_REMOVAL_SOURCE_SHA256 = '5e4f13fc1fb7cb3cf8e216a4963bf95a3588f00339ca3a94076211a4af949950';
+export const AGE_REMOVAL_SOURCE_SHA256 = 'c6dce2aae416ce69397aa6bc5a67c169f779a9920847d781e0075e80643c1f55';
