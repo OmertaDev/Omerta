@@ -4,7 +4,7 @@
 
 ## Census
 
-19,047 nodes and 75,844 edges at `607eb240cd67`.
+19,049 nodes and 75,852 edges at `288718fcf7cf`.
 
 ### Nodes
 
@@ -12,7 +12,7 @@
 |---|---:|
 | Artifact | 7736 |
 | Command | 321 |
-| Commit | 5775 |
+| Commit | 5777 |
 | Contract | 156 |
 | Document | 975 |
 | Domain | 13 |
@@ -32,14 +32,14 @@
 | Type | Count |
 |---|---:|
 | BELONGS_TO | 5997 |
-| CHANGED | 29623 |
+| CHANGED | 29629 |
 | CONTAINS | 7757 |
 | DECLARES | 321 |
 | DEFINED_IN | 1817 |
 | DEPENDS_ON | 69 |
 | EXECUTES | 1272 |
 | HANDLED_BY | 951 |
-| HAS_COMMIT | 5775 |
+| HAS_COMMIT | 5777 |
 | IMPLEMENTS | 124 |
 | IMPORTS | 9317 |
 | INHERITS | 47 |

@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `607eb240cd67`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `288718fcf7cf`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 5775 |
+| Commits in clone | 5777 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-11-09 — Reseal actual native inputs after documentation census correction |
+| Latest commit | 2026-11-10 — Merge pull request #334 from OmertaDev/reconcile/business-deadlines-20261109 |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 4641 |
+| OmertaDev | 4643 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 151 |
@@ -31,18 +31,18 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 964 | historical |
-| knowledge/generated/graph-summary.md | 964 | historical |
-| knowledge/generated/graph.json | 964 | historical |
-| knowledge/generated/inventory.md | 964 | historical |
+| knowledge/generated/github-history.md | 965 | historical |
+| knowledge/generated/graph-summary.md | 965 | historical |
+| knowledge/generated/graph.json | 965 | historical |
+| knowledge/generated/inventory.md | 965 | historical |
 | [SPEC.md](../../SPEC.md) | 649 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 514 | yes |
 | [src/server.js](../../src/server.js) | 465 | yes |
-| knowledge/generated/documents.md | 420 | historical |
+| knowledge/generated/documents.md | 421 | historical |
 | [schema.sql](../../schema.sql) | 385 | yes |
 | [package.json](../../package.json) | 376 | yes |
-| knowledge/generated/modules.md | 326 | historical |
+| knowledge/generated/modules.md | 327 | historical |
 | [BALANCE.md](../../BALANCE.md) | 258 | yes |
 | knowledge/generated/graph.mmd | 257 | historical |
 | [test/gates.js](../../test/gates.js) | 226 | yes |

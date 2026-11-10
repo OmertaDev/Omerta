@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "607eb240cd67c52528c98a4e3839f2f06a094cda",
+  "sourceRevision": "288718fcf7cf5ecb3dd8f1f2d59167747bb7e037",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 19047,
-    "edges": 75844,
+    "nodes": 19049,
+    "edges": 75852,
     "byNodeType": {
       "Artifact": 7736,
       "Command": 321,
-      "Commit": 5775,
+      "Commit": 5777,
       "Contract": 156,
       "Document": 975,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 5997,
-      "CHANGED": 29623,
+      "CHANGED": 29629,
       "CONTAINS": 7757,
       "DECLARES": 321,
       "DEFINED_IN": 1817,
       "DEPENDS_ON": 69,
       "EXECUTES": 1272,
       "HANDLED_BY": 951,
-      "HAS_COMMIT": 5775,
+      "HAS_COMMIT": 5777,
       "IMPLEMENTS": 124,
       "IMPORTS": 9317,
       "INHERITS": 47,
@@ -196522,6 +196522,22 @@
       ]
     },
     {
+      "key": "Commit:288718fcf7cf5ecb3dd8f1f2d59167747bb7e037",
+      "type": "Commit",
+      "id": "288718fcf7cf5ecb3dd8f1f2d59167747bb7e037",
+      "label": "Merge pull request #334 from OmertaDev/reconcile/business-deadlines-20261109",
+      "title": "Merge pull request #334 from OmertaDev/reconcile/business-deadlines-20261109",
+      "date": "2026-11-10T03:35:27.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/288718fcf7cf5ecb3dd8f1f2d59167747bb7e037",
+      "provenance": [
+        {
+          "commit": "288718fcf7cf5ecb3dd8f1f2d59167747bb7e037",
+          "url": "https://github.com/OmertaDev/Omerta/commit/288718fcf7cf5ecb3dd8f1f2d59167747bb7e037"
+        }
+      ]
+    },
+    {
       "key": "Commit:289275d3cdb8e02ef8296beba37ee4259562d973",
       "type": "Commit",
       "id": "289275d3cdb8e02ef8296beba37ee4259562d973",
@@ -207126,6 +207142,22 @@
         {
           "commit": "45082605e23e16f81959cc49b5e55d48e6088779",
           "url": "https://github.com/OmertaDev/Omerta/commit/45082605e23e16f81959cc49b5e55d48e6088779"
+        }
+      ]
+    },
+    {
+      "key": "Commit:4509f9248f237b7632bb34cdde313ca47e84ffc6",
+      "type": "Commit",
+      "id": "4509f9248f237b7632bb34cdde313ca47e84ffc6",
+      "label": "Refresh knowledge for qualified deadline planning",
+      "title": "Refresh knowledge for qualified deadline planning",
+      "date": "2026-11-09T21:46:52.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/4509f9248f237b7632bb34cdde313ca47e84ffc6",
+      "provenance": [
+        {
+          "commit": "4509f9248f237b7632bb34cdde313ca47e84ffc6",
+          "url": "https://github.com/OmertaDev/Omerta/commit/4509f9248f237b7632bb34cdde313ca47e84ffc6"
         }
       ]
     },
@@ -301774,6 +301806,9 @@
           "commit": "44f48a743e549591bd125a1f678099b8382dd78f"
         },
         {
+          "commit": "4509f9248f237b7632bb34cdde313ca47e84ffc6"
+        },
+        {
           "commit": "45379c3e9bfa82ebd32a76259ae02192f5081b6c"
         },
         {
@@ -303515,6 +303550,9 @@
         },
         {
           "commit": "44f48a743e549591bd125a1f678099b8382dd78f"
+        },
+        {
+          "commit": "4509f9248f237b7632bb34cdde313ca47e84ffc6"
         },
         {
           "commit": "45379c3e9bfa82ebd32a76259ae02192f5081b6c"
@@ -306418,6 +306456,9 @@
           "commit": "44f48a743e549591bd125a1f678099b8382dd78f"
         },
         {
+          "commit": "4509f9248f237b7632bb34cdde313ca47e84ffc6"
+        },
+        {
           "commit": "45379c3e9bfa82ebd32a76259ae02192f5081b6c"
         },
         {
@@ -309317,6 +309358,9 @@
         },
         {
           "commit": "44f48a743e549591bd125a1f678099b8382dd78f"
+        },
+        {
+          "commit": "4509f9248f237b7632bb34cdde313ca47e84ffc6"
         },
         {
           "commit": "45379c3e9bfa82ebd32a76259ae02192f5081b6c"
@@ -313000,6 +313044,9 @@
           "commit": "44f48a743e549591bd125a1f678099b8382dd78f"
         },
         {
+          "commit": "4509f9248f237b7632bb34cdde313ca47e84ffc6"
+        },
+        {
           "commit": "45379c3e9bfa82ebd32a76259ae02192f5081b6c"
         },
         {
@@ -315326,6 +315373,9 @@
         },
         {
           "commit": "44f48a743e549591bd125a1f678099b8382dd78f"
+        },
+        {
+          "commit": "4509f9248f237b7632bb34cdde313ca47e84ffc6"
         },
         {
           "commit": "45a5bb46c8900a565e0d86419e4dc0672a063012"
@@ -330307,8 +330357,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "607eb240cd67c52528c98a4e3839f2f06a094cda",
-      "currentBranch": "reconcile/business-deadlines-20261109",
+      "revision": "288718fcf7cf5ecb3dd8f1f2d59167747bb7e037",
+      "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -496147,6 +496197,54 @@
       "to": "Artifact:test/rc1-journeys.js",
       "provenance": {
         "commit": "45082605e23e16f81959cc49b5e55d48e6088779"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4509f9248f237b7632bb34cdde313ca47e84ffc6",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "4509f9248f237b7632bb34cdde313ca47e84ffc6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4509f9248f237b7632bb34cdde313ca47e84ffc6",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "4509f9248f237b7632bb34cdde313ca47e84ffc6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4509f9248f237b7632bb34cdde313ca47e84ffc6",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "4509f9248f237b7632bb34cdde313ca47e84ffc6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4509f9248f237b7632bb34cdde313ca47e84ffc6",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "4509f9248f237b7632bb34cdde313ca47e84ffc6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4509f9248f237b7632bb34cdde313ca47e84ffc6",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "4509f9248f237b7632bb34cdde313ca47e84ffc6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4509f9248f237b7632bb34cdde313ca47e84ffc6",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "4509f9248f237b7632bb34cdde313ca47e84ffc6"
       }
     },
     {
@@ -792975,6 +793073,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:288718fcf7cf5ecb3dd8f1f2d59167747bb7e037",
+      "provenance": {
+        "commit": "288718fcf7cf5ecb3dd8f1f2d59167747bb7e037"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:289275d3cdb8e02ef8296beba37ee4259562d973",
       "provenance": {
         "commit": "289275d3cdb8e02ef8296beba37ee4259562d973"
@@ -798274,6 +798380,14 @@
       "to": "Commit:45082605e23e16f81959cc49b5e55d48e6088779",
       "provenance": {
         "commit": "45082605e23e16f81959cc49b5e55d48e6088779"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:4509f9248f237b7632bb34cdde313ca47e84ffc6",
+      "provenance": {
+        "commit": "4509f9248f237b7632bb34cdde313ca47e84ffc6"
       }
     },
     {
