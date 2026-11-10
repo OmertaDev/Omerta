@@ -29,7 +29,7 @@ import { marketOverDeedSourceBaseline } from '../../tools/deed-market-source-com
 import { economyHardeningSourceBaseline } from '../../tools/economy-hardening-source-transfer.js';
 import { QUESTING_SOURCE, qualifyQuestingSource } from '../../tools/questing-source-transfer.js';
 import { SITE_BASICS_SOURCE, qualifySiteBasicsSource } from '../../tools/site-basics-source-transfer.js';
-import { ageRemovalHistoricalRecord } from '../../tools/age-removal-source-transfer.js';
+import { AGE_REMOVAL_SOURCE, ageRemovalHistoricalRecord } from '../../tools/age-removal-source-transfer.js';
 
 export const HISTORICAL_SOURCE_FIXTURE_REVISION = 'fe4a75a8b21fc41fd3d3bc75cf7720612c581463';
 const releaseRevision = 'b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16';
@@ -82,6 +82,7 @@ const enterpriseCombinedHistoricalFiles = Object.freeze([
   'src/wire.js',
 ]);
 const combinedSiteComparisonFiles = Object.freeze(['src/auth.js', 'src/business.js', 'src/population.js', 'src/social/combat.js']);
+const combinedTaskPuzzleComparisonFiles = Object.freeze(['src/growth.js', 'src/hustle.js']);
 const economicReceiptHistoricalFiles = Object.freeze(['src/store.js', 'src/router.js', 'src/treasury.js', 'src/watcher.js']);
 const npcEntries = new Set([
   'test/rc1-npc-retirement-journal.js', 'test/rc1-car-melt-provenance.js',
@@ -282,6 +283,13 @@ function qualifyCurrentCombinedSite(file, actual) {
   assert.deepEqual([proof.sourceOnly, proof.runtime, proof.native, proof.financial, proof.activation, proof.deployment, proof.priorResultsTransferred],
     [true, false, false, false, false, false, false]);
   return proof;
+}
+function taskPuzzleCombinedComparison(file, actual) {
+  assert.equal(arguments.length, 2);
+  assert(combinedTaskPuzzleComparisonFiles.includes(file), 'Only the two declared task-puzzle combined comparisons');
+  // Validate complete actual identities before projecting text for comparison. The cold loader
+  // still selects only its independently archived bodies; this source is never executed.
+  return ageRemovalHistoricalRecord(file, actual).committed.toString('utf8');
 }
 function qualifyCurrentQuestingWorldHelper(file, actual) {
   assert.equal(arguments.length, 2);
@@ -751,6 +759,7 @@ function rejectWebsiteHistoricalHelperSources() {
 }
 function rejectHistoricalApplicationSources() {
   rejectCurrentCombinedSiteSources();
+  rejectCurrentTaskPuzzleCombinedSources();
   const files = ['schema.sql', 'src/agentgateway.js', 'src/content/phase1.js', 'src/content/phase1-policy.js',
     'src/db.js', 'src/deeds.js', 'src/explore.js'];
   let positives = 0, refusals = 0;
@@ -811,6 +820,10 @@ function rejectHistoricalApplicationSources() {
       const actual = currentCombinedSiteRecord(combinedFile);
       assert.equal(physicalRaw, canonical(actual.physical), 'The physical combined comparison remains the same complete source');
       comparisonRaw = qualifyCurrentCombinedSite(combinedFile, actual).baselineText;
+    } else if (combinedTaskPuzzleComparisonFiles.includes(combinedFile)) {
+      const actual = currentHistoricalHelperRecord(combinedFile);
+      assert.equal(physicalRaw, canonical(actual.physical), 'The physical task-puzzle comparison remains the same complete source');
+      comparisonRaw = taskPuzzleCombinedComparison(combinedFile, actual);
     }
     const physicalCurrent = canonical(economyUxMergeCandidateHistoricalInput(combinedFile, comparisonRaw));
     const combinedCurrent = String(git(['cat-file', 'blob', combinedRow.after.blob]));
@@ -855,6 +868,75 @@ function rejectHistoricalApplicationSources() {
   ];
   for (const [file, raw] of denied) { assert.throws(() => currentHistoricalApplicationSource(file, raw)); refusals++; }
   console.log(`PASS_HISTORICAL_APPLICATION_GUARDS: ${positives} exact fe4-body controls; ${refusals} raw/inverse/domain refusals; no current runtime execution`);
+}
+
+function rejectCurrentTaskPuzzleCombinedSources() {
+  assert.deepEqual(enterpriseCombinedHistoricalFiles.filter(file => Object.hasOwn(AGE_REMOVAL_SOURCE.files, file)
+    && !combinedSiteComparisonFiles.includes(file)), combinedTaskPuzzleComparisonFiles,
+  'Only the two sealed task-puzzle sources add a combined comparison outside the existing site controls');
+  let positives = 0, refusals = 0, inverseMutations = 0;
+  const actuals = new Map(combinedTaskPuzzleComparisonFiles.map(file => [file, currentHistoricalHelperRecord(file)]));
+  for (const [file, actual] of actuals) {
+    const text = actual.committed.toString('utf8'), row = AGE_REMOVAL_SOURCE.files[file];
+    const predecessor = git(['--no-replace-objects', 'show', AGE_REMOVAL_SOURCE.predecessor + ':' + file]);
+    assert.equal(sha256(predecessor), row.baseline.sha256); assert.equal(blobHash(predecessor), row.baseline.blob);
+    const combinedRows = ENTERPRISE_NATIVE_RELEASE_INPUTS.replacements.filter(item => item.file === file);
+    assert.equal(combinedRows.length, 1);
+    const combined = git(['--no-replace-objects', 'show', ENTERPRISE_NATIVE_RELEASE_INPUTS.revision + ':' + file]);
+    assert.equal(sha256(combined), combinedRows[0].after.sha256); assert.equal(blobHash(combined), combinedRows[0].after.blob);
+    const frozen = blob(file, release), expected = blob(file, history);
+    for (const physical of [actual.committed, Buffer.from(text.replaceAll('\n', '\r\n'))]) {
+      const comparison = taskPuzzleCombinedComparison(file, { ...actual, physical });
+      assert.equal(comparison, predecessor.toString('utf8'), 'Actual task-puzzle source reaches its complete archived predecessor: ' + file);
+      const candidate = economyUxMergeCandidateHistoricalInput(file, comparison);
+      assert.equal(candidate, combined.toString('utf8'), 'The admitted predecessor reaches the unchanged combined enterprise source: ' + file);
+      assert.equal(enterpriseCombinedHistoricalInput(file, candidate, frozen), frozen.toString('utf8'));
+      assert.deepEqual(currentHistoricalApplicationSource(file, candidate), expected);
+      positives++;
+    }
+    const reject = record => { assert.throws(() => taskPuzzleCombinedComparison(file, record)); refusals++; };
+    const badBlob = '0'.repeat(40), otherMode = actual.head.mode === '100644' ? '100755' : '100644';
+    for (const patch of [
+      { head: { ...actual.head, blob: badBlob } }, { head: { ...actual.head, mode: otherMode } },
+      { head: { ...actual.head, mode: '120000' } }, { index: actual.index.replace(actual.head.blob, badBlob) },
+      { index: otherMode + actual.index.slice(6) }, { index: actual.index.replace(' 0\t', ' 2\t') },
+      { index: '' }, { index: actual.index + '\n' }, { regular: false }, { symbolic: true },
+      { committed: predecessor }, { committed: Buffer.from(text.replaceAll('\n', '\r\n')) },
+      { physical: text }, { unknown: true },
+    ]) reject({ ...actual, ...patch });
+    const { physical: omitted, ...missingPhysical } = actual;
+    reject(missingPhysical); reject(null);
+    // A consistent old HEAD/index/physical tuple must not masquerade as actual current source.
+    reject({ ...actual, head: { mode: row.baseline.mode, blob: row.baseline.blob },
+      index: row.baseline.mode + ' ' + row.baseline.blob + ' 0\t' + file, committed: predecessor, physical: predecessor });
+    const rejectBytes = changed => {
+      assert(Buffer.isBuffer(changed) && !changed.equals(actual.committed), 'Every causal mutation changes the actual source');
+      reject({ ...actual, physical: changed });
+      // Keeping both byte buffers equal prevents the physical equality check from hiding a missing whole-source check.
+      reject({ ...actual, committed: changed, physical: changed });
+    };
+    for (const changed of ['// unreviewed prefix\n' + text, text + '\n// unreviewed suffix\n', text.slice(1),
+      text.replace(/\S/, '?'), '\ufeff' + text, text + '\0', text.replace('\n', '\r\n'), text.replace('\n', '\r')])
+      rejectBytes(Buffer.from(changed));
+    rejectBytes(Buffer.concat([actual.committed, Buffer.from([255])]));
+    for (const inverse of row.inverses) {
+      assert.equal(text.slice(inverse.at, inverse.at + inverse.current.length), inverse.current);
+      for (const replacement of ['', inverse.current + inverse.current, inverse.baseline]) {
+        rejectBytes(Buffer.from(text.slice(0, inverse.at) + replacement + text.slice(inverse.at + inverse.current.length)));
+        inverseMutations++;
+      }
+    }
+    for (const other of combinedTaskPuzzleComparisonFiles.filter(name => name !== file)) reject(actuals.get(other));
+    for (const unsupported of ['src/auth.js', 'src/store.js', '../' + file, './' + file, file.replaceAll('/', '\\'), '__proto__', 'constructor', null]) {
+      assert.throws(() => taskPuzzleCombinedComparison(unsupported, actual)); refusals++;
+    }
+    assert.throws(() => taskPuzzleCombinedComparison(file)); refusals++;
+    assert.throws(() => taskPuzzleCombinedComparison(file, actual, {})); refusals++;
+  }
+  assert.throws(() => taskPuzzleCombinedComparison()); refusals++;
+  console.log(JSON.stringify({ phase: 'TASK_PUZZLE_COMBINED_PHYSICAL_CONTROLS', domains: combinedTaskPuzzleComparisonFiles.length,
+    positives, refusals, inverseMutations, sourceOnly: true, runtime: false, native: false,
+    migration: false, financial: false, activation: false, deployment: false, priorResultsTransferred: false, projectedSourceExecuted: false }));
 }
 
 function rejectCityActivityHistoricalSources() {
