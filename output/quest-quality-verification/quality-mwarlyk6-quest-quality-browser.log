@@ -1,0 +1,14 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+{"component":"player-command","phase":"request","correlationId":"f130d41a-7e78-4376-942e-62afb0f740d1"}
+{"component":"player-command","phase":"authorization","correlationId":"f130d41a-7e78-4376-942e-62afb0f740d1","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"f130d41a-7e78-4376-942e-62afb0f740d1","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"f130d41a-7e78-4376-942e-62afb0f740d1","statusCode":409,"elapsedMs":3}
+{"component":"player-command","phase":"request","correlationId":"66bdf01a-e71e-40e5-9a39-b1c003977fc6"}
+{"component":"player-command","phase":"authorization","correlationId":"66bdf01a-e71e-40e5-9a39-b1c003977fc6","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"66bdf01a-e71e-40e5-9a39-b1c003977fc6","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"66bdf01a-e71e-40e5-9a39-b1c003977fc6","statusCode":409,"elapsedMs":1}
+{"component":"player-command","phase":"request","correlationId":"a114ebfb-8d40-4820-b377-def059637d85"}
+{"component":"player-command","phase":"authorization","correlationId":"a114ebfb-8d40-4820-b377-def059637d85","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"a114ebfb-8d40-4820-b377-def059637d85","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"a114ebfb-8d40-4820-b377-def059637d85","statusCode":409,"elapsedMs":2}
+Quest quality production browser PASS: real pilot proof/conclusion/evidence, exact clauses, hidden-question boundary, private revision/reload/peer isolation, drafts/undo, motive, commitments, truthful AI study/24h refusal and eligible recall, opt-in debrief, actual fieldwork/disclosure, independent unsure/share, real cross-role volunteering, opaque mandate/pre-ack blocker/ack/withdraw/commit and390px. Artifacts: C:\Users\Jorge\AppData\Local\Temp\omerta-quality-ooZd8W
