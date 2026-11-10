@@ -100,8 +100,8 @@ const server = createServer((req, res) => {
   res.end(JSON.stringify(fixture));
 });
 await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
-const cli = duty => new Promise((resolve, reject) => {
-  const child = spawn(process.execPath, ['tools/business-agent.js', '--base', `http://127.0.0.1:${server.address().port}`, '--duty', duty],
+const cli = (duty, flags = []) => new Promise((resolve, reject) => {
+  const child = spawn(process.execPath, ['tools/business-agent.js', '--base', `http://127.0.0.1:${server.address().port}`, '--duty', duty, ...flags],
     { env: { ...process.env, OMERTA_BUSINESS_TOKEN: token }, stdio: ['ignore', 'pipe', 'pipe'] });
   let stdout = '', stderr = '';
   child.stdout.on('data', data => { stdout += data; });
@@ -121,5 +121,19 @@ try {
   assert.equal(invalid.stdout, '');
   assert.equal(invalid.stderr.trim(), 'business_agent_error');
   assert.equal(cliRequests, 1, 'invalid duty fails before any request');
+  const timed = await cli('sales', ['--work-seconds-per-job', '600', '--planning-horizon-seconds', '1200']);
+  assert.equal(timed.code, 0, timed.stderr);
+  const timedRecord = JSON.parse(timed.stdout);
+  assert.equal(timedRecord.financialRequests, 0);
+  assert.equal(timedRecord.samples[0].evaluation.policy.workSecondsPerJob, 600);
+  assert.equal(timedRecord.samples[0].evaluation.scheduling.planningHorizonSeconds, 1200);
+  assert(!timed.stdout.includes(token));
+  for (const flags of [['--work-seconds-per-job','59'], ['--work-seconds-per-job','3601'],
+    ['--planning-horizon-seconds','86401'], ['--planning-horizon-seconds','1.5'], ['--work-seconds-per-job']]) {
+    const invalidTime = await cli('sales', flags);
+    assert.equal(invalidTime.code, 1); assert.equal(invalidTime.stdout, '');
+    assert.equal(invalidTime.stderr.trim(), 'business_agent_error');
+  }
+  assert.equal(cliRequests, 2, 'invalid timing policy fails before any request');
 } finally { await new Promise(resolve => server.close(resolve)); }
 console.log('business-agent: finite read-only sampling, pacing, credential boundaries and bounded responses passed');
