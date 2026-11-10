@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `01bb38e3c07c`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `58f7dad94770`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 5820 |
+| Commits in clone | 5824 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-11-10 — chore: seal current quest evidence native inputs |
+| Latest commit | 2026-11-10 — chore: seal current RC1 admission native inputs |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 4685 |
+| OmertaDev | 4689 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 152 |
@@ -31,11 +31,11 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 967 | historical |
-| knowledge/generated/graph-summary.md | 967 | historical |
-| knowledge/generated/graph.json | 967 | historical |
-| knowledge/generated/inventory.md | 967 | historical |
-| [SPEC.md](../../SPEC.md) | 660 | yes |
+| knowledge/generated/github-history.md | 968 | historical |
+| knowledge/generated/graph-summary.md | 968 | historical |
+| knowledge/generated/graph.json | 968 | historical |
+| knowledge/generated/inventory.md | 968 | historical |
+| [SPEC.md](../../SPEC.md) | 661 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 515 | yes |
 | [src/server.js](../../src/server.js) | 468 | yes |
@@ -65,7 +65,7 @@
 | [test/growth.js](../../test/growth.js) | 97 | yes |
 | [test/migrate.js](../../test/migrate.js) | 95 | yes |
 | [docs/WIKI.md](../../docs/WIKI.md) | 93 | yes |
-| [tools/enterprise-native-questing-inputs.js](../../tools/enterprise-native-questing-inputs.js) | 89 | yes |
+| [tools/enterprise-native-questing-inputs.js](../../tools/enterprise-native-questing-inputs.js) | 90 | yes |
 | [test/social.js](../../test/social.js) | 88 | yes |
 | [test/hardening.js](../../test/hardening.js) | 73 | yes |
 | [tools/enterprise-native-inputs.js](../../tools/enterprise-native-inputs.js) | 72 | yes |
