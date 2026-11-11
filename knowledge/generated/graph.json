@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "70b1c4d22217482fcb8bd02e210684150943aad6",
+  "sourceRevision": "ffd2e265b47ff2216863d08c0608a0dfe6a96eee",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 19177,
-    "edges": 76342,
+    "nodes": 19179,
+    "edges": 76348,
     "byNodeType": {
       "Artifact": 7778,
       "Command": 324,
-      "Commit": 5839,
+      "Commit": 5841,
       "Contract": 156,
       "Document": 978,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 6016,
-      "CHANGED": 29844,
+      "CHANGED": 29848,
       "CONTAINS": 7799,
       "DECLARES": 324,
       "DEFINED_IN": 1820,
       "DEPENDS_ON": 69,
       "EXECUTES": 1280,
       "HANDLED_BY": 953,
-      "HAS_COMMIT": 5839,
+      "HAS_COMMIT": 5841,
       "IMPLEMENTS": 124,
       "IMPORTS": 9413,
       "INHERITS": 47,
@@ -185159,6 +185159,22 @@
       ]
     },
     {
+      "key": "Commit:050c664b5aed5f0d357d51aa379d25d57e97f3fa",
+      "type": "Commit",
+      "id": "050c664b5aed5f0d357d51aa379d25d57e97f3fa",
+      "label": "chore(knowledge): refresh reviewed mobile crime layout",
+      "title": "chore(knowledge): refresh reviewed mobile crime layout",
+      "date": "2026-11-11T05:20:29.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/050c664b5aed5f0d357d51aa379d25d57e97f3fa",
+      "provenance": [
+        {
+          "commit": "050c664b5aed5f0d357d51aa379d25d57e97f3fa",
+          "url": "https://github.com/OmertaDev/Omerta/commit/050c664b5aed5f0d357d51aa379d25d57e97f3fa"
+        }
+      ]
+    },
+    {
       "key": "Commit:050e3f28eff3ff02d29fa03902e0bb533b15b2de",
       "type": "Commit",
       "id": "050e3f28eff3ff02d29fa03902e0bb533b15b2de",
@@ -276535,6 +276551,22 @@
       ]
     },
     {
+      "key": "Commit:ffd2e265b47ff2216863d08c0608a0dfe6a96eee",
+      "type": "Commit",
+      "id": "ffd2e265b47ff2216863d08c0608a0dfe6a96eee",
+      "label": "Merge pull request #336 from OmertaDev/codex/task-puzzles-20261110",
+      "title": "Merge pull request #336 from OmertaDev/codex/task-puzzles-20261110",
+      "date": "2026-11-11T17:07:54.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/ffd2e265b47ff2216863d08c0608a0dfe6a96eee",
+      "provenance": [
+        {
+          "commit": "ffd2e265b47ff2216863d08c0608a0dfe6a96eee",
+          "url": "https://github.com/OmertaDev/Omerta/commit/ffd2e265b47ff2216863d08c0608a0dfe6a96eee"
+        }
+      ]
+    },
+    {
       "key": "Commit:ffe20171a9ae64a13067a8aa15f2f15bad80c250",
       "type": "Commit",
       "id": "ffe20171a9ae64a13067a8aa15f2f15bad80c250",
@@ -304890,6 +304922,9 @@
           "commit": "048d92fcbffea75da161f4ac65f0076f5a4e3e70"
         },
         {
+          "commit": "050c664b5aed5f0d357d51aa379d25d57e97f3fa"
+        },
+        {
           "commit": "051375ad4b0a4234a6c6427632b9bbaea073dc57"
         },
         {
@@ -307812,6 +307847,9 @@
           "commit": "048d92fcbffea75da161f4ac65f0076f5a4e3e70"
         },
         {
+          "commit": "050c664b5aed5f0d357d51aa379d25d57e97f3fa"
+        },
+        {
           "commit": "051375ad4b0a4234a6c6427632b9bbaea073dc57"
         },
         {
@@ -310732,6 +310770,9 @@
         },
         {
           "commit": "048d92fcbffea75da161f4ac65f0076f5a4e3e70"
+        },
+        {
+          "commit": "050c664b5aed5f0d357d51aa379d25d57e97f3fa"
         },
         {
           "commit": "051375ad4b0a4234a6c6427632b9bbaea073dc57"
@@ -314440,6 +314481,9 @@
         },
         {
           "commit": "048d92fcbffea75da161f4ac65f0076f5a4e3e70"
+        },
+        {
+          "commit": "050c664b5aed5f0d357d51aa379d25d57e97f3fa"
         },
         {
           "commit": "051375ad4b0a4234a6c6427632b9bbaea073dc57"
@@ -332622,8 +332666,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "70b1c4d22217482fcb8bd02e210684150943aad6",
-      "currentBranch": "codex/task-puzzles-20261110",
+      "revision": "ffd2e265b47ff2216863d08c0608a0dfe6a96eee",
+      "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -444202,6 +444246,38 @@
       "to": "Artifact:test/rc1-aggression-heir.js",
       "provenance": {
         "commit": "04ea65108a4e38fb6a9bb67b2975f5aedff8ddb1"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:050c664b5aed5f0d357d51aa379d25d57e97f3fa",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "050c664b5aed5f0d357d51aa379d25d57e97f3fa"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:050c664b5aed5f0d357d51aa379d25d57e97f3fa",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "050c664b5aed5f0d357d51aa379d25d57e97f3fa"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:050c664b5aed5f0d357d51aa379d25d57e97f3fa",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "050c664b5aed5f0d357d51aa379d25d57e97f3fa"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:050c664b5aed5f0d357d51aa379d25d57e97f3fa",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "050c664b5aed5f0d357d51aa379d25d57e97f3fa"
       }
     },
     {
@@ -791770,6 +791846,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:050c664b5aed5f0d357d51aa379d25d57e97f3fa",
+      "provenance": {
+        "commit": "050c664b5aed5f0d357d51aa379d25d57e97f3fa"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:050e3f28eff3ff02d29fa03902e0bb533b15b2de",
       "provenance": {
         "commit": "050e3f28eff3ff02d29fa03902e0bb533b15b2de"
@@ -837453,6 +837537,14 @@
       "to": "Commit:ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8",
       "provenance": {
         "commit": "ffc5ddb5e0b13ac5380f30784eae1ff64ecc00c8"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:ffd2e265b47ff2216863d08c0608a0dfe6a96eee",
+      "provenance": {
+        "commit": "ffd2e265b47ff2216863d08c0608a0dfe6a96eee"
       }
     },
     {
