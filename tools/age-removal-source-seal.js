@@ -133,6 +133,8 @@ const generated = new Set([metadata, 'tools/enterprise-native-questing-inputs.js
   "output/quest-quality-verification/quality-mwarmp0t-quest-quality-study.log",
 ]);
 const allowed = new Set([
+  // Deterministic jail-unit regression fixtures; no gameplay or historical result transfer.
+  'test/agentturn-jail-units.js',
   // Scoped cold-start puzzle reads; no runtime change or historical result transfer.
   'test/coldstart.js',
   // Reviewed current-growth receipt SQL model repin; no historical/native result transfer.
