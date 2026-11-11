@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "e5c666e09ede095d864ed5ea864070d308a85b26",
+  "sourceRevision": "d43841ac8785ad4d4dee3f5355023838b44dae1b",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 19169,
-    "edges": 76314,
+    "nodes": 19173,
+    "edges": 76328,
     "byNodeType": {
       "Artifact": 7778,
       "Command": 324,
-      "Commit": 5831,
+      "Commit": 5835,
       "Contract": 156,
       "Document": 978,
       "Domain": 13,
@@ -65,20 +65,20 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 6016,
-      "CHANGED": 29826,
+      "CHANGED": 29834,
       "CONTAINS": 7799,
       "DECLARES": 324,
       "DEFINED_IN": 1820,
       "DEPENDS_ON": 69,
       "EXECUTES": 1280,
       "HANDLED_BY": 953,
-      "HAS_COMMIT": 5831,
+      "HAS_COMMIT": 5835,
       "IMPLEMENTS": 124,
-      "IMPORTS": 9412,
+      "IMPORTS": 9413,
       "INHERITS": 47,
       "REFERENCES": 3981,
       "REPRESENTS": 2789,
-      "TESTS": 2653,
+      "TESTS": 2654,
       "TRACKS": 126,
       "USES_TABLE": 3264
     }
@@ -144661,20 +144661,20 @@
       "path": "test/agentturn-jail-units.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 1946,
-      "lines": 36,
-      "version": "fc5fd11c684c211f",
+      "bytes": 4193,
+      "lines": 68,
+      "version": "816f6bdc974be6ca",
       "text": true,
       "provenance": [
         {
           "file": "test/agentturn-jail-units.js",
           "line": 1,
-          "version": "fc5fd11c684c211f"
+          "version": "816f6bdc974be6ca"
         }
       ],
-      "lastChangedAt": "2026-11-08T07:23:02.000Z",
+      "lastChangedAt": "2026-11-11T01:27:15.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "8035cff3c015b19e2a3049c0caa6c5d69aab9ff4"
+      "lastChangedCommit": "e2d24f4fb7bd50f0cd56282eea9ddb4910e26bb4"
     },
     {
       "key": "Artifact:test/agentturn.js",
@@ -168765,20 +168765,20 @@
       "path": "tools/age-removal-source-data.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 538531,
-      "lines": 3027,
-      "version": "0d10e27467f9c696",
+      "bytes": 544744,
+      "lines": 3058,
+      "version": "3a22dd3770e75104",
       "text": true,
       "provenance": [
         {
           "file": "tools/age-removal-source-data.js",
           "line": 1,
-          "version": "0d10e27467f9c696"
+          "version": "3a22dd3770e75104"
         }
       ],
-      "lastChangedAt": "2026-11-10T17:28:09.000Z",
+      "lastChangedAt": "2026-11-11T01:27:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "2ffb36c25e9e4edabb49b814ab2f0e5ec8424c47"
+      "lastChangedCommit": "eccbe16da33ceab1ab894f0c84297b9e80c25afa"
     },
     {
       "key": "Artifact:tools/age-removal-source-seal.js",
@@ -168788,20 +168788,20 @@
       "path": "tools/age-removal-source-seal.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 18264,
-      "lines": 268,
-      "version": "6e351f5fd1542504",
+      "bytes": 18391,
+      "lines": 270,
+      "version": "2b997048b7fde5ee",
       "text": true,
       "provenance": [
         {
           "file": "tools/age-removal-source-seal.js",
           "line": 1,
-          "version": "6e351f5fd1542504"
+          "version": "2b997048b7fde5ee"
         }
       ],
-      "lastChangedAt": "2026-11-10T17:20:53.000Z",
+      "lastChangedAt": "2026-11-11T01:27:15.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "0735eeea89272ce706451829798be7165d0d799a"
+      "lastChangedCommit": "e2d24f4fb7bd50f0cd56282eea9ddb4910e26bb4"
     },
     {
       "key": "Artifact:tools/age-removal-source-transfer.js",
@@ -171759,18 +171759,18 @@
       "extension": ".js",
       "bytes": 494682,
       "lines": 13176,
-      "version": "d7e080be4564d4fc",
+      "version": "486450ca4b7f9565",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-questing-inputs.js",
           "line": 1,
-          "version": "d7e080be4564d4fc"
+          "version": "486450ca4b7f9565"
         }
       ],
-      "lastChangedAt": "2026-11-10T17:28:15.000Z",
+      "lastChangedAt": "2026-11-11T01:27:46.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e5c666e09ede095d864ed5ea864070d308a85b26"
+      "lastChangedCommit": "d43841ac8785ad4d4dee3f5355023838b44dae1b"
     },
     {
       "key": "Artifact:tools/enterprise-native-questing-seal.js",
@@ -223015,6 +223015,22 @@
       ]
     },
     {
+      "key": "Commit:6d8df241d7b5c13aa3b54821068c6d0bf2ad58d2",
+      "type": "Commit",
+      "id": "6d8df241d7b5c13aa3b54821068c6d0bf2ad58d2",
+      "label": "chore(knowledge): refresh reviewed coldstart candidate",
+      "title": "chore(knowledge): refresh reviewed coldstart candidate",
+      "date": "2026-11-10T17:48:12.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/6d8df241d7b5c13aa3b54821068c6d0bf2ad58d2",
+      "provenance": [
+        {
+          "commit": "6d8df241d7b5c13aa3b54821068c6d0bf2ad58d2",
+          "url": "https://github.com/OmertaDev/Omerta/commit/6d8df241d7b5c13aa3b54821068c6d0bf2ad58d2"
+        }
+      ]
+    },
+    {
       "key": "Commit:6d916c81c742bea8c51a3e3ace2e7cfaf228b11c",
       "type": "Commit",
       "id": "6d916c81c742bea8c51a3e3ace2e7cfaf228b11c",
@@ -260583,6 +260599,22 @@
       ]
     },
     {
+      "key": "Commit:d43841ac8785ad4d4dee3f5355023838b44dae1b",
+      "type": "Commit",
+      "id": "d43841ac8785ad4d4dee3f5355023838b44dae1b",
+      "label": "chore: seal current jail fixture native inputs",
+      "title": "chore: seal current jail fixture native inputs",
+      "date": "2026-11-11T01:27:46.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/d43841ac8785ad4d4dee3f5355023838b44dae1b",
+      "provenance": [
+        {
+          "commit": "d43841ac8785ad4d4dee3f5355023838b44dae1b",
+          "url": "https://github.com/OmertaDev/Omerta/commit/d43841ac8785ad4d4dee3f5355023838b44dae1b"
+        }
+      ]
+    },
+    {
       "key": "Commit:d43e6f64fade277399cf66efaed1564e401b3563",
       "type": "Commit",
       "id": "d43e6f64fade277399cf66efaed1564e401b3563",
@@ -265879,6 +265911,22 @@
       ]
     },
     {
+      "key": "Commit:e2d24f4fb7bd50f0cd56282eea9ddb4910e26bb4",
+      "type": "Commit",
+      "id": "e2d24f4fb7bd50f0cd56282eea9ddb4910e26bb4",
+      "label": "test: pin jail unit regression city events",
+      "title": "test: pin jail unit regression city events",
+      "date": "2026-11-11T01:27:15.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/e2d24f4fb7bd50f0cd56282eea9ddb4910e26bb4",
+      "provenance": [
+        {
+          "commit": "e2d24f4fb7bd50f0cd56282eea9ddb4910e26bb4",
+          "url": "https://github.com/OmertaDev/Omerta/commit/e2d24f4fb7bd50f0cd56282eea9ddb4910e26bb4"
+        }
+      ]
+    },
+    {
       "key": "Commit:e2ebf9bcb2f1cf7a3e82d32a94d7144ab962432d",
       "type": "Commit",
       "id": "e2ebf9bcb2f1cf7a3e82d32a94d7144ab962432d",
@@ -269187,6 +269235,22 @@
         {
           "commit": "ecb7255afa23dff763018856243237119b3a22c5",
           "url": "https://github.com/OmertaDev/Omerta/commit/ecb7255afa23dff763018856243237119b3a22c5"
+        }
+      ]
+    },
+    {
+      "key": "Commit:eccbe16da33ceab1ab894f0c84297b9e80c25afa",
+      "type": "Commit",
+      "id": "eccbe16da33ceab1ab894f0c84297b9e80c25afa",
+      "label": "chore: seal reviewed jail fixture source",
+      "title": "chore: seal reviewed jail fixture source",
+      "date": "2026-11-11T01:27:40.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/eccbe16da33ceab1ab894f0c84297b9e80c25afa",
+      "provenance": [
+        {
+          "commit": "eccbe16da33ceab1ab894f0c84297b9e80c25afa",
+          "url": "https://github.com/OmertaDev/Omerta/commit/eccbe16da33ceab1ab894f0c84297b9e80c25afa"
         }
       ]
     },
@@ -297011,15 +297075,15 @@
         },
         {
           "file": "tools/age-removal-source-data.js",
-          "line": 1342
+          "line": 1373
         },
         {
           "file": "tools/age-removal-source-data.js",
-          "line": 1404
+          "line": 1435
         },
         {
           "file": "tools/age-removal-source-data.js",
-          "line": 1405
+          "line": 1436
         },
         {
           "file": "tools/atomic-barter-native.js",
@@ -305974,6 +306038,9 @@
           "commit": "6d6994cb6983aff35e94ec4590fdcf304c0f9193"
         },
         {
+          "commit": "6d8df241d7b5c13aa3b54821068c6d0bf2ad58d2"
+        },
+        {
           "commit": "6e4cd3b50fd372203d1d08d950277bb17b8c8c46"
         },
         {
@@ -308890,6 +308957,9 @@
           "commit": "6d6994cb6983aff35e94ec4590fdcf304c0f9193"
         },
         {
+          "commit": "6d8df241d7b5c13aa3b54821068c6d0bf2ad58d2"
+        },
+        {
           "commit": "6e4cd3b50fd372203d1d08d950277bb17b8c8c46"
         },
         {
@@ -311804,6 +311874,9 @@
         },
         {
           "commit": "6d6994cb6983aff35e94ec4590fdcf304c0f9193"
+        },
+        {
+          "commit": "6d8df241d7b5c13aa3b54821068c6d0bf2ad58d2"
         },
         {
           "commit": "6e4cd3b50fd372203d1d08d950277bb17b8c8c46"
@@ -315503,6 +315576,9 @@
         },
         {
           "commit": "6d6994cb6983aff35e94ec4590fdcf304c0f9193"
+        },
+        {
+          "commit": "6d8df241d7b5c13aa3b54821068c6d0bf2ad58d2"
         },
         {
           "commit": "6e4cd3b50fd372203d1d08d950277bb17b8c8c46"
@@ -332464,7 +332540,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "e5c666e09ede095d864ed5ea864070d308a85b26",
+      "revision": "d43841ac8785ad4d4dee3f5355023838b44dae1b",
       "currentBranch": "codex/task-puzzles-20261110",
       "defaultBranch": "main",
       "visibility": "public",
@@ -371271,13 +371347,13 @@
       "type": "TestSuite",
       "id": "test/agentturn-jail-units.js",
       "label": "test/agentturn-jail-units.js",
-      "lines": 36,
-      "version": "fc5fd11c684c211f",
+      "lines": 68,
+      "version": "816f6bdc974be6ca",
       "provenance": [
         {
           "file": "test/agentturn-jail-units.js",
           "line": 1,
-          "version": "fc5fd11c684c211f"
+          "version": "816f6bdc974be6ca"
         }
       ]
     },
@@ -531816,6 +531892,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:6d8df241d7b5c13aa3b54821068c6d0bf2ad58d2",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "6d8df241d7b5c13aa3b54821068c6d0bf2ad58d2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6d8df241d7b5c13aa3b54821068c6d0bf2ad58d2",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "6d8df241d7b5c13aa3b54821068c6d0bf2ad58d2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6d8df241d7b5c13aa3b54821068c6d0bf2ad58d2",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "6d8df241d7b5c13aa3b54821068c6d0bf2ad58d2"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:6d8df241d7b5c13aa3b54821068c6d0bf2ad58d2",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "6d8df241d7b5c13aa3b54821068c6d0bf2ad58d2"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:6d916c81c742bea8c51a3e3ace2e7cfaf228b11c",
       "to": "Artifact:docs/company-production-security-review.md",
       "provenance": {
@@ -634848,6 +634956,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:d43841ac8785ad4d4dee3f5355023838b44dae1b",
+      "to": "Artifact:tools/enterprise-native-questing-inputs.js",
+      "provenance": {
+        "commit": "d43841ac8785ad4d4dee3f5355023838b44dae1b"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:d43e6f64fade277399cf66efaed1564e401b3563",
       "to": "Artifact:docs/warehouse-leases-security-review.md",
       "provenance": {
@@ -650976,6 +651092,22 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:e2d24f4fb7bd50f0cd56282eea9ddb4910e26bb4",
+      "to": "Artifact:test/agentturn-jail-units.js",
+      "provenance": {
+        "commit": "e2d24f4fb7bd50f0cd56282eea9ddb4910e26bb4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:e2d24f4fb7bd50f0cd56282eea9ddb4910e26bb4",
+      "to": "Artifact:tools/age-removal-source-seal.js",
+      "provenance": {
+        "commit": "e2d24f4fb7bd50f0cd56282eea9ddb4910e26bb4"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:e2ebf9bcb2f1cf7a3e82d32a94d7144ab962432d",
       "to": "Artifact:test/city-presence-browser.js",
       "provenance": {
@@ -659964,6 +660096,14 @@
       "to": "Artifact:tools/arena.js",
       "provenance": {
         "commit": "eca7beb313c84a32786188a9c303a80a84ac7485"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:eccbe16da33ceab1ab894f0c84297b9e80c25afa",
+      "to": "Artifact:tools/age-removal-source-data.js",
+      "provenance": {
+        "commit": "eccbe16da33ceab1ab894f0c84297b9e80c25afa"
       }
     },
     {
@@ -769069,7 +769209,7 @@
       "type": "DEPENDS_ON",
       "from": "Domain:delivery-assurance",
       "to": "Domain:platform-core",
-      "weight": 2034
+      "weight": 2035
     },
     {
       "type": "DEPENDS_ON",
@@ -810396,6 +810536,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:6d8df241d7b5c13aa3b54821068c6d0bf2ad58d2",
+      "provenance": {
+        "commit": "6d8df241d7b5c13aa3b54821068c6d0bf2ad58d2"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:6d916c81c742bea8c51a3e3ace2e7cfaf228b11c",
       "provenance": {
         "commit": "6d916c81c742bea8c51a3e3ace2e7cfaf228b11c"
@@ -829180,6 +829328,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:d43841ac8785ad4d4dee3f5355023838b44dae1b",
+      "provenance": {
+        "commit": "d43841ac8785ad4d4dee3f5355023838b44dae1b"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:d43e6f64fade277399cf66efaed1564e401b3563",
       "provenance": {
         "commit": "d43e6f64fade277399cf66efaed1564e401b3563"
@@ -831828,6 +831984,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:e2d24f4fb7bd50f0cd56282eea9ddb4910e26bb4",
+      "provenance": {
+        "commit": "e2d24f4fb7bd50f0cd56282eea9ddb4910e26bb4"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:e2ebf9bcb2f1cf7a3e82d32a94d7144ab962432d",
       "provenance": {
         "commit": "e2ebf9bcb2f1cf7a3e82d32a94d7144ab962432d"
@@ -833479,6 +833643,14 @@
       "to": "Commit:ecb7255afa23dff763018856243237119b3a22c5",
       "provenance": {
         "commit": "ecb7255afa23dff763018856243237119b3a22c5"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:eccbe16da33ceab1ab894f0c84297b9e80c25afa",
+      "provenance": {
+        "commit": "eccbe16da33ceab1ab894f0c84297b9e80c25afa"
       }
     },
     {
@@ -861063,6 +861235,15 @@
       "provenance": {
         "file": "test/agentoperatingmemory.js",
         "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/agentturn-jail-units.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/agentturn-jail-units.js",
+        "line": 3
       }
     },
     {
@@ -908042,7 +908223,7 @@
       "to": "Artifact:src/accrual.js",
       "provenance": {
         "file": "tools/age-removal-source-data.js",
-        "line": 1497
+        "line": 1528
       }
     },
     {
@@ -908051,7 +908232,7 @@
       "to": "Artifact:src/accrual.js",
       "provenance": {
         "file": "tools/age-removal-source-data.js",
-        "line": 1498
+        "line": 1529
       }
     },
     {
@@ -908060,7 +908241,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "tools/age-removal-source-data.js",
-        "line": 2053
+        "line": 2084
       }
     },
     {
@@ -908069,7 +908250,7 @@
       "to": "Artifact:src/server.js",
       "provenance": {
         "file": "tools/age-removal-source-data.js",
-        "line": 2054
+        "line": 2085
       }
     },
     {
@@ -908078,7 +908259,7 @@
       "to": "Artifact:src/social/estate.js",
       "provenance": {
         "file": "tools/age-removal-source-data.js",
-        "line": 1228
+        "line": 1259
       }
     },
     {
@@ -908087,7 +908268,7 @@
       "to": "Artifact:src/social/estate.js",
       "provenance": {
         "file": "tools/age-removal-source-data.js",
-        "line": 1229
+        "line": 1260
       }
     },
     {
@@ -908096,7 +908277,7 @@
       "to": "Artifact:tools/economy-hardening-source-transfer.js",
       "provenance": {
         "file": "tools/age-removal-source-data.js",
-        "line": 1290
+        "line": 1321
       }
     },
     {
@@ -908105,7 +908286,7 @@
       "to": "Artifact:tools/questing-enterprise-catalog.js",
       "provenance": {
         "file": "tools/age-removal-source-data.js",
-        "line": 1342
+        "line": 1373
       }
     },
     {
@@ -908114,7 +908295,7 @@
       "to": "Artifact:tools/questing-enterprise-catalog.js",
       "provenance": {
         "file": "tools/age-removal-source-data.js",
-        "line": 1343
+        "line": 1374
       }
     },
     {
@@ -908123,7 +908304,7 @@
       "to": "Artifact:tools/questing-source-transfer.js",
       "provenance": {
         "file": "tools/age-removal-source-data.js",
-        "line": 1389
+        "line": 1420
       }
     },
     {
@@ -908132,7 +908313,7 @@
       "to": "Artifact:tools/questing-source-transfer.js",
       "provenance": {
         "file": "tools/age-removal-source-data.js",
-        "line": 1390
+        "line": 1421
       }
     },
     {
@@ -908141,7 +908322,7 @@
       "to": "Artifact:tools/questing-source-transfer.js",
       "provenance": {
         "file": "tools/age-removal-source-data.js",
-        "line": 1461
+        "line": 1492
       }
     },
     {
@@ -908150,7 +908331,7 @@
       "to": "Artifact:tools/questing-source-transfer.js",
       "provenance": {
         "file": "tools/age-removal-source-data.js",
-        "line": 1462
+        "line": 1493
       }
     },
     {
@@ -908159,7 +908340,7 @@
       "to": "Artifact:tools/rc1-fourth-batch-source-compatibility.js",
       "provenance": {
         "file": "tools/age-removal-source-data.js",
-        "line": 1285
+        "line": 1316
       }
     },
     {
@@ -908168,7 +908349,7 @@
       "to": "Artifact:tools/rc1-fourth-batch-source-compatibility.js",
       "provenance": {
         "file": "tools/age-removal-source-data.js",
-        "line": 1286
+        "line": 1317
       }
     },
     {
@@ -908177,7 +908358,7 @@
       "to": "Artifact:tools/task-puzzle-enterprise-catalog.js",
       "provenance": {
         "file": "tools/age-removal-source-data.js",
-        "line": 1342
+        "line": 1373
       }
     },
     {
@@ -908186,7 +908367,7 @@
       "to": "Artifact:tools/task-puzzle-native-catalog.js",
       "provenance": {
         "file": "tools/age-removal-source-data.js",
-        "line": 1342
+        "line": 1373
       }
     },
     {
@@ -908195,7 +908376,7 @@
       "to": "ExternalDependency:pg",
       "provenance": {
         "file": "tools/age-removal-source-data.js",
-        "line": 1342
+        "line": 1373
       }
     },
     {
@@ -908204,7 +908385,7 @@
       "to": "ExternalDependency:pg",
       "provenance": {
         "file": "tools/age-removal-source-data.js",
-        "line": 1404
+        "line": 1435
       }
     },
     {
@@ -908213,7 +908394,7 @@
       "to": "ExternalDependency:pg",
       "provenance": {
         "file": "tools/age-removal-source-data.js",
-        "line": 1405
+        "line": 1436
       }
     },
     {
@@ -984426,6 +984607,15 @@
       "provenance": {
         "file": "test/agentoperatingmemory.js",
         "line": 6
+      }
+    },
+    {
+      "type": "TESTS",
+      "from": "Artifact:test/agentturn-jail-units.js",
+      "to": "Artifact:src/rules.js",
+      "provenance": {
+        "file": "test/agentturn-jail-units.js",
+        "line": 3
       }
     },
     {
