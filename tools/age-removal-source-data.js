@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const AGE_REMOVAL_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_AGE_REMOVAL_SOURCE_COMPARISON_ONLY",
-  "revision": "0735eeea89272ce706451829798be7165d0d799a",
-  "tree": "cf07445ad1bd4952a014e62d7cd20abbe01c07f4",
+  "revision": "e2d24f4fb7bd50f0cd56282eea9ddb4910e26bb4",
+  "tree": "9f5b66c0be86dc545070dce6117fac0797db6105",
   "predecessor": "35913ec1b448275b227019ede2a2ef8047be55aa",
   "predecessorTree": "c74c606d97ee2f8ebb6c5201a4ddd2c2781d5db0",
   "files": {
@@ -1025,6 +1025,37 @@ export const AGE_REMOVAL_SOURCE = freeze({
           "at": 3675,
           "current": "    'character creation closes unacknowledged recovery');\n  const spec = (await app.inject('/openapi.json')).json();\n  assert.deepEqual(spec.paths['/v1/auth/agent'].post.security, [], 'agent signup is advertised without bearer auth');\n  console.log('Agent onboarding: permanent classification, recovery, privacy and human-only reward isolation passed.');\n} finally { await app.close(); }\n",
           "baseline": "    'character creation closes unacknowledged recovery');\n  const spec = (await app.inject('/openapi.json')).json();\n  assert.deepEqual(spec.paths['/v1/auth/agent'].post.security, [], 'agent signup is advertised without bearer auth');\n  console.log('Agent-only age exemption: permanent classification, recovery, privacy, denial precedence and human-route isolation passed.');\n} finally { await app.close(); }\n"
+        }
+      ]
+    },
+    "test/agentturn-jail-units.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "4fe31efb6a6b2a1138fb2bb7ed9947fc1ff7e1c0",
+        "sha256": "816f6bdc974be6caefa2e32fa62b0feedd6fc07a6006d724cc59824ba7c1e538",
+        "bytes": 4193
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "d5a5504fde9d1dc9d14ce22550ae4cb11655b389",
+        "sha256": "fc5fd11c684c211f5d3470dbfc26b3fcfd1fb99905ee297edc4b77b2469892a7",
+        "bytes": 1946
+      },
+      "inverses": [
+        {
+          "at": 0,
+          "current": "import assert from 'node:assert/strict';\nimport { buildServer } from './server-fixture.js';\nimport { cityEventOf, dayOf } from '../src/rules.js';\n\nif (process.env.DATABASE_URL) throw new Error('Jail-unit regression requires a disposable memory database.');\nprocess.env.NODE_ENV = 'test'; process.env.RATE_LIMIT = 'off';\n",
+          "baseline": "import assert from 'node:assert/strict';\nimport { buildServer } from './server-fixture.js';\n\nif (process.env.DATABASE_URL) throw new Error('Jail-unit regression requires a disposable memory database.');\nprocess.env.NODE_ENV = 'test'; process.env.RATE_LIMIT = 'off';\n"
+        },
+        {
+          "at": 617,
+          "current": "  assert.equal(response.statusCode, 200, response.body);\n  return response.json();\n};\nconst failCrimeAt = async (at) => {\n  const random = Math.random, now = Date.now;\n  try {\n    Date.now = () => at;\n    const turn = await call('GET', '/v1/agent/turn');\n    const action = turn.actions.find(action => action.path === '/v1/crimes/stereo');\n    assert(action?.executable, 'the fresh character can take the published standard job');\n    Math.random = () => 0.999999;\n    return { action, result: await call('POST', action.path, action.body) };\n  } finally { Math.random = random; Date.now = now; }\n};\ntry {\n  token = (await call('POST', '/v1/auth/guest')).token;\n  token = (await call('POST', '/v1/auth/agent-key', {})).token;\n  await call('POST', '/v1/character', { name: 'Jail Units Regression' });\n  // Daily city events are independent of the season overrides above. Pin the turn and action,\n  // not the whole server lifecycle, so midnight cannot turn this baseline into HEAT WAVE.\n  const neutralAt = Date.parse('2026-11-10T12:00:00Z');\n  const neutralEvent = cityEventOf(dayOf(neutralAt));\n  assert.equal(neutralEvent.id, 'opencity', 'the explicit baseline date selects OPEN CITY');\n  assert.equal(neutralEvent.jailMult ?? 1, 1, 'the baseline has no city-event jail modifier');\n  const { action, result } = await failCrimeAt(neutralAt);\n  assert.equal(result.success, false, 'the pinned failed roll exercises the authoritative jail outcome');\n  assert.equal(result.jailSeconds, 8, 'canonical gameplay duration remains eight seconds');\n  assert.equal(action.risk.baseJailSeconds, result.jailSeconds,\n",
+          "baseline": "  assert.equal(response.statusCode, 200, response.body);\n  return response.json();\n};\ntry {\n  token = (await call('POST', '/v1/auth/guest')).token;\n  token = (await call('POST', '/v1/auth/agent-key', {})).token;\n  await call('POST', '/v1/character', { name: 'Jail Units Regression' });\n  const turn = await call('GET', '/v1/agent/turn');\n  const action = turn.actions.find(action => action.path === '/v1/crimes/stereo');\n  assert(action?.executable, 'the fresh character can take the published standard job');\n  const random = Math.random;\n  let result;\n  try {\n    Math.random = () => 0.999999;\n    result = await call('POST', action.path, action.body);\n  } finally { Math.random = random; }\n  assert.equal(result.success, false, 'the pinned failed roll exercises the authoritative jail outcome');\n  assert.equal(result.jailSeconds, 8, 'canonical gameplay duration remains eight seconds');\n  assert.equal(action.risk.baseJailSeconds, result.jailSeconds,\n"
+        },
+        {
+          "at": 2327,
+          "current": "  assert.equal(action.risk.jailMinutes * 60, action.risk.baseJailSeconds,\n    'legacy minute consumers receive the same duration in their documented unit');\n  console.log('agentturn jail units: baseJailSeconds=8, legacy jailMinutes=8/60, authoritative failed crime jailSeconds=8 passed');\n\n  // These literal outcomes catch a dropped/doubled event multiplier or a descriptor\n  // accidentally reporting the modified outcome instead of the base duration.\n  for (const [eventId, date, multiplier, seconds] of [\n    ['heat', '2026-11-11T12:00:00Z', 2, 16],\n    ['visit', '2026-11-16T12:00:00Z', 0.5, 4],\n    ['crackdown', '2026-11-22T12:00:00Z', 1.5, 12],\n  ]) {\n    const at = Date.parse(date), event = cityEventOf(dayOf(at));\n    assert.equal(event.id, eventId, 'the explicit date selects the intended daily city event');\n    assert.equal(event.jailMult, multiplier, 'the fixture exercises the documented jail modifier');\n    token = (await call('POST', '/v1/auth/guest')).token;\n    token = (await call('POST', '/v1/auth/agent-key', {})).token;\n    await call('POST', '/v1/character', { name: `Jail Units ${eventId}` });\n    const { action: eventAction, result: outcome } = await failCrimeAt(at);\n    assert.equal(outcome.success, false, `${eventId}: the pinned roll fails the real crime`);\n    assert.equal(outcome.jailSeconds, seconds, `${eventId}: the authoritative outcome applies the daily modifier once`);\n    assert.equal(eventAction.risk.baseJailSeconds, 8, `${eventId}: the descriptor retains the unmodified base duration`);\n    assert.equal(eventAction.risk.jailMinutes * 60, eventAction.risk.baseJailSeconds,\n      `${eventId}: the legacy minute field retains the base duration in its documented unit`);\n  }\n  console.log('agentturn jail event controls: heat=16, visit=4, crackdown=12; base descriptor unchanged passed');\n} finally { await app.close(); }\n",
+          "baseline": "  assert.equal(action.risk.jailMinutes * 60, action.risk.baseJailSeconds,\n    'legacy minute consumers receive the same duration in their documented unit');\n  console.log('agentturn jail units: baseJailSeconds=8, legacy jailMinutes=8/60, authoritative failed crime jailSeconds=8 passed');\n} finally { await app.close(); }\n"
         }
       ]
     },
@@ -2987,9 +3018,9 @@ export const AGE_REMOVAL_SOURCE = freeze({
     },
     "tools/age-removal-source-seal.js": {
       "mode": "100644",
-      "blob": "22423e28c365238ee4e23254db9bc3fc8d35f318",
-      "sha256": "6e351f5fd15425040ba954ae91bb03425a2075e1cecab1bc116727861510ab7c",
-      "bytes": 18264
+      "blob": "86400c9e676c1d511f643219c0efe7b74570299b",
+      "sha256": "2b997048b7fde5ee2926ac5aeb695fc97eb1e5cca06109b6d5e2c85b14d05c8e",
+      "bytes": 18391
     },
     "tools/age-removal-source-transfer.js": {
       "mode": "100644",
@@ -3023,4 +3054,4 @@ export const AGE_REMOVAL_SOURCE = freeze({
     }
   }
 });
-export const AGE_REMOVAL_SOURCE_SHA256 = 'c6926c6542ea8b956a3f304ccac407cbbdb3a0f18e11bdfecfd9d8306661a970';
+export const AGE_REMOVAL_SOURCE_SHA256 = '302664ad1a79dcd0ea70dac8d274b17d09262f552230ad1e2c70a3ba3896ef34';
