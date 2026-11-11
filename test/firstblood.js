@@ -76,6 +76,20 @@ await call('POST', '/v1/crimes/pick', { token: player.token });
 const notes2 = (await pool.query("SELECT count(*)::int n FROM notifications WHERE character_id=$1 AND type='first_blood'", [player.id])).rows[0].n;
 assert.equal(notes2, 1, 'the beat is assigned once — no duplicate on a second action');
 
+// A processed loss is HTTP 200 but does not settle the assigned rival. This is
+// the response distinction the progression harness must preserve when measuring
+// whether advice stayed pinned after completion.
+await seedCh(resident, 'muscle=40000, speed=40000');
+const lost = await call('POST', `/v1/streets/${resident}/jump`, { token: player.token });
+assert.equal(lost.code, 200, 'a lost jump is still a processed request');
+assert.equal(lost.body.win, false, 'the stronger rival wins deterministically');
+assert.ok(!lost.body.firstBlood, 'a loss carries no First Blood settlement');
+assert.equal(Number((await rowOf(player.id)).aha_stage), 1, 'a loss leaves First Blood pending');
+assert.equal((await meOf(player.token)).coach.label, 'Settle your first score',
+  'pending First Blood advice correctly remains after a loss');
+await seedCh(resident, 'muscle=1, speed=1');
+await seedCh(player.id, 'energy=200, ammo=200');
+
 // ── SETTLE: jump the assigned rival. The bruiser wins deterministically (400/400 vs 1/1). ──
 const jr = await call('POST', `/v1/streets/${resident}/jump`, { token: player.token });
 assert.equal(jr.code, 200, 'the jump lands');

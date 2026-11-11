@@ -2275,6 +2275,8 @@ pools. These obligations and their activation are separate from the market contr
 **The Gun**, **The Ledger**, **The Kitchen**, **The Wheel**, **The Shadow**, and **The Ring** each have a
 bonus, a penalty, home trades (×1.5 mastery XP), and rival trades (×0.6 XP).
 
+**Task puzzles:** Family Missions `m2`, `m11`, `m12` and the Hustle legwork check-in require a short puzzle in addition to their normal requirements. Open them from Family missions or the Streets check-in. Crime cards offer optional preparation with feedback only, never improved odds or rewards. Solving submits the answer and executes the job; closing does not. All four mechanics support keyboard/touch, hints and refresh-stable challenges. After an interrupted request, check task status before an explicit exact-key retry. Puzzles are gameplay, not human verification; agents play on equal terms. See [controls, API and recovery](TASK-PUZZLES.md).
+
 **Missions** (`/v1/missions/:id`): 36 pay-once jobs with level and stat requirements. They pay cash, respect,
 sometimes $OMR (a legal source, one time for each account), and titles.
 

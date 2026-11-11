@@ -491,7 +491,7 @@ const admin = decomment(readFileSync(new URL('../public/admin.html', import.meta
       catch (e) { assert.fail(`${path}: the <script> has a SYNTAX ERROR — the whole page is DEAD in a browser: ${e.message}`); }
     }
   }
-  for (const name of ['feedback','progression','social','navigation','workspace','world','tactics','investigation','coordination','feel','tools','identity','story','community']) {
+  for (const name of ['feedback','progression','social','navigation','workspace','world','tactics','investigation','coordination','feel','tools','identity','story','community','task-puzzles']) {
     const path = 'public/ux-' + name + '.js';
     new vm.Script(readFileSync(new URL('../' + path, import.meta.url), 'utf8'), { filename: path });
   }
@@ -579,6 +579,7 @@ for (const m of html.matchAll(/\b(?:api|act)\(\s*'(GET|POST|PUT|DELETE)'\s*,\s*/
 for (const m of admin.matchAll(/\bj\(\s*'(GET|POST|PUT|DELETE)'\s*,\s*/g)) addCall(admin, m, '/admin');
 
 // UX dynamic choices have dedicated API/browser proofs; retain their finite mounted contracts.
+for (const method of ['GET', 'POST']) addRef(method, '/v1/task-puzzles', 'Task puzzle protocol; real page/API/browser proofs');
 for (const [method,path] of [["GET","/v1/ux/workspace"],["PUT","/v1/ux/workspace"],["GET","/v1/ux/tactics"],["GET","/v1/ux/crew-workspace"],["POST","/v1/ux/crew-workspace"],["GET","/v1/ux/investigations"],["GET","/v1/ux/investigations/:p"],["GET","/v1/ux/investigations/:p/nodes/:p/hints/:p"],["GET","/v1/ux/investigation-items"],["GET","/v1/ux/story"],["GET","/v1/ux/story/:p"],["GET","/v1/ux/community"],["POST","/v1/ux/community"],["GET","/v1/ux/community/operations/:p/playback"],["GET","/v1/ux/community/portraits/:p"],["GET","/v1/ux/mentor-subjects"],["POST","/v1/ux/mentor-subjects"]]) addRef(method,path,'UX route contract');
 
 assert.equal(unreadable, 0, `${unreadable} api()/act() call site(s) name their path in a way this ` +
@@ -661,7 +662,12 @@ const ids = (c) => {
     `a catalog resolved to ${[...set].slice(0, 4).join(',')} — the id extraction is wrong, not the client`);
   return set;
 };
+const taskPuzzleRules = (await app.inject({ method: 'GET', url: '/v1/rules' })).json();
+const taskPuzzleSelectors = [...taskPuzzleRules.missions.map(m => m.puzzle), ...taskPuzzleRules.crimes.map(c => c.puzzle), taskPuzzleRules.hustle.puzzle].filter(Boolean);
+assert.equal(new Set(taskPuzzleSelectors.map(p => p.scope)).size, 3, 'All task puzzle scopes are published in the actual rules.');
 const CATALOGS = {
+  scope: new Set(taskPuzzleSelectors.map(p => p.scope)),
+  targetId: new Set(taskPuzzleSelectors.map(p => p.targetId)), // union for the three scopes; exact binding is verified by task-puzzle jobs/API tests
   approach: ids(M3.CRIME_APPROACHES),          // the crime verb
   intent: ids(M3.JUMP_INTENTS),                // the jump verb
   play: ids(M4.DEAL_PLAYS),                    // the corner verb

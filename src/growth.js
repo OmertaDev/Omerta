@@ -14,6 +14,8 @@ import { accountDailyClaimRows, resolvedBoundedClaimIds, takeAccountDailyClaim, 
   takeBoundedAccountDailyClaim } from './accountdaily.js';
 import { dbCaps } from './db.js';
 import { normalizeLegacyPaidSocialPostProof } from './socialproof.js';
+import { missionPuzzle, taskPuzzleContext } from './task-puzzle-jobs.js';
+import { consumeTaskPuzzle } from './task-puzzles.js';
 
 
 // ── PATHS (§5.1): first pick $10,000 at level ≥5; switching burns PATH_SWITCH_OMR ──
@@ -131,7 +133,7 @@ export function missionReadiness(ch, mission, owned = {}) {
 }
 
 // ── MISSIONS (§5.1): validate reqs (eff stats, fp, trade), pay once ──
-export async function doMission(ch, missionId, client, h) {
+export async function doMission(ch, missionId, client, h, puzzle) {
   const m = MISSIONS.find((x) => x.id === missionId);
   if (!m) throw new GameError('bad_mission', 'No such job on the books.');
   const done = (await client.query('SELECT 1 FROM missions_done WHERE character_id=$1 AND mission_id=$2', [ch.id, missionId])).rows.length;
@@ -165,6 +167,8 @@ export async function doMission(ch, missionId, client, h) {
   // persistCharacter's positional UPDATE — the active_at pattern), so it can't be clobbered.
   if (missionCool)
     throw new GameError('cooldown', `The family gives you one job at a time. Next one in ${coolWait(missionCool)}.`, { cooldownSeconds: missionCool });
+  const puzzleFeedback = missionPuzzle(missionId)
+    ? await consumeTaskPuzzle(ch, await taskPuzzleContext(ch, { scope: 'mission', targetId: missionId }, client), puzzle, client) : null;
   await client.query('INSERT INTO missions_done (character_id, mission_id) VALUES ($1,$2)', [ch.id, missionId]);
   const missionAt = new Date(Date.now() + missionCd);
   await client.query('UPDATE characters SET mission_at=$2 WHERE id=$1', [ch.id, missionAt]);
@@ -213,6 +217,7 @@ export async function doMission(ch, missionId, client, h) {
   // it is an object rather than a bare id so nothing else can collide with it. Absence is not a
   // discriminator — this reply had no marker only until it needed one.
   return { ok: true, mission: { id: m.id, name: m.name },
+    ...(puzzleFeedback ? { puzzle: puzzleFeedback } : {}),
     reward: { ...m.reward, respect: missionRep, omr: omrPaid, mintCredit: creditPaid }, title: m.title || null,
     nextMissionSeconds: missionCd > 0 ? Math.ceil(missionCd / 1000) : 0 };
 }

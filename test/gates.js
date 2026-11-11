@@ -25,6 +25,7 @@
 // `safeHoused(ch)` proves the shield is consulted, not that the comparison is the right way round.
 import assert from 'node:assert';
 import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -33,6 +34,101 @@ import { DEED_QUEST_SOURCE_DOMAINS, deedQuestSourceBaseline } from '../tools/dee
 import { QUESTING_SOURCE, qualifyQuestingSource } from '../tools/questing-source-transfer.js';
 import { FOUNDRY_RELEASE, verifyFoundryArchive } from '../tools/ci-foundry.js';
 import { POLICY as FOUNDRY_API_POLICY } from '../tools/foundry-release-api.js';
+import { scanQueryCalls } from '../tools/sqlscan.js';
+
+// Current pgquery admission is executable source validation, not a native SQL result.
+// A stale pin must fail here; a function-only replacement must fail the unchanged-body controls.
+{
+  const root = process.cwd(), options = { ecmaVersion: 'latest', sourceType: 'module' };
+  const read = file => fs.readFileSync(path.join(root, file), 'utf8');
+  const pgquery = read('tools/pgquery.js').replaceAll('\r\n', '\n');
+  const tree = parse(pgquery, options).body;
+  const declaration = (nodes, name) => {
+    const found = nodes.filter(node => node.type === 'VariableDeclaration'
+      && node.declarations.some(value => value.id.name === name));
+    assert.equal(found.length, 1, 'One actual production declaration: ' + name);
+    return found[0];
+  };
+  const models = tree.filter(node => node.type === 'FunctionDeclaration' && node.id.name === 'modelSocialReceiptQueries');
+  assert.equal(models.length, 1);
+  const model = models[0], statements = model.body.body;
+  const imports = statements.filter(node => node.type === 'VariableDeclaration'
+    && node.declarations.some(value => value.init?.type === 'AwaitExpression'));
+  assert.equal(imports.length, 1, 'One bounded runtime import boundary');
+  const prefix = pgquery.slice(model.body.start + 1, imports[0].start);
+  assert(!prefix.includes('import('), 'Source and signature regression stops before runtime imports');
+  const helpers = ['canonicalSql', 'scannerSignature'].map(name => {
+    const node = declaration(tree, name); return pgquery.slice(node.start, node.end);
+  }).join('\n');
+  const verify = new Function('createHash', 'readFileSync', 'path', 'ROOT', 'rows',
+    helpers + '\n' + prefix + '\nreturn { sourcePins, rowByName };');
+  const files = ['src/accountdaily.js', 'src/db.js', 'src/growth.js'];
+  const sources = Object.fromEntries(files.map(file => [file, read(file)]));
+  const { readable } = scanQueryCalls(path.join(root, 'src'), { root });
+  const admit = candidate => verify(createHash, (file, encoding) => {
+    assert.equal(encoding, 'utf8');
+    const rel = path.relative(root, file).replaceAll('\\', '/');
+    assert(files.includes(rel), 'Only the three real complete sources are supplied');
+    return candidate[rel];
+  }, path, root, readable);
+  const accepted = admit(sources), growth = sources['src/growth.js'].replaceAll('\r\n', '\n');
+  const withGrowth = value => ({ ...sources, 'src/growth.js': value });
+  admit(withGrowth(growth)); admit(withGrowth(growth.replaceAll('\n', '\r\n')));
+  assert.deepEqual([...accepted.rowByName.keys()], ['accountInsert', 'migrationCutoff', 'migrationClaims',
+    'migrationTelemetry', 'sweepPaid', 'sweepPending', 'sweepDelete']);
+  const counts = declaration(statements, 'expectedCounts');
+  assert.deepEqual(new Function(pgquery.slice(counts.start, counts.end) + '; return expectedCounts;')(),
+    { accountInsert: 1000, migrationCutoff: 2, migrationClaims: 2, migrationTelemetry: 3,
+      sweepPaid: 2, sweepPending: 2, sweepDelete: 2000 });
+  const functionText = (source, name) => {
+    const nodes = parse(source, options).body.map(node => node.declaration || node)
+      .filter(node => node.type === 'FunctionDeclaration' && node.id.name === name);
+    assert.equal(nodes.length, 1); return source.slice(nodes[0].start, nodes[0].end);
+  };
+  const sweep = functionText(growth, 'sweepSocialClaims');
+  const unchangedBody = [growth + '\n// Unknown complete-source successor.\n', growth.replace('// M4', '// M5')];
+  for (const mutation of unchangedBody) {
+    assert.notEqual(mutation, growth);
+    assert.equal(functionText(mutation, 'sweepSocialClaims'), sweep);
+    assert.throws(() => admit(withGrowth(mutation)), /src\/growth\.js source changed/,
+      'Unchanged generator cannot authorize unknown complete source');
+  }
+  const oldGrowth = execFileSync('git', ['--no-optional-locks', '--no-replace-objects', 'cat-file', 'blob',
+    '95c12467a^:src/growth.js'], { cwd: root, encoding: 'utf8', windowsHide: true });
+  assert.throws(() => admit(withGrowth(oldGrowth)), /src\/growth\.js source changed/,
+    'Historical source is not current runtime-model admission');
+  for (const malformed of [growth.replace('\n', '\r\n'), growth.replace('\n', '\r'), '\ufeff' + growth, growth + '\0'])
+    assert.throws(() => admit(withGrowth(malformed)), /source changed|complete LF or uniform CRLF/);
+  const pins = declaration(statements, 'generatorPins'), pinIndex = statements.indexOf(pins);
+  const loop = statements[pinIndex + 1];
+  assert.equal(loop.type, 'ForOfStatement'); assert.equal(loop.right.name, 'generatorPins');
+  const checkGenerators = new Function('createHash', 'canonicalSql', 'takeAccountDailyClaims', 'sweepSocialClaims',
+    pgquery.slice(pins.start, loop.end));
+  const account = functionText(sources['src/accountdaily.js'].replaceAll('\r\n', '\n'), 'takeAccountDailyClaims');
+  const fn = source => new Function('return (' + source + ');')();
+  const check = (left, right) => checkGenerators(createHash, sql => sql.replaceAll('\r\n', '\n'), fn(left), fn(right));
+  check(account, sweep);
+  assert.throws(() => check(account.replace('{', '{ '), sweep), /takeAccountDailyClaims source changed/);
+  assert.throws(() => check(account, sweep.replace('{', '{ ')), /sweepSocialClaims source changed/);
+  assert.throws(() => admit(withGrowth(growth.replace(sweep, sweep.replace('{', '{ ')))), /src\/growth\.js source changed/);
+  const dmlNode = declaration(tree, 'DML');
+  const dml = new Function(pgquery.slice(dmlNode.start, dmlNode.end) + '; return DML;')();
+  const puzzleSql = [
+    ['src/task-puzzles.js', 'SELECT * FROM task_puzzles WHERE character_id=$1 AND scope=$2 AND target_id=$3 AND context_key=$4'],
+    ['src/task-puzzles.js', 'SELECT kind,structural_signature FROM task_puzzles WHERE character_id=$1 ORDER BY issue_order DESC LIMIT 16'],
+    ['src/task-puzzles.js', 'INSERT INTO task_puzzles (id,character_id,scope,target_id,context_key,version,kind,structural_signature,puzzle) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)'],
+    ['src/task-puzzles.js', 'UPDATE task_puzzles SET consumed_at=now() WHERE id=$1 AND character_id=$2 AND scope=$3 AND target_id=$4 AND context_key=$5 AND consumed_at IS NULL RETURNING id'],
+    ['src/task-puzzle-jobs.js', 'SELECT step FROM hustles WHERE character_id=$1 AND day=$2'],
+    ['src/task-puzzle-jobs.js', 'SELECT crime_puzzle_revision FROM characters WHERE id=$1'],
+    ['src/game.js', 'UPDATE characters SET crime_puzzle_revision=crime_puzzle_revision+1 WHERE id=$1'],
+  ];
+  for (const [rel, sql] of puzzleSql) {
+    const matches = readable.filter(row => row.rel === rel && row.sql === sql);
+    assert.equal(matches.length, 1); assert(!matches[0].interpolated); assert(dml.test(matches[0].sql));
+  }
+  console.log('  pgquery source admission: current LF/CRLF and seven receipt signatures accepted; unknown, historical, malformed and generator mutations refused; seven puzzle literals remain in the PREPARE corpus (source-only, no database).');
+}
+// End current pgquery admission regression.
 
 const expectedFoundryRelease = {
   version: '1.7.1',
@@ -2233,6 +2329,7 @@ const SCENERY_WAIVED = {
     'combat.js:intent':     'published on /v1/rules; compared, never rendered (the approach precedent)',
     'rules.tail.js:rarity': 'a catalog helper return — its callers attach the display name',
     'graph.js:kind': 'bounded declarative prerequisite discriminator from the Coordination compiler; server predicates branch on it, and player projection labels are separately authored',
+    'task-puzzles.js:kind': 'closed patrol/route/matching/evidence protocol discriminator in completion feedback; the issued puzzle supplies its readable title and the acknowledgement supplies a human message, never raw-kind prose',
     'companyspecialization.js:kind': 'closed volume/quality/speed/niche production-profile discriminator, validated against COMPANY_SPECIALIZATION and a native CHECK; a machine admission setting, never a narrative catalog rung',
     'operations.js:subjectKey': 'server-private Family prerequisite plan key for a declared role; never rendered as a role display name',
     // ── the `.kind` half. The rule was widened from `X.id` to `X.id|X.kind` after the business
@@ -4089,7 +4186,7 @@ scopedSocialContext = async function(db) {
   const nativeShape = block => block.replaceAll('\r\n', '\n').split('\n')
     .filter(line => line.trim() && !/^\s*#/.test(line)).map(line => line.trimEnd()).join('\n');
   const expectedQuestBrowser = "  questing_browser:\n    name: Quest acceptance and browser playthroughs\n    runs-on: ubuntu-latest\n    timeout-minutes: 15\n    steps:\n      - uses: actions/checkout@v7\n        with:\n          fetch-depth: 0\n      - uses: actions/setup-node@v7\n        with:\n          node-version: '22'\n          cache: npm\n      - run: npm ci\n      - run: npx playwright-core install --with-deps chromium\n      - name: Quest source and current native admission guards\n        run: |\n          node test/questing-source-transfer.js\n          node test/enterprise-native-questing-guard.js\n          node test/questing-enterprise-catalog-guard.js\n          node test/questing-ux-release-phase2-native-catalog-guard.js\n          node test/rc1-npc-retirement-journal.js\n          node test/genesis-fee-readiness-source-transfer.js\n      - name: Quest runtime, cases and community workshop\n        run: npm run test:questing\n      - name: Production quest and clue interfaces\n        run: |\n          export CHROMIUM_PATH=\"$(node --input-type=module -e 'import { chromium } from \"playwright-core\"; process.stdout.write(chromium.executablePath());')\"\n          npm run test:questing:browser\n      - run: npm run questing:check";
-  const expectedQuestNative = "  questing_native:\n    name: Quest authority and concurrency (PostgreSQL)\n    runs-on: ubuntu-latest\n    timeout-minutes: 30\n    services:\n      postgres:\n        image: postgres:18.4\n        env:\n          POSTGRES_PASSWORD: pgcheck\n          POSTGRES_DB: omerta_questing_ci\n        ports:\n          - 5432:5432\n        options: >-\n          --health-cmd \"pg_isready -U postgres\"\n          --health-interval 5s\n          --health-timeout 5s\n          --health-retries 12\n    steps:\n      - uses: actions/checkout@v7\n        with:\n          fetch-depth: 0\n      - uses: actions/setup-node@v7\n        with:\n          node-version: '22'\n          cache: npm\n      - run: npm ci\n      - name: Set owned test PostgreSQL lock capacity for populated migrations\n        timeout-minutes: 3\n        shell: bash\n        env:\n          POSTGRES_SERVICE_ID: ${{ job.services.postgres.id }}\n        run: |\n          set -euo pipefail\n          [[ \"$POSTGRES_SERVICE_ID\" =~ ^[0-9a-f]{64}$ ]] || { echo 'Missing owned PostgreSQL service container ID' >&2; exit 1; }\n          timeout 15s docker exec \"$POSTGRES_SERVICE_ID\" psql -X -U postgres -d postgres -v ON_ERROR_STOP=1 -c 'ALTER SYSTEM SET max_locks_per_transaction = 512;'\n          timeout 45s docker restart --timeout 30 \"$POSTGRES_SERVICE_ID\"\n          ready=0\n          deadline=$((SECONDS + 60))\n          while (( SECONDS < deadline )); do\n            if timeout 3s docker exec \"$POSTGRES_SERVICE_ID\" pg_isready -q -t 1 -U postgres -d postgres; then\n              ready=1\n              break\n            fi\n            sleep 1\n          done\n          [[ \"$ready\" == 1 ]] || { echo 'Owned PostgreSQL service did not become ready within 60 seconds' >&2; exit 1; }\n          actual=\"$(timeout 10s docker exec \"$POSTGRES_SERVICE_ID\" psql -X -U postgres -d postgres -v ON_ERROR_STOP=1 -Atc 'SHOW max_locks_per_transaction;')\"\n          [[ \"$actual\" == 512 ]] || { echo \"Unexpected test max_locks_per_transaction: $actual\" >&2; exit 1; }\n      - name: Create fresh owned migration fixture databases\n        timeout-minutes: 1\n        run: |\n          node --input-type=module <<'NODE'\n          import assert from 'node:assert/strict';\n          import pg from 'pg';\n          const client = new pg.Client({ connectionString: 'postgres://postgres:pgcheck@127.0.0.1:5432/postgres', connectionTimeoutMillis: 10000, query_timeout: 30000 });\n          try {\n            await client.connect();\n            assert.deepEqual((await client.query('SELECT current_user AS role,current_database() AS database,inet_server_port() AS port')).rows,\n              [{ role: 'postgres', database: 'postgres', port: 5432 }]);\n            const existing = await client.query('SELECT datname FROM pg_database WHERE datname IN ($1,$2)', ['omerta_check', 'omerta_query']);\n            assert.deepEqual(existing.rows, [], 'Owned migration fixture databases must not pre-exist');\n            await client.query('CREATE DATABASE omerta_check');\n            await client.query('CREATE DATABASE omerta_query');\n            assert.deepEqual((await client.query('SELECT datname,pg_get_userbyid(datdba) AS owner FROM pg_database WHERE datname IN ($1,$2) ORDER BY datname', ['omerta_check', 'omerta_query'])).rows,\n              [{ datname: 'omerta_check', owner: 'postgres' }, { datname: 'omerta_query', owner: 'postgres' }]);\n          } finally { await client.end(); }\n          NODE\n      - name: Populated phase2 and Director migration regression\n        run: |\n          set -euo pipefail\n          (\n            export TEST_DATABASE_URL=postgres://postgres:pgcheck@127.0.0.1:5432/omerta_check\n            phase2_status=0\n            npm run phase2:definitions:postgres || phase2_status=1\n            npm run phase2:lots:postgres || phase2_status=1\n            exit \"$phase2_status\"\n          ) > \"$RUNNER_TEMP/questing-phase2-migrations.log\" 2>&1 &\n          phase2_pid=$!\n          (\n            export COORDINATION_TEST_DATABASE_URL=postgres://postgres:pgcheck@127.0.0.1:5432/omerta_query\n            node test/director-migration.js --postgres\n          ) > \"$RUNNER_TEMP/questing-director-migration.log\" 2>&1 &\n          director_pid=$!\n          result=0\n          wait \"$phase2_pid\" || result=1\n          wait \"$director_pid\" || result=1\n          cat \"$RUNNER_TEMP/questing-phase2-migrations.log\"\n          cat \"$RUNNER_TEMP/questing-director-migration.log\"\n          exit \"$result\"\n      - name: Native invitation, handoff and receipt races\n        env:\n          QUESTING_TEST_DATABASE_URL: postgres://postgres:pgcheck@127.0.0.1:5432/omerta_questing_ci\n          JWT_SECRET: ci-questing-jwt-not-a-real-secret\n          MOD_KEY: ci-questing-mod-not-a-real-secret\n          MARKET_SEED: ciQuestingMarketSeed7Qx2mVb9PwLn4\n          SOCIAL_VERIFY_MODE: 'off'\n          POPULATION_OFF: 'on'\n        run: npm run test:questing:postgres";
+  const expectedQuestNative = "  questing_native:\n    name: Quest authority and concurrency (PostgreSQL)\n    runs-on: ubuntu-latest\n    timeout-minutes: 30\n    services:\n      postgres:\n        image: postgres:18.4\n        env:\n          POSTGRES_PASSWORD: pgcheck\n          POSTGRES_DB: omerta_questing_ci\n        ports:\n          - 5432:5432\n        options: >-\n          --health-cmd \"pg_isready -U postgres\"\n          --health-interval 5s\n          --health-timeout 5s\n          --health-retries 12\n    steps:\n      - uses: actions/checkout@v7\n        with:\n          fetch-depth: 0\n      - uses: actions/setup-node@v7\n        with:\n          node-version: '22'\n          cache: npm\n      - run: npm ci\n      - name: Set owned test PostgreSQL lock capacity for populated migrations\n        timeout-minutes: 3\n        shell: bash\n        env:\n          POSTGRES_SERVICE_ID: ${{ job.services.postgres.id }}\n        run: |\n          set -euo pipefail\n          [[ \"$POSTGRES_SERVICE_ID\" =~ ^[0-9a-f]{64}$ ]] || { echo 'Missing owned PostgreSQL service container ID' >&2; exit 1; }\n          timeout 15s docker exec \"$POSTGRES_SERVICE_ID\" psql -X -U postgres -d postgres -v ON_ERROR_STOP=1 -c 'ALTER SYSTEM SET max_locks_per_transaction = 512;'\n          timeout 45s docker restart --timeout 30 \"$POSTGRES_SERVICE_ID\"\n          ready=0\n          deadline=$((SECONDS + 60))\n          while (( SECONDS < deadline )); do\n            if timeout 3s docker exec \"$POSTGRES_SERVICE_ID\" pg_isready -q -t 1 -U postgres -d postgres; then\n              ready=1\n              break\n            fi\n            sleep 1\n          done\n          [[ \"$ready\" == 1 ]] || { echo 'Owned PostgreSQL service did not become ready within 60 seconds' >&2; exit 1; }\n          actual=\"$(timeout 10s docker exec \"$POSTGRES_SERVICE_ID\" psql -X -U postgres -d postgres -v ON_ERROR_STOP=1 -Atc 'SHOW max_locks_per_transaction;')\"\n          [[ \"$actual\" == 512 ]] || { echo \"Unexpected test max_locks_per_transaction: $actual\" >&2; exit 1; }\n      - name: Create fresh owned migration fixture databases\n        timeout-minutes: 1\n        run: |\n          node --input-type=module <<'NODE'\n          import assert from 'node:assert/strict';\n          import pg from 'pg';\n          const client = new pg.Client({ connectionString: 'postgres://postgres:pgcheck@127.0.0.1:5432/postgres', connectionTimeoutMillis: 10000, query_timeout: 30000 });\n          try {\n            await client.connect();\n            assert.deepEqual((await client.query('SELECT current_user AS role,current_database() AS database,inet_server_port() AS port')).rows,\n              [{ role: 'postgres', database: 'postgres', port: 5432 }]);\n            const existing = await client.query('SELECT datname FROM pg_database WHERE datname IN ($1,$2,$3)', ['omerta_check', 'omerta_query', 'omerta_task_puzzles_ci']);\n            assert.deepEqual(existing.rows, [], 'Owned migration fixture databases must not pre-exist');\n            await client.query('CREATE DATABASE omerta_check');\n            await client.query('CREATE DATABASE omerta_query');\n            await client.query('CREATE DATABASE omerta_task_puzzles_ci');\n            assert.deepEqual((await client.query('SELECT datname,pg_get_userbyid(datdba) AS owner FROM pg_database WHERE datname IN ($1,$2,$3) ORDER BY datname', ['omerta_check', 'omerta_query', 'omerta_task_puzzles_ci'])).rows,\n              [{ datname: 'omerta_check', owner: 'postgres' }, { datname: 'omerta_query', owner: 'postgres' }, { datname: 'omerta_task_puzzles_ci', owner: 'postgres' }]);\n          } finally { await client.end(); }\n          NODE\n      - name: Populated phase2 and Director migration regression\n        run: |\n          set -euo pipefail\n          (\n            export TEST_DATABASE_URL=postgres://postgres:pgcheck@127.0.0.1:5432/omerta_check\n            phase2_status=0\n            npm run phase2:definitions:postgres || phase2_status=1\n            npm run phase2:lots:postgres || phase2_status=1\n            exit \"$phase2_status\"\n          ) > \"$RUNNER_TEMP/questing-phase2-migrations.log\" 2>&1 &\n          phase2_pid=$!\n          (\n            export COORDINATION_TEST_DATABASE_URL=postgres://postgres:pgcheck@127.0.0.1:5432/omerta_query\n            node test/director-migration.js --postgres\n          ) > \"$RUNNER_TEMP/questing-director-migration.log\" 2>&1 &\n          director_pid=$!\n          result=0\n          wait \"$phase2_pid\" || result=1\n          wait \"$director_pid\" || result=1\n          cat \"$RUNNER_TEMP/questing-phase2-migrations.log\"\n          cat \"$RUNNER_TEMP/questing-director-migration.log\"\n          exit \"$result\"\n      - name: Native invitation, handoff and receipt races\n        env:\n          QUESTING_TEST_DATABASE_URL: postgres://postgres:pgcheck@127.0.0.1:5432/omerta_questing_ci\n          JWT_SECRET: ci-questing-jwt-not-a-real-secret\n          MOD_KEY: ci-questing-mod-not-a-real-secret\n          MARKET_SEED: ciQuestingMarketSeed7Qx2mVb9PwLn4\n          SOCIAL_VERIFY_MODE: 'off'\n          POPULATION_OFF: 'on'\n        run: npm run test:questing:postgres\n      - name: Native task puzzle issuance, job races and rollback\n        env:\n          TASK_PUZZLE_TEST_DATABASE_URL: postgres://postgres:pgcheck@127.0.0.1:5432/omerta_task_puzzles_ci\n        run: npm run test:task-puzzles:postgres";
   const assertQuestJobs = (browserBlock, nativeBlock) => {
     assert.equal(nativeShape(browserBlock), expectedQuestBrowser, 'The quest browser job retains complete pure guards, cases and real browser commands without database authority');
     assert.equal(nativeShape(nativeBlock), expectedQuestNative, 'The quest authority job retains its isolated PostgreSQL18 service, owned lock setup and real native endpoint/command');
@@ -4129,6 +4226,10 @@ scopedSocialContext = async function(db) {
     expectedQuestNative.replace('job.services.postgres.id', 'inputs.container_id'),
     expectedQuestNative.replace('test:questing:postgres', 'test:questing:postgres -- --partial'),
     expectedQuestNative.replace('npm run test:questing:postgres', 'node -e "process.exit(0)"'),
+    expectedQuestNative.replace('npm run test:task-puzzles:postgres', 'node -e "process.exit(0)"'),
+    expectedQuestNative.replace('test:task-puzzles:postgres', 'test:task-puzzles:postgres -- --partial'),
+    expectedQuestNative.replaceAll('omerta_task_puzzles_ci', 'production'),
+    expectedQuestNative.replace("            await client.query('CREATE DATABASE omerta_task_puzzles_ci');\n", ''),
     expectedQuestNative.replace('POSTGRES_PASSWORD: pgcheck', 'POSTGRES_PASSWORD: questing'),
     expectedQuestNative.replace("assert.deepEqual(existing.rows, [], 'Owned migration fixture databases must not pre-exist');", 'void existing;'),
     expectedQuestNative.replace('export COORDINATION_TEST_DATABASE_URL=postgres://postgres:pgcheck@127.0.0.1:5432/omerta_query', 'export COORDINATION_TEST_DATABASE_URL=postgres://postgres:pgcheck@127.0.0.1:5432/omerta_check'),
@@ -5419,7 +5520,7 @@ scopedSocialContext = async function(db) {
     const normalized=source.replaceAll('\r\n','\n');
     if(file!=='src/growth.js'||source.split(original).length!==4||normalized.includes('\r')
       ||(source!==normalized&&source!==normalized.replaceAll('\n','\r\n'))
-      ||createHash('sha256').update(normalized).digest('hex')!=='a56eef048988290bcab08966e9874b74dd84d1275e062e84b1d26c5d1097657b')return source;
+      ||createHash('sha256').update(normalized).digest('hex')!=='32f6733d566505eeb5407da8dfb65c9cdfd115f717f9890ed329153b62067298')return source;
     // These three refusals read the permanent provider/post receipt, not a refillable allowance.
     // Mask only the reviewed error token; a same-named counter or changed claim path remains visible.
     return source.replaceAll(original,original.replace("'proof_used'","'proof'"));

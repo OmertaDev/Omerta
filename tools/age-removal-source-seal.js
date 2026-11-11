@@ -14,6 +14,7 @@ const generated = new Set([metadata, 'tools/enterprise-native-questing-inputs.js
   'knowledge/generated/graph-summary.md', 'knowledge/generated/graph.json',
   'knowledge/generated/graph.mmd', 'knowledge/generated/inventory.md',
   'knowledge/generated/modules.md', 'knowledge/generated/routes.md',
+  'knowledge/generated/schema.md',
   'docs/questing-workgraph.json',
   'docs/quest-quality-workgraph.json',
   'output/quest-quality-verification/quality-mw8vf9xg-quest-quality-content.log',
@@ -107,8 +108,66 @@ const generated = new Set([metadata, 'tools/enterprise-native-questing-inputs.js
   "output/quest-quality-verification/quality-mw95gzjg-quest-quality-social.log",
   "output/quest-quality-verification/quality-mw95h410-quest-quality-spoilers.log",
   "output/quest-quality-verification/quality-mw95h79m-quest-quality-study.log",
+  // Fresh task-puzzle source executions; no historical runtime or native result transfer.
+  "output/questing-verification/quest-mwark67n-quest-saga.log",
+  "output/questing-verification/quest-mwarkbi1-content-narrative-security.log",
+  "output/questing-verification/quest-mwarkca8-quest-specialist.log",
+  "output/questing-verification/quest-mwarkhxw-clue-puzzles.log",
+  "output/questing-verification/quest-mwarkm6f-clue-puzzles-browser.log",
+  "output/questing-verification/quest-mwarksr3-content-narrative.log",
+  "output/questing-verification/quest-mwarkw30-quest-experience-browser.log",
+  "output/questing-verification/quest-mwarl9x9-content-api.log",
+  "output/questing-verification/quest-mwarlaw3-quest-saga-social.log",
+  "output/questing-verification/quest-mwarleq8-content-casework.log",
+  "output/questing-verification/quest-mwarlhxi-quest-workshop.log",
+  "output/quest-quality-verification/quality-mwarlkmn-quest-quality-content.log",
+  "output/quest-quality-verification/quality-mwarlqup-quest-quality-rules.log",
+  "output/quest-quality-verification/quality-mwarlr2l-quest-quality-studio.log",
+  "output/quest-quality-verification/quality-mwarlru4-quest-quality-runtime.log",
+  "output/quest-quality-verification/quality-mwarlvcs-quest-quality-api.log",
+  "output/quest-quality-verification/quality-mwarlyk6-quest-quality-browser.log",
+  "output/quest-quality-verification/quality-mwarmcbu-quest-quality-postgres.log",
+  "output/quest-quality-verification/quality-mwarmhvy-quest-quality-stateful.log",
+  "output/quest-quality-verification/quality-mwarmikt-quest-quality-social.log",
+  "output/quest-quality-verification/quality-mwarmm5u-quest-quality-spoilers.log",
+  "output/quest-quality-verification/quality-mwarmp0t-quest-quality-study.log",
 ]);
 const allowed = new Set([
+  // Deterministic jail-unit regression fixtures; no gameplay or historical result transfer.
+  'test/agentturn-jail-units.js',
+  // Scoped cold-start puzzle reads; no runtime change or historical result transfer.
+  'test/coldstart.js',
+  // Reviewed current-growth receipt SQL model repin; no historical/native result transfer.
+  'tools/pgquery.js',
+  // Exact current586 native catalog integration; historical source views only.
+  'tools/task-puzzle-native-catalog.js', 'tools/task-puzzle-enterprise-catalog.js',
+  'test/task-puzzle-native-catalog-guard.js', 'test/task-puzzle-native-integration-guard.js',
+  'tools/questing-ux-release-phase2-native-catalog.js',
+  'test/enterprise-release-phase2-migration-catalog.js', 'test/phase2-postgres.js', 'test/director-migration.js',
+  'test/questing-enterprise-catalog-guard.js', 'test/questing-ux-release-phase2-native-catalog-guard.js',
+  'test/lib/questing-ux-native-reader-source-compatibility.js',
+  'test/lib/questing-ux-director-reader-source-compatibility.js',
+  'test/lib/questing-ux-enterprise-reader-source-compatibility.js',
+  'tools/enterprise-native-questing.js',
+
+  // Task puzzles: the exact 30 additional paths measured from approved base
+  // 0a45705bb34acb5a0a9b620802e042eaa4609259; no runtime/native result transfer.
+  '.github/workflows/ci.yml', 'MARKETING-POSTS.md',
+  'docs/TASK-PUZZLES.md', 'docs/WIKI.md',
+  'docs/superpowers/plans/2026-11-10-task-puzzles.md',
+  'docs/superpowers/specs/2026-11-10-task-puzzles.md',
+  'public/ux-task-puzzles.css', 'public/ux-task-puzzles.js', 'public/wiki.html',
+  'schema.sql', 'src/game.js', 'src/gateway/context.js', 'src/growth.js', 'src/hustle.js',
+  'src/task-puzzle-contract.js', 'src/task-puzzle-engine.js', 'src/task-puzzle-jobs.js', 'src/task-puzzles.js',
+  'src/ux-tactics.js', 'test/client.js', 'test/daily-lineage.js', 'test/gateway-context.js',
+  'test/growth.js', 'test/lib/task-puzzle-solver.js', 'test/migrate.js',
+  'test/task-puzzle-engine.js', 'test/task-puzzle-jobs.js', 'test/task-puzzle-postgres.js',
+  'test/task-puzzles-browser.js', 'test/task-puzzles.js',
+  // Reviewed playthrough truth repair; no game/runtime change or execution transfer.
+  'tools/playthrough.js', 'test/playthrough-truth.js',
+  'test/playthrough-firstblood-truth.js', 'test/firstblood.js',
+  // Exact self-source key comparison; original historical helpers stay unchanged.
+  'tools/deed-quest-source-transfer.js', 'test/deed-quest-source-compatibility.js',
   // Reviewed PR #208 reconciliation: shadow-only scheduling and its tests/documentation.
   'src/businesspolicy.js', 'tools/business-agent.js', 'test/businesspolicy.js', 'test/business-agent.js',
   'docs/agent-business-shadow.md', 'docs/superpowers/plans/2026-11-09-business-deadlines.md',

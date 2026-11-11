@@ -3,6 +3,7 @@ import { continuousCityHistoricalInput } from '../tools/continuous-city-source-c
 import {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from "../tools/commerce-current-enterprise-source-compatibility.js";
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import path from 'node:path';
 import {marketOverDeedSourceBaseline} from '../tools/deed-market-source-compatibility.js';
 import {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';
 import {hasCommerceEnterpriseSource,commerceOverEnterpriseSourceBaseline} from '../tools/commerce-enterprise-source-compatibility.js';
@@ -15,6 +16,8 @@ import { nextFiveSourceBaseline } from '../tools/next-five-source-compatibility.
 import { fourthBatchMigrationSchema } from '../tools/rc1-fourth-batch-source-compatibility.js';
 import { fifthBatchMigrationSchema } from '../tools/rc1-fifth-batch-source-compatibility.js';
 import { nextLayerMigrationPredecessor } from '../tools/next-layer-release-phase2-migration-catalog.js';
+import { enterpriseCurrentDeedSources } from '../tools/enterprise-deed-release-phase2-migration-catalog.js';
+import { ECONOMY_HARDENING_SOURCE_DOMAINS } from '../tools/economy-hardening-source-transfer.js';
 
 const lf = text => text.replaceAll('\r\n', '\n');
 const git = (...args) => lf(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 16 * 1024 * 1024,
@@ -23,6 +26,113 @@ const hash = text => crypto.createHash('sha256').update(text).digest('hex');
 const blob = text => crypto.createHash('sha1').update(`blob ${Buffer.byteLength(text)}\0`).update(text).digest('hex');
 const retainedDeedRelease = '3aaeaa97a102babf7f56dece03860964814fe313';
 const retainedDeedSource = file => git('show', retainedDeedRelease+':'+file);
+// The original Enterprise guard passes this one legacy basename. Only this exact
+// self identity may acquire a canonical key; no path normalization or schema alias.
+const selfKey='tools/deed-quest-source-transfer.js',selfBare='deed-quest-source-transfer.js';
+const selfBefore=git('show','a084f636b3ddd61de333b600f127e56bc4dfa98a:'+selfKey);
+assert.equal(blob(selfBefore),'5129b649ea2b4f1f6a706ff7aa229d22d04a85b2');
+const selfExpected='05bc98b2f26de7172675b0fb17d865ffa75d299a113807f4a5160beeb8fcfe9e';
+for(const key of [selfBare,selfKey])for(const input of [selfBefore,selfBefore.replaceAll('\n','\r\n')])
+  assert.equal(hash(deedQuestSourceBaseline(key,input)),selfExpected,'The exact original self basename reaches its unchanged whole protected pin');
+let selfKeyRefusals=0;
+for(const key of ['./'+selfKey,'../'+selfKey,'tools\\'+selfBare,'other/'+selfBare,selfBare.toUpperCase(),selfBare+'.extra','schema.sql','enterprise-deed-release-phase2-migration-catalog.js','__proto__']){
+  assert.notEqual(hash(deedQuestSourceBaseline(key,selfBefore)),selfExpected);selfKeyRefusals++;
+}
+for(const input of [selfBefore+'\n',selfBefore.slice(1),'\ufeff'+selfBefore,selfBefore+'\0',selfBefore.replace('\n','\r\n'),selfBefore.replace('assert.equal','assert.notEqual')]){
+  assert.notEqual(hash(deedQuestSourceBaseline(selfBare,input)),selfExpected);selfKeyRefusals++;
+}
+const selfEdits=[
+  ["import { economyHardeningSourceBaseline } from './economy-hardening-source-transfer.js';", "import { economyHardeningSourceBaseline } from './economy-hardening-source-transfer.js';\nimport { ageRemovalHistoricalInput } from './age-removal-source-transfer.js';"],
+  ["export function deedQuestSourceBaseline(file, input) {\n", "export function deedQuestSourceBaseline(file, input) {\n  if (typeof input === 'string' && (file === 'deed-quest-source-transfer.js' || file === 'tools/deed-quest-source-transfer.js')) {\n    file = 'tools/deed-quest-source-transfer.js';\n    input = ageRemovalHistoricalInput(file, input);\n  }\n"],
+];
+const restoreSelf=input=>{
+  assert.equal(typeof input,'string');let text=lf(input);assert(!text.includes('\r')&&(input===text||input===text.replaceAll('\n','\r\n')));
+  for(const [before,after]of selfEdits.toReversed()){assert.equal(text.split(after).length,2);text=text.replace(after,()=>before);}
+  assert.equal(text,selfBefore,'Every original source domain, inverse, constant and qualifier byte survives the exact self-only comparison branch');
+};
+const selfCurrent=lf(fs.readFileSync(selfKey,'utf8'));restoreSelf(selfCurrent);restoreSelf(selfCurrent.replaceAll('\n','\r\n'));
+let selfConservationRefusals=0;
+for(const input of [selfCurrent+'\n',selfCurrent.slice(1),'\ufeff'+selfCurrent,selfCurrent.replace('\n','\r\n'),selfCurrent.replace('assert.equal','assert.notEqual'),...selfEdits.map(([before,after])=>selfCurrent.replace(after,()=>before)),...selfEdits.map(([,after])=>selfCurrent.replace(after,()=>after+after))]){
+  assert.notEqual(input,selfCurrent);assert.throws(()=>restoreSelf(input));selfConservationRefusals++;
+}
+const currentSelfInverseMutations = text => {
+  const mutations = [];
+  // The two conserved self-only additions split the original inverse contexts.
+  // Expand each exact context to its current bytes before deleting or duplicating it.
+  for (const [index, inverse] of ECONOMY_HARDENING_SOURCE_DOMAINS[selfKey].inverses.entries()) {
+    const [before, after] = selfEdits[index];
+    assert.equal(inverse.current.split(before).length, 2, 'Each original inverse contains its one conserved self edit');
+    const current = inverse.current.replace(before, () => after);
+    assert.equal(text.split(current).length, 2, 'The complete current inverse region occurs exactly once');
+    mutations.push(text.replace(current, ''), text.replace(current, () => current + current));
+  }
+  return mutations;
+};
+const selfInverseMutations = currentSelfInverseMutations(selfCurrent);
+assert.equal(selfInverseMutations.length, 4, 'Delete and duplicate both protected inverse regions');
+assert.equal(new Set(selfInverseMutations).size, 4, 'All four current-source mutations are distinct');
+for (const changed of selfInverseMutations) {
+  assert.notEqual(changed, selfCurrent, 'Every refusal changes actual protected bytes');
+  for (const key of [selfBare, selfKey]) assert.notEqual(hash(deedQuestSourceBaseline(key, changed)), selfExpected);
+}
+console.log(JSON.stringify({phase:'DEED_EXACT_SELF_KEY',positives:4,selfKeyRefusals,selfConservationRefusals,selfInverseMutations:selfInverseMutations.length,nativeAttempts:0}));
+// Exercise the real Enterprise guard, not a reconstruction of its implementation.
+// Only protected-file reads are substituted to test drift without changing checkout bytes.
+const protectedModules = {
+  'enterprise-release-phase2-migration-catalog.js': 'fc35f2b8770f3c7bd77347478c55eb944935fed019d40a43b101c70e5bc82570',
+  'market-operations-release-phase2-migration-catalog.js': '689d63b4273296c247fb130566a96d9c1beb049c8b0bde3169b988f66074acf1',
+  'deed-discovery-migration-catalog.js': 'bd2da4747ab5a7fa41fe5630bb352e385184f73ecdadc716738b2532a845fd44',
+  'deed-quest-source-transfer.js': '05bc98b2f26de7172675b0fb17d865ffa75d299a113807f4a5160beeb8fcfe9e',
+  'deed-market-source-compatibility.js': '11c3683f55b6b960135c3d522c759f10e4e16b65b993546dc93dce899762dc26',
+};
+const protectedInputs = new Map(Object.keys(protectedModules).map(file =>
+  [new URL('../tools/' + file, import.meta.url).href, lf(fs.readFileSync(new URL('../tools/' + file, import.meta.url), 'utf8'))]));
+const protectedSchema = git('show', '61bfb1b963f1c8c657c01674dae1cf71f4da80c6:schema.sql');
+const assertProtectedSources = () => {
+  const selected = enterpriseCurrentDeedSources(protectedSchema);
+  assert.equal(selected.current, protectedSchema);
+  assert.equal(hash(selected.predecessor), '50293aebc2fb963c46696869e4770232b4508972820cd1e709918b1df112e90a');
+};
+assertProtectedSources();
+let protectedRefusals = 0;
+for (const [file, expected] of Object.entries(protectedModules)) {
+  const text = protectedInputs.get(new URL('../tools/' + file, import.meta.url).href);
+  const posixKey = path.posix.relative('/repo', path.posix.join('/repo/tools', file));
+  const windowsKey = path.win32.relative('C:\\repo', path.win32.join('C:\\repo\\tools', file)).replaceAll('\\', '/');
+  for (const key of [posixKey, windowsKey]) for (const input of [text, text.replaceAll('\n', '\r\n')])
+    assert.equal(hash(lf(deedQuestSourceBaseline(key, input))), expected, 'Repository-relative identity preserves the original protected pin');
+}
+const originalReadFileSync = fs.readFileSync;
+let protectedLineEndings = text => text, changedFile, changedInput;
+try {
+  fs.readFileSync = function (file, ...args) {
+    if (file instanceof URL && protectedInputs.has(file.href)) {
+      assert.equal(args[0], 'utf8');
+      return file.href === changedFile ? changedInput : protectedLineEndings(protectedInputs.get(file.href));
+    }
+    return originalReadFileSync.call(this, file, ...args);
+  };
+  for (const endings of [text => text, text => text.replaceAll('\n', '\r\n')]) {
+    protectedLineEndings = endings;
+    assertProtectedSources();
+    for (const file of Object.keys(protectedModules)) {
+      const url = new URL('../tools/' + file, import.meta.url).href, text = protectedInputs.get(url);
+      const mutations = [text + '\n// unknown protected source\n', text.slice(1), '\ufeff' + text, text + '\0',
+        text.replace('\n', '\r\n'), text.replace('\n', '\r')];
+      if (file === 'deed-quest-source-transfer.js') mutations.push(...currentSelfInverseMutations(text));
+      for (const changed of mutations) {
+        assert.notEqual(changed, text, 'Every refusal changes actual protected bytes');
+        changedFile = url; changedInput = changed;
+        assert.throws(assertProtectedSources, error => error?.code === 'ERR_ASSERTION'
+          && (error.message.includes('Whole protected original native/source module: ' + file)
+            || error.message.includes('Only whole LF or uniformCRLF source')), 'Changed protected bytes still refuse: ' + file);
+        protectedRefusals++;
+      }
+      changedFile = undefined;
+    }
+  }
+} finally { fs.readFileSync = originalReadFileSync; }
+console.log(`Enterprise protected source identity PASS: all 5 real guard entries, POSIX/Windows logical keys, LF/CRLF inputs, ${protectedRefusals} refusing controls; original pins unchanged`);
 assert.equal(DEED_QUEST_SOURCE_PREDECESSOR, '2c8eaacf104e8555d5140136b5ed19027ecd4766');
 assert.equal(DEED_QUEST_SOURCE_PHASE, 'exact-source-transfer-only; no historical runtime, native, migration, financial, genesis or deployment clearance');
 assert.deepEqual(Object.keys(DEED_QUEST_SOURCE_DOMAINS), ['package.json', 'schema.sql', 'src/agentgateway.js',

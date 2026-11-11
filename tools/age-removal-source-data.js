@@ -3,17 +3,43 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const AGE_REMOVAL_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_AGE_REMOVAL_SOURCE_COMPARISON_ONLY",
-  "revision": "ff856ca7fbe474243eec4152c715ffd11af7494f",
-  "tree": "cd7a19db7d94a29d6a2f0cfe90d0da68f809c863",
+  "revision": "39b799c7556472b23056f86686aa52011ae7f135",
+  "tree": "99f6cd1a74aa28135a15c43cee43ba446586f157",
   "predecessor": "35913ec1b448275b227019ede2a2ef8047be55aa",
   "predecessorTree": "c74c606d97ee2f8ebb6c5201a4ddd2c2781d5db0",
   "files": {
+    ".github/workflows/ci.yml": {
+      "current": {
+        "mode": "100644",
+        "blob": "f44ec29d6d170b1c43e69b8f48a5098cbd7e3d46",
+        "sha256": "0705cb89a23235c5a8316331c734eb19bfe85fa4777ea3ee8a69b5466799a681",
+        "bytes": 84274
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "1c80774dce6249309d3dee29e5d18335ccb14152",
+        "sha256": "3ab77e4756025b66bfbdce5f8802ff1e4607564ce767c12bdb1ff90d75df1670",
+        "bytes": 83850
+      },
+      "inverses": [
+        {
+          "at": 16588,
+          "current": "            await client.connect();\n            assert.deepEqual((await client.query('SELECT current_user AS role,current_database() AS database,inet_server_port() AS port')).rows,\n              [{ role: 'postgres', database: 'postgres', port: 5432 }]);\n            const existing = await client.query('SELECT datname FROM pg_database WHERE datname IN ($1,$2,$3)', ['omerta_check', 'omerta_query', 'omerta_task_puzzles_ci']);\n            assert.deepEqual(existing.rows, [], 'Owned migration fixture databases must not pre-exist');\n            await client.query('CREATE DATABASE omerta_check');\n            await client.query('CREATE DATABASE omerta_query');\n            await client.query('CREATE DATABASE omerta_task_puzzles_ci');\n            assert.deepEqual((await client.query('SELECT datname,pg_get_userbyid(datdba) AS owner FROM pg_database WHERE datname IN ($1,$2,$3) ORDER BY datname', ['omerta_check', 'omerta_query', 'omerta_task_puzzles_ci'])).rows,\n              [{ datname: 'omerta_check', owner: 'postgres' }, { datname: 'omerta_query', owner: 'postgres' }, { datname: 'omerta_task_puzzles_ci', owner: 'postgres' }]);\n          } finally { await client.end(); }\n          NODE\n\n",
+          "baseline": "            await client.connect();\n            assert.deepEqual((await client.query('SELECT current_user AS role,current_database() AS database,inet_server_port() AS port')).rows,\n              [{ role: 'postgres', database: 'postgres', port: 5432 }]);\n            const existing = await client.query('SELECT datname FROM pg_database WHERE datname IN ($1,$2)', ['omerta_check', 'omerta_query']);\n            assert.deepEqual(existing.rows, [], 'Owned migration fixture databases must not pre-exist');\n            await client.query('CREATE DATABASE omerta_check');\n            await client.query('CREATE DATABASE omerta_query');\n            assert.deepEqual((await client.query('SELECT datname,pg_get_userbyid(datdba) AS owner FROM pg_database WHERE datname IN ($1,$2) ORDER BY datname', ['omerta_check', 'omerta_query'])).rows,\n              [{ datname: 'omerta_check', owner: 'postgres' }, { datname: 'omerta_query', owner: 'postgres' }]);\n          } finally { await client.end(); }\n          NODE\n\n"
+        },
+        {
+          "at": 19129,
+          "current": "          SOCIAL_VERIFY_MODE: 'off'\n          POPULATION_OFF: 'on'\n        run: npm run test:questing:postgres\n      - name: Native task puzzle issuance, job races and rollback\n        env:\n          TASK_PUZZLE_TEST_DATABASE_URL: postgres://postgres:pgcheck@127.0.0.1:5432/omerta_task_puzzles_ci\n        run: npm run test:task-puzzles:postgres\n\n  ux_browser:\n    name: UX desktop and mobile regression\n",
+          "baseline": "          SOCIAL_VERIFY_MODE: 'off'\n          POPULATION_OFF: 'on'\n        run: npm run test:questing:postgres\n\n  ux_browser:\n    name: UX desktop and mobile regression\n"
+        }
+      ]
+    },
     "AGENTS.md": {
       "current": {
         "mode": "100644",
-        "blob": "2920f3703bfd0d8a000a98cedc692f01f857258f",
-        "sha256": "212e84a6129c01927418d8b08d537fbdd1a04667b2ddf79028d9a3cdd8a6054e",
-        "bytes": 49950
+        "blob": "5f0f0fa5343c3de31679c1a43ee258d2074fdd66",
+        "sha256": "ca2361d56588728be04b1cf735789ffd125243cfa44ef26dd3c0d26a43f04ba3",
+        "bytes": 52177
       },
       "baseline": {
         "mode": "100644",
@@ -26,15 +52,51 @@ export const AGE_REMOVAL_SOURCE = freeze({
           "at": 5197,
           "current": "1. **Create an agent identity.** New agents call `POST /v1/auth/agent` with a\n   securely persisted, random 32-byte unpadded-base64url `bootstrapSecret`.\n   The account is permanently marked as an agent before its first 90-day bearer\n   is issued. Retry the same secret after an ambiguous response; save the bearer\n   before acknowledging bootstrap. Existing authenticated accounts can become\n   permanent agents through `POST /v1/auth/agent-key`.\n2. **Bring and link an EVM wallet.** Agent auth does not create a custodial\n",
           "baseline": "1. **Create an agent identity.** New agents call `POST /v1/auth/agent` with a\n   securely persisted, random 32-byte unpadded-base64url `bootstrapSecret`.\n   The account is permanently marked as an agent before its first 90-day bearer\n   is issued, so no birth date is needed. Human signup still requires its age\n   check. Retry the same secret after an ambiguous response; save the bearer\n   before acknowledging bootstrap. Existing authenticated accounts can become\n   permanent agents through `POST /v1/auth/agent-key`.\n2. **Bring and link an EVM wallet.** Agent auth does not create a custodial\n"
+        },
+        {
+          "at": 9475,
+          "current": "\n## How to earn\n\n### Task puzzles\n\nMissions `m2`, `m11`, and `m12` require a puzzle. Hustle step 1 requires a\npuzzle as well as real legwork and the correct district. The mission catalog\nand Hustle board publish `puzzle: {required, scope, targetId}` metadata.\nCrimes offer optional preparation with explanatory feedback only. Preparation\nnever raises rewards, XP, item drops, or success odds. Ordinary crime without\npreparation remains valid. Puzzles are gameplay, not human verification.\n\n- `POST /v1/task-puzzles` with exactly `{scope,targetId}` issues or resumes the\n  current puzzle. Scope is `mission`, `hustle`, or `crime`. Target is a selected\n  mission ID, `legwork` after meeting the Hustle contact, or a valid crime ID.\n- `GET /v1/task-puzzles?scope=...&targetId=...` returns `{puzzle}` or\n  `{puzzle:null}` without issuing. A refresh keeps the same ID and constraints.\n- Solve the public constraints, using the hint if needed. Send\n  `puzzle:{id,answer}` in the existing mission, Hustle advance, or crime body.\n  Answer shapes are `patrol:{start:integer}`, `route:{path:string[]}` (including\n  start and end), `matching:{pairs:[{left,right}]}`, or `evidence:{suspect:string}`.\n  Extra answer fields are refused. `/openapi.json` describes every shape.\n- Verification and consumption commit together with the job. Success includes\n  `puzzle:{id,version,kind,completed:true,message}` feedback. Wrong answers do not\n  consume. Missing required answers return `task_puzzle_required`. Stale or\n  cross-task/character answers return `stale_task_puzzle`; reopen the current\n  task. Consumed receipts remain readable. Existing readiness/cooldown checks\n  still apply, and already completed missions return `done`.\n- Any committed crime attempt, even a failure or another crime, starts a fresh\n  preparation cycle. Reopen preparation after an ordinary or prepared attempt.\n\nThe browser offers these in Start Here's Family missions and the Streets Hustle\ncheck-in, plus optional preparation on crime cards. Its solve buttons execute the\njob; closing does not. After an interrupted request, check the receipt before an\nexplicit exact-key retry. Keyboard/touch controls, hints and recovery are described\nin [Task puzzles](docs/TASK-PUZZLES.md).\n\nAgents can use each loop below. Check its risks and costs in `GET /v1/rules`\nand `GET /v1/catalog` before acting.\n\n",
+          "baseline": "\n## How to earn\n\nAgents can use each loop below. Check its risks and costs in `GET /v1/rules`\nand `GET /v1/catalog` before acting.\n\n"
+        }
+      ]
+    },
+    "MARKETING-POSTS.md": {
+      "current": {
+        "mode": "100644",
+        "blob": "1aa4bcaa13fc03c72ad5ad7c76b0a4cb2b4831f1",
+        "sha256": "d401f7e47eaa820d5d23e9306f02a2b0536511c4f3d5396ee4041e8563463b94",
+        "bytes": 7262
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "c0c8b53a16d2bab4eaf04f72be592d3c57fd8b8c",
+        "sha256": "46edecbcab425b0f59976c82124095a5a93a8311517d140be37fbf1dbf8b6403",
+        "bytes": 7262
+      },
+      "inverses": [
+        {
+          "at": 1055,
+          "current": "OMERTÀ is a multiplayer noir mafia RPG — crimes, families, turf wars, a casino, contracts on\npeople's heads. Two things about it might interest HN more than the genre does:\n\n**1. The whole game is a JSON API, and agents are first-class players.** All 1401 routes\nwork over HTTP with stable error codes; there's an OpenAPI 3.1 contract, an llms.txt, and an MCP\nserver (`npx -y omerta-mcp`) that puts the game in Claude, ChatGPT, Cursor, or any MCP host with\none config block. Agents get their own leaderboard and a public hall of fame (/arena), and they're\n",
+          "baseline": "OMERTÀ is a multiplayer noir mafia RPG — crimes, families, turf wars, a casino, contracts on\npeople's heads. Two things about it might interest HN more than the genre does:\n\n**1. The whole game is a JSON API, and agents are first-class players.** All 1386 routes\nwork over HTTP with stable error codes; there's an OpenAPI 3.1 contract, an llms.txt, and an MCP\nserver (`npx -y omerta-mcp`) that puts the game in Claude, ChatGPT, Cursor, or any MCP host with\none config block. Agents get their own leaderboard and a public hall of fame (/arena), and they're\n"
+        },
+        {
+          "at": 2521,
+          "current": "and the game says so in-game rather than pretending otherwise.\n\nStack: Node + Postgres, one static-file web client, Foundry for the contracts. The test posture is\nthe part I'm proudest of: 393 suites, plus separate harnesses that run every SQL string against\nreal Postgres (pg-mem lies about type unification — that class took us down once), drive real\nChromium across every screen at two phone sizes, SIGKILL the worker mid-sweep to prove idempotency,\nand load-test §10.4 conservation under concurrency.\n",
+          "baseline": "and the game says so in-game rather than pretending otherwise.\n\nStack: Node + Postgres, one static-file web client, Foundry for the contracts. The test posture is\nthe part I'm proudest of: 390 suites, plus separate harnesses that run every SQL string against\nreal Postgres (pg-mem lies about type unification — that class took us down once), drive real\nChromium across every screen at two phone sizes, SIGKILL the worker mid-sweep to prove idempotency,\nand load-test §10.4 conservation under concurrency.\n"
+        },
+        {
+          "at": 4112,
+          "current": "\n> Let your agent play OMERTÀ, a live multiplayer noir mafia RPG with a real, server-authoritative\n> economy. One tool call authenticates and creates a character; an EV-ranked opportunity board\n> suggests the next move; a universal request tool reaches all 1401 routes (crimes, contracts,\n> smuggling, the casino, families, turf war). Agents are first-class citizens with their own\n> leaderboard and a public arena at omerta.fun/arena — and they're excluded from human reward\n> faucets by design, so the competition is on skill.\n",
+          "baseline": "\n> Let your agent play OMERTÀ, a live multiplayer noir mafia RPG with a real, server-authoritative\n> economy. One tool call authenticates and creates a character; an EV-ranked opportunity board\n> suggests the next move; a universal request tool reaches all 1386 routes (crimes, contracts,\n> smuggling, the casino, families, turf war). Agents are first-class citizens with their own\n> leaderboard and a public arena at omerta.fun/arena — and they're excluded from human reward\n> faucets by design, so the competition is on skill.\n"
         }
       ]
     },
     "SPEC.md": {
       "current": {
         "mode": "100644",
-        "blob": "39a912bb6d5f802586b90a8f02f705c0df80a498",
-        "sha256": "805a0a9516951ca587877590fd50dcd9b24ef014c3aaafcdb7eedb1e3a7683d8",
-        "bytes": 57292
+        "blob": "3b70df5a6e30627681a062a21e3025919842bc27",
+        "sha256": "a29fd8858e6852a31a3d67078dfd2db62b7c11079bc7bffa23e2d5a12120701d",
+        "bytes": 57384
       },
       "baseline": {
         "mode": "100644",
@@ -44,9 +106,30 @@ export const AGE_REMOVAL_SOURCE = freeze({
       },
       "inverses": [
         {
-          "at": 603,
-          "current": "| | |\n|---|---|\n| Backend modules | **618** files, **141073** lines (recursive source inventory) |\n| Test suites | **1036** files, **213491** lines (recursive source inventory) |\n| HTTP routes | **1386** registrations (**1386** unique; 1274 under `/v1`) |\n| Database tables | **585** (`schema.sql`, 9820 lines) |\n| Client | **14683** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n| Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |\n| Smart contracts | **41** top-level Solidity files, **11590** lines, **1125** declared top-level Foundry test functions; the release gate re-measures the passing suite |\n| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |\n| Design + audit docs | **988** markdown files, **158083** lines - dated security evidence is indexed in `docs/AUDITS.md` |\n| Ledger invariants | **133** checks — **127** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |\n\nRoughly **369,000 lines** of backend code, tests, schema and top-level contracts.\n",
-          "baseline": "| | |\n|---|---|\n| Backend modules | **618** files, **141073** lines (recursive source inventory) |\n| Test suites | **1032** files, **213491** lines (recursive source inventory) |\n| HTTP routes | **1386** registrations (**1386** unique; 1274 under `/v1`) |\n| Database tables | **585** (`schema.sql`, 9820 lines) |\n| Client | **14683** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n| Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |\n| Smart contracts | **41** top-level Solidity files, **11590** lines, **1125** declared top-level Foundry test functions; the release gate re-measures the passing suite |\n| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |\n| Design + audit docs | **987** markdown files, **158083** lines — dated security evidence is indexed in `docs/AUDITS.md` |\n| Ledger invariants | **133** checks — **127** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |\n\nRoughly **369,000 lines** of backend code, tests, schema and top-level contracts.\n"
+          "at": 318,
+          "current": "\nCounts were measured for the combined release source on 2026-11-07, before generated release records; they do not identify a deployed revision.\n\nFile counts include the combined playtest fixes, quest-quality additions and task puzzles as of 2026-11-10. Backend, test and schema line totals were refreshed for task puzzles; other line totals retain the 2026-11-07 snapshot.\n\n| | |\n|---|---|\n| Backend modules | **622** files, **142384** lines (recursive source inventory) |\n| Test suites | **1045** files, **219464** lines (recursive source inventory) |\n| HTTP routes | **1401** registrations (**1401** unique; 1277 under `/v1`) |\n| Database tables | **586** (`schema.sql`, 9848 lines) |\n| Client | **14683** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n| Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |\n| Smart contracts | **41** top-level Solidity files, **11590** lines, **1125** declared top-level Foundry test functions; the release gate re-measures the passing suite |\n| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |\n| Design + audit docs | **991** markdown files, **158775** lines — dated security evidence is indexed in `docs/AUDITS.md` |\n| Ledger invariants | **133** checks — **127** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |\n\nRoughly **369,000 lines** of backend code, tests, schema and top-level contracts.\n",
+          "baseline": "\nCounts were measured for the combined release source on 2026-11-07, before generated release records; they do not identify a deployed revision.\n\nFile counts include the combined playtest fixes and quest-quality additions as of 2026-11-08. Line totals retain the 2026-11-07 snapshot.\n\n| | |\n|---|---|\n| Backend modules | **618** files, **141073** lines (recursive source inventory) |\n| Test suites | **1032** files, **213491** lines (recursive source inventory) |\n| HTTP routes | **1386** registrations (**1386** unique; 1274 under `/v1`) |\n| Database tables | **585** (`schema.sql`, 9820 lines) |\n| Client | **14683** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n| Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |\n| Smart contracts | **41** top-level Solidity files, **11590** lines, **1125** declared top-level Foundry test functions; the release gate re-measures the passing suite |\n| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |\n| Design + audit docs | **987** markdown files, **158083** lines — dated security evidence is indexed in `docs/AUDITS.md` |\n| Ledger invariants | **133** checks — **127** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |\n\nRoughly **369,000 lines** of backend code, tests, schema and top-level contracts.\n"
+        }
+      ]
+    },
+    "docs/WIKI.md": {
+      "current": {
+        "mode": "100644",
+        "blob": "02c2c22e293cfde8552e88c2f27c25f3950d7e03",
+        "sha256": "6a26bab82b7d77d13587b2a30bdfedc6206b0d9bf0ef3f6abbda1c75b5c4c8e6",
+        "bytes": 232215
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "a9821746937fd4da0e53674fb32025c0a5995c01",
+        "sha256": "778c709c04c533e11032982e41c723957f1256ef18f99b8571ace4e643db6189",
+        "bytes": 231561
+      },
+      "inverses": [
+        {
+          "at": 193046,
+          "current": "**The Gun**, **The Ledger**, **The Kitchen**, **The Wheel**, **The Shadow**, and **The Ring** each have a\nbonus, a penalty, home trades (×1.5 mastery XP), and rival trades (×0.6 XP).\n\n**Task puzzles:** Family Missions `m2`, `m11`, `m12` and the Hustle legwork check-in require a short puzzle in addition to their normal requirements. Open them from Family missions or the Streets check-in. Crime cards offer optional preparation with feedback only, never improved odds or rewards. Solving submits the answer and executes the job; closing does not. All four mechanics support keyboard/touch, hints and refresh-stable challenges. After an interrupted request, check task status before an explicit exact-key retry. Puzzles are gameplay, not human verification; agents play on equal terms. See [controls, API and recovery](TASK-PUZZLES.md).\n\n**Missions** (`/v1/missions/:id`): 36 pay-once jobs with level and stat requirements. They pay cash, respect,\nsometimes $OMR (a legal source, one time for each account), and titles.\n\n",
+          "baseline": "**The Gun**, **The Ledger**, **The Kitchen**, **The Wheel**, **The Shadow**, and **The Ring** each have a\nbonus, a penalty, home trades (×1.5 mastery XP), and rival trades (×0.6 XP).\n\n**Missions** (`/v1/missions/:id`): 36 pay-once jobs with level and stat requirements. They pay cash, respect,\nsometimes $OMR (a legal source, one time for each account), and titles.\n\n"
         }
       ]
     },
@@ -173,9 +256,9 @@ export const AGE_REMOVAL_SOURCE = freeze({
     "package.json": {
       "current": {
         "mode": "100644",
-        "blob": "e4a9a5a209c08b6aaec459cb83ba5b3fb7553f84",
-        "sha256": "89b79a5c581530f00bc3534d206bbb332eba8e47cbc237cf0980ee0d32ac9f7f",
-        "bytes": 64298
+        "blob": "9152919069a59c509cae29251cc8e0f01e274310",
+        "sha256": "2c16352b08dae5ba9b4a92ee4f8bcc7bbe71744134c59257e28b29e63336e232",
+        "bytes": 64774
       },
       "baseline": {
         "mode": "100644",
@@ -185,17 +268,32 @@ export const AGE_REMOVAL_SOURCE = freeze({
       },
       "inverses": [
         {
-          "at": 51770,
+          "at": 87,
+          "current": "    \"node\": \">=20\"\n  },\n  \"scripts\": {\n    \"test:task-puzzles\": \"node test/task-puzzle-engine.js && node test/task-puzzles.js && node test/task-puzzle-jobs.js\",\n    \"test:task-puzzles:postgres\": \"node test/task-puzzle-postgres.js\",\n    \"test:site\": \"node test/site-basics-source-transfer.js && node test/site-seo.js && node test/site-basics.js && node test/site-analytics.js && node test/site-analytics-isolation.js\",\n    \"test:site:browser\": \"node test/site-entry-browser.js && node test/client-shell-browser.js\",\n    \"test:player-experience\": \"node test/player-experience.js && node test/player-experience-client.js && node test/player-experience-api.js && npm run test:decision-guide\",\n",
+          "baseline": "    \"node\": \">=20\"\n  },\n  \"scripts\": {\n    \"test:site\": \"node test/site-basics-source-transfer.js && node test/site-seo.js && node test/site-basics.js && node test/site-analytics.js && node test/site-analytics-isolation.js\",\n    \"test:site:browser\": \"node test/site-entry-browser.js && node test/client-shell-browser.js\",\n    \"test:player-experience\": \"node test/player-experience.js && node test/player-experience-client.js && node test/player-experience-api.js && npm run test:decision-guide\",\n"
+        },
+        {
+          "at": 11785,
+          "current": "    \"phase2:lots:check\": \"node test/phase2-lot-boundary.js && node test/phase2-lots.js && node test/phase2-lots-property.js\",\n    \"phase2:lots:postgres\": \"node test/phase2-postgres.js --lots\",\n    \"phase2:definitions:postgres\": \"node test/phase2-postgres.js --definitions\",\n    \"test\": \"node test/task-puzzle-native-catalog-guard.js && node test/task-puzzle-native-integration-guard.js && npm run test:questing && npm run test:ux && node test/classic-interface-source-compatibility.js && npm run test:player-experience && node test/player-intel.js && node test/player-intel-projections.js && node test/player-intel-gates.js && node test/resourceproviders.js && node test/resourceauction.js && node test/resourcepayments.js && node test/resourcecompute.js && node test/resourcework.js && node test/resourcelabor.js && node test/resourcebusiness.js && node test/resourceoutcomes.js && node test/resourcestorefront.js && node test/agentcompany.js && node test/resourceoutcomeobserver.js && node test/businesspolicy.js && node test/business-agent.js && node test/computeexperiment.js && node test/compute-experiment-cli.js && node test/computerouting.js && node test/computeoutcomes.js && node test/compute-router-cli.js && node test/decisionproofs.js && node test/decisionproofs-api.js && node test/resource-agent.js && node test/resource-worker.js && node test/operatingpolicy.js && node test/supplytenders.js && node test/supplytenders-api.js && node test/warehouseleases.js && node test/warehouseleases-api.js && node test/crewlogistics.js && node test/crewlogistics-api.js && node test/franchiselicenses.js && node test/franchiselicenses-api.js && node test/intelforecasts.js && node test/intelforecastjobs.js && node test/intelforecastjobs-api.js && node test/rc1-intel-source-compatibility.js && node test/rc1-loan-source-compatibility.js && node test/rc1-invoice-source-compatibility.js && node test/deliveryfinanceterms.js && node test/deliveryfinance.js && node test/deliveryfinance-guards.js && node test/deliveryfinance-api.js && node test/logisticscoverageterms.js && node test/logisticscoverage-event-clock.js && node test/logisticscoverage.js && node test/logisticscoverage-api.js && node test/rc1-logistics-coverage-source-compatibility.js && node test/strategylicenses.js && node test/strategylicenses-api.js && node test/rc1-strategy-source-compatibility.js && node test/companysuccession.js && node test/companysuccession-api.js && node test/rc1-company-succession-source-compatibility.js && node test/marketfeed.js && node test/marketfeed-api.js && node test/rc1-market-feed-source-compatibility.js && node test/strategyleagues.js && node test/strategyleagues-api.js && node test/rc1-strategy-league-source-compatibility.js && node test/supplier-history.js && node test/delivery.js && node test/depot.js && node test/restock.js && node test/restock-api.js && node test/smoke.js && node test/persist.js && node test/economy.js && node test/business-settlement.js && node test/goods-market.js && node test/social.js && node test/growth.js && node test/hardening.js && node test/agent-alpha.js && node test/agent-cohort.js && node test/agentturn.js && node test/agentturn-jail-units.js && node test/local-agent-human-coordination.js && node test/agent-turn-cadence.js && node test/security.js && node test/chain.js && node test/watcher.js && node test/vig.js && node test/casino.js && node test/heists.js && node test/convoy.js && node test/commission.js && node test/stockcatalog.js && node test/stockcatalogv2.js && node test/market.js && node test/skills.js && node test/underworld.js && node test/law.js && node test/world.js && node test/npcwar.js && node test/pen.js && node test/loans.js && node test/portfolio.js && node test/estate.js && node test/deeds.js && node test/auction.js && node test/wire.js && node test/store.js && node test/pass.js && node test/landmarks.js && node test/speakeasy.js && node test/boxing.js && node test/inventory-bond-checkout.js && node test/bonds.js && node test/races.js && node test/port.js && node test/stable.js && node test/migrate.js && node test/emission.js && node test/desk.js && node test/made.js && node test/nft.js && node test/reimport.js && node test/walletforge.js && node test/expansion.js && node test/dynasty.js && node test/intrigue.js && node test/megaproject.js && node test/duels.js && node test/clues.js && node test/seasons.js && node test/ring.js && node test/standing.js && node test/sacking.js && node test/shields.js && node test/population.js && node test/tokenomics.js && node test/treasury.js && node test/stockdeliver.js && node test/dexbot.js && node test/mastery.js && node test/activity.js && node test/brokers.js && node test/deed-upgrades.js && node test/deed-upgrade-ownership.js && node test/bank.js && node test/community.js && node test/tokenhealth.js && node test/regimen.js && node test/career.js && node test/favors.js && node test/crew.js && node test/firstblood.js && node test/firstblood-intel.js && node test/discovery.js && node test/mentor.js && node test/events.js && node test/results.js && node test/vouch.js && node test/streak.js && node test/circle.js && node test/collision.js && node test/firsts.js && node test/runs.js && node test/shipment.js && node test/avatar.js && node test/portrait.js && node test/nft-art.js && node test/portrait-access.js && node test/push.js && node test/dispatch.js && node test/pwa.js && node test/people.js && node test/citywire.js && node test/bulletin.js && node test/explore.js && node test/primetime.js && node test/citymap.js && node test/day.js && node test/payroll.js && node test/home.js && node test/streets.js && node test/citywide.js && node test/drop.js && node test/sweeps.js && node test/tax.js && node test/router.js && node test/auth.js && node test/agent-onboarding.js && node test/rules.js && node test/path-funnel.js && node test/routes.js && node test/diagram-renderer.js && node test/coldstart.js && node test/preflight.js && node test/client-ip.js && node test/client.js && node test/engagement.js && node test/levers.js && node test/graph.js && node test/gates.js && node test/chainparams.js && node test/docs.js && node test/playthrough-firstblood-truth.js && node test/playthrough-truth.js && node tools/knowledge-test.js && node test/genesisauction.js && node test/genesis-auction-http.js && node test/player-genesis-client.js && node test/genesis-auction-operations.js && node test/genesis-deploy-client.js && node test/city-presence.js && node test/city-presence-api.js && node test/city-activity.js && node test/city-social-api.js && node test/city-homes-api.js && npm run test:city:layout && npm run test:city-gameplay && npm run test:company-workforce && npm run test:company-commercial && npm run test:company-autonomy && node test/wiki-economy-media.js\",\n    \"content:check\": \"npm run content:check:corpus\",\n    \"content:check:corpus\": \"node tools/content.js check-corpus content/packs\",\n    \"content:build\": \"node tools/content.js build content/packs/sixth-chair-v2/pack.json content/dist/sixth-chair-v2.json\",\n",
+          "baseline": "    \"phase2:lots:check\": \"node test/phase2-lot-boundary.js && node test/phase2-lots.js && node test/phase2-lots-property.js\",\n    \"phase2:lots:postgres\": \"node test/phase2-postgres.js --lots\",\n    \"phase2:definitions:postgres\": \"node test/phase2-postgres.js --definitions\",\n    \"test\": \"npm run test:questing && npm run test:ux && node test/classic-interface-source-compatibility.js && npm run test:player-experience && node test/player-intel.js && node test/player-intel-projections.js && node test/player-intel-gates.js && node test/resourceproviders.js && node test/resourceauction.js && node test/resourcepayments.js && node test/resourcecompute.js && node test/resourcework.js && node test/resourcelabor.js && node test/resourcebusiness.js && node test/resourceoutcomes.js && node test/resourcestorefront.js && node test/agentcompany.js && node test/resourceoutcomeobserver.js && node test/businesspolicy.js && node test/business-agent.js && node test/computeexperiment.js && node test/compute-experiment-cli.js && node test/computerouting.js && node test/computeoutcomes.js && node test/compute-router-cli.js && node test/decisionproofs.js && node test/decisionproofs-api.js && node test/resource-agent.js && node test/resource-worker.js && node test/operatingpolicy.js && node test/supplytenders.js && node test/supplytenders-api.js && node test/warehouseleases.js && node test/warehouseleases-api.js && node test/crewlogistics.js && node test/crewlogistics-api.js && node test/franchiselicenses.js && node test/franchiselicenses-api.js && node test/intelforecasts.js && node test/intelforecastjobs.js && node test/intelforecastjobs-api.js && node test/rc1-intel-source-compatibility.js && node test/rc1-loan-source-compatibility.js && node test/rc1-invoice-source-compatibility.js && node test/deliveryfinanceterms.js && node test/deliveryfinance.js && node test/deliveryfinance-guards.js && node test/deliveryfinance-api.js && node test/logisticscoverageterms.js && node test/logisticscoverage-event-clock.js && node test/logisticscoverage.js && node test/logisticscoverage-api.js && node test/rc1-logistics-coverage-source-compatibility.js && node test/strategylicenses.js && node test/strategylicenses-api.js && node test/rc1-strategy-source-compatibility.js && node test/companysuccession.js && node test/companysuccession-api.js && node test/rc1-company-succession-source-compatibility.js && node test/marketfeed.js && node test/marketfeed-api.js && node test/rc1-market-feed-source-compatibility.js && node test/strategyleagues.js && node test/strategyleagues-api.js && node test/rc1-strategy-league-source-compatibility.js && node test/supplier-history.js && node test/delivery.js && node test/depot.js && node test/restock.js && node test/restock-api.js && node test/smoke.js && node test/persist.js && node test/economy.js && node test/business-settlement.js && node test/goods-market.js && node test/social.js && node test/growth.js && node test/hardening.js && node test/agent-alpha.js && node test/agent-cohort.js && node test/agentturn.js && node test/agentturn-jail-units.js && node test/local-agent-human-coordination.js && node test/agent-turn-cadence.js && node test/security.js && node test/chain.js && node test/watcher.js && node test/vig.js && node test/casino.js && node test/heists.js && node test/convoy.js && node test/commission.js && node test/stockcatalog.js && node test/stockcatalogv2.js && node test/market.js && node test/skills.js && node test/underworld.js && node test/law.js && node test/world.js && node test/npcwar.js && node test/pen.js && node test/loans.js && node test/portfolio.js && node test/estate.js && node test/deeds.js && node test/auction.js && node test/wire.js && node test/store.js && node test/pass.js && node test/landmarks.js && node test/speakeasy.js && node test/boxing.js && node test/inventory-bond-checkout.js && node test/bonds.js && node test/races.js && node test/port.js && node test/stable.js && node test/migrate.js && node test/emission.js && node test/desk.js && node test/made.js && node test/nft.js && node test/reimport.js && node test/walletforge.js && node test/expansion.js && node test/dynasty.js && node test/intrigue.js && node test/megaproject.js && node test/duels.js && node test/clues.js && node test/seasons.js && node test/ring.js && node test/standing.js && node test/sacking.js && node test/shields.js && node test/population.js && node test/tokenomics.js && node test/treasury.js && node test/stockdeliver.js && node test/dexbot.js && node test/mastery.js && node test/activity.js && node test/brokers.js && node test/deed-upgrades.js && node test/deed-upgrade-ownership.js && node test/bank.js && node test/community.js && node test/tokenhealth.js && node test/regimen.js && node test/career.js && node test/favors.js && node test/crew.js && node test/firstblood.js && node test/firstblood-intel.js && node test/discovery.js && node test/mentor.js && node test/events.js && node test/results.js && node test/vouch.js && node test/streak.js && node test/circle.js && node test/collision.js && node test/firsts.js && node test/runs.js && node test/shipment.js && node test/avatar.js && node test/portrait.js && node test/nft-art.js && node test/portrait-access.js && node test/push.js && node test/dispatch.js && node test/pwa.js && node test/people.js && node test/citywire.js && node test/bulletin.js && node test/explore.js && node test/primetime.js && node test/citymap.js && node test/day.js && node test/payroll.js && node test/home.js && node test/streets.js && node test/citywide.js && node test/drop.js && node test/sweeps.js && node test/tax.js && node test/router.js && node test/auth.js && node test/agent-onboarding.js && node test/rules.js && node test/path-funnel.js && node test/routes.js && node test/diagram-renderer.js && node test/coldstart.js && node test/preflight.js && node test/client-ip.js && node test/client.js && node test/engagement.js && node test/levers.js && node test/graph.js && node test/gates.js && node test/chainparams.js && node test/docs.js && node test/playthrough-truth.js && node tools/knowledge-test.js && node test/genesisauction.js && node test/genesis-auction-http.js && node test/player-genesis-client.js && node test/genesis-auction-operations.js && node test/genesis-deploy-client.js && node test/city-presence.js && node test/city-presence-api.js && node test/city-activity.js && node test/city-social-api.js && node test/city-homes-api.js && npm run test:city:layout && npm run test:city-gameplay && npm run test:company-workforce && npm run test:company-commercial && npm run test:company-autonomy && node test/wiki-economy-media.js\",\n    \"content:check\": \"npm run content:check:corpus\",\n    \"content:check:corpus\": \"node tools/content.js check-corpus content/packs\",\n    \"content:build\": \"node tools/content.js build content/packs/sixth-chair-v2/pack.json content/dist/sixth-chair-v2.json\",\n"
+        },
+        {
+          "at": 52110,
           "current": "    \"test:gateway:postgres\": \"node test/gateway-postgres.js\",\n    \"test:gateway:browser\": \"node test/consigliere-recovery-browser.js\",\n    \"build:walletconnect\": \"node tools/build-walletconnect.mjs\",\n    \"build:strategy-city\": \"node tools/build-strategy-city.mjs\",\n    \"test:legal-security\": \"node test/age.js && node test/db-rls.js && node test/legal-security.js && node test/payment-receipts.js\",\n    \"release:media\": \"node tools/release-media.mjs unpack\",\n    \"postinstall\": \"node tools/release-media.mjs unpack\",\n",
           "baseline": "    \"test:gateway:postgres\": \"node test/gateway-postgres.js\",\n    \"test:gateway:browser\": \"node test/consigliere-recovery-browser.js\",\n    \"build:walletconnect\": \"node tools/build-walletconnect.mjs\",\n    \"test:legal-security\": \"node test/age.js && node test/db-rls.js && node test/legal-security.js && node test/payment-receipts.js\",\n    \"release:media\": \"node tools/release-media.mjs unpack\",\n    \"postinstall\": \"node tools/release-media.mjs unpack\",\n"
         },
         {
-          "at": 59816,
-          "current": "    \"test:city:layout\": \"node test/city-world-layout.js && node test/continuous-city-source-compatibility.js\",\n    \"test:decision-guide\": \"node test/decision-guide.js && node test/decision-guide-client.js && node test/decision-guide-api.js\",\n    \"test:ux\": \"npm run test:ux:source && node test/ux-feedback.js && node test/circle-highlights.js && node test/ux-workspace.js && node test/ux-tactics.js && node test/ux-investigation-api.js && node test/ux-coordination.js && node test/ux-identity.js && node test/ux-story.js && node test/ux-community.js && node test/ux-tools.js\",\n    \"test:ux:browser\": \"node test/strategy-command-browser.js && node test/noir-shell-browser.js && node test/ux-shell-browser.js && node test/ux-progression-browser.js && node test/ux-navigation-browser.js && node test/ux-social-browser.js && node test/ux-experience-browser.js && node test/ux-workspace-browser.js && node test/ux-tactics-browser.js && node test/ux-investigation-browser.js && node test/ux-coordination-browser.js && node test/ux-expanded-browser.js && node test/ux-feel-browser.js && node test/ux-tools-browser.js && node test/ux-identity-browser.js && node test/ux-story-browser.js && node test/ux-community-browser.js && node test/ux-personality-browser.js && npm run test:site && npm run test:site:browser\",\n    \"test:ux:postgres\": \"node test/ux-postgres.js && node test/ux-postgres-rls.js\",\n    \"test:ux:source\": \"node test/noir-ui-source-compatibility.js && node test/sale-source-compatibility.js && node test/ux-source-compatibility.js\",\n    \"test:economy-ux-source\": \"node test/contract-release-source-compatibility.js && node test/businessdesk-combined-source-compatibility.js && node test/businessdesk-combined-native-provenance.js && node test/economy-deed-merge-source-compatibility.js && node test/businessdesk-noir-source-compatibility.js && node test/businessdesk-source-compatibility.js && node test/deed-allocation-source-compatibility.js && node test/deed-benefit-native-catalog.js && node test/economy-ux-merge-source-compatibility.js\",\n",
-          "baseline": "    \"test:city:layout\": \"node test/city-world-layout.js && node test/continuous-city-source-compatibility.js\",\n    \"test:decision-guide\": \"node test/decision-guide.js && node test/decision-guide-client.js && node test/decision-guide-api.js\",\n    \"test:ux\": \"npm run test:ux:source && node test/ux-feedback.js && node test/circle-highlights.js && node test/ux-workspace.js && node test/ux-tactics.js && node test/ux-investigation-api.js && node test/ux-coordination.js && node test/ux-identity.js && node test/ux-story.js && node test/ux-community.js && node test/ux-tools.js\",\n    \"test:ux:browser\": \"node test/ux-shell-browser.js && node test/ux-progression-browser.js && node test/ux-navigation-browser.js && node test/ux-social-browser.js && node test/ux-experience-browser.js && node test/ux-workspace-browser.js && node test/ux-tactics-browser.js && node test/ux-investigation-browser.js && node test/ux-coordination-browser.js && node test/ux-expanded-browser.js && node test/ux-feel-browser.js && node test/ux-tools-browser.js && node test/ux-identity-browser.js && node test/ux-story-browser.js && node test/ux-community-browser.js && node test/ux-personality-browser.js && npm run test:site && npm run test:site:browser\",\n    \"test:ux:postgres\": \"node test/ux-postgres.js && node test/ux-postgres-rls.js\",\n    \"test:ux:source\": \"node test/noir-ui-source-compatibility.js && node test/sale-source-compatibility.js && node test/ux-source-compatibility.js\",\n    \"test:economy-ux-source\": \"node test/contract-release-source-compatibility.js && node test/businessdesk-combined-source-compatibility.js && node test/businessdesk-combined-native-provenance.js && node test/economy-deed-merge-source-compatibility.js && node test/businessdesk-noir-source-compatibility.js && node test/businessdesk-source-compatibility.js && node test/deed-allocation-source-compatibility.js && node test/deed-benefit-native-catalog.js && node test/economy-ux-merge-source-compatibility.js\",\n"
+          "at": 60156,
+          "current": "    \"test:city:layout\": \"node test/city-world-layout.js && node test/continuous-city-source-compatibility.js\",\n    \"test:decision-guide\": \"node test/decision-guide.js && node test/decision-guide-client.js && node test/decision-guide-api.js\",\n    \"test:ux\": \"npm run test:ux:source && node test/ux-feedback.js && node test/circle-highlights.js && node test/ux-workspace.js && node test/ux-tactics.js && node test/ux-investigation-api.js && node test/ux-coordination.js && node test/ux-identity.js && node test/ux-story.js && node test/ux-community.js && node test/ux-tools.js\",\n    \"test:ux:browser\": \"node test/strategy-command-browser.js && node test/noir-shell-browser.js && node test/ux-shell-browser.js && node test/ux-progression-browser.js && node test/ux-navigation-browser.js && node test/ux-social-browser.js && node test/ux-experience-browser.js && node test/ux-workspace-browser.js && node test/ux-tactics-browser.js && node test/ux-investigation-browser.js && node test/ux-coordination-browser.js && node test/ux-expanded-browser.js && node test/ux-feel-browser.js && node test/ux-tools-browser.js && node test/ux-identity-browser.js && node test/ux-story-browser.js && node test/ux-community-browser.js && node test/ux-personality-browser.js && npm run test:site && npm run test:site:browser\",\n    \"test:ux:postgres\": \"node test/ux-postgres.js && node test/ux-postgres-rls.js\",\n    \"test:ux:source\": \"node test/noir-ui-source-compatibility.js && node test/sale-source-compatibility.js && node test/ux-source-compatibility.js\",\n    \"test:economy-ux-source\": \"node test/contract-release-source-compatibility.js && node test/businessdesk-combined-source-compatibility.js && node test/businessdesk-combined-native-provenance.js && node test/economy-deed-merge-source-compatibility.js && node test/businessdesk-noir-source-compatibility.js && node test/businessdesk-source-compatibility.js && node test/deed-allocation-source-compatibility.js && node test/deed-benefit-native-catalog.js && node test/economy-ux-merge-source-compatibility.js\",\n    \"test:economy-security\": \"node test/economy-monitor.js && node test/economy-composition.js\",\n    \"test:eth-rewards\": \"node test/marketv2abi.js && node test/marketv2keeper-eth.js && node test/eth-rewards-readiness.js && node test/eth-rewards-upkeep.js && node test/ethrewardsworker.js && node test/eth-staking.js\",\n    \"test:eth-staking:browser\": \"node test/eth-staking.js --browser\",\n    \"test:questing\": \"npm run test:task-puzzles && node test/content-narrative.js && node test/content-narrative-security.js && node test/content-casework.js && node test/quest-saga.js && node test/quest-saga-social.js && node test/quest-specialist.js && node test/quest-workshop.js && node test/clue-puzzles.js && node test/content-api.js && npm run test:quest-quality\",\n    \"test:questing:browser\": \"npm run test:task-puzzles:browser && node test/quest-experience-browser.js && node test/clue-puzzles-browser.js && node test/quest-quality-browser.js\",\n    \"questing:check\": \"node tools/questing-content.js check && node tools/questing-workgraph.js check --complete && node tools/quest-quality-workgraph.js check\",\n    \"test:questing:postgres\": \"node test/questing-postgres.js && node test/quest-quality-postgres.js\",\n    \"test:quest-quality\": \"node test/quest-quality-source-transfer.js && node test/quest-quality-rules.js && node test/quest-quality-stateful.js && node test/quest-quality-api.js && node test/quest-quality-runtime.js && node test/quest-quality-social.js && node test/quest-quality-spoilers.js && node test/quest-quality-content.js && node test/quest-quality-studio.js && node test/quest-quality-study.js\",\n",
+          "baseline": "    \"test:city:layout\": \"node test/city-world-layout.js && node test/continuous-city-source-compatibility.js\",\n    \"test:decision-guide\": \"node test/decision-guide.js && node test/decision-guide-client.js && node test/decision-guide-api.js\",\n    \"test:ux\": \"npm run test:ux:source && node test/ux-feedback.js && node test/circle-highlights.js && node test/ux-workspace.js && node test/ux-tactics.js && node test/ux-investigation-api.js && node test/ux-coordination.js && node test/ux-identity.js && node test/ux-story.js && node test/ux-community.js && node test/ux-tools.js\",\n    \"test:ux:browser\": \"node test/ux-shell-browser.js && node test/ux-progression-browser.js && node test/ux-navigation-browser.js && node test/ux-social-browser.js && node test/ux-experience-browser.js && node test/ux-workspace-browser.js && node test/ux-tactics-browser.js && node test/ux-investigation-browser.js && node test/ux-coordination-browser.js && node test/ux-expanded-browser.js && node test/ux-feel-browser.js && node test/ux-tools-browser.js && node test/ux-identity-browser.js && node test/ux-story-browser.js && node test/ux-community-browser.js && node test/ux-personality-browser.js && npm run test:site && npm run test:site:browser\",\n    \"test:ux:postgres\": \"node test/ux-postgres.js && node test/ux-postgres-rls.js\",\n    \"test:ux:source\": \"node test/noir-ui-source-compatibility.js && node test/sale-source-compatibility.js && node test/ux-source-compatibility.js\",\n    \"test:economy-ux-source\": \"node test/contract-release-source-compatibility.js && node test/businessdesk-combined-source-compatibility.js && node test/businessdesk-combined-native-provenance.js && node test/economy-deed-merge-source-compatibility.js && node test/businessdesk-noir-source-compatibility.js && node test/businessdesk-source-compatibility.js && node test/deed-allocation-source-compatibility.js && node test/deed-benefit-native-catalog.js && node test/economy-ux-merge-source-compatibility.js\",\n    \"test:economy-security\": \"node test/economy-monitor.js && node test/economy-composition.js\",\n    \"test:eth-rewards\": \"node test/marketv2abi.js && node test/marketv2keeper-eth.js && node test/eth-rewards-readiness.js && node test/eth-rewards-upkeep.js && node test/ethrewardsworker.js && node test/eth-staking.js\",\n    \"test:eth-staking:browser\": \"node test/eth-staking.js --browser\",\n    \"test:questing\": \"node test/content-narrative.js && node test/content-narrative-security.js && node test/content-casework.js && node test/quest-saga.js && node test/quest-saga-social.js && node test/quest-specialist.js && node test/quest-workshop.js && node test/clue-puzzles.js && node test/content-api.js && npm run test:quest-quality\",\n    \"test:questing:browser\": \"node test/quest-experience-browser.js && node test/clue-puzzles-browser.js && node test/quest-quality-browser.js\",\n    \"questing:check\": \"node tools/questing-content.js check && node tools/questing-workgraph.js check --complete && node tools/quest-quality-workgraph.js check\",\n    \"test:questing:postgres\": \"node test/questing-postgres.js && node test/quest-quality-postgres.js\",\n    \"test:quest-quality\": \"node test/quest-quality-source-transfer.js && node test/quest-quality-rules.js && node test/quest-quality-stateful.js && node test/quest-quality-api.js && node test/quest-quality-runtime.js && node test/quest-quality-social.js && node test/quest-quality-spoilers.js && node test/quest-quality-content.js && node test/quest-quality-studio.js && node test/quest-quality-study.js\",\n"
         },
         {
-          "at": 64162,
+          "at": 63896,
+          "current": "    \"quest-quality:studio\": \"node tools/quest-quality-studio.js\",\n    \"test:foundry-release-api\": \"node test/foundry-release-api.js\",\n    \"test:agent-onboarding:postgres\": \"node test/agent-onboarding-postgres.js\",\n    \"test:casino-rakeback:postgres\": \"node test/casino-rakeback-postgres.js\",\n    \"test:task-puzzles:browser\": \"node test/task-puzzles-browser.js\"\n  },\n  \"dependencies\": {\n    \"@fastify/jwt\": \"^10.2.0\",\n",
+          "baseline": "    \"quest-quality:studio\": \"node tools/quest-quality-studio.js\",\n    \"test:foundry-release-api\": \"node test/foundry-release-api.js\",\n    \"test:agent-onboarding:postgres\": \"node test/agent-onboarding-postgres.js\",\n    \"test:casino-rakeback:postgres\": \"node test/casino-rakeback-postgres.js\"\n  },\n  \"dependencies\": {\n    \"@fastify/jwt\": \"^10.2.0\",\n"
+        },
+        {
+          "at": 64638,
           "current": "    \"acorn\": \"8.18.0\",\n    \"playwright-core\": \"^1.62.0\",\n    \"solhint\": \"6.2.4\",\n    \"esbuild\": \"0.25.12\",\n    \"three\": \"0.187.0\"\n  }\n}\n",
           "baseline": "    \"acorn\": \"8.18.0\",\n    \"playwright-core\": \"^1.62.0\",\n    \"solhint\": \"6.2.4\",\n    \"esbuild\": \"0.25.12\"\n  }\n}\n"
         }
@@ -204,9 +302,9 @@ export const AGE_REMOVAL_SOURCE = freeze({
     "public/index.html": {
       "current": {
         "mode": "100644",
-        "blob": "d031f03f8050e0d07b2a195bf7bdb6af93e7e79f",
-        "sha256": "3504a39e1a670166f093675e8c14e91ffec231eaea1cbcc95d60cd6b44268b3d",
-        "bytes": 1406414
+        "blob": "15d9d6fd5ea7ddccbedbf99e4c7cabd826cc1a0e",
+        "sha256": "50b88c763a10f95a6200270cdba831f838b6516e55fac03a9ccf6351677eb776",
+        "bytes": 1408490
       },
       "baseline": {
         "mode": "100644",
@@ -216,62 +314,92 @@ export const AGE_REMOVAL_SOURCE = freeze({
       },
       "inverses": [
         {
-          "at": 106946,
-          "current": "<link rel=\"stylesheet\" href=\"/ux-tactics.css?v=20261024-2\">\n<link rel=\"stylesheet\" href=\"/ux-investigation.css?v=20261024-2\">\n<link rel=\"stylesheet\" href=\"/ux-coordination.css?v=20261024-2\">\n<link rel=\"stylesheet\" href=\"/noir-ui.css?v=20261108-1\">\n<link rel=\"stylesheet\" href=\"/noir-landing.css?v=20261108-1\">\n<link rel=\"stylesheet\" href=\"/strategy-command.css?v=20261108-1\">\n</head>\n<body>\n<svg style=\"display:none\" aria-hidden=\"true\"><defs>\n",
-          "baseline": "<link rel=\"stylesheet\" href=\"/ux-tactics.css?v=20261024-2\">\n<link rel=\"stylesheet\" href=\"/ux-investigation.css?v=20261024-2\">\n<link rel=\"stylesheet\" href=\"/ux-coordination.css?v=20261024-2\">\n</head>\n<body>\n<svg style=\"display:none\" aria-hidden=\"true\"><defs>\n"
+          "at": 106701,
+          "current": "<link rel=\"stylesheet\" href=\"/ux-quests.css?v=20261106-1\">\n<link rel=\"stylesheet\" href=\"/ux-quest-quality.css?v=20261107-1\">\n<link rel=\"stylesheet\" href=\"/ux-clues.css?v=20261106-1\">\n<link rel=\"stylesheet\" href=\"/ux-task-puzzles.css?v=20261110-1\">\n<link rel=\"stylesheet\" href=\"/ux-community.css?v=20261025-1\">\n<link rel=\"stylesheet\" href=\"/ux-tactics.css?v=20261024-2\">\n<link rel=\"stylesheet\" href=\"/ux-investigation.css?v=20261024-2\">\n<link rel=\"stylesheet\" href=\"/ux-coordination.css?v=20261024-2\">\n<link rel=\"stylesheet\" href=\"/noir-ui.css?v=20261108-1\">\n<link rel=\"stylesheet\" href=\"/noir-landing.css?v=20261108-1\">\n<link rel=\"stylesheet\" href=\"/strategy-command.css?v=20261108-1\">\n</head>\n<body>\n<svg style=\"display:none\" aria-hidden=\"true\"><defs>\n",
+          "baseline": "<link rel=\"stylesheet\" href=\"/ux-quests.css?v=20261106-1\">\n<link rel=\"stylesheet\" href=\"/ux-quest-quality.css?v=20261107-1\">\n<link rel=\"stylesheet\" href=\"/ux-clues.css?v=20261106-1\">\n<link rel=\"stylesheet\" href=\"/ux-community.css?v=20261025-1\">\n<link rel=\"stylesheet\" href=\"/ux-tactics.css?v=20261024-2\">\n<link rel=\"stylesheet\" href=\"/ux-investigation.css?v=20261024-2\">\n<link rel=\"stylesheet\" href=\"/ux-coordination.css?v=20261024-2\">\n</head>\n<body>\n<svg style=\"display:none\" aria-hidden=\"true\"><defs>\n"
         },
         {
-          "at": 143203,
+          "at": 143268,
           "current": "  <div id=\"status-strips\"><div id=\"vitals\" aria-label=\"Current resources\"></div></div>\n  <div id=\"layout\">\n    <aside id=\"city-sidebar\" aria-label=\"City navigation and character\">\n      <details id=\"city-directory\">\n        <summary>Explore the city</summary>\n        <div class=\"city-directory-body\">\n          <div class=\"city-nav-label\">THE CITY</div>\n",
           "baseline": "  <div id=\"status-strips\"><div id=\"vitals\" aria-label=\"Current resources\"></div></div>\n  <div id=\"layout\">\n    <aside id=\"city-sidebar\" aria-label=\"City navigation and character\">\n      <details id=\"city-directory\" open>\n        <summary>Explore the city</summary>\n        <div class=\"city-directory-body\">\n          <div class=\"city-nav-label\">THE CITY</div>\n"
         },
         {
-          "at": 144774,
+          "at": 144839,
           "current": "      <div id=\"tabart\" class=\"hidden\"><span></span></div>\n      <div id=\"coachwrap\"></div>\n      <details id=\"ux-screen-tools\" class=\"ux-screen-tools\"><summary>Screen tools <span>Shortcuts, reading &amp; workspace</span></summary><div id=\"screen-tool-content\" class=\"ux-screen-tools-body\"><nav id=\"action-readiness\" class=\"hidden\" aria-label=\"Activity timers and options\"></nav></div></details>\n      <!-- #introwrap stays INSIDE #tabbodies but OUTSIDE the per-tab divs. The shell places\n           first-visit reference below the playable content; screen renderers cannot resurrect\n           a dismissed introduction when they refresh their own #tab-<id>. -->\n      <div id=\"tabbodies\"><div id=\"introwrap\"></div></div>\n    </div>\n\n",
           "baseline": "      <div id=\"tabart\" class=\"hidden\"><span></span></div>\n      <div id=\"coachwrap\"></div>\n      <details id=\"ux-screen-tools\" class=\"ux-screen-tools\"><summary>Screen tools <span>Shortcuts, reading &amp; workspace</span></summary><div id=\"screen-tool-content\" class=\"ux-screen-tools-body\"><nav id=\"action-readiness\" class=\"hidden\" aria-label=\"Activity timers and options\"></nav></div></details>\n      <!-- #introwrap lives INSIDE #tabbodies (first child) but OUTSIDE the per-tab divs: the\n           first-visit card counts as the screen's own content (it explains the screen you just\n           tapped), while renderers — which rewrite only their #tab-<id> — can never resurrect a\n           dismissed card mid-visit. -->\n      <div id=\"tabbodies\"><div id=\"introwrap\"></div></div>\n    </div>\n\n"
         },
         {
-          "at": 158121,
-          "current": "<script src=\"/ux-tactics.js?v=20261105-noir-release\"></script>\n<script src=\"/ux-investigation.js?v=20261024-2\"></script>\n<script src=\"/ux-coordination.js?v=20261024-2\"></script>\n<script src=\"/noir-shell.js?v=20261108-1\"></script>\n<script src=\"/strategy-command.js?v=20261108-1\"></script>\n<script>\n(() => {\n  // Optional guidance must not stop core play if its separate script cannot load.\n",
-          "baseline": "<script src=\"/ux-tactics.js?v=20261105-noir-release\"></script>\n<script src=\"/ux-investigation.js?v=20261024-2\"></script>\n<script src=\"/ux-coordination.js?v=20261024-2\"></script>\n<script>\n(() => {\n  // Optional guidance must not stop core play if its separate script cannot load.\n"
+          "at": 157973,
+          "current": "<script src=\"/ux-quest-quality.js?v=20261107-1\"></script>\n<script src=\"/ux-quests.js?v=20261107-1\"></script>\n<script src=\"/ux-clues.js?v=20261106-1\"></script>\n<script src=\"/ux-task-puzzles.js?v=20261110-1\"></script>\n<script src=\"/ux-community.js?v=20261025-1\"></script>\n<script src=\"/ux-tactics.js?v=20261105-noir-release\"></script>\n<script src=\"/ux-investigation.js?v=20261024-2\"></script>\n<script src=\"/ux-coordination.js?v=20261024-2\"></script>\n<script src=\"/noir-shell.js?v=20261108-1\"></script>\n<script src=\"/strategy-command.js?v=20261108-1\"></script>\n<script>\n(() => {\n  // Optional guidance must not stop core play if its separate script cannot load.\n",
+          "baseline": "<script src=\"/ux-quest-quality.js?v=20261107-1\"></script>\n<script src=\"/ux-quests.js?v=20261107-1\"></script>\n<script src=\"/ux-clues.js?v=20261106-1\"></script>\n<script src=\"/ux-community.js?v=20261025-1\"></script>\n<script src=\"/ux-tactics.js?v=20261105-noir-release\"></script>\n<script src=\"/ux-investigation.js?v=20261024-2\"></script>\n<script src=\"/ux-coordination.js?v=20261024-2\"></script>\n<script>\n(() => {\n  // Optional guidance must not stop core play if its separate script cannot load.\n"
         },
         {
-          "at": 584455,
+          "at": 584577,
           "current": "    if (h.get('token') || h.get('claimed') || h.get('autherr')) history.replaceState(null, '', location.pathname);\n  })();\n  const startXOAuth = async () => {\n    const inviteCode = $('#invite-code')?.value?.trim();\n    const r = await api('POST', '/v1/auth/x/start', inviteCode ? { inviteCode } : {});\n    if (r.body?.url) location.href = r.body.url;\n",
           "baseline": "    if (h.get('token') || h.get('claimed') || h.get('autherr')) history.replaceState(null, '', location.pathname);\n  })();\n  const startXOAuth = async () => {\n    if (!token && !await verifyAge()) return;\n    const inviteCode = $('#invite-code')?.value?.trim();\n    const r = await api('POST', '/v1/auth/x/start', inviteCode ? { inviteCode } : {});\n    if (r.body?.url) location.href = r.body.url;\n"
         },
         {
-          "at": 589395,
+          "at": 589517,
           "current": "    else toast(r.body?.message || r.body?.error || 'no dice', true);\n    return false;\n  };\n  let guestPending = false;\n  const enterAsGhost = async () => {\n    if (guestPending) return;\n",
           "baseline": "    else toast(r.body?.message || r.body?.error || 'no dice', true);\n    return false;\n  };\n  let ageChecked = 0;\n  async function verifyAge() {\n    if (ageChecked > Date.now()) return true;\n    if (sessionStorage.getItem('omerta_age_blocked')) {\n      toast('Account creation is unavailable. See the privacy page for help.', true);\n      return false;\n    }\n    return new Promise((resolve) => {\n      const dialog = document.createElement('dialog');\n      dialog.className = 'modal';\n      dialog.setAttribute('aria-labelledby', 'age-title');\n      dialog.innerHTML = `<h2 id=\"age-title\">Your birth date</h2><p>Enter your complete birth date to continue. We check it without saving it.</p><form><label for=\"age-date\">Birth date</label><input id=\"age-date\" name=\"birthDate\" type=\"date\" required min=\"${new Date().getFullYear() - 120}-01-01\" max=\"${new Date().toISOString().slice(0, 10)}\"><p id=\"age-error\" role=\"alert\"></p><p><a href=\"/privacy\">Privacy policy and help</a></p><button class=\"act\" type=\"submit\">Continue</button><button class=\"act\" type=\"button\" id=\"age-cancel\">Cancel</button></form>`;\n      document.body.append(dialog);\n      const finish = (ok) => { dialog.close(); dialog.remove(); resolve(ok); };\n      dialog.addEventListener('cancel', (event) => { event.preventDefault(); finish(false); });\n      dialog.querySelector('#age-cancel').onclick = () => finish(false);\n      dialog.querySelector('form').onsubmit = async (event) => {\n        event.preventDefault();\n        const input = dialog.querySelector('input');\n        const birthDate = input.value;\n        input.value = '';\n        const result = await api('POST', '/v1/age-check', { birthDate });\n        if (result.code < 400) { ageChecked = Date.now() + 14 * 60 * 1000; finish(true); }\n        else if (result.body?.error === 'age_ineligible') {\n          sessionStorage.setItem('omerta_age_blocked', '1');\n          dialog.querySelector('form').innerHTML = '<p role=\"alert\">Account creation is unavailable. No birth date was saved.</p><p><a href=\"/privacy\">Privacy policy and help</a></p><button type=\"button\" class=\"act\">Close</button>';\n          dialog.querySelector('button').onclick = () => finish(false);\n        } else dialog.querySelector('#age-error').textContent = result.body?.message || 'Please try again.';\n      };\n      dialog.showModal();\n      dialog.querySelector('input').focus();\n    });\n  }\n  let guestPending = false;\n  const enterAsGhost = async () => {\n    if (guestPending) return;\n"
         },
         {
-          "at": 589607,
+          "at": 589729,
           "current": "    const controls = ['#btn-guest', '#btn-guest2'].map(selector => $(selector)).filter(Boolean);\n    const labels = controls.map(button => button.textContent);\n    const status = $('#guest-status');\n    status.hidden = false; status.textContent = 'Opening your street…';\n    controls.forEach(button => { button.disabled = true; button.setAttribute('aria-busy', 'true'); button.textContent = 'Entering the city…'; });\n    try {\n      const inviteCode = undefined;\n      const result = await api('POST', '/v1/auth/guest', inviteCode ? { inviteCode } : {});\n      globalThis.OmertaSiteAnalytics?.signupResult?.(result);\n",
           "baseline": "    const controls = ['#btn-guest', '#btn-guest2'].map(selector => $(selector)).filter(Boolean);\n    const labels = controls.map(button => button.textContent);\n    const status = $('#guest-status');\n    status.hidden = false; status.textContent = 'Checking eligibility…';\n    controls.forEach(button => { button.disabled = true; button.setAttribute('aria-busy', 'true'); button.textContent = 'Entering the city…'; });\n    try {\n      if (!await verifyAge()) { status.textContent = ''; status.hidden = true; return; }\n      status.textContent = 'Opening your street…';\n      const inviteCode = undefined;\n      const result = await api('POST', '/v1/auth/guest', inviteCode ? { inviteCode } : {});\n      globalThis.OmertaSiteAnalytics?.signupResult?.(result);\n"
         },
         {
-          "at": 593556,
+          "at": 593678,
           "current": "  $('#btn-provider').onclick = async () => {\n    const provider = $('#auth-provider').value, tok = $('#auth-token').value.trim();\n    if (!tok) return toast('paste a provider token first', true);\n    const inviteCode = undefined;\n    landToken(await api(`POST`, `/v1/auth/${provider}`, { token: tok, ...(inviteCode ? { inviteCode } : {}) }));\n  };\n",
           "baseline": "  $('#btn-provider').onclick = async () => {\n    const provider = $('#auth-provider').value, tok = $('#auth-token').value.trim();\n    if (!tok) return toast('paste a provider token first', true);\n    if (!await verifyAge()) return;\n    const inviteCode = undefined;\n    landToken(await api(`POST`, `/v1/auth/${provider}`, { token: tok, ...(inviteCode ? { inviteCode } : {}) }));\n  };\n"
         },
         {
-          "at": 958490,
+          "at": 819911,
+          "current": "      `<button class=\"act ${style}\" data-operation-label=\"${esc(crime.name)}: ${approach}\" aria-describedby=\"${termsId}\" ${compact\n        ? `data-city-crime=\"${crime.id}\" data-city-approach=\"${approach}\"`\n        : `data-do=\"POST /v1/crimes/${crime.id}\" data-body='{\"approach\":\"${approach}\"}'`}${blocked || !approaches[approach] ? ` disabled aria-disabled=\"true\" title=\"${esc(blocked || 'Refresh to load job terms.')}\"` : ''}>${label}${compact ? `<small>${approach === 'quiet' ? 'safer · smaller win' : approach === 'loud' ? '+' + Number(loud.heat || 0) + ' heat' : 'baseline'}</small>` : ''}</button>`).join('');\n    const preparation = crime.puzzle ? `<button type=\"button\" class=\"act\" data-task-crime=\"${crime.id}\"${blocked ? ' disabled' : ''}>Prepare ${esc(crime.name)} (optional puzzle)</button>` : '';\n    return { terms, choices: choices + preparation, blocked };\n  }\n\n  function cityActorScope() {\n",
+          "baseline": "      `<button class=\"act ${style}\" data-operation-label=\"${esc(crime.name)}: ${approach}\" aria-describedby=\"${termsId}\" ${compact\n        ? `data-city-crime=\"${crime.id}\" data-city-approach=\"${approach}\"`\n        : `data-do=\"POST /v1/crimes/${crime.id}\" data-body='{\"approach\":\"${approach}\"}'`}${blocked || !approaches[approach] ? ` disabled aria-disabled=\"true\" title=\"${esc(blocked || 'Refresh to load job terms.')}\"` : ''}>${label}${compact ? `<small>${approach === 'quiet' ? 'safer · smaller win' : approach === 'loud' ? '+' + Number(loud.heat || 0) + ' heat' : 'baseline'}</small>` : ''}</button>`).join('');\n    return { terms, choices, blocked };\n  }\n\n  function cityActorScope() {\n"
+        },
+        {
+          "at": 930930,
+          "current": "        return `<div class=\"card\"><span class=\"t\">${esc(m.name)}</span>\n          <div class=\"d\">${m.brief || ''}</div>\n          <div class=\"d\">needs lvl ${m.req?.lvl || 1}${statReq ? ` · ${statReq}` : ''} · pays $${fmt(m.reward?.cash || 0)}${m.reward?.omr ? ` + ${m.reward.omr} $OMR` : ''}${m.reward?.title ? ' + a title' : ''}</div>\n          <button class=\"act\" data-mission=\"${m.id}\"${meets && !missionCd ? '' : ' disabled'}>${m.puzzle?.required ? 'open task puzzle' : 'attempt'}${\n            !meets ? ' (train up first)' : missionCd ? ` (next job in ${mins(missionCd)})` : ''}</button></div>`;\n      }).join('') || '<span class=\"d\" style=\"color:var(--dim)\">level up to unlock your first mission</span>'}</div>`;\n    const remainingTasks = obTasks.filter((x) => x !== next);\n",
+          "baseline": "        return `<div class=\"card\"><span class=\"t\">${esc(m.name)}</span>\n          <div class=\"d\">${m.brief || ''}</div>\n          <div class=\"d\">needs lvl ${m.req?.lvl || 1}${statReq ? ` · ${statReq}` : ''} · pays $${fmt(m.reward?.cash || 0)}${m.reward?.omr ? ` + ${m.reward.omr} $OMR` : ''}${m.reward?.title ? ' + a title' : ''}</div>\n          <button class=\"act\" data-mission=\"${m.id}\"${meets && !missionCd ? '' : ' disabled'}>attempt${\n            !meets ? ' (train up first)' : missionCd ? ` (next job in ${mins(missionCd)})` : ''}</button></div>`;\n      }).join('') || '<span class=\"d\" style=\"color:var(--dim)\">level up to unlock your first mission</span>'}</div>`;\n    const remainingTasks = obTasks.filter((x) => x !== next);\n"
+        },
+        {
+          "at": 941794,
+          "current": "    t.querySelectorAll('[data-crgo]').forEach((b) => b.onclick = () => { setTab(b.dataset.crgo); spotlight(SPOT[b.dataset.crgo]); });\n    const ht = t.querySelector('#howto-tour'); if (ht) ht.onclick = (e) => { e.preventDefault(); openTour(); };\n    wireSects(t);\n    t.querySelectorAll('[data-mission]').forEach((b) => b.onclick = () => {\n      const mission = rules?.missions?.find(m => m.id === b.dataset.mission);\n      if (mission?.puzzle?.required) openTaskPuzzle({ selector: { scope: 'mission', targetId: mission.id }, path: `/v1/missions/${mission.id}`, label: mission.name, submitLabel: 'Solve and attempt mission', trigger: b });\n      else act('POST', `/v1/missions/${b.dataset.mission}`, {}).then(() => renderStart());\n    });\n    t.querySelectorAll('[data-swclaim]').forEach((b) => b.onclick = () => {\n      const inp = t.querySelector(`.sw-proof[data-for=\"${b.dataset.swclaim}\"]`);\n      const proof = inp ? inp.value.trim() : '';\n",
+          "baseline": "    t.querySelectorAll('[data-crgo]').forEach((b) => b.onclick = () => { setTab(b.dataset.crgo); spotlight(SPOT[b.dataset.crgo]); });\n    const ht = t.querySelector('#howto-tour'); if (ht) ht.onclick = (e) => { e.preventDefault(); openTour(); };\n    wireSects(t);\n    t.querySelectorAll('[data-mission]').forEach((b) => b.onclick = () => act('POST', `/v1/missions/${b.dataset.mission}`, {}).then(() => renderStart()));\n    t.querySelectorAll('[data-swclaim]').forEach((b) => b.onclick = () => {\n      const inp = t.querySelector(`.sw-proof[data-for=\"${b.dataset.swclaim}\"]`);\n      const proof = inp ? inp.value.trim() : '';\n"
+        },
+        {
+          "at": 959196,
           "current": "    // but draws law heat + a harder bust. Same cash EV — the choice is your risk appetite.\n    const crimeCard = (c) => {\n      const { terms, choices } = coreCrimeMarkup(c);\n      return `<article class=\"card noir-job-card\">${aart('crime', c.id)}<div class=\"noir-job-content\">\n        <div class=\"noir-job-eyebrow\">Street job · Level ${c.lvl}</div><span class=\"t\">${esc(c.name)}</span>\n        ${terms}<div class=\"verbrow\">${choices}</div></div></article>`;\n    };\n    const allCrimes = [...(rules?.crimes || [])].sort((a, b) => a.lvl - b.lvl);\n    const lvl = me?.level || 1;\n",
           "baseline": "    // but draws law heat + a harder bust. Same cash EV — the choice is your risk appetite.\n    const crimeCard = (c) => {\n      const { terms, choices } = coreCrimeMarkup(c);\n      return `<div class=\"card\">${aart('crime', c.id)}<span class=\"t\">${esc(c.name)}</span>${terms}<div class=\"verbrow\">${choices}</div></div>`;\n    };\n    const allCrimes = [...(rules?.crimes || [])].sort((a, b) => a.lvl - b.lvl);\n    const lvl = me?.level || 1;\n"
         },
         {
-          "at": 973694,
+          "at": 974400,
           "current": "    // jobs + the bank/map lead the screen; everything else is a labeled drawer that stays how you\n    // left it. One glance = act; the depth is a click away, not a scroll away.\n    t.innerHTML = `\n      <div class=\"noir-jobs-heading\"><h2>Find your next score</h2><span>${best.length} available · Level ${lvl}</span></div>\n      ${streetActionClock()}\n      <div class=\"grid noir-job-grid\">${crimes || restCrimes && '<span class=\"d\" style=\"color:var(--dim)\">no jobs at your level yet — open the full book below</span>' || ''}</div>\n      ${rest.length ? sect('crimes-all', 'The Full Book', `every job in the city (${allCrimes.length})`, `<div class=\"grid noir-job-grid\">${restCrimes}</div>`) : ''}\n\n${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [`Pocket: ${guideMoney(b.pocket)}. Bank total: ${guideMoney(b.total)}.`, `Cleared: ${guideMoney(b.cleared)}. In transit: ${guideMoney(b.transit)}. Clearing: ${b.seconds == null ? 'unknown' : minsTxt(b.seconds)}.`, 'A killer can loot pocket cash and deposits in transit. Cleared cash avoids that cut. All bank cash is lost on death.'];})())}\n      <div class=\"card\" style=\"display:flex;flex-wrap:wrap;gap:8px;align-items:center\">\n",
           "baseline": "    // jobs + the bank/map lead the screen; everything else is a labeled drawer that stays how you\n    // left it. One glance = act; the depth is a click away, not a scroll away.\n    t.innerHTML = `\n      <h2 style=\"margin-top:14px\">Crimes <span class=\"d\" style=\"color:var(--dim);font-size:12.5px\">— your best jobs at level ${lvl}</span></h2>\n      ${streetActionClock()}\n      <div class=\"grid\">${crimes || restCrimes && '<span class=\"d\" style=\"color:var(--dim)\">no jobs at your level yet — open the full book below</span>' || ''}</div>\n      ${rest.length ? sect('crimes-all', 'The Full Book', `every job in the city (${allCrimes.length})`, `<div class=\"grid\">${restCrimes}</div>`) : ''}\n\n${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [`Pocket: ${guideMoney(b.pocket)}. Bank total: ${guideMoney(b.total)}.`, `Cleared: ${guideMoney(b.cleared)}. In transit: ${guideMoney(b.transit)}. Clearing: ${b.seconds == null ? 'unknown' : minsTxt(b.seconds)}.`, 'A killer can loot pocket cash and deposits in transit. Cleared cash avoids that cut. All bank cash is lost on death.'];})())}\n      <div class=\"card\" style=\"display:flex;flex-wrap:wrap;gap:8px;align-items:center\">\n"
         },
         {
-          "at": 1389861,
+          "at": 977015,
+          "current": "        <span class=\"d\" style=\"margin-left:6px\">${['◉', '◉', '◉'].map((d, i) => `<span style=\"color:${i < hu.step ? 'var(--ok)' : 'var(--dim)'}\">${d}</span>`).join('​')}</span>\n        <div class=\"d\">${esc(hu.what || '')}</div>\n        ${hu.done ? '' : `<div style=\"margin-top:6px\">\n          ${hu.here ? `<button class=\"act prime\" id=\"hu-go\"${hu.legworkDone === false ? ' disabled' : ''}>${hu.puzzle?.required ? 'OPEN CHECK-IN PUZZLE' : 'CHECK IN'}${hu.step === 2 ? ` — collect $${fmt(hu.pay || 0)}` : ''}</button>${hu.legworkDone === false ? ` <span class=\"d\" style=\"font-size:11px\">the contact wants the work done first — ${esc(hu.legwork || 'pull a job')}</span>` : ''}`\n            : `<button class=\"act\" data-do=\"POST /v1/travel/${hu.district}\">travel to ${esc(hu.districtName || '')}</button> <span class=\"d\" style=\"font-size:11px\">then check in there</span>`}\n        </div>`}\n      </div>` : ''}\n",
+          "baseline": "        <span class=\"d\" style=\"margin-left:6px\">${['◉', '◉', '◉'].map((d, i) => `<span style=\"color:${i < hu.step ? 'var(--ok)' : 'var(--dim)'}\">${d}</span>`).join('​')}</span>\n        <div class=\"d\">${esc(hu.what || '')}</div>\n        ${hu.done ? '' : `<div style=\"margin-top:6px\">\n          ${hu.here ? `<button class=\"act prime\" id=\"hu-go\"${hu.legworkDone === false ? ' disabled' : ''}>CHECK IN${hu.step === 2 ? ` — collect $${fmt(hu.pay || 0)}` : ''}</button>${hu.legworkDone === false ? ` <span class=\"d\" style=\"font-size:11px\">the contact wants the work done first — ${esc(hu.legwork || 'pull a job')}</span>` : ''}`\n            : `<button class=\"act\" data-do=\"POST /v1/travel/${hu.district}\">travel to ${esc(hu.districtName || '')}</button> <span class=\"d\" style=\"font-size:11px\">then check in there</span>`}\n        </div>`}\n      </div>` : ''}\n"
+        },
+        {
+          "at": 985310,
+          "current": "        if (dg) dg.onclick = () => act('POST', '/v1/clues/dig', {}).then(() => renderStreets());\n      } }\n    // THE HUSTLE — check in at the current stop\n    { const hg = t.querySelector('#hu-go'); if (hg) hg.onclick = () => hu.puzzle?.required\n      ? openTaskPuzzle({ selector: { scope: 'hustle', targetId: 'legwork' }, path: '/v1/hustle/advance', label: 'Hustle legwork check-in', submitLabel: 'Solve and check in', trigger: hg })\n      : act('POST', '/v1/hustle/advance', {}).then(() => renderStreets()); }\n    t.querySelectorAll('[data-corner-take]').forEach((b) => b.onclick = () =>\n      act('POST', `/v1/corner/${b.dataset.cornerTake}/accept`, {}).then(() => renderStreets()));\n    t.querySelectorAll('[data-corner-claim]').forEach((b) => b.onclick = () =>\n",
+          "baseline": "        if (dg) dg.onclick = () => act('POST', '/v1/clues/dig', {}).then(() => renderStreets());\n      } }\n    // THE HUSTLE — check in at the current stop\n    { const hg = t.querySelector('#hu-go'); if (hg) hg.onclick = () => act('POST', '/v1/hustle/advance', {}).then(() => renderStreets()); }\n    t.querySelectorAll('[data-corner-take]').forEach((b) => b.onclick = () =>\n      act('POST', `/v1/corner/${b.dataset.cornerTake}/accept`, {}).then(() => renderStreets()));\n    t.querySelectorAll('[data-corner-claim]').forEach((b) => b.onclick = () =>\n"
+        },
+        {
+          "at": 1340980,
+          "current": "      act('POST', '/v1/pen/talk', {}).then(() => renderPen()); }\n  }\n\n  let taskPuzzleUI = null;\n  function openTaskPuzzle(options) {\n    taskPuzzleUI ||= window.createOmertaTaskPuzzles({ read: api, issue: api, action: act,\n      getActor: () => `${me?.id}:${me?.generation}`, refresh: async () => { await refresh(); renderActive({ afterAction: true }); },\n      focusFallback: () => { const panel = document.getElementById(`tab-${currentTab}`); const control = [...(panel?.querySelectorAll('button:not(:disabled), summary') || [])].find(node => node.getClientRects().length); (control || panel)?.focus(); } });\n    taskPuzzleUI.open(options);\n  }\n  document.addEventListener('click', event => {\n    const button = event.target?.closest?.('[data-task-crime]');\n    if (!button || button.disabled) return;\n    const crime = rules?.crimes?.find(c => c.id === button.dataset.taskCrime);\n    if (crime) openTaskPuzzle({ selector: { scope: 'crime', targetId: crime.id }, path: `/v1/crimes/${crime.id}`,\n      label: `Prepare ${crime.name}`, submitLabel: 'Solve and attempt crime', trigger: button, body: { approach: 'standard' }, approaches: rules?.crimeApproaches });\n  });\n\n  // data-do buttons (POST/GET; an optional data-body='{...}' rides along).\n  // A button may also carry data-confirm=\"Title|the consequence\" — most of the irreversible verbs\n  // in the game are declarative data-do buttons, so the guard has to live here rather than being\n",
+          "baseline": "      act('POST', '/v1/pen/talk', {}).then(() => renderPen()); }\n  }\n\n  // data-do buttons (POST/GET; an optional data-body='{...}' rides along).\n  // A button may also carry data-confirm=\"Title|the consequence\" — most of the irreversible verbs\n  // in the game are declarative data-do buttons, so the guard has to live here rather than being\n"
+        },
+        {
+          "at": 1391937,
           "current": "  if (workspaceUX) uxModules.push(workspaceUX);\n  for (const factory of [window.createOmertaFeedback, window.createOmertaProgression, window.createOmertaSocial, window.createOmertaNavigation,\n    window.createOmertaTactics, window.createOmertaInvestigation, window.createOmertaCoordination,\n    window.createOmertaFeel, window.createOmertaTools, window.createOmertaIdentity, window.createOmertaStory, window.createOmertaQuests, window.createOmertaCommunity, window.createOmertaWorld, window.createOmertaNoirShell, window.createOmertaStrategyCommand]) {\n    if (!factory) continue;\n    try { const module = factory(uxContext); uxModules.push(module); if (factory === window.createOmertaFeedback) feedbackUX = module; }\n    catch (error) { console.warn('UI enhancement unavailable', error); }\n",
           "baseline": "  if (workspaceUX) uxModules.push(workspaceUX);\n  for (const factory of [window.createOmertaFeedback, window.createOmertaProgression, window.createOmertaSocial, window.createOmertaNavigation,\n    window.createOmertaTactics, window.createOmertaInvestigation, window.createOmertaCoordination,\n    window.createOmertaFeel, window.createOmertaTools, window.createOmertaIdentity, window.createOmertaStory, window.createOmertaQuests, window.createOmertaCommunity, window.createOmertaWorld]) {\n    if (!factory) continue;\n    try { const module = factory(uxContext); uxModules.push(module); if (factory === window.createOmertaFeedback) feedbackUX = module; }\n    catch (error) { console.warn('UI enhancement unavailable', error); }\n"
         },
         {
-          "at": 1390656,
+          "at": 1392732,
           "current": "  // The shell reveals optional controls without replacing their original action handlers.\n  const gameMenu = $('#game-menu'), cityDirectory = $('#city-directory');\n  const wideNavigation = matchMedia('(min-width: 1001px)');\n  const syncDirectory = () => { cityDirectory.open = false; };\n  syncDirectory(); wideNavigation.addEventListener('change', syncDirectory);\n  function closeGameMenu(focus = false) {\n    if (!gameMenu.open) return;\n",
           "baseline": "  // The shell reveals optional controls without replacing their original action handlers.\n  const gameMenu = $('#game-menu'), cityDirectory = $('#city-directory');\n  const wideNavigation = matchMedia('(min-width: 1001px)');\n  const syncDirectory = () => { cityDirectory.open = wideNavigation.matches; };\n  syncDirectory(); wideNavigation.addEventListener('change', syncDirectory);\n  function closeGameMenu(focus = false) {\n    if (!gameMenu.open) return;\n"
         }
@@ -370,12 +498,59 @@ export const AGE_REMOVAL_SOURCE = freeze({
         }
       ]
     },
+    "public/wiki.html": {
+      "current": {
+        "mode": "100644",
+        "blob": "8660ac659f336ffaa4b2d3cf3aa2ec98da5cceba",
+        "sha256": "0f5236174c06c330cdaa53eb8475110cfda07883c4328a96decb34998fd52c80",
+        "bytes": 253971
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "e68cd78e93077bc31a4b0d48401ed34065299977",
+        "sha256": "5fcd9826e5cfa5beb6b7330d50fc41cc319e5647734111c2479104efd72f4673",
+        "bytes": 252178
+      },
+      "inverses": [
+        {
+          "at": 20361,
+          "current": "  return `${from ? '…' : ''}${escText(before)}<mark>${escText(match)}</mark>${escText(after)}${to < clean.length ? '…' : ''}`;\n};\nconst SECTIONS = [\n  { id: 'task-puzzles', group: 'Start', title: 'Task puzzles', tag: 'missions, Hustle and optional preparation',\n    html: `<p>Family Missions <code>m2</code>, <code>m11</code>, <code>m12</code> and the Hustle legwork check-in require a short puzzle as well as their normal requirements. Open Family missions on Start Here or the check-in on Streets. The Hustle still needs real legwork and the correct district.</p>\n      <p>Crime cards offer optional preparation with feedback only, never improved odds or rewards. Choose an approach before submitting. <b>Solving and submitting executes the job</b> with its usual resources and risks; closing does not.</p>\n      <p>Choose a patrol start time, build an ordered courier route, match parcels to contacts, or deduce a suspect from evidence. Use touch or Tab, arrow keys, Space and Enter, with hints, visible focus and no dragging or fast reactions. Close with the button or Escape.</p>\n      <p>Refresh and reopening keep the issued challenge and a local answer draft when storage is available. After a lost response, use <b>Check task status</b> to read the receipt without resending. If needed, explicitly retry the exact original submission and request key. A changed occurrence requires <b>Reopen current task</b>; any committed crime attempt invalidates previous preparation.</p>\n      <p>Agents solve the same public constraints: <code>POST /v1/task-puzzles</code> with <code>{scope,targetId}</code>, or read with <code>GET /v1/task-puzzles?scope=…&amp;targetId=…</code>. Submit <code>puzzle:{id,answer}</code> with the existing job request. Verification and consumption commit with the job. See <code>/openapi.json</code> and the <a href=\"/agents#task-puzzles\">agent guide</a>. Puzzles are gameplay, not human verification.</p>` },\n  { id: 'welcome', group: 'Start', title: 'The city', tag: 'rules and reference',\n    html: `<p class=\"lead\">OMERTÀ is a persistent multiplayer mafia RPG. The server runs the rules. You start in the Docks with $500 and share the city with human and autonomous players. Other players can kill your character; your account and bloodline records survive.</p>\n      <p>Use the search box to find a system, risk, or route. The numbers here are the current settings and can change. \"Level N\" is your\n",
+          "baseline": "  return `${from ? '…' : ''}${escText(before)}<mark>${escText(match)}</mark>${escText(after)}${to < clean.length ? '…' : ''}`;\n};\nconst SECTIONS = [\n  { id: 'welcome', group: 'Start', title: 'The city', tag: 'rules and reference',\n    html: `<p class=\"lead\">OMERTÀ is a persistent multiplayer mafia RPG. The server runs the rules. You start in the Docks with $500 and share the city with human and autonomous players. Other players can kill your character; your account and bloodline records survive.</p>\n      <p>Use the search box to find a system, risk, or route. The numbers here are the current settings and can change. \"Level N\" is your\n"
+        }
+      ]
+    },
+    "schema.sql": {
+      "current": {
+        "mode": "100755",
+        "blob": "511950e2a68d50cebebe6139098a5dbb609117c9",
+        "sha256": "b5c66d128de9b730bac19b135a8d13791f3bc70ba4a27818abec7de5141564de",
+        "bytes": 627053
+      },
+      "baseline": {
+        "mode": "100755",
+        "blob": "86b671c5d6f6928ff3e66f1ad0fca5f46a7364e3",
+        "sha256": "659235a1735d24dbebc5f9b4dfcff8a58ed766a27fd3ae32fc6c6d2ec77006dc",
+        "bytes": 625914
+      },
+      "inverses": [
+        {
+          "at": 135965,
+          "current": "  outcome TEXT NOT NULL\n);\n\n-- A durable crime occurrence, including failed attempts. Direct SQL prevents a\n-- stale character snapshot from clobbering it; prepared answers never bind to clocks.\nALTER TABLE characters ADD COLUMN IF NOT EXISTS crime_puzzle_revision BIGINT NOT NULL DEFAULT 0;\n\n-- ── Indexes & integrity (audit hardening) — after all tables exist ──\n-- No two LIVING characters may share a name (referral codes resolve by name, §7.13).\nCREATE UNIQUE INDEX IF NOT EXISTS ux_char_name_alive ON characters (name) WHERE alive;\n",
+          "baseline": "  outcome TEXT NOT NULL\n);\n\n-- ── Indexes & integrity (audit hardening) — after all tables exist ──\n-- No two LIVING characters may share a name (referral codes resolve by name, §7.13).\nCREATE UNIQUE INDEX IF NOT EXISTS ux_char_name_alive ON characters (name) WHERE alive;\n"
+        },
+        {
+          "at": 623203,
+          "current": "  solved_at TIMESTAMPTZ,\n  PRIMARY KEY (account_id,day_ordinal)\n);\n\n-- Durable gameplay task puzzles. Private payloads and consumed receipts are retained;\n-- trusted adapters bind occurrences and consume under the job's character transaction.\n-- Issuance history survives estate cleanup under its original character ID, never as heir authority.\nCREATE TABLE IF NOT EXISTS task_puzzles (\n  id TEXT PRIMARY KEY,\n  issue_order BIGSERIAL NOT NULL,\n  character_id TEXT NOT NULL REFERENCES characters(id),\n  scope TEXT NOT NULL,\n  target_id TEXT NOT NULL,\n  context_key TEXT NOT NULL,\n  version INT NOT NULL CHECK (version >= 1),\n  kind TEXT NOT NULL,\n  structural_signature TEXT NOT NULL,\n  puzzle JSONB NOT NULL,\n  issued_at TIMESTAMPTZ NOT NULL DEFAULT now(),\n  consumed_at TIMESTAMPTZ,\n  UNIQUE (character_id, scope, target_id, context_key)\n);\nCREATE INDEX IF NOT EXISTS ix_task_puzzles_recent ON task_puzzles(character_id, issue_order DESC);\n",
+          "baseline": "  solved_at TIMESTAMPTZ,\n  PRIMARY KEY (account_id,day_ordinal)\n);\n"
+        }
+      ]
+    },
     "src/agentgateway.js": {
       "current": {
         "mode": "100644",
-        "blob": "b453f64df26b4a4a42adaf8352e4a1e2a00556b3",
-        "sha256": "1f17ee1bb1550ec60a0d862df77b029c5966d3a4447638dfe89a7e83bf461d50",
-        "bytes": 160952
+        "blob": "a5587d593e9468e8b026de46c578bc3ad6cce516",
+        "sha256": "8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f",
+        "bytes": 161832
       },
       "baseline": {
         "mode": "100644",
@@ -385,29 +560,49 @@ export const AGE_REMOVAL_SOURCE = freeze({
       },
       "inverses": [
         {
-          "at": 4418,
+          "at": 3848,
+          "current": "import { EQUIPMENT_ECONOMY_CONTRACTS, EQUIPMENT_ECONOMY_SCHEMAS } from './equipment-economy-contracts.js';\nimport { COMPANY_WORKFORCE_CONTRACTS, COMPANY_WORKFORCE_SCHEMAS } from './company-workforce-contracts.js';\nimport { DISTRICTS, GOODS } from './rules.js';\nimport { TASK_PUZZLE_CONTRACTS, TASK_PUZZLE_SCHEMAS, TASK_PUZZLE_SUBMISSION } from './task-puzzle-contract.js';\n\n// Routes reachable WITHOUT a player token (the discovery + auth surface). Everything else under\n// /v1 needs the bearer JWT; anything under /v1/mod/ needs the x-mod-key header instead.\n",
+          "baseline": "import { EQUIPMENT_ECONOMY_CONTRACTS, EQUIPMENT_ECONOMY_SCHEMAS } from './equipment-economy-contracts.js';\nimport { COMPANY_WORKFORCE_CONTRACTS, COMPANY_WORKFORCE_SCHEMAS } from './company-workforce-contracts.js';\nimport { DISTRICTS, GOODS } from './rules.js';\n\n// Routes reachable WITHOUT a player token (the discovery + auth surface). Everything else under\n// /v1 needs the bearer JWT; anything under /v1/mod/ needs the x-mod-key header instead.\n"
+        },
+        {
+          "at": 4530,
           "current": "  '/v1/rules', '/v1/catalog', '/v1/arena', '/v1/depots',\n  '/v1/resources/catalog', '/v1/resources/services', '/v1/resources/auctions', '/v1/resources/payments/webhook',\n  '/v1/auth/guest', '/v1/auth/agent', '/v1/auth/x', '/v1/auth/privy',\n  '/v1/access/redeem', '/v1/access/logout', '/privacy', '/terms', '/dmca', '/resources', '/vendor/walletconnect.js',\n]);\n\n// Human/asset routes we don't advertise in the machine API contract (they serve HTML/markdown).\n",
           "baseline": "  '/v1/rules', '/v1/catalog', '/v1/arena', '/v1/depots',\n  '/v1/resources/catalog', '/v1/resources/services', '/v1/resources/auctions', '/v1/resources/payments/webhook',\n  '/v1/auth/guest', '/v1/auth/agent', '/v1/auth/x', '/v1/auth/privy',\n  '/v1/access/redeem', '/v1/access/logout', '/v1/age-check', '/privacy', '/terms', '/dmca', '/resources', '/vendor/walletconnect.js',\n]);\n\n// Human/asset routes we don't advertise in the machine API contract (they serve HTML/markdown).\n"
         },
         {
-          "at": 30621,
+          "at": 23485,
+          "current": "// COMPLETE path discovery; these overlays replace its generic object body where the server itself\n// emits an action that an agent is expected to send back verbatim.\nconst OPERATION_CONTRACTS = {\n  ...TASK_PUZZLE_CONTRACTS,\n  ...QUESTING_CONTRACTS,\n  'GET /v1/deeds/discovery': {\n    operationId: 'getDeedDiscovery',\n",
+          "baseline": "// COMPLETE path discovery; these overlays replace its generic object body where the server itself\n// emits an action that an agent is expected to send back verbatim.\nconst OPERATION_CONTRACTS = {\n  ...QUESTING_CONTRACTS,\n  'GET /v1/deeds/discovery': {\n    operationId: 'getDeedDiscovery',\n"
+        },
+        {
+          "at": 30761,
           "current": "    } },\n    responseSchema: { type: 'object', required: ['token', 'agent'], properties: {\n      token: { type: 'string', description: '90-day agent bearer.' },\n      agent: { const: true, description: 'Permanently classified at creation; excluded from human-only rewards.' },\n    } },\n  },\n  'POST /v1/access/redeem': {\n",
           "baseline": "    } },\n    responseSchema: { type: 'object', required: ['token', 'agent'], properties: {\n      token: { type: 'string', description: '90-day agent bearer.' },\n      agent: { const: true, description: 'Permanently classified at creation; excluded from human-only rewards. No birth date is needed.' },\n    } },\n  },\n  'POST /v1/access/redeem': {\n"
         },
         {
-          "at": 30981,
+          "at": 31121,
           "current": "    requestSchema: { type: 'object', required: ['bootstrapSecret'], properties: {\n      inviteCode: { type: 'string', maxLength: 128, description: 'Unused launch invitation. Reuse the same bootstrapSecret after an ambiguous response.' },\n      bootstrapSecret: { type: 'string', pattern: '^[A-Za-z0-9_-]{43}$', description: 'Persist 32 cryptographically random bytes encoded as unpadded base64url before submitting.' },\n    } },\n  },\n  'POST /v1/access/session': { operationId: 'restoreBrowserAccess', requestSchema: { type: 'object' } },\n  'POST /v1/access/logout': { operationId: 'clearBrowserAccess', requestSchema: { type: 'object' } },\n  'GET /v1/invites': { operationId: 'getLaunchInvites' },\n",
           "baseline": "    requestSchema: { type: 'object', required: ['bootstrapSecret'], properties: {\n      inviteCode: { type: 'string', maxLength: 128, description: 'Unused launch invitation. Reuse the same bootstrapSecret after an ambiguous response.' },\n      bootstrapSecret: { type: 'string', pattern: '^[A-Za-z0-9_-]{43}$', description: 'Persist 32 cryptographically random bytes encoded as unpadded base64url before submitting.' },\n      birthDate: { type: 'string', format: 'date', description: 'Human/operator-supplied date for first account creation; omitted with a valid age-check cookie or existing bootstrap recovery. Never infer a date.' },\n    } },\n  },\n  'POST /v1/age-check': {\n    operationId: 'checkAgeEligibility',\n    requestSchema: { type: 'object', required: ['birthDate'], properties: {\n      birthDate: { type: 'string', format: 'date', description: 'Complete birth date, processed transiently and never saved in account records.' },\n    } },\n    extraResponses: { 403: { description: 'Account creation is unavailable; use the privacy contact for help.' } },\n  },\n  'POST /v1/access/session': { operationId: 'restoreBrowserAccess', requestSchema: { type: 'object' } },\n  'POST /v1/access/logout': { operationId: 'clearBrowserAccess', requestSchema: { type: 'object' } },\n  'GET /v1/invites': { operationId: 'getLaunchInvites' },\n"
         },
         {
-          "at": 152578,
+          "at": 64394,
+          "current": "    operationId: 'commitCrime',\n    requestSchema: { type: 'object', additionalProperties: false, properties: {\n      approach: { type: 'string', enum: ['quiet', 'standard', 'loud'], default: 'standard' },\n      puzzle: { ...TASK_PUZZLE_SUBMISSION, description: 'Optional preparation, feedback only. Issue/resume with scope crime and this crime ID. Any committed crime attempt invalidates previous preparations. Omit for ordinary crime; never changes odds or rewards.' },\n    } },\n  },\n  'POST /v1/market/:id/fill': {\n",
+          "baseline": "    operationId: 'commitCrime',\n    requestSchema: { type: 'object', additionalProperties: false, properties: {\n      approach: { type: 'string', enum: ['quiet', 'standard', 'loud'], default: 'standard' },\n    } },\n  },\n  'POST /v1/market/:id/fill': {\n"
+        },
+        {
+          "at": 81982,
+          "current": "};\n\nconst AGENT_SCHEMAS = {\n  ...TASK_PUZZLE_SCHEMAS,\n  ...QUESTING_SCHEMAS,\n  DeedDiscovery: {\n    type: 'object', required: ['config', 'primaryClaimed', 'currentDistrict', 'questEligible', 'actorEligible', 'buildings'],\n",
+          "baseline": "};\n\nconst AGENT_SCHEMAS = {\n  ...QUESTING_SCHEMAS,\n  DeedDiscovery: {\n    type: 'object', required: ['config', 'primaryClaimed', 'currentDistrict', 'questEligible', 'actorEligible', 'buildings'],\n"
+        },
+        {
+          "at": 153010,
           "current": "      description: 'Autonomous agents are first-class players. New accounts need no invitation. '\n        + 'See /agents for the quickstart, '\n        + '/v1/rules for the machine rulebook, and /llms.txt for the discovery index. New agents use '\n        + 'POST /v1/auth/agent; existing accounts use POST /v1/auth/agent-key. Agents need a linked EVM wallet and a minted character '\n        + 'before on-chain extraction can open for them. Errors are stable string codes: { error, message }.',\n      contact: { url: baseUrl },\n    },\n",
           "baseline": "      description: 'Autonomous agents are first-class players. New accounts need no invitation. '\n        + 'See /agents for the quickstart, '\n        + '/v1/rules for the machine rulebook, and /llms.txt for the discovery index. New agents use '\n        + 'POST /v1/auth/agent without a birth date; existing accounts use POST /v1/auth/agent-key. Agents need a linked EVM wallet and a minted character '\n        + 'before on-chain extraction can open for them. Errors are stable string codes: { error, message }.',\n      contact: { url: baseUrl },\n    },\n"
         },
         {
-          "at": 155512,
-          "current": "- Execute a turn: POST ${baseUrl}/v1/agent/act with the latest \\`{turnId, actionId}\\`; success returns the post-action turn, while \\`409 stale_turn\\` returns a replacement snapshot without executing.\n- Agent Alpha is the owner-operated bounded runner in \\`tools/agent-alpha.js\\`: one durable identity, default one action, finite 1–50 attempts, at least 3100 ms between mutations, no reset, and no fleet, PvP, borrowing, human-faucet, wallet, mint, withdrawal, or replacement automation.\n- [OpenAPI 3.1 spec](${baseUrl}/openapi.json): every route, for your tool framework.\n- New agents: POST ${baseUrl}/v1/auth/agent with a durably saved random 32-byte base64url bootstrapSecret (permanent 🤖 flag, 90-day token). Save the bearer before acknowledging bootstrap; retry the same secret after an ambiguous response. Existing accounts use POST ${baseUrl}/v1/auth/agent-key.\n- Before extraction: link a wallet through POST ${baseUrl}/v1/wallet/challenge and POST ${baseUrl}/v1/wallet/verify, then mint the character through POST ${baseUrl}/v1/character/mint. Wallet linking alone is not enough; the production rail is still dormant until launch.\n\n## Machine rulebook\n",
-          "baseline": "- Execute a turn: POST ${baseUrl}/v1/agent/act with the latest \\`{turnId, actionId}\\`; success returns the post-action turn, while \\`409 stale_turn\\` returns a replacement snapshot without executing.\n- Agent Alpha is the owner-operated bounded runner in \\`tools/agent-alpha.js\\`: one durable identity, default one action, finite 1–50 attempts, at least 3100 ms between mutations, no reset, and no fleet, PvP, borrowing, human-faucet, wallet, mint, withdrawal, or replacement automation.\n- [OpenAPI 3.1 spec](${baseUrl}/openapi.json): every route, for your tool framework.\n- New agents: POST ${baseUrl}/v1/auth/agent with a durably saved random 32-byte base64url bootstrapSecret (permanent 🤖 flag, no birth date, 90-day token). Save the bearer before acknowledging bootstrap; retry the same secret after an ambiguous response. Human signup requires an age check. Existing accounts use POST ${baseUrl}/v1/auth/agent-key.\n- Before extraction: link a wallet through POST ${baseUrl}/v1/wallet/challenge and POST ${baseUrl}/v1/wallet/verify, then mint the character through POST ${baseUrl}/v1/character/mint. Wallet linking alone is not enough; the production rail is still dormant until launch.\n\n## Machine rulebook\n"
+          "at": 155944,
+          "current": "- Execute a turn: POST ${baseUrl}/v1/agent/act with the latest \\`{turnId, actionId}\\`; success returns the post-action turn, while \\`409 stale_turn\\` returns a replacement snapshot without executing.\n- Agent Alpha is the owner-operated bounded runner in \\`tools/agent-alpha.js\\`: one durable identity, default one action, finite 1–50 attempts, at least 3100 ms between mutations, no reset, and no fleet, PvP, borrowing, human-faucet, wallet, mint, withdrawal, or replacement automation.\n- [OpenAPI 3.1 spec](${baseUrl}/openapi.json): every route, for your tool framework.\n- New agents: POST ${baseUrl}/v1/auth/agent with a durably saved random 32-byte base64url bootstrapSecret (permanent 🤖 flag, 90-day token). Save the bearer before acknowledging bootstrap; retry the same secret after an ambiguous response. Existing accounts use POST ${baseUrl}/v1/auth/agent-key.\n- Before extraction: link a wallet through POST ${baseUrl}/v1/wallet/challenge and POST ${baseUrl}/v1/wallet/verify, then mint the character through POST ${baseUrl}/v1/character/mint. Wallet linking alone is not enough; the production rail is still dormant until launch.\n\n## Machine rulebook\n- [Rules](${baseUrl}/v1/rules): crimes, districts, guns, drugs, goods, catalogs, thresholds, paths.\n- Task puzzles: POST /v1/task-puzzles with {scope,targetId} issues or resumes the current puzzle; GET with the same query reads it without issuing. Required for missions m2/m11/m12 and Hustle legwork (targetId legwork, step 1). Submit puzzle:{id,answer} with the existing job action. Crime preparation is optional feedback only. Hints and all constraints are public; agents remain first-class players. Puzzles are gameplay, not human verification.\n- [Capability catalog](${baseUrl}/v1/catalog): level-gated fronts plus direct Phase 1 world-graph route pointers.\n\n## Phase 1 world graph: direct play\n",
+          "baseline": "- Execute a turn: POST ${baseUrl}/v1/agent/act with the latest \\`{turnId, actionId}\\`; success returns the post-action turn, while \\`409 stale_turn\\` returns a replacement snapshot without executing.\n- Agent Alpha is the owner-operated bounded runner in \\`tools/agent-alpha.js\\`: one durable identity, default one action, finite 1–50 attempts, at least 3100 ms between mutations, no reset, and no fleet, PvP, borrowing, human-faucet, wallet, mint, withdrawal, or replacement automation.\n- [OpenAPI 3.1 spec](${baseUrl}/openapi.json): every route, for your tool framework.\n- New agents: POST ${baseUrl}/v1/auth/agent with a durably saved random 32-byte base64url bootstrapSecret (permanent 🤖 flag, no birth date, 90-day token). Save the bearer before acknowledging bootstrap; retry the same secret after an ambiguous response. Human signup requires an age check. Existing accounts use POST ${baseUrl}/v1/auth/agent-key.\n- Before extraction: link a wallet through POST ${baseUrl}/v1/wallet/challenge and POST ${baseUrl}/v1/wallet/verify, then mint the character through POST ${baseUrl}/v1/character/mint. Wallet linking alone is not enough; the production rail is still dormant until launch.\n\n## Machine rulebook\n- [Rules](${baseUrl}/v1/rules): crimes, districts, guns, drugs, goods, catalogs, thresholds, paths.\n- [Capability catalog](${baseUrl}/v1/catalog): level-gated fronts plus direct Phase 1 world-graph route pointers.\n\n## Phase 1 world graph: direct play\n"
         }
       ]
     },
@@ -499,6 +694,145 @@ export const AGE_REMOVAL_SOURCE = freeze({
         }
       ]
     },
+    "src/game.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "c833190107a3f378e3513718d92ea02dbc04b347",
+        "sha256": "f027bfa3c314c9d045a2446e9fef755fe8e4b67ac7ba49ceb0661302bac78654",
+        "bytes": 231839
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "01e36158e5398dc8da427affd8363ee8457d7869",
+        "sha256": "f8058d0890ab0d2bf226b0f1c645f95e756f9ac86cad4528c134c1fe7abb7a28",
+        "bytes": 231036
+      },
+      "inverses": [
+        {
+          "at": 2241,
+          "current": "import { accrue } from './accrual.js';\nimport { captureAccrualEconomy, accrualEconomyIssues } from './economy-monitor.js';\nimport { consumeStreetActionCooldown } from './actioncooldown.js';\nimport { taskPuzzleContext } from './task-puzzle-jobs.js';\nimport { consumeTaskPuzzle } from './task-puzzles.js';\nimport { resolvedBoundedClaimIds, takeAccountDailyClaim } from './accountdaily.js';\nimport { logCollect } from './collection.js';\nimport { claimFirst, firstTaken, __setAnnouncer } from './firsts.js';\n",
+          "baseline": "import { accrue } from './accrual.js';\nimport { captureAccrualEconomy, accrualEconomyIssues } from './economy-monitor.js';\nimport { consumeStreetActionCooldown } from './actioncooldown.js';\nimport { resolvedBoundedClaimIds, takeAccountDailyClaim } from './accountdaily.js';\nimport { logCollect } from './collection.js';\nimport { claimFirst, firstTaken, __setAnnouncer } from './firsts.js';\n"
+        },
+        {
+          "at": 175840,
+          "current": "}\n\n// ── §7.2 CRIME ──\nexport async function doCrime(ch, crimeId, client, h, approach, puzzle) {\n  const c = CRIMES.find((x) => x.id === crimeId);\n  if (!c) throw new GameError('bad_crime', 'No such job.');\n  const lvl = levelOf(Number(ch.respect));\n  if (jailed(ch)) throw new GameError('jailed', 'You are in lockup.');\n  if (lvl < c.lvl) throw new GameError('level', `That job needs level ${c.lvl}.`);\n  if (Number(ch.nerve) < c.nerve) throw new GameError('nerve', `Takes ${c.nerve} nerve.`);\n  // Retain cooldown error priority, but do not consume prep before a known refusal.\n  const streetCool = coolLeft(ch.street_action_at);\n  if (streetCool) throw new GameError('cooldown', `Let the street settle. Next job or deal in ${coolWait(streetCool)}.`, { cooldownSeconds: streetCool });\n  const puzzleFeedback = puzzle !== undefined\n    ? await consumeTaskPuzzle(ch, await taskPuzzleContext(ch, { scope: 'crime', targetId: crimeId }, client), puzzle, client) : null;\n  await consumeStreetActionCooldown(ch, client);\n  await client.query('UPDATE characters SET crime_puzzle_revision=crime_puzzle_revision+1 WHERE id=$1', [ch.id]);\n  // D6a — THE APPROACH: the per-job risk/reward choice. An unknown/omitted approach falls back to\n  // 'standard' (the signed baseline, byte-identical to the old single-click behaviour). Cash EV is\n  // held ~flat by payMult ≈ 1/successMult, so the §7.2 cash faucet is untouched; the choice moves the\n",
+          "baseline": "}\n\n// ── §7.2 CRIME ──\nexport async function doCrime(ch, crimeId, client, h, approach) {\n  const c = CRIMES.find((x) => x.id === crimeId);\n  if (!c) throw new GameError('bad_crime', 'No such job.');\n  const lvl = levelOf(Number(ch.respect));\n  if (jailed(ch)) throw new GameError('jailed', 'You are in lockup.');\n  if (lvl < c.lvl) throw new GameError('level', `That job needs level ${c.lvl}.`);\n  if (Number(ch.nerve) < c.nerve) throw new GameError('nerve', `Takes ${c.nerve} nerve.`);\n  await consumeStreetActionCooldown(ch, client);\n  // D6a — THE APPROACH: the per-job risk/reward choice. An unknown/omitted approach falls back to\n  // 'standard' (the signed baseline, byte-identical to the old single-click behaviour). Cash EV is\n  // held ~flat by payMult ≈ 1/successMult, so the §7.2 cash faucet is untouched; the choice moves the\n"
+        },
+        {
+          "at": 179203,
+          "current": "  const chance = Math.min(0.97, (c.base + statEdge\n    + gangLevel * 0.02 + (held.includes('brick') ? 0.02 : 0) + (rIdx >= 9 ? 0.02 : 0)) * ap.successMult);\n  const roll = Math.random();\n  const outcome = await (async () => {\n    // SOLDIERS: the assigned, fit second rides along (assists + takes a cut + carries the risk)\n    const second = await assignedSoldier(client, ch.id);\n    // THE MARK (founder: \"crimes can't just be committed against nobody\") — every job names a\n",
+          "baseline": "  const chance = Math.min(0.97, (c.base + statEdge\n    + gangLevel * 0.02 + (held.includes('brick') ? 0.02 : 0) + (rIdx >= 9 ? 0.02 : 0)) * ap.successMult);\n  const roll = Math.random();\n  return (async () => {\n    // SOLDIERS: the assigned, fit second rides along (assists + takes a cut + carries the risk)\n    const second = await assignedSoldier(client, ch.id);\n    // THE MARK (founder: \"crimes can't just be committed against nobody\") — every job names a\n"
+        },
+        {
+          "at": 188908,
+          "current": "    return { ok: true, success: false, approach: ap.id, jailSeconds: jailS, victim: mark, soldier,\n      cooldownMs: PACING.STREET_ACTION_CD_MS };\n  })();\n  return { ...outcome, ...(puzzleFeedback ? { puzzle: puzzleFeedback } : {}) };\n}\n\n// ── §7.3 TRAIN ──\n",
+          "baseline": "    return { ok: true, success: false, approach: ap.id, jailSeconds: jailS, victim: mark, soldier,\n      cooldownMs: PACING.STREET_ACTION_CD_MS };\n  })();\n}\n\n// ── §7.3 TRAIN ──\n"
+        }
+      ]
+    },
+    "src/gateway/context.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "082bae0a3d426c12c949c42c496f82cbb0b13bf5",
+        "sha256": "7516534f6b3e426efe6c92136aa1bc9d599925fce15a89f4ce57cace35be466f",
+        "bytes": 43315
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "8e1203e0812192e64b349369eea0181406c40c24",
+        "sha256": "1b3dfaa49711d8b83824a1edbfb3bb7d554a24d8496d35c3ec47b72058fe6edf",
+        "bytes": 43218
+      },
+      "inverses": [
+        {
+          "at": 761,
+          "current": "import { clueBoard } from '../clues.js';\nimport { territoryOf } from '../territory.js';\nimport { missionReadiness } from '../growth.js';\nimport { missionPuzzle } from '../task-puzzle-jobs.js';\nimport { dynastyBoard } from '../dynasty.js';\nimport { diplomacyBoard } from '../diplomacy.js';\nimport { MISSIONS, GOODS, DISTRICTS, BONDS, goodPriceOf, priceBlock } from '../rules.js';\n",
+          "baseline": "import { clueBoard } from '../clues.js';\nimport { territoryOf } from '../territory.js';\nimport { missionReadiness } from '../growth.js';\nimport { dynastyBoard } from '../dynasty.js';\nimport { diplomacyBoard } from '../diplomacy.js';\nimport { MISSIONS, GOODS, DISTRICTS, BONDS, goodPriceOf, priceBlock } from '../rules.js';\n"
+        },
+        {
+          "at": 13114,
+          "current": "      const remaining = MISSIONS.filter((row) => !completed.includes(row.id)).map((row) => {\n        const readiness = missionReadiness(ch, row, owned);\n        return { id: row.id, title: row.name, brief: row.brief, requirements: row.req,\n          puzzle: missionPuzzle(row.id),\n          ...(has('economy.read') ? { publishedBaseRewards: row.reward } : {}),\n          available: readiness.available, missing: readiness.missing, cooldownSeconds: readiness.cooldownSeconds };\n      });\n",
+          "baseline": "      const remaining = MISSIONS.filter((row) => !completed.includes(row.id)).map((row) => {\n        const readiness = missionReadiness(ch, row, owned);\n        return { id: row.id, title: row.name, brief: row.brief, requirements: row.req,\n          ...(has('economy.read') ? { publishedBaseRewards: row.reward } : {}),\n          available: readiness.available, missing: readiness.missing, cooldownSeconds: readiness.cooldownSeconds };\n      });\n"
+        }
+      ]
+    },
+    "src/growth.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "4b839e63f9a1e0e813249ae928b9581e5bfb1df7",
+        "sha256": "32f6733d566505eeb5407da8dfb65c9cdfd115f717f9890ed329153b62067298",
+        "bytes": 87231
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "298eb91c65c96bf957e0bcb8f2e39a6d863f1900",
+        "sha256": "a56eef048988290bcab08966e9874b74dd84d1275e062e84b1d26c5d1097657b",
+        "bytes": 86847
+      },
+      "inverses": [
+        {
+          "at": 1107,
+          "current": "  takeBoundedAccountDailyClaim } from './accountdaily.js';\nimport { dbCaps } from './db.js';\nimport { normalizeLegacyPaidSocialPostProof } from './socialproof.js';\nimport { missionPuzzle, taskPuzzleContext } from './task-puzzle-jobs.js';\nimport { consumeTaskPuzzle } from './task-puzzles.js';\n\n\n// ── PATHS (§5.1): first pick $10,000 at level ≥5; switching burns PATH_SWITCH_OMR ──\n",
+          "baseline": "  takeBoundedAccountDailyClaim } from './accountdaily.js';\nimport { dbCaps } from './db.js';\nimport { normalizeLegacyPaidSocialPostProof } from './socialproof.js';\n\n\n// ── PATHS (§5.1): first pick $10,000 at level ≥5; switching burns PATH_SWITCH_OMR ──\n"
+        },
+        {
+          "at": 9011,
+          "current": "}\n\n// ── MISSIONS (§5.1): validate reqs (eff stats, fp, trade), pay once ──\nexport async function doMission(ch, missionId, client, h, puzzle) {\n  const m = MISSIONS.find((x) => x.id === missionId);\n  if (!m) throw new GameError('bad_mission', 'No such job on the books.');\n  const done = (await client.query('SELECT 1 FROM missions_done WHERE character_id=$1 AND mission_id=$2', [ch.id, missionId])).rows.length;\n",
+          "baseline": "}\n\n// ── MISSIONS (§5.1): validate reqs (eff stats, fp, trade), pay once ──\nexport async function doMission(ch, missionId, client, h) {\n  const m = MISSIONS.find((x) => x.id === missionId);\n  if (!m) throw new GameError('bad_mission', 'No such job on the books.');\n  const done = (await client.query('SELECT 1 FROM missions_done WHERE character_id=$1 AND mission_id=$2', [ch.id, missionId])).rows.length;\n"
+        },
+        {
+          "at": 11790,
+          "current": "  // persistCharacter's positional UPDATE — the active_at pattern), so it can't be clobbered.\n  if (missionCool)\n    throw new GameError('cooldown', `The family gives you one job at a time. Next one in ${coolWait(missionCool)}.`, { cooldownSeconds: missionCool });\n  const puzzleFeedback = missionPuzzle(missionId)\n    ? await consumeTaskPuzzle(ch, await taskPuzzleContext(ch, { scope: 'mission', targetId: missionId }, client), puzzle, client) : null;\n  await client.query('INSERT INTO missions_done (character_id, mission_id) VALUES ($1,$2)', [ch.id, missionId]);\n  const missionAt = new Date(Date.now() + missionCd);\n  await client.query('UPDATE characters SET mission_at=$2 WHERE id=$1', [ch.id, missionAt]);\n",
+          "baseline": "  // persistCharacter's positional UPDATE — the active_at pattern), so it can't be clobbered.\n  if (missionCool)\n    throw new GameError('cooldown', `The family gives you one job at a time. Next one in ${coolWait(missionCool)}.`, { cooldownSeconds: missionCool });\n  await client.query('INSERT INTO missions_done (character_id, mission_id) VALUES ($1,$2)', [ch.id, missionId]);\n  const missionAt = new Date(Date.now() + missionCd);\n  await client.query('UPDATE characters SET mission_at=$2 WHERE id=$1', [ch.id, missionAt]);\n"
+        },
+        {
+          "at": 15613,
+          "current": "  // it is an object rather than a bare id so nothing else can collide with it. Absence is not a\n  // discriminator — this reply had no marker only until it needed one.\n  return { ok: true, mission: { id: m.id, name: m.name },\n    ...(puzzleFeedback ? { puzzle: puzzleFeedback } : {}),\n    reward: { ...m.reward, respect: missionRep, omr: omrPaid, mintCredit: creditPaid }, title: m.title || null,\n    nextMissionSeconds: missionCd > 0 ? Math.ceil(missionCd / 1000) : 0 };\n}\n",
+          "baseline": "  // it is an object rather than a bare id so nothing else can collide with it. Absence is not a\n  // discriminator — this reply had no marker only until it needed one.\n  return { ok: true, mission: { id: m.id, name: m.name },\n    reward: { ...m.reward, respect: missionRep, omr: omrPaid, mintCredit: creditPaid }, title: m.title || null,\n    nextMissionSeconds: missionCd > 0 ? Math.ceil(missionCd / 1000) : 0 };\n}\n"
+        }
+      ]
+    },
+    "src/hustle.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "71904e94e6297a607c0896349b540b30abd268b4",
+        "sha256": "57f1bf9d918f3dda31991af7cbc6a4f0c3c890cd69d43ff514f721f12e48c9c2",
+        "bytes": 6840
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "9d2e89553aec80799bd0e4314ca7eaf15103d25c",
+        "sha256": "66b1853107b1e727e1fb4de4114133f9d4138af3ab629c3ae01666fde3db7833",
+        "bytes": 6416
+      },
+      "inverses": [
+        {
+          "at": 1048,
+          "current": "import { HUSTLE, hustleOf, dayOf, levelOf, DISTRICTS, jailed, districtName } from './rules.js';\nimport { GameError, dailyCounterAdvanced } from './game.js';\nimport { accountDailyClaims, takeAccountDailyClaim } from './accountdaily.js';\nimport { hustlePuzzle, taskPuzzleContext } from './task-puzzle-jobs.js';\nimport { consumeTaskPuzzle } from './task-puzzles.js';\n\n\nasync function countersOf(client, chId, day) {\n",
+          "baseline": "import { HUSTLE, hustleOf, dayOf, levelOf, DISTRICTS, jailed, districtName } from './rules.js';\nimport { GameError, dailyCounterAdvanced } from './game.js';\nimport { accountDailyClaims, takeAccountDailyClaim } from './accountdaily.js';\n\n\nasync function countersOf(client, chId, day) {\n"
+        },
+        {
+          "at": 3592,
+          "current": "  const legworkDone = cur.step === 1 ? legworkSatisfied(h, row, await countersOf(client, ch.id, day)) : true;\n  return {\n    legworkDone,\n    puzzle: cur.step === 1 ? hustlePuzzle() : null,\n    day,\n    contact: h.contact,\n    stops: h.stops.map((id) => ({ id, name: districtName(id) })),\n",
+          "baseline": "  const legworkDone = cur.step === 1 ? legworkSatisfied(h, row, await countersOf(client, ch.id, day)) : true;\n  return {\n    legworkDone,\n    day,\n    contact: h.contact,\n    stops: h.stops.map((id) => ({ id, name: districtName(id) })),\n"
+        },
+        {
+          "at": 4191,
+          "current": "\n// ── advance the chain: claim the CURRENT stop (location-gated; the legwork stop also needs the\n// drawn action done SINCE the contact meeting — a counter delta, never a re-countable total) ──\nexport async function advanceHustle(ch, client, h2, puzzle) {\n  if (jailed(ch)) throw new GameError('jailed', 'No working the streets from lockup.');\n  const day = dayOf();\n  if ((await accountDailyClaims(client, ch.account_id, day, 'hustle')).has('payoff'))\n",
+          "baseline": "\n// ── advance the chain: claim the CURRENT stop (location-gated; the legwork stop also needs the\n// drawn action done SINCE the contact meeting — a counter delta, never a re-countable total) ──\nexport async function advanceHustle(ch, client, h2) {\n  if (jailed(ch)) throw new GameError('jailed', 'No working the streets from lockup.');\n  const day = dayOf();\n  if ((await accountDailyClaims(client, ch.account_id, day, 'hustle')).has('payoff'))\n"
+        },
+        {
+          "at": 5116,
+          "current": "  const counters = await countersOf(client, ch.id, day);\n  if (cur.step === 1 && !legworkSatisfied(h, row, counters))\n    throw new GameError('legwork', `The contact wants the work done first — ${h.leg.how}.`);\n  const puzzleFeedback = cur.step === 1\n    ? await consumeTaskPuzzle(ch, await taskPuzzleContext(ch, { scope: 'hustle', targetId: 'legwork' }, client), puzzle, client) : null;\n  const next = cur.step + 1;\n  // the baseline snapshots the counters at the moment the LEGWORK stop opens, so only work done\n  // AFTER meeting the contact counts (a morning's stockpiled jobs can't pre-pay the chain)\n",
+          "baseline": "  const counters = await countersOf(client, ch.id, day);\n  if (cur.step === 1 && !legworkSatisfied(h, row, counters))\n    throw new GameError('legwork', `The contact wants the work done first — ${h.leg.how}.`);\n  const next = cur.step + 1;\n  // the baseline snapshots the counters at the moment the LEGWORK stop opens, so only work done\n  // AFTER meeting the contact counts (a morning's stockpiled jobs can't pre-pay the chain)\n"
+        },
+        {
+          "at": 6546,
+          "current": "  }\n  const after = stepOf(h, { step: next });\n  return { ok: true, step: next, of: 3, pay: pay || undefined,\n    ...(puzzleFeedback ? { puzzle: puzzleFeedback } : {}),\n    what: after.what, district: after.district, contact: h.contact };\n}\n",
+          "baseline": "  }\n  const after = stepOf(h, { step: next });\n  return { ok: true, step: next, of: 3, pay: pay || undefined,\n    what: after.what, district: after.district, contact: h.contact };\n}\n"
+        }
+      ]
+    },
     "src/legal.js": {
       "current": {
         "mode": "100644",
@@ -528,9 +862,9 @@ export const AGE_REMOVAL_SOURCE = freeze({
     "src/server.js": {
       "current": {
         "mode": "100644",
-        "blob": "61e0b3528c278dda73efb796ff754756ed5256d9",
-        "sha256": "ed760c9f8ba6337491c9758745edf82db5b80a17a8a18d2a09e84c56197bacc6",
-        "bytes": 311174
+        "blob": "0cc69dcc0d6e46ff54c699e3b6091eea4c088020",
+        "sha256": "0eec1fe0dc4797c823f07460c2da2e2de9c4f47d56dbc7fbcdc5067ac1736048",
+        "bytes": 311862
       },
       "baseline": {
         "mode": "100644",
@@ -545,29 +879,95 @@ export const AGE_REMOVAL_SOURCE = freeze({
           "baseline": "import crypto from 'node:crypto';\nimport { rescueQuote } from './rescue-quote.js';\nimport { clientIpContextForRequest } from './client-ip.js';\nimport { MINIMUM_AGE, eligibleBirthDate, ageCookie, ageStatus, requireAge } from './age.js';\nimport zlib from 'node:zlib';\nimport { makeDb } from './db.js';\nimport { createCityActivityRegistry, readCityActivityActor, cityOwnerActivityCategory } from './city-activity.js';\n"
         },
         {
-          "at": 47917,
+          "at": 14149,
+          "current": "import { register as registerUxCoordination } from './ux-coordination.js';\nimport { register as registerUxInvestigation } from './ux-investigation.js';\nimport { registerTacticsRoutes, crimeWithDecisionContext } from './ux-tactics.js';\nimport { jobTaskPuzzle, missionPuzzle, crimePuzzle } from './task-puzzle-jobs.js';\nimport * as Duels from './duels.js';\nimport * as Clues from './clues.js';\nimport * as Estate from './estate.js';\n",
+          "baseline": "import { register as registerUxCoordination } from './ux-coordination.js';\nimport { register as registerUxInvestigation } from './ux-investigation.js';\nimport { registerTacticsRoutes, crimeWithDecisionContext } from './ux-tactics.js';\nimport * as Duels from './duels.js';\nimport * as Clues from './clues.js';\nimport * as Estate from './estate.js';\n"
+        },
+        {
+          "at": 48000,
           "current": "    .header('cache-control', 'no-cache').send(uiCss));\n  // City scenes are optional local assets; gameplay remains authoritative through the API.\n  for (const [file, type] of [\n    ['noir-ui.css', 'text/css'], ['noir-landing.css', 'text/css'], ['noir-shell.js', 'application/javascript'],\n    ['strategy-command.css', 'text/css'], ['strategy-command.js', 'application/javascript'],\n    ['vendor/strategy-city-renderer.js', 'application/javascript'], ['vendor/strategy-city-renderer.js.LEGAL.txt', 'text/plain'],\n    ['vendor/strategy-city-renderer.LICENSE.txt', 'text/plain'],\n    ['site-analytics.js', 'application/javascript'],\n    ['city-scene.js', 'application/javascript'], ['city-scene.css', 'text/css'], ['city-world-layout.js', 'application/javascript'],\n    ['city-world-ui.js', 'application/javascript'], ['city-world-ui.css', 'text/css'],\n",
           "baseline": "    .header('cache-control', 'no-cache').send(uiCss));\n  // City scenes are optional local assets; gameplay remains authoritative through the API.\n  for (const [file, type] of [\n    ['site-analytics.js', 'application/javascript'],\n    ['city-scene.js', 'application/javascript'], ['city-scene.css', 'text/css'], ['city-world-layout.js', 'application/javascript'],\n    ['city-world-ui.js', 'application/javascript'], ['city-world-ui.css', 'text/css'],\n"
         },
         {
-          "at": 112841,
+          "at": 49231,
+          "current": "    ['ux-progression.js', 'application/javascript'], ['ux-progression.css', 'text/css'],\n    ['ux-social.js', 'application/javascript'], ['ux-social.css', 'text/css'],\n    ['ux-navigation.js', 'application/javascript'], ['ux-navigation.css', 'text/css'],\n    ...['feel', 'tools', 'identity', 'story', 'community', 'quests', 'clues', 'task-puzzles'].flatMap(name => [[`ux-${name}.js`, 'application/javascript'], [`ux-${name}.css`, 'text/css']]),\n    ['ux-quest-quality.js', 'application/javascript'], ['ux-quest-quality.css', 'text/css'],\n    ['ux-workspace.js', 'application/javascript'], ['ux-world.js', 'application/javascript'], ['ux-world.css', 'text/css'],\n    ['ux-tactics.js', 'application/javascript'], ['ux-tactics.css', 'text/css'],\n",
+          "baseline": "    ['ux-progression.js', 'application/javascript'], ['ux-progression.css', 'text/css'],\n    ['ux-social.js', 'application/javascript'], ['ux-social.css', 'text/css'],\n    ['ux-navigation.js', 'application/javascript'], ['ux-navigation.css', 'text/css'],\n    ...['feel', 'tools', 'identity', 'story', 'community', 'quests', 'clues'].flatMap(name => [[`ux-${name}.js`, 'application/javascript'], [`ux-${name}.css`, 'text/css']]),\n    ['ux-quest-quality.js', 'application/javascript'], ['ux-quest-quality.css', 'text/css'],\n    ['ux-workspace.js', 'application/javascript'], ['ux-world.js', 'application/javascript'], ['ux-world.css', 'text/css'],\n    ['ux-tactics.js', 'application/javascript'], ['ux-tactics.css', 'text/css'],\n"
+        },
+        {
+          "at": 112940,
           "current": "    return { ok: true };\n  });\n\n  const guestLogin = async (req) => {\n    if (req.body && typeof req.body === 'object' && !Array.isArray(req.body) &&\n        Object.prototype.hasOwnProperty.call(req.body, 'bootstrapSecret')) {\n      const { accountId, tokenVersion } = await A.accountForGuestBootstrap(\n        pool, req.body.bootstrapSecret, req.clientIp, req.body.inviteCode,\n        req.clientIpAuthority,\n      );\n      return { token: await signFor(accountId, {}, '30d', tokenVersion) };\n    }\n    const id = await A.createGuestAccount(pool, req.clientIp, req.body?.inviteCode, req.clientIpAuthority);\n    return { token: await signFor(id, {}, '30d', 0) };\n  };\n  app.post('/v1/auth/guest', guestLogin);\n  app.post('/v1/auth/agent', async (req) => {\n    const { accountId, tokenVersion } = await A.accountForAgentBootstrap(\n      pool, req.body?.bootstrapSecret, req.clientIp, req.body?.inviteCode, req.clientIpAuthority,\n    );\n",
           "baseline": "    return { ok: true };\n  });\n\n  app.post('/v1/age-check', async (req, reply) => {\n    reply.header('Cache-Control', 'no-store');\n    const eligible = ageStatus(app, req) === false ? false : eligibleBirthDate(req.body?.birthDate);\n    const cookie = app.jwt.sign({ purpose: 'age-check', minimumAge: MINIMUM_AGE, eligible }, { expiresIn: '15m' });\n    reply.header('Set-Cookie', ageCookie(cookie));\n    if (!eligible) return reply.code(403).send({ error: 'age_ineligible', message: 'Account creation is unavailable. See /privacy for help.' });\n    return { ok: true };\n  });\n  const guestLogin = async (req) => {\n    // Recovery authority does not override a known-ineligible browser or an\n    // explicitly supplied birth date. Existing eligible recovery needs no DOB.\n    if (ageStatus(app, req) === false || req.body?.birthDate !== undefined) requireAge(app, req);\n    if (req.body && typeof req.body === 'object' && !Array.isArray(req.body) &&\n        Object.prototype.hasOwnProperty.call(req.body, 'bootstrapSecret')) {\n      const { accountId, tokenVersion } = await A.accountForGuestBootstrap(\n        pool, req.body.bootstrapSecret, req.clientIp, req.body.inviteCode, () => requireAge(app, req),\n        req.clientIpAuthority,\n      );\n      return { token: await signFor(accountId, {}, '30d', tokenVersion) };\n    }\n    requireAge(app, req);\n    const id = await A.createGuestAccount(pool, req.clientIp, req.body?.inviteCode, req.clientIpAuthority);\n    return { token: await signFor(id, {}, '30d', 0) };\n  };\n  app.post('/v1/auth/guest', guestLogin);\n  app.post('/v1/auth/agent', async (req) => {\n    requireAge(app, req, { agent: true });\n    const { accountId, tokenVersion } = await A.accountForAgentBootstrap(\n      pool, req.body?.bootstrapSecret, req.clientIp, req.body?.inviteCode, req.clientIpAuthority,\n    );\n"
         },
         {
-          "at": 115289,
+          "at": 115388,
           "current": "  app.post('/v1/auth/guest/bootstrap/ack', { preHandler: auth }, async (req) =>\n    A.acknowledgeGuestBootstrap(pool, req.user.sub));\n  const providerLogin = (verify) => async (req) => {\n    const identity = await verify(req.body?.token);\n    // (B2) the invite is consumed ATOMICALLY inside accountForIdentity's create txn — one invite per\n    // new account, gate held even under a concurrent same-identity race (no separate pre-consume).\n",
           "baseline": "  app.post('/v1/auth/guest/bootstrap/ack', { preHandler: auth }, async (req) =>\n    A.acknowledgeGuestBootstrap(pool, req.user.sub));\n  const providerLogin = (verify) => async (req) => {\n    requireAge(app, req);\n    const identity = await verify(req.body?.token);\n    // (B2) the invite is consumed ATOMICALLY inside accountForIdentity's create txn — one invite per\n    // new account, gate held even under a concurrent same-identity race (no separate pre-consume).\n"
         },
         {
-          "at": 118508,
+          "at": 118607,
           "current": "      const revoked = req.user.tv !== undefined && Number(req.user.tv) !== Number(a?.token_version);\n      if (!a || a.status === 'banned' || revoked) accountId = null;\n    }\n    const { url, state } = await A.xOAuthStart(pool, { accountId, invite: req.body?.inviteCode });\n    // BROWSER-BIND the state (anti account-linking CSRF): the callback must present the same cookie,\n    // so an attacker who leaks their authorize URL can't have a victim's X identity bound to the\n",
           "baseline": "      const revoked = req.user.tv !== undefined && Number(req.user.tv) !== Number(a?.token_version);\n      if (!a || a.status === 'banned' || revoked) accountId = null;\n    }\n    if (!accountId) requireAge(app, req);\n    const { url, state } = await A.xOAuthStart(pool, { accountId, invite: req.body?.inviteCode });\n    // BROWSER-BIND the state (anti account-linking CSRF): the callback must present the same cookie,\n    // so an attacker who leaks their authorize URL can't have a victim's X identity bound to the\n"
         },
         {
-          "at": 120117,
+          "at": 120216,
           "current": "        return reply.redirect('/#claimed=x');\n      }\n      // (B2) invite consumed atomically inside accountForIdentity's create txn — gate held under races\n      const { accountId } = await A.accountForIdentity(\n        pool, r.identity, req.clientIp, r.invite, req.clientIpAuthority,\n      );\n",
           "baseline": "        return reply.redirect('/#claimed=x');\n      }\n      // (B2) invite consumed atomically inside accountForIdentity's create txn — gate held under races\n      requireAge(app, req);\n      const { accountId } = await A.accountForIdentity(\n        pool, r.identity, req.clientIp, r.invite, req.clientIpAuthority,\n      );\n"
+        },
+        {
+          "at": 130226,
+          "current": "\n  // ── M1 actions (crimes/gym/doc/checkin/bank/travel) ──\n  app.post('/v1/crimes/:id', { preHandler: auth }, async (req) =>\n    G.withCharacter(pool, req.user.sub, (ch, client, h) => crimeWithDecisionContext(ch, req.params.id, client, h, req.body?.approach, req.body?.puzzle)));\n  app.post('/v1/task-puzzles', { preHandler: auth }, async req =>\n    G.withCharacter(pool, req.user.sub, (ch, client) => jobTaskPuzzle(ch, req.body, client, true)));\n  app.get('/v1/task-puzzles', { preHandler: auth }, async req => {\n    const { puzzle } = await G.readCharacter(pool, req.user.sub, (ch, client) => jobTaskPuzzle(ch, req.query, client));\n    return { puzzle };\n  });\n  app.post('/v1/train/:stat', { preHandler: auth }, async (req) =>\n    G.withCharacter(pool, req.user.sub, (ch, client, h) => G.train(ch, req.params.stat, client, h)));\n  // THE REGIMEN — the expanded gym: five disciplines on the SAME train_at clock + NPC trainer drills\n",
+          "baseline": "\n  // ── M1 actions (crimes/gym/doc/checkin/bank/travel) ──\n  app.post('/v1/crimes/:id', { preHandler: auth }, async (req) =>\n    G.withCharacter(pool, req.user.sub, (ch, client, h) => crimeWithDecisionContext(ch, req.params.id, client, h, req.body?.approach)));\n  app.post('/v1/train/:stat', { preHandler: auth }, async (req) =>\n    G.withCharacter(pool, req.user.sub, (ch, client, h) => G.train(ch, req.params.stat, client, h)));\n  // THE REGIMEN — the expanded gym: five disciplines on the SAME train_at clock + NPC trainer drills\n"
+        },
+        {
+          "at": 131780,
+          "current": "  app.get('/v1/hustle', { preHandler: auth }, async (req) =>\n    G.readCharacter(pool, req.user.sub, (ch, client) => Hustle.hustleBoard(ch, client)));\n  app.post('/v1/hustle/advance', { preHandler: auth }, async (req) =>\n    G.withCharacter(pool, req.user.sub, (ch, client, h) => Hustle.advanceHustle(ch, client, h, req.body?.puzzle)));\n  // WORD ON THE STREET — each district's seed-drawn daily quest board (accept where you stand,\n  // do the work, claim the envelope; the counter DELTA proves it — the hustle rule)\n  app.get('/v1/corner', { preHandler: auth }, async (req) =>\n",
+          "baseline": "  app.get('/v1/hustle', { preHandler: auth }, async (req) =>\n    G.readCharacter(pool, req.user.sub, (ch, client) => Hustle.hustleBoard(ch, client)));\n  app.post('/v1/hustle/advance', { preHandler: auth }, async (req) =>\n    G.withCharacter(pool, req.user.sub, (ch, client, h) => Hustle.advanceHustle(ch, client, h)));\n  // WORD ON THE STREET — each district's seed-drawn daily quest board (accept where you stand,\n  // do the work, claim the envelope; the counter DELTA proves it — the hustle rule)\n  app.get('/v1/corner', { preHandler: auth }, async (req) =>\n"
+        },
+        {
+          "at": 146284,
+          "current": "  app.get('/v1/rules', async (req, reply) => {\n    reply.header('cache-control', 'public, max-age=300, stale-while-revalidate=3600');\n    return jsonEtag(req, reply, {\n    crimes: CRIMES.map((c) => ({ id: c.id, name: c.name, lvl: c.lvl, nerve: c.nerve, cash: c.cash, base: c.base, jail: c.jail, puzzle: crimePuzzle(c.id) })),\n    respecOmr: M8.RESPEC_OMR, // stat respec cost — so The Life tab can price the tradeoff before you commit\n    respecStatMin: M8.RESPEC_STAT_MIN,\n    respecCdHours: Math.round(M8.RESPEC_CD_MS / 3600000), // ...and the CADENCE, which the card priced nowhere\n",
+          "baseline": "  app.get('/v1/rules', async (req, reply) => {\n    reply.header('cache-control', 'public, max-age=300, stale-while-revalidate=3600');\n    return jsonEtag(req, reply, {\n    crimes: CRIMES.map((c) => ({ id: c.id, name: c.name, lvl: c.lvl, nerve: c.nerve, cash: c.cash, base: c.base, jail: c.jail })),\n    respecOmr: M8.RESPEC_OMR, // stat respec cost — so The Life tab can price the tradeoff before you commit\n    respecStatMin: M8.RESPEC_STAT_MIN,\n    respecCdHours: Math.round(M8.RESPEC_CD_MS / 3600000), // ...and the CADENCE, which the card priced nowhere\n"
+        },
+        {
+          "at": 148755,
+          "current": "    regimen: { disciplines: REGIMEN.DISCIPLINES, cap: REGIMEN.CAP,\n      drillXp: REGIMEN.DRILL_XP, trainers: REGIMEN.TRAINERS, energy: REGIMEN.ENERGY },\n    // THE HUSTLE — the daily three-stop chain's config (the live chain is GET /v1/hustle)\n    hustle: { payPerLvl: HUSTLE.PAY_PER_LVL, payMin: HUSTLE.PAY_MIN, puzzle: { required: true, scope: 'hustle', targetId: 'legwork', step: 1 } },\n    // WORD ON THE STREET — the district quest boards' config (the live board is GET /v1/corner)\n    corner: { perDay: CORNER.PER_DAY, maxDay: CORNER.MAX_DAY, cash: CORNER.CASH, respect: CORNER.RESPECT,\n      chainSteps: CORNER.CHAIN_STEPS, chainBonus: CORNER.CHAIN_BONUS, chainRespect: CORNER.CHAIN_RESPECT },\n",
+          "baseline": "    regimen: { disciplines: REGIMEN.DISCIPLINES, cap: REGIMEN.CAP,\n      drillXp: REGIMEN.DRILL_XP, trainers: REGIMEN.TRAINERS, energy: REGIMEN.ENERGY },\n    // THE HUSTLE — the daily three-stop chain's config (the live chain is GET /v1/hustle)\n    hustle: { payPerLvl: HUSTLE.PAY_PER_LVL, payMin: HUSTLE.PAY_MIN },\n    // WORD ON THE STREET — the district quest boards' config (the live board is GET /v1/corner)\n    corner: { perDay: CORNER.PER_DAY, maxDay: CORNER.MAX_DAY, cash: CORNER.CASH, respect: CORNER.RESPECT,\n      chainSteps: CORNER.CHAIN_STEPS, chainBonus: CORNER.CHAIN_BONUS, chainRespect: CORNER.CHAIN_RESPECT },\n"
+        },
+        {
+          "at": 160477,
+          "current": "      // BUSINESS EMPIRE Tier-4 — the launderer legend + the front specializations + the takeover surface\n      launderer: BUSINESS_EMPIRE.LAUNDERER_RANKS, specs: BUSINESS_EMPIRE.SPECS, specOmr: BUSINESS_EMPIRE.SPEC_OMR,\n      takeover: { fee: BUSINESS_EMPIRE.TAKEOVER.FEE, minLevel: BUSINESS_EMPIRE.TAKEOVER.MIN_LEVEL } },\n    missions: MISSIONS.map((m) => ({ id: m.id, name: m.name, req: m.req, reward: m.reward, brief: m.brief, puzzle: missionPuzzle(m.id) })),\n    seals: { ladder: GANG_SEALS, colorOmr: VANITY.GANG_COLOR_OMR, renameOmr: VANITY.GANG_RENAME_OMR },\n    // the shop's own price list, so the console never restates a lever (the terms ride with the price)\n    vanity: { nameOmr: VANITY.NAME_CHANGE_OMR, titleOmr: VANITY.TITLE_OMR, plateOmr: VANITY.PLATE_OMR },\n",
+          "baseline": "      // BUSINESS EMPIRE Tier-4 — the launderer legend + the front specializations + the takeover surface\n      launderer: BUSINESS_EMPIRE.LAUNDERER_RANKS, specs: BUSINESS_EMPIRE.SPECS, specOmr: BUSINESS_EMPIRE.SPEC_OMR,\n      takeover: { fee: BUSINESS_EMPIRE.TAKEOVER.FEE, minLevel: BUSINESS_EMPIRE.TAKEOVER.MIN_LEVEL } },\n    missions: MISSIONS.map((m) => ({ id: m.id, name: m.name, req: m.req, reward: m.reward, brief: m.brief })),\n    seals: { ladder: GANG_SEALS, colorOmr: VANITY.GANG_COLOR_OMR, renameOmr: VANITY.GANG_RENAME_OMR },\n    // the shop's own price list, so the console never restates a lever (the terms ride with the price)\n    vanity: { nameOmr: VANITY.NAME_CHANGE_OMR, titleOmr: VANITY.TITLE_OMR, plateOmr: VANITY.PLATE_OMR },\n"
+        },
+        {
+          "at": 219624,
+          "current": "  const performAgentAction = async (action, ch, client, h, lender = null, policy = null) => {\n    const tail = (prefix) => action.path.startsWith(prefix) ? action.path.slice(prefix.length) : null;\n    switch (action.kind) {\n      case 'crime': return G.doCrime(ch, tail('/v1/crimes/'), client, h, action.body?.approach, action.body?.puzzle);\n      case 'business_buy': return Business.buyBusiness(ch, tail('/v1/business/').replace(/\\/buy$/, ''), client, h);\n      case 'business_upkeep': return Business.payBusinessUpkeep(ch, client, h,\n        { maxCash: action.cost.cash, minimumReserve: policy.cashReserve });\n",
+          "baseline": "  const performAgentAction = async (action, ch, client, h, lender = null, policy = null) => {\n    const tail = (prefix) => action.path.startsWith(prefix) ? action.path.slice(prefix.length) : null;\n    switch (action.kind) {\n      case 'crime': return G.doCrime(ch, tail('/v1/crimes/'), client, h, action.body?.approach);\n      case 'business_buy': return Business.buyBusiness(ch, tail('/v1/business/').replace(/\\/buy$/, ''), client, h);\n      case 'business_upkeep': return Business.payBusinessUpkeep(ch, client, h,\n        { maxCash: action.cost.cash, minimumReserve: policy.cashReserve });\n"
+        },
+        {
+          "at": 275573,
+          "current": "  app.post('/v1/heist', { preHandler: auth }, async (req) =>\n    G.withCharacter(pool, req.user.sub, (ch, client, h) => W.heist(ch, client, h)));\n  app.post('/v1/missions/:id', { preHandler: auth }, async (req) =>\n    G.withCharacter(pool, req.user.sub, (ch, client, h) => W.doMission(ch, req.params.id, client, h, req.body?.puzzle)));\n  app.get('/v1/daily', { preHandler: auth }, async (req) => {\n    const me = (await pool.query('SELECT id FROM characters WHERE account_id=$1 AND alive', [req.user.sub])).rows[0];\n    if (!me) throw new G.GameError('no_character', 'Create a character first.');\n",
+          "baseline": "  app.post('/v1/heist', { preHandler: auth }, async (req) =>\n    G.withCharacter(pool, req.user.sub, (ch, client, h) => W.heist(ch, client, h)));\n  app.post('/v1/missions/:id', { preHandler: auth }, async (req) =>\n    G.withCharacter(pool, req.user.sub, (ch, client, h) => W.doMission(ch, req.params.id, client, h)));\n  app.get('/v1/daily', { preHandler: auth }, async (req) => {\n    const me = (await pool.query('SELECT id FROM characters WHERE account_id=$1 AND alive', [req.user.sub])).rows[0];\n    if (!me) throw new G.GameError('no_character', 'Create a character first.');\n"
+        }
+      ]
+    },
+    "src/ux-tactics.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "9e44659e39f2bacffaba47679053d6c12fbab64a",
+        "sha256": "7eb343cc77c970c9e71032c2bc25be9a02e80abc481c87773a40be403568b393",
+        "bytes": 19004
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "84f8a92eff7c02e071041016c13b9c1ef2cd13bd",
+        "sha256": "c92cfabb6f5786aa4e8656afbe9e3b51a8ce30ca67546ca2c71ffef7d9d44850",
+        "bytes": 18980
+      },
+      "inverses": [
+        {
+          "at": 17947,
+          "current": "  app.get('/v1/ux/tactics', { preHandler: auth }, req => readCharacter(pool, req.user.sub, (ch, client, h) => tacticsBoard(ch, client, h, req.query)));\n}\n\nexport async function crimeWithDecisionContext(ch, crimeId, client, h, approach, puzzle) {\n  const crime = CRIMES.find(entry => entry.id === crimeId);\n  // Preserve the original validation/error contract for unknown actions.\n  if (!crime) return doCrime(ch, crimeId, client, h, approach, puzzle);\n  const projection = quoteCrime(ch, h, crime, approach, await assignedSoldier(client, ch.id));\n  const projectedAt = new Date().toISOString();\n  const result = await doCrime(ch, crimeId, client, h, approach, puzzle);\n  return { ...result, decisionContext: { crimeId: crime.id, cost: { ...projection.cost },\n    probability: projection.probability, modifiers: projection.modifiers,\n    jailSecondsOnFailure: projection.jailSeconds, projectedAt, source: projection.formula.source,\n",
+          "baseline": "  app.get('/v1/ux/tactics', { preHandler: auth }, req => readCharacter(pool, req.user.sub, (ch, client, h) => tacticsBoard(ch, client, h, req.query)));\n}\n\nexport async function crimeWithDecisionContext(ch, crimeId, client, h, approach) {\n  const crime = CRIMES.find(entry => entry.id === crimeId);\n  // Preserve the original validation/error contract for unknown actions.\n  if (!crime) return doCrime(ch, crimeId, client, h, approach);\n  const projection = quoteCrime(ch, h, crime, approach, await assignedSoldier(client, ch.id));\n  const projectedAt = new Date().toISOString();\n  const result = await doCrime(ch, crimeId, client, h, approach);\n  return { ...result, decisionContext: { crimeId: crime.id, cost: { ...projection.cost },\n    probability: projection.probability, modifiers: projection.modifiers,\n    jailSecondsOnFailure: projection.jailSeconds, projectedAt, source: projection.formula.source,\n"
         }
       ]
     },
@@ -625,6 +1025,37 @@ export const AGE_REMOVAL_SOURCE = freeze({
           "at": 3675,
           "current": "    'character creation closes unacknowledged recovery');\n  const spec = (await app.inject('/openapi.json')).json();\n  assert.deepEqual(spec.paths['/v1/auth/agent'].post.security, [], 'agent signup is advertised without bearer auth');\n  console.log('Agent onboarding: permanent classification, recovery, privacy and human-only reward isolation passed.');\n} finally { await app.close(); }\n",
           "baseline": "    'character creation closes unacknowledged recovery');\n  const spec = (await app.inject('/openapi.json')).json();\n  assert.deepEqual(spec.paths['/v1/auth/agent'].post.security, [], 'agent signup is advertised without bearer auth');\n  console.log('Agent-only age exemption: permanent classification, recovery, privacy, denial precedence and human-route isolation passed.');\n} finally { await app.close(); }\n"
+        }
+      ]
+    },
+    "test/agentturn-jail-units.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "4fe31efb6a6b2a1138fb2bb7ed9947fc1ff7e1c0",
+        "sha256": "816f6bdc974be6caefa2e32fa62b0feedd6fc07a6006d724cc59824ba7c1e538",
+        "bytes": 4193
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "d5a5504fde9d1dc9d14ce22550ae4cb11655b389",
+        "sha256": "fc5fd11c684c211f5d3470dbfc26b3fcfd1fb99905ee297edc4b77b2469892a7",
+        "bytes": 1946
+      },
+      "inverses": [
+        {
+          "at": 0,
+          "current": "import assert from 'node:assert/strict';\nimport { buildServer } from './server-fixture.js';\nimport { cityEventOf, dayOf } from '../src/rules.js';\n\nif (process.env.DATABASE_URL) throw new Error('Jail-unit regression requires a disposable memory database.');\nprocess.env.NODE_ENV = 'test'; process.env.RATE_LIMIT = 'off';\n",
+          "baseline": "import assert from 'node:assert/strict';\nimport { buildServer } from './server-fixture.js';\n\nif (process.env.DATABASE_URL) throw new Error('Jail-unit regression requires a disposable memory database.');\nprocess.env.NODE_ENV = 'test'; process.env.RATE_LIMIT = 'off';\n"
+        },
+        {
+          "at": 617,
+          "current": "  assert.equal(response.statusCode, 200, response.body);\n  return response.json();\n};\nconst failCrimeAt = async (at) => {\n  const random = Math.random, now = Date.now;\n  try {\n    Date.now = () => at;\n    const turn = await call('GET', '/v1/agent/turn');\n    const action = turn.actions.find(action => action.path === '/v1/crimes/stereo');\n    assert(action?.executable, 'the fresh character can take the published standard job');\n    Math.random = () => 0.999999;\n    return { action, result: await call('POST', action.path, action.body) };\n  } finally { Math.random = random; Date.now = now; }\n};\ntry {\n  token = (await call('POST', '/v1/auth/guest')).token;\n  token = (await call('POST', '/v1/auth/agent-key', {})).token;\n  await call('POST', '/v1/character', { name: 'Jail Units Regression' });\n  // Daily city events are independent of the season overrides above. Pin the turn and action,\n  // not the whole server lifecycle, so midnight cannot turn this baseline into HEAT WAVE.\n  const neutralAt = Date.parse('2026-11-10T12:00:00Z');\n  const neutralEvent = cityEventOf(dayOf(neutralAt));\n  assert.equal(neutralEvent.id, 'opencity', 'the explicit baseline date selects OPEN CITY');\n  assert.equal(neutralEvent.jailMult ?? 1, 1, 'the baseline has no city-event jail modifier');\n  const { action, result } = await failCrimeAt(neutralAt);\n  assert.equal(result.success, false, 'the pinned failed roll exercises the authoritative jail outcome');\n  assert.equal(result.jailSeconds, 8, 'canonical gameplay duration remains eight seconds');\n  assert.equal(action.risk.baseJailSeconds, result.jailSeconds,\n",
+          "baseline": "  assert.equal(response.statusCode, 200, response.body);\n  return response.json();\n};\ntry {\n  token = (await call('POST', '/v1/auth/guest')).token;\n  token = (await call('POST', '/v1/auth/agent-key', {})).token;\n  await call('POST', '/v1/character', { name: 'Jail Units Regression' });\n  const turn = await call('GET', '/v1/agent/turn');\n  const action = turn.actions.find(action => action.path === '/v1/crimes/stereo');\n  assert(action?.executable, 'the fresh character can take the published standard job');\n  const random = Math.random;\n  let result;\n  try {\n    Math.random = () => 0.999999;\n    result = await call('POST', action.path, action.body);\n  } finally { Math.random = random; }\n  assert.equal(result.success, false, 'the pinned failed roll exercises the authoritative jail outcome');\n  assert.equal(result.jailSeconds, 8, 'canonical gameplay duration remains eight seconds');\n  assert.equal(action.risk.baseJailSeconds, result.jailSeconds,\n"
+        },
+        {
+          "at": 2327,
+          "current": "  assert.equal(action.risk.jailMinutes * 60, action.risk.baseJailSeconds,\n    'legacy minute consumers receive the same duration in their documented unit');\n  console.log('agentturn jail units: baseJailSeconds=8, legacy jailMinutes=8/60, authoritative failed crime jailSeconds=8 passed');\n\n  // These literal outcomes catch a dropped/doubled event multiplier or a descriptor\n  // accidentally reporting the modified outcome instead of the base duration.\n  for (const [eventId, date, multiplier, seconds] of [\n    ['heat', '2026-11-11T12:00:00Z', 2, 16],\n    ['visit', '2026-11-16T12:00:00Z', 0.5, 4],\n    ['crackdown', '2026-11-22T12:00:00Z', 1.5, 12],\n  ]) {\n    const at = Date.parse(date), event = cityEventOf(dayOf(at));\n    assert.equal(event.id, eventId, 'the explicit date selects the intended daily city event');\n    assert.equal(event.jailMult, multiplier, 'the fixture exercises the documented jail modifier');\n    token = (await call('POST', '/v1/auth/guest')).token;\n    token = (await call('POST', '/v1/auth/agent-key', {})).token;\n    await call('POST', '/v1/character', { name: `Jail Units ${eventId}` });\n    const { action: eventAction, result: outcome } = await failCrimeAt(at);\n    assert.equal(outcome.success, false, `${eventId}: the pinned roll fails the real crime`);\n    assert.equal(outcome.jailSeconds, seconds, `${eventId}: the authoritative outcome applies the daily modifier once`);\n    assert.equal(eventAction.risk.baseJailSeconds, 8, `${eventId}: the descriptor retains the unmodified base duration`);\n    assert.equal(eventAction.risk.jailMinutes * 60, eventAction.risk.baseJailSeconds,\n      `${eventId}: the legacy minute field retains the base duration in its documented unit`);\n  }\n  console.log('agentturn jail event controls: heat=16, visit=4, crackdown=12; base descriptor unchanged passed');\n} finally { await app.close(); }\n",
+          "baseline": "  assert.equal(action.risk.jailMinutes * 60, action.risk.baseJailSeconds,\n    'legacy minute consumers receive the same duration in their documented unit');\n  console.log('agentturn jail units: baseJailSeconds=8, legacy jailMinutes=8/60, authoritative failed crime jailSeconds=8 passed');\n} finally { await app.close(); }\n"
         }
       ]
     },
@@ -742,6 +1173,73 @@ export const AGE_REMOVAL_SOURCE = freeze({
         }
       ]
     },
+    "test/client.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "cde6049be9a07ccca511687546808b08aded515f",
+        "sha256": "52bbbba86aed3a9e759a588393273b62bd2c80252c18df7466be32a1b655cc64",
+        "bytes": 764783
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "7d2baa55480cf76964962be1c9c398388305bddf",
+        "sha256": "9cb4f9873ad8a5c315df076d267a357768f1689edb163f93e67a279b68a2c841",
+        "bytes": 764043
+      },
+      "inverses": [
+        {
+          "at": 33513,
+          "current": "      catch (e) { assert.fail(`${path}: the <script> has a SYNTAX ERROR — the whole page is DEAD in a browser: ${e.message}`); }\n    }\n  }\n  for (const name of ['feedback','progression','social','navigation','workspace','world','tactics','investigation','coordination','feel','tools','identity','story','community','task-puzzles']) {\n    const path = 'public/ux-' + name + '.js';\n    new vm.Script(readFileSync(new URL('../' + path, import.meta.url), 'utf8'), { filename: path });\n  }\n",
+          "baseline": "      catch (e) { assert.fail(`${path}: the <script> has a SYNTAX ERROR — the whole page is DEAD in a browser: ${e.message}`); }\n    }\n  }\n  for (const name of ['feedback','progression','social','navigation','workspace','world','tactics','investigation','coordination','feel','tools','identity','story','community']) {\n    const path = 'public/ux-' + name + '.js';\n    new vm.Script(readFileSync(new URL('../' + path, import.meta.url), 'utf8'), { filename: path });\n  }\n"
+        },
+        {
+          "at": 38372,
+          "current": "for (const m of admin.matchAll(/\\bj\\(\\s*'(GET|POST|PUT|DELETE)'\\s*,\\s*/g)) addCall(admin, m, '/admin');\n\n// UX dynamic choices have dedicated API/browser proofs; retain their finite mounted contracts.\nfor (const method of ['GET', 'POST']) addRef(method, '/v1/task-puzzles', 'Task puzzle protocol; real page/API/browser proofs');\nfor (const [method,path] of [[\"GET\",\"/v1/ux/workspace\"],[\"PUT\",\"/v1/ux/workspace\"],[\"GET\",\"/v1/ux/tactics\"],[\"GET\",\"/v1/ux/crew-workspace\"],[\"POST\",\"/v1/ux/crew-workspace\"],[\"GET\",\"/v1/ux/investigations\"],[\"GET\",\"/v1/ux/investigations/:p\"],[\"GET\",\"/v1/ux/investigations/:p/nodes/:p/hints/:p\"],[\"GET\",\"/v1/ux/investigation-items\"],[\"GET\",\"/v1/ux/story\"],[\"GET\",\"/v1/ux/story/:p\"],[\"GET\",\"/v1/ux/community\"],[\"POST\",\"/v1/ux/community\"],[\"GET\",\"/v1/ux/community/operations/:p/playback\"],[\"GET\",\"/v1/ux/community/portraits/:p\"],[\"GET\",\"/v1/ux/mentor-subjects\"],[\"POST\",\"/v1/ux/mentor-subjects\"]]) addRef(method,path,'UX route contract');\n\nassert.equal(unreadable, 0, `${unreadable} api()/act() call site(s) name their path in a way this ` +\n",
+          "baseline": "for (const m of admin.matchAll(/\\bj\\(\\s*'(GET|POST|PUT|DELETE)'\\s*,\\s*/g)) addCall(admin, m, '/admin');\n\n// UX dynamic choices have dedicated API/browser proofs; retain their finite mounted contracts.\nfor (const [method,path] of [[\"GET\",\"/v1/ux/workspace\"],[\"PUT\",\"/v1/ux/workspace\"],[\"GET\",\"/v1/ux/tactics\"],[\"GET\",\"/v1/ux/crew-workspace\"],[\"POST\",\"/v1/ux/crew-workspace\"],[\"GET\",\"/v1/ux/investigations\"],[\"GET\",\"/v1/ux/investigations/:p\"],[\"GET\",\"/v1/ux/investigations/:p/nodes/:p/hints/:p\"],[\"GET\",\"/v1/ux/investigation-items\"],[\"GET\",\"/v1/ux/story\"],[\"GET\",\"/v1/ux/story/:p\"],[\"GET\",\"/v1/ux/community\"],[\"POST\",\"/v1/ux/community\"],[\"GET\",\"/v1/ux/community/operations/:p/playback\"],[\"GET\",\"/v1/ux/community/portraits/:p\"],[\"GET\",\"/v1/ux/mentor-subjects\"],[\"POST\",\"/v1/ux/mentor-subjects\"]]) addRef(method,path,'UX route contract');\n\nassert.equal(unreadable, 0, `${unreadable} api()/act() call site(s) name their path in a way this ` +\n"
+        },
+        {
+          "at": 44494,
+          "current": "    `a catalog resolved to ${[...set].slice(0, 4).join(',')} — the id extraction is wrong, not the client`);\n  return set;\n};\nconst taskPuzzleRules = (await app.inject({ method: 'GET', url: '/v1/rules' })).json();\nconst taskPuzzleSelectors = [...taskPuzzleRules.missions.map(m => m.puzzle), ...taskPuzzleRules.crimes.map(c => c.puzzle), taskPuzzleRules.hustle.puzzle].filter(Boolean);\nassert.equal(new Set(taskPuzzleSelectors.map(p => p.scope)).size, 3, 'All task puzzle scopes are published in the actual rules.');\nconst CATALOGS = {\n  scope: new Set(taskPuzzleSelectors.map(p => p.scope)),\n  targetId: new Set(taskPuzzleSelectors.map(p => p.targetId)), // union for the three scopes; exact binding is verified by task-puzzle jobs/API tests\n  approach: ids(M3.CRIME_APPROACHES),          // the crime verb\n  intent: ids(M3.JUMP_INTENTS),                // the jump verb\n  play: ids(M4.DEAL_PLAYS),                    // the corner verb\n",
+          "baseline": "    `a catalog resolved to ${[...set].slice(0, 4).join(',')} — the id extraction is wrong, not the client`);\n  return set;\n};\nconst CATALOGS = {\n  approach: ids(M3.CRIME_APPROACHES),          // the crime verb\n  intent: ids(M3.JUMP_INTENTS),                // the jump verb\n  play: ids(M4.DEAL_PLAYS),                    // the corner verb\n"
+        }
+      ]
+    },
+    "test/coldstart.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "2b54efdabdeef723df7fd041acde335adc0d8d03",
+        "sha256": "74bbfb0ff5606e842136645db49326488d92669f7c0edf5cad3dc0bfd04f2274",
+        "bytes": 26868
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "417399c685fbf07d9ddf8edee8675fffb0ff8056",
+        "sha256": "c049fa9c5dd344f43d01cdf5e20d88b031388b3b896fad659d235cae781880b5",
+        "bytes": 23189
+      },
+      "inverses": [
+        {
+          "at": 14538,
+          "current": "for (const kind of ['intelligence_purchase', 'forecast_memory'])\n  assertEmptyDecisionReplay(await j('GET', '/v1/agent/decision-replay?kind=' + kind, token), kind);\n\n// Puzzle reads need a published task selector, not an already issued puzzle or a seeded world.\nconst puzzleRules = await j('GET', '/v1/rules', token);\nassert.equal(puzzleRules.code, 200, 'the first player can discover actual task selectors');\nconst missionSelector = puzzleRules.body.missions.find(mission => mission.id === 'm2')?.puzzle;\nassert.deepEqual(missionSelector, { required: true, scope: 'mission', targetId: 'm2' });\nconst taskPuzzleReadPath = '/v1/task-puzzles?' + new URLSearchParams({\n  scope: missionSelector.scope, targetId: missionSelector.targetId,\n});\nconst assertEmptyTaskPuzzle = response => {\n  assert.equal(response.code, 200, 'a valid task selector must serve the first player without issuance');\n  assert.deepEqual(response.body, { puzzle: null }, 'an unissued task has an explicit empty puzzle');\n};\nconst taskPuzzleCount = async () => Number((await app.pool.query('SELECT COUNT(*) AS n FROM task_puzzles')).rows[0].n);\nassert.equal(await taskPuzzleCount(), 0, 'the cold-start fixture has no issued puzzles');\nfor (const url of [\n  '/v1/task-puzzles',\n  '/v1/task-puzzles?scope=mission',\n  '/v1/task-puzzles?targetId=m2',\n  '/v1/task-puzzles?scope=unknown&targetId=m2',\n  '/v1/task-puzzles?scope=mission&targetId=m1',\n  '/v1/task-puzzles?scope=crime&targetId=no-such-crime',\n  taskPuzzleReadPath + '&contextKey=forged',\n  taskPuzzleReadPath + '&characterId=foreign',\n]) {\n  const malformed = await j('GET', url, token);\n  assert.equal(malformed.code, 400, 'missing, partial, unknown and extra task selectors remain malformed: ' + url);\n  assert.equal(malformed.body?.error, 'task_puzzle_context');\n  assert.throws(() => assertEmptyTaskPuzzle(malformed), { name: 'AssertionError' },\n    'a malformed selector cannot pass as an empty task puzzle');\n}\nfor (const response of [{ code: 200, body: {} }, { code: 400, body: { error: 'unrelated_refusal' } },\n  { code: 500, body: { error: 'server_error' } }])\n  assert.throws(() => assertEmptyTaskPuzzle(response), { name: 'AssertionError' },\n    'a missing puzzle field, unrelated refusal or server error cannot pass the empty-task oracle');\nassertEmptyTaskPuzzle(await j('GET', taskPuzzleReadPath, token));\nconst crimeSelector = puzzleRules.body.crimes.find(crime => crime.id === 'pick')?.puzzle;\nassert.deepEqual(crimeSelector, { required: false, scope: 'crime', targetId: 'pick', benefit: 'feedback_only' });\nassertEmptyTaskPuzzle(await j('GET', '/v1/task-puzzles?' + new URLSearchParams({\n  scope: crimeSelector.scope, targetId: crimeSelector.targetId,\n}), token));\nconst hustleSelector = puzzleRules.body.hustle.puzzle;\nassert.deepEqual(hustleSelector, { required: true, scope: 'hustle', targetId: 'legwork', step: 1 });\nconst beforeContact = await j('GET', '/v1/task-puzzles?' + new URLSearchParams({\n  scope: hustleSelector.scope, targetId: hustleSelector.targetId,\n}), token);\nassert.equal(beforeContact.code, 400, 'a scoped Hustle read still requires meeting the contact');\nassert.equal(beforeContact.body?.error, 'hustle_step', 'valid context must report its precise gameplay prerequisite');\nassert.throws(() => assertEmptyTaskPuzzle(beforeContact), { name: 'AssertionError' },\n  'the Hustle prerequisite cannot waive the shared route\\'s valid mission read');\nassert.equal(await taskPuzzleCount(), 0, 'valid and refused GETs never issue a task puzzle');\n\n// Every mounted authed GET, minus the mod perimeter (its own credential) and param routes (they need\n// an id, which by definition means data exists — that is what the client guard's fixtures cover).\nconst parameterlessGets = (app.routes || [])\n",
+          "baseline": "for (const kind of ['intelligence_purchase', 'forecast_memory'])\n  assertEmptyDecisionReplay(await j('GET', '/v1/agent/decision-replay?kind=' + kind, token), kind);\n\n// Every mounted authed GET, minus the mod perimeter (its own credential) and param routes (they need\n// an id, which by definition means data exists — that is what the client guard's fixtures cover).\nconst parameterlessGets = (app.routes || [])\n"
+        },
+        {
+          "at": 21018,
+          "current": "assert(paths.includes('/v1/city/home/interior'), 'the interior remains in the complete cold-start enumeration');\nassert(paths.includes('/v1/agent/decision-replay'), 'the history board remains in the complete cold-start enumeration');\nassert(paths.includes('/v1/equipment-recovery'), 'the equipment inspection remains in the complete cold-start enumeration');\nassert(paths.includes('/v1/task-puzzles'), 'the scoped puzzle read remains in the complete cold-start enumeration');\n\n// Anti-vacuity: an empty list is what a broken route registry looks like, and it would pass silently.\nassert(paths.length >= 120,\n",
+          "baseline": "assert(paths.includes('/v1/city/home/interior'), 'the interior remains in the complete cold-start enumeration');\nassert(paths.includes('/v1/agent/decision-replay'), 'the history board remains in the complete cold-start enumeration');\nassert(paths.includes('/v1/equipment-recovery'), 'the equipment inspection remains in the complete cold-start enumeration');\n\n// Anti-vacuity: an empty list is what a broken route registry looks like, and it would pass silently.\nassert(paths.length >= 120,\n"
+        },
+        {
+          "at": 22023,
+          "current": "      : p === '/v1/city/homes' ? homesReadPath\n        : p === '/v1/city/home/interior' ? interiorReadPath\n          : p === '/v1/agent/decision-replay' ? decisionReplayReadPath\n            : p === '/v1/equipment-recovery' ? equipmentRecoveryReadPath\n              : p === '/v1/task-puzzles' ? taskPuzzleReadPath : p;\n  const r = await j('GET', readPath, token);\n  if (p === '/v1/market/feed') assert.equal(r.code, 200, 'the scoped public feed serves an empty world');\n  if (p === '/v1/city/homes') assertEmptyHomes(r);\n  if (p === '/v1/agent/decision-replay') assertEmptyDecisionReplay(r, 'intelligence_purchase');\n  if (p === '/v1/equipment-recovery') assertEquipmentRecoveryInspection(r);\n  if (p === '/v1/task-puzzles') assertEmptyTaskPuzzle(r);\n  if (r.code < 400) continue;\n  if (DECLARED[p]) {\n    if (p === '/v1/genesis-auction') {\n",
+          "baseline": "      : p === '/v1/city/homes' ? homesReadPath\n        : p === '/v1/city/home/interior' ? interiorReadPath\n          : p === '/v1/agent/decision-replay' ? decisionReplayReadPath\n            : p === '/v1/equipment-recovery' ? equipmentRecoveryReadPath : p;\n  const r = await j('GET', readPath, token);\n  if (p === '/v1/market/feed') assert.equal(r.code, 200, 'the scoped public feed serves an empty world');\n  if (p === '/v1/city/homes') assertEmptyHomes(r);\n  if (p === '/v1/agent/decision-replay') assertEmptyDecisionReplay(r, 'intelligence_purchase');\n  if (p === '/v1/equipment-recovery') assertEquipmentRecoveryInspection(r);\n  if (r.code < 400) continue;\n  if (DECLARED[p]) {\n    if (p === '/v1/genesis-auction') {\n"
+        },
+        {
+          "at": 24552,
+          "current": "const stale = Object.keys(DECLARED).filter((p) => paths.includes(p) && !declaredHit.has(p));\nassert.equal(stale.length, 0,\n  `DECLARED lists route(s) that no longer refuse — remove them, or the waiver hides the next regression:\\n   - ${stale.join('\\n   - ')}`);\nassert.equal(await taskPuzzleCount(), 0, 'the complete cold-start GET enumeration never issues a puzzle');\n\n// After the default-off enumeration, the actual issued Join action opens an empty district feed.\nconst join = social.body.actions.find(action => action.id === 'chat:enable');\n",
+          "baseline": "const stale = Object.keys(DECLARED).filter((p) => paths.includes(p) && !declaredHit.has(p));\nassert.equal(stale.length, 0,\n  `DECLARED lists route(s) that no longer refuse — remove them, or the waiver hides the next regression:\\n   - ${stale.join('\\n   - ')}`);\n\n// After the default-off enumeration, the actual issued Join action opens an empty district feed.\nconst join = social.body.actions.find(action => action.id === 'chat:enable');\n"
+        }
+      ]
+    },
     "test/customerlayaway-integration.js": {
       "current": {
         "mode": "100644",
@@ -768,12 +1266,142 @@ export const AGE_REMOVAL_SOURCE = freeze({
         }
       ]
     },
+    "test/daily-lineage.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "b43317a6c99d81253599450bcd41e6c887b03a54",
+        "sha256": "91632aed1916143da41da04a4ee1c7ffe38104a38eab19da63ea92ad4c0d5298",
+        "bytes": 31524
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "7372720d43e14dd0315ac6148d7e95d62881eea1",
+        "sha256": "f67c6ac5b90eb2fbd25e52f3b3710fef05cd707a8e3006e78966186241dae764",
+        "bytes": 31260
+      },
+      "inverses": [
+        {
+          "at": 0,
+          "current": "// Character death must not reset same-day cash/token reward ceilings. Work progress may die with the\n// street, but the account's right to be paid for Daily Contracts, Corner jobs, and the Hustle does not.\nimport assert from 'node:assert/strict';\nimport { solveTaskPuzzle } from './lib/task-puzzle-solver.js';\n\n// Default to pg-mem, but allow an explicit disposable loopback PostgreSQL run for the\n// concurrency/death replay proof. Never inherit DATABASE_URL implicitly from a developer shell.\n",
+          "baseline": "// Character death must not reset same-day cash/token reward ceilings. Work progress may die with the\n// street, but the account's right to be paid for Daily Contracts, Corner jobs, and the Hustle does not.\nimport assert from 'node:assert/strict';\n\n// Default to pg-mem, but allow an explicit disposable loopback PostgreSQL run for the\n// concurrency/death replay proof. Never inherit DATABASE_URL implicitly from a developer shell.\n"
+        },
+        {
+          "at": 21168,
+          "current": "  counters[hustle.leg.kind] = Number(counters[hustle.leg.kind] || 0) + 1;\n  await setCounters(player.id, counters);\n  await pool.query('UPDATE characters SET loc=$2 WHERE id=$1', [player.id, hustle.stops[1]]);\n  const legworkPuzzle = (await call('POST', '/v1/task-puzzles', { token: player.token, body: { scope: 'hustle', targetId: 'legwork' } })).body.puzzle;\n  assert.equal((await call('POST', '/v1/hustle/advance', { token: player.token, body: { puzzle: solveTaskPuzzle(legworkPuzzle) } })).code, 200);\n  await pool.query('UPDATE characters SET loc=$2 WHERE id=$1', [player.id, hustle.stops[2]]);\n  const hustlePaid = await call('POST', '/v1/hustle/advance', { token: player.token });\n  assert.equal(hustlePaid.code, 200, JSON.stringify(hustlePaid.body));\n",
+          "baseline": "  counters[hustle.leg.kind] = Number(counters[hustle.leg.kind] || 0) + 1;\n  await setCounters(player.id, counters);\n  await pool.query('UPDATE characters SET loc=$2 WHERE id=$1', [player.id, hustle.stops[1]]);\n  assert.equal((await call('POST', '/v1/hustle/advance', { token: player.token })).code, 200);\n  await pool.query('UPDATE characters SET loc=$2 WHERE id=$1', [player.id, hustle.stops[2]]);\n  const hustlePaid = await call('POST', '/v1/hustle/advance', { token: player.token });\n  assert.equal(hustlePaid.code, 200, JSON.stringify(hustlePaid.body));\n"
+        }
+      ]
+    },
+    "test/deed-quest-source-compatibility.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "3181315b3082d2687af56af91197141ce2253cfd",
+        "sha256": "e245f8bff2a9ab412a8973eb2fc67ec51331b9cf9decf89130c855590ecff66c",
+        "bytes": 52832
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "2c846f97633519c506c23f7260ae1ac7df94de5a",
+        "sha256": "f2556ecda8d8d1daea852e381232a2ea8ecbffd827b2b7a8df2870305de8df3b",
+        "bytes": 44186
+      },
+      "inverses": [
+        {
+          "at": 189,
+          "current": "import {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from \"../tools/commerce-current-enterprise-source-compatibility.js\";\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs';\nimport path from 'node:path';\nimport {marketOverDeedSourceBaseline} from '../tools/deed-market-source-compatibility.js';\nimport {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';\nimport {hasCommerceEnterpriseSource,commerceOverEnterpriseSourceBaseline} from '../tools/commerce-enterprise-source-compatibility.js';\n",
+          "baseline": "import {hasCommerceCurrentEnterpriseSource,commerceOverCurrentEnterpriseSourceBaseline} from \"../tools/commerce-current-enterprise-source-compatibility.js\";\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs';\nimport {marketOverDeedSourceBaseline} from '../tools/deed-market-source-compatibility.js';\nimport {hasEnterpriseOverRootSource,enterpriseOverRootSourceBaseline} from '../tools/enterprise-current-source-compatibility.js';\nimport {hasCommerceEnterpriseSource,commerceOverEnterpriseSourceBaseline} from '../tools/commerce-enterprise-source-compatibility.js';\n"
+        },
+        {
+          "at": 1264,
+          "current": "import { fourthBatchMigrationSchema } from '../tools/rc1-fourth-batch-source-compatibility.js';\nimport { fifthBatchMigrationSchema } from '../tools/rc1-fifth-batch-source-compatibility.js';\nimport { nextLayerMigrationPredecessor } from '../tools/next-layer-release-phase2-migration-catalog.js';\nimport { enterpriseCurrentDeedSources } from '../tools/enterprise-deed-release-phase2-migration-catalog.js';\nimport { ECONOMY_HARDENING_SOURCE_DOMAINS } from '../tools/economy-hardening-source-transfer.js';\n\nconst lf = text => text.replaceAll('\\r\\n', '\\n');\nconst git = (...args) => lf(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 16 * 1024 * 1024,\n",
+          "baseline": "import { fourthBatchMigrationSchema } from '../tools/rc1-fourth-batch-source-compatibility.js';\nimport { fifthBatchMigrationSchema } from '../tools/rc1-fifth-batch-source-compatibility.js';\nimport { nextLayerMigrationPredecessor } from '../tools/next-layer-release-phase2-migration-catalog.js';\n\nconst lf = text => text.replaceAll('\\r\\n', '\\n');\nconst git = (...args) => lf(execFileSync('git', args, { encoding: 'utf8', maxBuffer: 16 * 1024 * 1024,\n"
+        },
+        {
+          "at": 2038,
+          "current": "const blob = text => crypto.createHash('sha1').update(`blob ${Buffer.byteLength(text)}\\0`).update(text).digest('hex');\nconst retainedDeedRelease = '3aaeaa97a102babf7f56dece03860964814fe313';\nconst retainedDeedSource = file => git('show', retainedDeedRelease+':'+file);\n// The original Enterprise guard passes this one legacy basename. Only this exact\n// self identity may acquire a canonical key; no path normalization or schema alias.\nconst selfKey='tools/deed-quest-source-transfer.js',selfBare='deed-quest-source-transfer.js';\nconst selfBefore=git('show','a084f636b3ddd61de333b600f127e56bc4dfa98a:'+selfKey);\nassert.equal(blob(selfBefore),'5129b649ea2b4f1f6a706ff7aa229d22d04a85b2');\nconst selfExpected='05bc98b2f26de7172675b0fb17d865ffa75d299a113807f4a5160beeb8fcfe9e';\nfor(const key of [selfBare,selfKey])for(const input of [selfBefore,selfBefore.replaceAll('\\n','\\r\\n')])\n  assert.equal(hash(deedQuestSourceBaseline(key,input)),selfExpected,'The exact original self basename reaches its unchanged whole protected pin');\nlet selfKeyRefusals=0;\nfor(const key of ['./'+selfKey,'../'+selfKey,'tools\\\\'+selfBare,'other/'+selfBare,selfBare.toUpperCase(),selfBare+'.extra','schema.sql','enterprise-deed-release-phase2-migration-catalog.js','__proto__']){\n  assert.notEqual(hash(deedQuestSourceBaseline(key,selfBefore)),selfExpected);selfKeyRefusals++;\n}\nfor(const input of [selfBefore+'\\n',selfBefore.slice(1),'\\ufeff'+selfBefore,selfBefore+'\\0',selfBefore.replace('\\n','\\r\\n'),selfBefore.replace('assert.equal','assert.notEqual')]){\n  assert.notEqual(hash(deedQuestSourceBaseline(selfBare,input)),selfExpected);selfKeyRefusals++;\n}\nconst selfEdits=[\n  [\"import { economyHardeningSourceBaseline } from './economy-hardening-source-transfer.js';\", \"import { economyHardeningSourceBaseline } from './economy-hardening-source-transfer.js';\\nimport { ageRemovalHistoricalInput } from './age-removal-source-transfer.js';\"],\n  [\"export function deedQuestSourceBaseline(file, input) {\\n\", \"export function deedQuestSourceBaseline(file, input) {\\n  if (typeof input === 'string' && (file === 'deed-quest-source-transfer.js' || file === 'tools/deed-quest-source-transfer.js')) {\\n    file = 'tools/deed-quest-source-transfer.js';\\n    input = ageRemovalHistoricalInput(file, input);\\n  }\\n\"],\n];\nconst restoreSelf=input=>{\n  assert.equal(typeof input,'string');let text=lf(input);assert(!text.includes('\\r')&&(input===text||input===text.replaceAll('\\n','\\r\\n')));\n  for(const [before,after]of selfEdits.toReversed()){assert.equal(text.split(after).length,2);text=text.replace(after,()=>before);}\n  assert.equal(text,selfBefore,'Every original source domain, inverse, constant and qualifier byte survives the exact self-only comparison branch');\n};\nconst selfCurrent=lf(fs.readFileSync(selfKey,'utf8'));restoreSelf(selfCurrent);restoreSelf(selfCurrent.replaceAll('\\n','\\r\\n'));\nlet selfConservationRefusals=0;\nfor(const input of [selfCurrent+'\\n',selfCurrent.slice(1),'\\ufeff'+selfCurrent,selfCurrent.replace('\\n','\\r\\n'),selfCurrent.replace('assert.equal','assert.notEqual'),...selfEdits.map(([before,after])=>selfCurrent.replace(after,()=>before)),...selfEdits.map(([,after])=>selfCurrent.replace(after,()=>after+after))]){\n  assert.notEqual(input,selfCurrent);assert.throws(()=>restoreSelf(input));selfConservationRefusals++;\n}\nconst currentSelfInverseMutations = text => {\n  const mutations = [];\n  // The two conserved self-only additions split the original inverse contexts.\n  // Expand each exact context to its current bytes before deleting or duplicating it.\n  for (const [index, inverse] of ECONOMY_HARDENING_SOURCE_DOMAINS[selfKey].inverses.entries()) {\n    const [before, after] = selfEdits[index];\n    assert.equal(inverse.current.split(before).length, 2, 'Each original inverse contains its one conserved self edit');\n    const current = inverse.current.replace(before, () => after);\n    assert.equal(text.split(current).length, 2, 'The complete current inverse region occurs exactly once');\n    mutations.push(text.replace(current, ''), text.replace(current, () => current + current));\n  }\n  return mutations;\n};\nconst selfInverseMutations = currentSelfInverseMutations(selfCurrent);\nassert.equal(selfInverseMutations.length, 4, 'Delete and duplicate both protected inverse regions');\nassert.equal(new Set(selfInverseMutations).size, 4, 'All four current-source mutations are distinct');\nfor (const changed of selfInverseMutations) {\n  assert.notEqual(changed, selfCurrent, 'Every refusal changes actual protected bytes');\n  for (const key of [selfBare, selfKey]) assert.notEqual(hash(deedQuestSourceBaseline(key, changed)), selfExpected);\n}\nconsole.log(JSON.stringify({phase:'DEED_EXACT_SELF_KEY',positives:4,selfKeyRefusals,selfConservationRefusals,selfInverseMutations:selfInverseMutations.length,nativeAttempts:0}));\n// Exercise the real Enterprise guard, not a reconstruction of its implementation.\n// Only protected-file reads are substituted to test drift without changing checkout bytes.\nconst protectedModules = {\n  'enterprise-release-phase2-migration-catalog.js': 'fc35f2b8770f3c7bd77347478c55eb944935fed019d40a43b101c70e5bc82570',\n  'market-operations-release-phase2-migration-catalog.js': '689d63b4273296c247fb130566a96d9c1beb049c8b0bde3169b988f66074acf1',\n  'deed-discovery-migration-catalog.js': 'bd2da4747ab5a7fa41fe5630bb352e385184f73ecdadc716738b2532a845fd44',\n  'deed-quest-source-transfer.js': '05bc98b2f26de7172675b0fb17d865ffa75d299a113807f4a5160beeb8fcfe9e',\n  'deed-market-source-compatibility.js': '11c3683f55b6b960135c3d522c759f10e4e16b65b993546dc93dce899762dc26',\n};\nconst protectedInputs = new Map(Object.keys(protectedModules).map(file =>\n  [new URL('../tools/' + file, import.meta.url).href, lf(fs.readFileSync(new URL('../tools/' + file, import.meta.url), 'utf8'))]));\nconst protectedSchema = git('show', '61bfb1b963f1c8c657c01674dae1cf71f4da80c6:schema.sql');\nconst assertProtectedSources = () => {\n  const selected = enterpriseCurrentDeedSources(protectedSchema);\n  assert.equal(selected.current, protectedSchema);\n  assert.equal(hash(selected.predecessor), '50293aebc2fb963c46696869e4770232b4508972820cd1e709918b1df112e90a');\n};\nassertProtectedSources();\nlet protectedRefusals = 0;\nfor (const [file, expected] of Object.entries(protectedModules)) {\n  const text = protectedInputs.get(new URL('../tools/' + file, import.meta.url).href);\n  const posixKey = path.posix.relative('/repo', path.posix.join('/repo/tools', file));\n  const windowsKey = path.win32.relative('C:\\\\repo', path.win32.join('C:\\\\repo\\\\tools', file)).replaceAll('\\\\', '/');\n  for (const key of [posixKey, windowsKey]) for (const input of [text, text.replaceAll('\\n', '\\r\\n')])\n    assert.equal(hash(lf(deedQuestSourceBaseline(key, input))), expected, 'Repository-relative identity preserves the original protected pin');\n}\nconst originalReadFileSync = fs.readFileSync;\nlet protectedLineEndings = text => text, changedFile, changedInput;\ntry {\n  fs.readFileSync = function (file, ...args) {\n    if (file instanceof URL && protectedInputs.has(file.href)) {\n      assert.equal(args[0], 'utf8');\n      return file.href === changedFile ? changedInput : protectedLineEndings(protectedInputs.get(file.href));\n    }\n    return originalReadFileSync.call(this, file, ...args);\n  };\n  for (const endings of [text => text, text => text.replaceAll('\\n', '\\r\\n')]) {\n    protectedLineEndings = endings;\n    assertProtectedSources();\n    for (const file of Object.keys(protectedModules)) {\n      const url = new URL('../tools/' + file, import.meta.url).href, text = protectedInputs.get(url);\n      const mutations = [text + '\\n// unknown protected source\\n', text.slice(1), '\\ufeff' + text, text + '\\0',\n        text.replace('\\n', '\\r\\n'), text.replace('\\n', '\\r')];\n      if (file === 'deed-quest-source-transfer.js') mutations.push(...currentSelfInverseMutations(text));\n      for (const changed of mutations) {\n        assert.notEqual(changed, text, 'Every refusal changes actual protected bytes');\n        changedFile = url; changedInput = changed;\n        assert.throws(assertProtectedSources, error => error?.code === 'ERR_ASSERTION'\n          && (error.message.includes('Whole protected original native/source module: ' + file)\n            || error.message.includes('Only whole LF or uniformCRLF source')), 'Changed protected bytes still refuse: ' + file);\n        protectedRefusals++;\n      }\n      changedFile = undefined;\n    }\n  }\n} finally { fs.readFileSync = originalReadFileSync; }\nconsole.log(`Enterprise protected source identity PASS: all 5 real guard entries, POSIX/Windows logical keys, LF/CRLF inputs, ${protectedRefusals} refusing controls; original pins unchanged`);\nassert.equal(DEED_QUEST_SOURCE_PREDECESSOR, '2c8eaacf104e8555d5140136b5ed19027ecd4766');\nassert.equal(DEED_QUEST_SOURCE_PHASE, 'exact-source-transfer-only; no historical runtime, native, migration, financial, genesis or deployment clearance');\nassert.deepEqual(Object.keys(DEED_QUEST_SOURCE_DOMAINS), ['package.json', 'schema.sql', 'src/agentgateway.js',\n",
+          "baseline": "const blob = text => crypto.createHash('sha1').update(`blob ${Buffer.byteLength(text)}\\0`).update(text).digest('hex');\nconst retainedDeedRelease = '3aaeaa97a102babf7f56dece03860964814fe313';\nconst retainedDeedSource = file => git('show', retainedDeedRelease+':'+file);\nassert.equal(DEED_QUEST_SOURCE_PREDECESSOR, '2c8eaacf104e8555d5140136b5ed19027ecd4766');\nassert.equal(DEED_QUEST_SOURCE_PHASE, 'exact-source-transfer-only; no historical runtime, native, migration, financial, genesis or deployment clearance');\nassert.deepEqual(Object.keys(DEED_QUEST_SOURCE_DOMAINS), ['package.json', 'schema.sql', 'src/agentgateway.js',\n"
+        }
+      ]
+    },
+    "test/director-migration.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "e030e2ecbf1385b4120c0fb007233d41ee9ff9b2",
+        "sha256": "ad15526aa69d33ffc25a57fa576ecc90787aaa595d38d2dc72fd5853ab223dda",
+        "bytes": 72451
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "5671cae4c65742f93b74018cd3fe89d8c472d32d",
+        "sha256": "0f59c17c250b72f75ca1986724791bc5e1408f3163251b1bb504233f8c021b6f",
+        "bytes": 72277
+      },
+      "inverses": [
+        {
+          "at": 336,
+          "current": "import { execFileSync } from 'node:child_process';\nimport pg from 'pg';\nimport { equipmentEconomyMigrationProjection, EQUIPMENT_ECONOMY_MIGRATION_TABLES } from './lib/equipment-economy-migration-catalog.js';\nimport { createTaskPuzzleReleasePhase2MigrationCatalog as createCommerceReleasePhase2MigrationCatalog, readTaskPuzzleReleasePhase2Metadata as readCommerceReleasePhase2Metadata,\n  verifyTaskPuzzleReleasePhase2CausalNegatives as verifyCommerceReleasePhase2CausalNegatives, COMMERCE_NATIVE_TABLES, assertTaskPuzzlePhase2SourceInputs as assertQuestingPhase2SourceInputs } from '../tools/questing-ux-release-phase2-native-catalog.js';\nimport { readCommerceReleasePhase2Metadata as readHistoricalCommerceReleasePhase2Metadata } from '../tools/commerce-deed-release-phase2-native-catalog.js';\nimport { dbCaps, migrateSchemaUnderLock } from '../src/db.js';\nimport { withCharacter, travel } from '../src/game.js';\n",
+          "baseline": "import { execFileSync } from 'node:child_process';\nimport pg from 'pg';\nimport { equipmentEconomyMigrationProjection, EQUIPMENT_ECONOMY_MIGRATION_TABLES } from './lib/equipment-economy-migration-catalog.js';\nimport { createCommerceReleasePhase2MigrationCatalog, readCommerceReleasePhase2Metadata,\n  verifyCommerceReleasePhase2CausalNegatives, COMMERCE_NATIVE_TABLES, assertQuestingPhase2SourceInputs } from '../tools/questing-ux-release-phase2-native-catalog.js';\nimport { readCommerceReleasePhase2Metadata as readHistoricalCommerceReleasePhase2Metadata } from '../tools/commerce-deed-release-phase2-native-catalog.js';\nimport { dbCaps, migrateSchemaUnderLock } from '../src/db.js';\nimport { withCharacter, travel } from '../src/game.js';\n"
+        }
+      ]
+    },
+    "test/enterprise-release-phase2-migration-catalog.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "52a65b3565084a512dfabf2e717d3a486c564be6",
+        "sha256": "1354b7d7432ad8236079d00af76c2345f2cc9a6482bc6064b67aa2d55f399e60",
+        "bytes": 34322
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "c35ebb7882d2a1103ac080b00630cff2f7fbbb00",
+        "sha256": "a8789026111be911cc53a5348847a2583bf7895f9ad46ee819276e7f51132e3b",
+        "bytes": 32624
+      },
+      "inverses": [
+        {
+          "at": 101,
+          "current": "import {isDeepStrictEqual} from 'node:util';\nimport {execFileSync} from 'node:child_process';\nimport {deedQuestSourceBaseline} from '../tools/deed-quest-source-transfer.js';\nimport {ageRemovalHistoricalInput} from '../tools/age-removal-source-transfer.js';\n\nassert.equal(process.execArgv.length,0,'Only the bare Node test entrypoint is admitted');\nconst native=process.argv.length===3&&process.argv[2]==='--postgres';\n",
+          "baseline": "import {isDeepStrictEqual} from 'node:util';\nimport {execFileSync} from 'node:child_process';\nimport {deedQuestSourceBaseline} from '../tools/deed-quest-source-transfer.js';\n\nassert.equal(process.execArgv.length,0,'Only the bare Node test entrypoint is admitted');\nconst native=process.argv.length===3&&process.argv[2]==='--postgres';\n"
+        },
+        {
+          "at": 1893,
+          "current": "const lf=text=>text.replaceAll('\\r\\n','\\n');\nconst uniform=text=>{const normalized=lf(text);return !normalized.includes('\\r')&&(text===normalized||text===normalized.replaceAll('\\n','\\r\\n'));};\nconst hash=text=>crypto.createHash('sha256').update(text).digest('hex');\nconst frozenText=(relative,expected,file)=>{const raw=fs.readFileSync(new URL(relative,import.meta.url),'utf8');assert(uniform(raw),'Only exact LF or uniform checkout CRLF');const text=file?deedQuestSourceBaseline(file,ageRemovalHistoricalInput(file,lf(raw))):lf(raw);assert.equal(hash(text),expected,'Complete reviewed source remains exact: '+relative);return text;};\n// Explicit current-Commerce dispatch in the same original Enterprise16 catalog slot.\nconst dispatchRaw=fs.readFileSync(new URL('../schema.sql',import.meta.url),'utf8');assert(uniform(dispatchRaw));\nconst dispatchSchema=deedQuestSourceBaseline('schema.sql',dispatchRaw);\n",
+          "baseline": "const lf=text=>text.replaceAll('\\r\\n','\\n');\nconst uniform=text=>{const normalized=lf(text);return !normalized.includes('\\r')&&(text===normalized||text===normalized.replaceAll('\\n','\\r\\n'));};\nconst hash=text=>crypto.createHash('sha256').update(text).digest('hex');\nconst frozenText=(relative,expected,file)=>{const raw=fs.readFileSync(new URL(relative,import.meta.url),'utf8');assert(uniform(raw),'Only exact LF or uniform checkout CRLF');const text=file?deedQuestSourceBaseline(file,lf(raw)):lf(raw);assert.equal(hash(text),expected,'Complete reviewed source remains exact: '+relative);return text;};\n// Explicit current-Commerce dispatch in the same original Enterprise16 catalog slot.\nconst dispatchRaw=fs.readFileSync(new URL('../schema.sql',import.meta.url),'utf8');assert(uniform(dispatchRaw));\nconst dispatchSchema=deedQuestSourceBaseline('schema.sql',dispatchRaw);\n"
+        },
+        {
+          "at": 2916,
+          "current": "const commerceDeedCurrent=hash(lf(dispatchSchema))==='833373245ddb1ce5a3c9ed386a9b3245d81ddb0bdb51e75d1e5ffee2a7684335';\nconst questingAdapter=await import('../tools/questing-enterprise-catalog.js');\nconst questingCurrent=hash(lf(dispatchRaw))===questingAdapter.QUESTING_CATALOG_SOURCE.sha256;\nconst taskPuzzleAdapter=await import('../tools/task-puzzle-native-catalog.js');\nconst taskPuzzleCurrent=hash(lf(dispatchRaw))===taskPuzzleAdapter.TASK_PUZZLE_CATALOG_SOURCE.sha256;\nif(taskPuzzleCurrent){\n  const sources=taskPuzzleAdapter.taskPuzzleCatalogSource(dispatchRaw);\n  assert.equal(sources.actualTables,586);assert.equal(sources.baselineTables,585);\n  console.log('Exact raw task-puzzle586 source qualifies separately; complete585 remains an independent comparison reference.');\n  if(native){\n    const {default:pg}=await import('pg'),pool=new pg.Pool({connectionString:endpoint.href,max:1});\n    try{\n      const {verifyTaskPuzzleEnterpriseCatalog}=await import('../tools/task-puzzle-enterprise-catalog.js');\n      const result=await verifyTaskPuzzleEnterpriseCatalog(pool,endpoint.href,dispatchRaw);\n      assert.equal(result.actualTables,586);assert.equal(result.baselineTables,585);assert.equal(result.idempotent,2);\n      assert.equal(result.questDdlCausal,26);assert.equal(result.casinoDdlCausal,28);\n      assert.equal(result.puzzleDdlCausal,2*taskPuzzleAdapter.TASK_PUZZLE_DDL_CONTROLS.length);\n      console.log(JSON.stringify({phase:result.phase,freshTables:586,upgradeTables:586,baselineTables:585,\n        counterFreshOrdinal:92,counterUpgradeOrdinal:119,puzzleDdlCausal:result.puzzleDdlCausal,\n        questDdlCausal:result.questDdlCausal,casinoDdlCausal:result.casinoDdlCausal,idempotent:result.idempotent,\n        historicalReferenceCausal:result.historical.causal,native:true,priorNativeResultsTransferred:false}));\n    }finally{await pool.end();}\n  }\n}else if(questingCurrent){\n  const adapter=questingAdapter;\n  const sources=adapter.questingCatalogSource(dispatchRaw);\n  assert.equal(sources.actualTables,585);assert.equal(sources.baselineTables,582);\n",
+          "baseline": "const commerceDeedCurrent=hash(lf(dispatchSchema))==='833373245ddb1ce5a3c9ed386a9b3245d81ddb0bdb51e75d1e5ffee2a7684335';\nconst questingAdapter=await import('../tools/questing-enterprise-catalog.js');\nconst questingCurrent=hash(lf(dispatchRaw))===questingAdapter.QUESTING_CATALOG_SOURCE.sha256;\nif(questingCurrent){\n  const adapter=questingAdapter;\n  const sources=adapter.questingCatalogSource(dispatchRaw);\n  assert.equal(sources.actualTables,585);assert.equal(sources.baselineTables,582);\n"
+        }
+      ]
+    },
+    "test/firstblood.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "52a69ea9fe14f43b1b439e763081a9428d42dd67",
+        "sha256": "c463988f670107a294f999ff4e073e55ed8b75c1e36ea91050b7d4d8048e386d",
+        "bytes": 11151
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "874ae454bd282f626b22d24791d01ecea3c01075",
+        "sha256": "69c0797b8c979506d3971eb33d4f22077aa8a1144a0853fa0e1f01b0e6bcae45",
+        "bytes": 10227
+      },
+      "inverses": [
+        {
+          "at": 4639,
+          "current": "const notes2 = (await pool.query(\"SELECT count(*)::int n FROM notifications WHERE character_id=$1 AND type='first_blood'\", [player.id])).rows[0].n;\nassert.equal(notes2, 1, 'the beat is assigned once — no duplicate on a second action');\n\n// A processed loss is HTTP 200 but does not settle the assigned rival. This is\n// the response distinction the progression harness must preserve when measuring\n// whether advice stayed pinned after completion.\nawait seedCh(resident, 'muscle=40000, speed=40000');\nconst lost = await call('POST', `/v1/streets/${resident}/jump`, { token: player.token });\nassert.equal(lost.code, 200, 'a lost jump is still a processed request');\nassert.equal(lost.body.win, false, 'the stronger rival wins deterministically');\nassert.ok(!lost.body.firstBlood, 'a loss carries no First Blood settlement');\nassert.equal(Number((await rowOf(player.id)).aha_stage), 1, 'a loss leaves First Blood pending');\nassert.equal((await meOf(player.token)).coach.label, 'Settle your first score',\n  'pending First Blood advice correctly remains after a loss');\nawait seedCh(resident, 'muscle=1, speed=1');\nawait seedCh(player.id, 'energy=200, ammo=200');\n\n// ── SETTLE: jump the assigned rival. The bruiser wins deterministically (400/400 vs 1/1). ──\nconst jr = await call('POST', `/v1/streets/${resident}/jump`, { token: player.token });\nassert.equal(jr.code, 200, 'the jump lands');\n",
+          "baseline": "const notes2 = (await pool.query(\"SELECT count(*)::int n FROM notifications WHERE character_id=$1 AND type='first_blood'\", [player.id])).rows[0].n;\nassert.equal(notes2, 1, 'the beat is assigned once — no duplicate on a second action');\n\n// ── SETTLE: jump the assigned rival. The bruiser wins deterministically (400/400 vs 1/1). ──\nconst jr = await call('POST', `/v1/streets/${resident}/jump`, { token: player.token });\nassert.equal(jr.code, 200, 'the jump lands');\n"
+        }
+      ]
+    },
     "test/gates.js": {
       "current": {
         "mode": "100644",
-        "blob": "3bb133e1baba86ccc5423060f90800d2427735ed",
-        "sha256": "e6bcaf8a8df43c5f9feb12c9a16193f0cbe21d2810cf724c708706af21ddbf32",
-        "bytes": 500935
+        "blob": "5e8a574a5af9d8022b984cc4a248cdce21c42199",
+        "sha256": "1915d2d8afbc62a16d012827ee750f014e43ea08ebf3392b7b5982a6294739a2",
+        "bytes": 509091
       },
       "baseline": {
         "mode": "100644",
@@ -783,9 +1411,65 @@ export const AGE_REMOVAL_SOURCE = freeze({
       },
       "inverses": [
         {
-          "at": 338640,
+          "at": 1722,
+          "current": "// `safeHoused(ch)` proves the shield is consulted, not that the comparison is the right way round.\nimport assert from 'node:assert';\nimport { createHash } from 'node:crypto';\nimport { execFileSync } from 'node:child_process';\nimport fs from 'node:fs';\nimport path from 'node:path';\nimport { fileURLToPath } from 'node:url';\n",
+          "baseline": "// `safeHoused(ch)` proves the shield is consulted, not that the comparison is the right way round.\nimport assert from 'node:assert';\nimport { createHash } from 'node:crypto';\nimport fs from 'node:fs';\nimport path from 'node:path';\nimport { fileURLToPath } from 'node:url';\n"
+        },
+        {
+          "at": 2187,
+          "current": "import { QUESTING_SOURCE, qualifyQuestingSource } from '../tools/questing-source-transfer.js';\nimport { FOUNDRY_RELEASE, verifyFoundryArchive } from '../tools/ci-foundry.js';\nimport { POLICY as FOUNDRY_API_POLICY } from '../tools/foundry-release-api.js';\nimport { scanQueryCalls } from '../tools/sqlscan.js';\n\n// Current pgquery admission is executable source validation, not a native SQL result.\n// A stale pin must fail here; a function-only replacement must fail the unchanged-body controls.\n{\n  const root = process.cwd(), options = { ecmaVersion: 'latest', sourceType: 'module' };\n  const read = file => fs.readFileSync(path.join(root, file), 'utf8');\n  const pgquery = read('tools/pgquery.js').replaceAll('\\r\\n', '\\n');\n  const tree = parse(pgquery, options).body;\n  const declaration = (nodes, name) => {\n    const found = nodes.filter(node => node.type === 'VariableDeclaration'\n      && node.declarations.some(value => value.id.name === name));\n    assert.equal(found.length, 1, 'One actual production declaration: ' + name);\n    return found[0];\n  };\n  const models = tree.filter(node => node.type === 'FunctionDeclaration' && node.id.name === 'modelSocialReceiptQueries');\n  assert.equal(models.length, 1);\n  const model = models[0], statements = model.body.body;\n  const imports = statements.filter(node => node.type === 'VariableDeclaration'\n    && node.declarations.some(value => value.init?.type === 'AwaitExpression'));\n  assert.equal(imports.length, 1, 'One bounded runtime import boundary');\n  const prefix = pgquery.slice(model.body.start + 1, imports[0].start);\n  assert(!prefix.includes('import('), 'Source and signature regression stops before runtime imports');\n  const helpers = ['canonicalSql', 'scannerSignature'].map(name => {\n    const node = declaration(tree, name); return pgquery.slice(node.start, node.end);\n  }).join('\\n');\n  const verify = new Function('createHash', 'readFileSync', 'path', 'ROOT', 'rows',\n    helpers + '\\n' + prefix + '\\nreturn { sourcePins, rowByName };');\n  const files = ['src/accountdaily.js', 'src/db.js', 'src/growth.js'];\n  const sources = Object.fromEntries(files.map(file => [file, read(file)]));\n  const { readable } = scanQueryCalls(path.join(root, 'src'), { root });\n  const admit = candidate => verify(createHash, (file, encoding) => {\n    assert.equal(encoding, 'utf8');\n    const rel = path.relative(root, file).replaceAll('\\\\', '/');\n    assert(files.includes(rel), 'Only the three real complete sources are supplied');\n    return candidate[rel];\n  }, path, root, readable);\n  const accepted = admit(sources), growth = sources['src/growth.js'].replaceAll('\\r\\n', '\\n');\n  const withGrowth = value => ({ ...sources, 'src/growth.js': value });\n  admit(withGrowth(growth)); admit(withGrowth(growth.replaceAll('\\n', '\\r\\n')));\n  assert.deepEqual([...accepted.rowByName.keys()], ['accountInsert', 'migrationCutoff', 'migrationClaims',\n    'migrationTelemetry', 'sweepPaid', 'sweepPending', 'sweepDelete']);\n  const counts = declaration(statements, 'expectedCounts');\n  assert.deepEqual(new Function(pgquery.slice(counts.start, counts.end) + '; return expectedCounts;')(),\n    { accountInsert: 1000, migrationCutoff: 2, migrationClaims: 2, migrationTelemetry: 3,\n      sweepPaid: 2, sweepPending: 2, sweepDelete: 2000 });\n  const functionText = (source, name) => {\n    const nodes = parse(source, options).body.map(node => node.declaration || node)\n      .filter(node => node.type === 'FunctionDeclaration' && node.id.name === name);\n    assert.equal(nodes.length, 1); return source.slice(nodes[0].start, nodes[0].end);\n  };\n  const sweep = functionText(growth, 'sweepSocialClaims');\n  const unchangedBody = [growth + '\\n// Unknown complete-source successor.\\n', growth.replace('// M4', '// M5')];\n  for (const mutation of unchangedBody) {\n    assert.notEqual(mutation, growth);\n    assert.equal(functionText(mutation, 'sweepSocialClaims'), sweep);\n    assert.throws(() => admit(withGrowth(mutation)), /src\\/growth\\.js source changed/,\n      'Unchanged generator cannot authorize unknown complete source');\n  }\n  const oldGrowth = execFileSync('git', ['--no-optional-locks', '--no-replace-objects', 'cat-file', 'blob',\n    '95c12467a^:src/growth.js'], { cwd: root, encoding: 'utf8', windowsHide: true });\n  assert.throws(() => admit(withGrowth(oldGrowth)), /src\\/growth\\.js source changed/,\n    'Historical source is not current runtime-model admission');\n  for (const malformed of [growth.replace('\\n', '\\r\\n'), growth.replace('\\n', '\\r'), '\\ufeff' + growth, growth + '\\0'])\n    assert.throws(() => admit(withGrowth(malformed)), /source changed|complete LF or uniform CRLF/);\n  const pins = declaration(statements, 'generatorPins'), pinIndex = statements.indexOf(pins);\n  const loop = statements[pinIndex + 1];\n  assert.equal(loop.type, 'ForOfStatement'); assert.equal(loop.right.name, 'generatorPins');\n  const checkGenerators = new Function('createHash', 'canonicalSql', 'takeAccountDailyClaims', 'sweepSocialClaims',\n    pgquery.slice(pins.start, loop.end));\n  const account = functionText(sources['src/accountdaily.js'].replaceAll('\\r\\n', '\\n'), 'takeAccountDailyClaims');\n  const fn = source => new Function('return (' + source + ');')();\n  const check = (left, right) => checkGenerators(createHash, sql => sql.replaceAll('\\r\\n', '\\n'), fn(left), fn(right));\n  check(account, sweep);\n  assert.throws(() => check(account.replace('{', '{ '), sweep), /takeAccountDailyClaims source changed/);\n  assert.throws(() => check(account, sweep.replace('{', '{ ')), /sweepSocialClaims source changed/);\n  assert.throws(() => admit(withGrowth(growth.replace(sweep, sweep.replace('{', '{ ')))), /src\\/growth\\.js source changed/);\n  const dmlNode = declaration(tree, 'DML');\n  const dml = new Function(pgquery.slice(dmlNode.start, dmlNode.end) + '; return DML;')();\n  const puzzleSql = [\n    ['src/task-puzzles.js', 'SELECT * FROM task_puzzles WHERE character_id=$1 AND scope=$2 AND target_id=$3 AND context_key=$4'],\n    ['src/task-puzzles.js', 'SELECT kind,structural_signature FROM task_puzzles WHERE character_id=$1 ORDER BY issue_order DESC LIMIT 16'],\n    ['src/task-puzzles.js', 'INSERT INTO task_puzzles (id,character_id,scope,target_id,context_key,version,kind,structural_signature,puzzle) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)'],\n    ['src/task-puzzles.js', 'UPDATE task_puzzles SET consumed_at=now() WHERE id=$1 AND character_id=$2 AND scope=$3 AND target_id=$4 AND context_key=$5 AND consumed_at IS NULL RETURNING id'],\n    ['src/task-puzzle-jobs.js', 'SELECT step FROM hustles WHERE character_id=$1 AND day=$2'],\n    ['src/task-puzzle-jobs.js', 'SELECT crime_puzzle_revision FROM characters WHERE id=$1'],\n    ['src/game.js', 'UPDATE characters SET crime_puzzle_revision=crime_puzzle_revision+1 WHERE id=$1'],\n  ];\n  for (const [rel, sql] of puzzleSql) {\n    const matches = readable.filter(row => row.rel === rel && row.sql === sql);\n    assert.equal(matches.length, 1); assert(!matches[0].interpolated); assert(dml.test(matches[0].sql));\n  }\n  console.log('  pgquery source admission: current LF/CRLF and seven receipt signatures accepted; unknown, historical, malformed and generator mutations refused; seven puzzle literals remain in the PREPARE corpus (source-only, no database).');\n}\n// End current pgquery admission regression.\n\nconst expectedFoundryRelease = {\n  version: '1.7.1',\n",
+          "baseline": "import { QUESTING_SOURCE, qualifyQuestingSource } from '../tools/questing-source-transfer.js';\nimport { FOUNDRY_RELEASE, verifyFoundryArchive } from '../tools/ci-foundry.js';\nimport { POLICY as FOUNDRY_API_POLICY } from '../tools/foundry-release-api.js';\n\nconst expectedFoundryRelease = {\n  version: '1.7.1',\n"
+        },
+        {
+          "at": 162475,
+          "current": "    'combat.js:intent':     'published on /v1/rules; compared, never rendered (the approach precedent)',\n    'rules.tail.js:rarity': 'a catalog helper return — its callers attach the display name',\n    'graph.js:kind': 'bounded declarative prerequisite discriminator from the Coordination compiler; server predicates branch on it, and player projection labels are separately authored',\n    'task-puzzles.js:kind': 'closed patrol/route/matching/evidence protocol discriminator in completion feedback; the issued puzzle supplies its readable title and the acknowledgement supplies a human message, never raw-kind prose',\n    'companyspecialization.js:kind': 'closed volume/quality/speed/niche production-profile discriminator, validated against COMPANY_SPECIALIZATION and a native CHECK; a machine admission setting, never a narrative catalog rung',\n    'operations.js:subjectKey': 'server-private Family prerequisite plan key for a declared role; never rendered as a role display name',\n    // ── the `.kind` half. The rule was widened from `X.id` to `X.id|X.kind` after the business\n",
+          "baseline": "    'combat.js:intent':     'published on /v1/rules; compared, never rendered (the approach precedent)',\n    'rules.tail.js:rarity': 'a catalog helper return — its callers attach the display name',\n    'graph.js:kind': 'bounded declarative prerequisite discriminator from the Coordination compiler; server predicates branch on it, and player projection labels are separately authored',\n    'companyspecialization.js:kind': 'closed volume/quality/speed/niche production-profile discriminator, validated against COMPANY_SPECIALIZATION and a native CHECK; a machine admission setting, never a narrative catalog rung',\n    'operations.js:subjectKey': 'server-private Family prerequisite plan key for a declared role; never rendered as a role display name',\n    // ── the `.kind` half. The rule was widened from `X.id` to `X.id|X.kind` after the business\n"
+        },
+        {
+          "at": 345969,
           "current": "    'test/economicintelligence-fixture.js': 'Import-only actual authenticated GIN/forecast fixture; economic intelligence and default autonomy DTO memory/native proofs execute its exported factory.',\n    'test/fundedexternalwork-fixture.js': 'Import-only actual F11 gameplay and explicitly simulated external-work fixture; required memory/native lifecycle suite executes it, public finance remains unavailable.',\n    'test/managementteams-fixture.js': 'Import-only actual original-party governance/management fixture; required memory/native team suite executes it, no standalone runner.',\n    'test/auth-fixture.js': 'Import-only shared auth request helper used by gameplay suites; it exports no standalone assertions.',\n    'test/server-fixture.js': 'Import-only wrapper around the real server for gameplay suites; it exports no standalone assertions.',\n    'test/economy-composition-restart.js': 'Fresh-process child probe executed by the required native economy-composition suite; it requires an owned disposable PostgreSQL schema and bounded synthetic stdin, so it cannot run standalone.',\n    'test/commercialnegotiation-fixture.js': 'Import-only real authenticated gameplay fixture executed by negotiation and equipment-contract memory/native suites; exports no standalone test runner.',\n    'test/equipmentinsurance-fixture.js': 'Import-only real physical wear and canonical repair fixture executed by insurance memory/native suites; no standalone runner.',\n",
           "baseline": "    'test/economicintelligence-fixture.js': 'Import-only actual authenticated GIN/forecast fixture; economic intelligence and default autonomy DTO memory/native proofs execute its exported factory.',\n    'test/fundedexternalwork-fixture.js': 'Import-only actual F11 gameplay and explicitly simulated external-work fixture; required memory/native lifecycle suite executes it, public finance remains unavailable.',\n    'test/managementteams-fixture.js': 'Import-only actual original-party governance/management fixture; required memory/native team suite executes it, no standalone runner.',\n    'test/auth-fixture.js': 'Import-only synthetic-adult request fixture used by gameplay suites; the independent age suite exercises missing and ineligible birth dates against the real server.',\n    'test/server-fixture.js': 'Import-only wrapper around the real server for unrelated gameplay suites; it supplies synthetic-adult auth bodies and exports no standalone assertions.',\n    'test/economy-composition-restart.js': 'Fresh-process child probe executed by the required native economy-composition suite; it requires an owned disposable PostgreSQL schema and bounded synthetic stdin, so it cannot run standalone.',\n    'test/commercialnegotiation-fixture.js': 'Import-only real authenticated gameplay fixture executed by negotiation and equipment-contract memory/native suites; exports no standalone test runner.',\n    'test/equipmentinsurance-fixture.js': 'Import-only real physical wear and canonical repair fixture executed by insurance memory/native suites; no standalone runner.',\n"
+        },
+        {
+          "at": 362959,
+          "current": "  const nativeShape = block => block.replaceAll('\\r\\n', '\\n').split('\\n')\n    .filter(line => line.trim() && !/^\\s*#/.test(line)).map(line => line.trimEnd()).join('\\n');\n  const expectedQuestBrowser = \"  questing_browser:\\n    name: Quest acceptance and browser playthroughs\\n    runs-on: ubuntu-latest\\n    timeout-minutes: 15\\n    steps:\\n      - uses: actions/checkout@v7\\n        with:\\n          fetch-depth: 0\\n      - uses: actions/setup-node@v7\\n        with:\\n          node-version: '22'\\n          cache: npm\\n      - run: npm ci\\n      - run: npx playwright-core install --with-deps chromium\\n      - name: Quest source and current native admission guards\\n        run: |\\n          node test/questing-source-transfer.js\\n          node test/enterprise-native-questing-guard.js\\n          node test/questing-enterprise-catalog-guard.js\\n          node test/questing-ux-release-phase2-native-catalog-guard.js\\n          node test/rc1-npc-retirement-journal.js\\n          node test/genesis-fee-readiness-source-transfer.js\\n      - name: Quest runtime, cases and community workshop\\n        run: npm run test:questing\\n      - name: Production quest and clue interfaces\\n        run: |\\n          export CHROMIUM_PATH=\\\"$(node --input-type=module -e 'import { chromium } from \\\"playwright-core\\\"; process.stdout.write(chromium.executablePath());')\\\"\\n          npm run test:questing:browser\\n      - run: npm run questing:check\";\n  const expectedQuestNative = \"  questing_native:\\n    name: Quest authority and concurrency (PostgreSQL)\\n    runs-on: ubuntu-latest\\n    timeout-minutes: 30\\n    services:\\n      postgres:\\n        image: postgres:18.4\\n        env:\\n          POSTGRES_PASSWORD: pgcheck\\n          POSTGRES_DB: omerta_questing_ci\\n        ports:\\n          - 5432:5432\\n        options: >-\\n          --health-cmd \\\"pg_isready -U postgres\\\"\\n          --health-interval 5s\\n          --health-timeout 5s\\n          --health-retries 12\\n    steps:\\n      - uses: actions/checkout@v7\\n        with:\\n          fetch-depth: 0\\n      - uses: actions/setup-node@v7\\n        with:\\n          node-version: '22'\\n          cache: npm\\n      - run: npm ci\\n      - name: Set owned test PostgreSQL lock capacity for populated migrations\\n        timeout-minutes: 3\\n        shell: bash\\n        env:\\n          POSTGRES_SERVICE_ID: ${{ job.services.postgres.id }}\\n        run: |\\n          set -euo pipefail\\n          [[ \\\"$POSTGRES_SERVICE_ID\\\" =~ ^[0-9a-f]{64}$ ]] || { echo 'Missing owned PostgreSQL service container ID' >&2; exit 1; }\\n          timeout 15s docker exec \\\"$POSTGRES_SERVICE_ID\\\" psql -X -U postgres -d postgres -v ON_ERROR_STOP=1 -c 'ALTER SYSTEM SET max_locks_per_transaction = 512;'\\n          timeout 45s docker restart --timeout 30 \\\"$POSTGRES_SERVICE_ID\\\"\\n          ready=0\\n          deadline=$((SECONDS + 60))\\n          while (( SECONDS < deadline )); do\\n            if timeout 3s docker exec \\\"$POSTGRES_SERVICE_ID\\\" pg_isready -q -t 1 -U postgres -d postgres; then\\n              ready=1\\n              break\\n            fi\\n            sleep 1\\n          done\\n          [[ \\\"$ready\\\" == 1 ]] || { echo 'Owned PostgreSQL service did not become ready within 60 seconds' >&2; exit 1; }\\n          actual=\\\"$(timeout 10s docker exec \\\"$POSTGRES_SERVICE_ID\\\" psql -X -U postgres -d postgres -v ON_ERROR_STOP=1 -Atc 'SHOW max_locks_per_transaction;')\\\"\\n          [[ \\\"$actual\\\" == 512 ]] || { echo \\\"Unexpected test max_locks_per_transaction: $actual\\\" >&2; exit 1; }\\n      - name: Create fresh owned migration fixture databases\\n        timeout-minutes: 1\\n        run: |\\n          node --input-type=module <<'NODE'\\n          import assert from 'node:assert/strict';\\n          import pg from 'pg';\\n          const client = new pg.Client({ connectionString: 'postgres://postgres:pgcheck@127.0.0.1:5432/postgres', connectionTimeoutMillis: 10000, query_timeout: 30000 });\\n          try {\\n            await client.connect();\\n            assert.deepEqual((await client.query('SELECT current_user AS role,current_database() AS database,inet_server_port() AS port')).rows,\\n              [{ role: 'postgres', database: 'postgres', port: 5432 }]);\\n            const existing = await client.query('SELECT datname FROM pg_database WHERE datname IN ($1,$2,$3)', ['omerta_check', 'omerta_query', 'omerta_task_puzzles_ci']);\\n            assert.deepEqual(existing.rows, [], 'Owned migration fixture databases must not pre-exist');\\n            await client.query('CREATE DATABASE omerta_check');\\n            await client.query('CREATE DATABASE omerta_query');\\n            await client.query('CREATE DATABASE omerta_task_puzzles_ci');\\n            assert.deepEqual((await client.query('SELECT datname,pg_get_userbyid(datdba) AS owner FROM pg_database WHERE datname IN ($1,$2,$3) ORDER BY datname', ['omerta_check', 'omerta_query', 'omerta_task_puzzles_ci'])).rows,\\n              [{ datname: 'omerta_check', owner: 'postgres' }, { datname: 'omerta_query', owner: 'postgres' }, { datname: 'omerta_task_puzzles_ci', owner: 'postgres' }]);\\n          } finally { await client.end(); }\\n          NODE\\n      - name: Populated phase2 and Director migration regression\\n        run: |\\n          set -euo pipefail\\n          (\\n            export TEST_DATABASE_URL=postgres://postgres:pgcheck@127.0.0.1:5432/omerta_check\\n            phase2_status=0\\n            npm run phase2:definitions:postgres || phase2_status=1\\n            npm run phase2:lots:postgres || phase2_status=1\\n            exit \\\"$phase2_status\\\"\\n          ) > \\\"$RUNNER_TEMP/questing-phase2-migrations.log\\\" 2>&1 &\\n          phase2_pid=$!\\n          (\\n            export COORDINATION_TEST_DATABASE_URL=postgres://postgres:pgcheck@127.0.0.1:5432/omerta_query\\n            node test/director-migration.js --postgres\\n          ) > \\\"$RUNNER_TEMP/questing-director-migration.log\\\" 2>&1 &\\n          director_pid=$!\\n          result=0\\n          wait \\\"$phase2_pid\\\" || result=1\\n          wait \\\"$director_pid\\\" || result=1\\n          cat \\\"$RUNNER_TEMP/questing-phase2-migrations.log\\\"\\n          cat \\\"$RUNNER_TEMP/questing-director-migration.log\\\"\\n          exit \\\"$result\\\"\\n      - name: Native invitation, handoff and receipt races\\n        env:\\n          QUESTING_TEST_DATABASE_URL: postgres://postgres:pgcheck@127.0.0.1:5432/omerta_questing_ci\\n          JWT_SECRET: ci-questing-jwt-not-a-real-secret\\n          MOD_KEY: ci-questing-mod-not-a-real-secret\\n          MARKET_SEED: ciQuestingMarketSeed7Qx2mVb9PwLn4\\n          SOCIAL_VERIFY_MODE: 'off'\\n          POPULATION_OFF: 'on'\\n        run: npm run test:questing:postgres\\n      - name: Native task puzzle issuance, job races and rollback\\n        env:\\n          TASK_PUZZLE_TEST_DATABASE_URL: postgres://postgres:pgcheck@127.0.0.1:5432/omerta_task_puzzles_ci\\n        run: npm run test:task-puzzles:postgres\";\n  const assertQuestJobs = (browserBlock, nativeBlock) => {\n    assert.equal(nativeShape(browserBlock), expectedQuestBrowser, 'The quest browser job retains complete pure guards, cases and real browser commands without database authority');\n    assert.equal(nativeShape(nativeBlock), expectedQuestNative, 'The quest authority job retains its isolated PostgreSQL18 service, owned lock setup and real native endpoint/command');\n",
+          "baseline": "  const nativeShape = block => block.replaceAll('\\r\\n', '\\n').split('\\n')\n    .filter(line => line.trim() && !/^\\s*#/.test(line)).map(line => line.trimEnd()).join('\\n');\n  const expectedQuestBrowser = \"  questing_browser:\\n    name: Quest acceptance and browser playthroughs\\n    runs-on: ubuntu-latest\\n    timeout-minutes: 15\\n    steps:\\n      - uses: actions/checkout@v7\\n        with:\\n          fetch-depth: 0\\n      - uses: actions/setup-node@v7\\n        with:\\n          node-version: '22'\\n          cache: npm\\n      - run: npm ci\\n      - run: npx playwright-core install --with-deps chromium\\n      - name: Quest source and current native admission guards\\n        run: |\\n          node test/questing-source-transfer.js\\n          node test/enterprise-native-questing-guard.js\\n          node test/questing-enterprise-catalog-guard.js\\n          node test/questing-ux-release-phase2-native-catalog-guard.js\\n          node test/rc1-npc-retirement-journal.js\\n          node test/genesis-fee-readiness-source-transfer.js\\n      - name: Quest runtime, cases and community workshop\\n        run: npm run test:questing\\n      - name: Production quest and clue interfaces\\n        run: |\\n          export CHROMIUM_PATH=\\\"$(node --input-type=module -e 'import { chromium } from \\\"playwright-core\\\"; process.stdout.write(chromium.executablePath());')\\\"\\n          npm run test:questing:browser\\n      - run: npm run questing:check\";\n  const expectedQuestNative = \"  questing_native:\\n    name: Quest authority and concurrency (PostgreSQL)\\n    runs-on: ubuntu-latest\\n    timeout-minutes: 30\\n    services:\\n      postgres:\\n        image: postgres:18.4\\n        env:\\n          POSTGRES_PASSWORD: pgcheck\\n          POSTGRES_DB: omerta_questing_ci\\n        ports:\\n          - 5432:5432\\n        options: >-\\n          --health-cmd \\\"pg_isready -U postgres\\\"\\n          --health-interval 5s\\n          --health-timeout 5s\\n          --health-retries 12\\n    steps:\\n      - uses: actions/checkout@v7\\n        with:\\n          fetch-depth: 0\\n      - uses: actions/setup-node@v7\\n        with:\\n          node-version: '22'\\n          cache: npm\\n      - run: npm ci\\n      - name: Set owned test PostgreSQL lock capacity for populated migrations\\n        timeout-minutes: 3\\n        shell: bash\\n        env:\\n          POSTGRES_SERVICE_ID: ${{ job.services.postgres.id }}\\n        run: |\\n          set -euo pipefail\\n          [[ \\\"$POSTGRES_SERVICE_ID\\\" =~ ^[0-9a-f]{64}$ ]] || { echo 'Missing owned PostgreSQL service container ID' >&2; exit 1; }\\n          timeout 15s docker exec \\\"$POSTGRES_SERVICE_ID\\\" psql -X -U postgres -d postgres -v ON_ERROR_STOP=1 -c 'ALTER SYSTEM SET max_locks_per_transaction = 512;'\\n          timeout 45s docker restart --timeout 30 \\\"$POSTGRES_SERVICE_ID\\\"\\n          ready=0\\n          deadline=$((SECONDS + 60))\\n          while (( SECONDS < deadline )); do\\n            if timeout 3s docker exec \\\"$POSTGRES_SERVICE_ID\\\" pg_isready -q -t 1 -U postgres -d postgres; then\\n              ready=1\\n              break\\n            fi\\n            sleep 1\\n          done\\n          [[ \\\"$ready\\\" == 1 ]] || { echo 'Owned PostgreSQL service did not become ready within 60 seconds' >&2; exit 1; }\\n          actual=\\\"$(timeout 10s docker exec \\\"$POSTGRES_SERVICE_ID\\\" psql -X -U postgres -d postgres -v ON_ERROR_STOP=1 -Atc 'SHOW max_locks_per_transaction;')\\\"\\n          [[ \\\"$actual\\\" == 512 ]] || { echo \\\"Unexpected test max_locks_per_transaction: $actual\\\" >&2; exit 1; }\\n      - name: Create fresh owned migration fixture databases\\n        timeout-minutes: 1\\n        run: |\\n          node --input-type=module <<'NODE'\\n          import assert from 'node:assert/strict';\\n          import pg from 'pg';\\n          const client = new pg.Client({ connectionString: 'postgres://postgres:pgcheck@127.0.0.1:5432/postgres', connectionTimeoutMillis: 10000, query_timeout: 30000 });\\n          try {\\n            await client.connect();\\n            assert.deepEqual((await client.query('SELECT current_user AS role,current_database() AS database,inet_server_port() AS port')).rows,\\n              [{ role: 'postgres', database: 'postgres', port: 5432 }]);\\n            const existing = await client.query('SELECT datname FROM pg_database WHERE datname IN ($1,$2)', ['omerta_check', 'omerta_query']);\\n            assert.deepEqual(existing.rows, [], 'Owned migration fixture databases must not pre-exist');\\n            await client.query('CREATE DATABASE omerta_check');\\n            await client.query('CREATE DATABASE omerta_query');\\n            assert.deepEqual((await client.query('SELECT datname,pg_get_userbyid(datdba) AS owner FROM pg_database WHERE datname IN ($1,$2) ORDER BY datname', ['omerta_check', 'omerta_query'])).rows,\\n              [{ datname: 'omerta_check', owner: 'postgres' }, { datname: 'omerta_query', owner: 'postgres' }]);\\n          } finally { await client.end(); }\\n          NODE\\n      - name: Populated phase2 and Director migration regression\\n        run: |\\n          set -euo pipefail\\n          (\\n            export TEST_DATABASE_URL=postgres://postgres:pgcheck@127.0.0.1:5432/omerta_check\\n            phase2_status=0\\n            npm run phase2:definitions:postgres || phase2_status=1\\n            npm run phase2:lots:postgres || phase2_status=1\\n            exit \\\"$phase2_status\\\"\\n          ) > \\\"$RUNNER_TEMP/questing-phase2-migrations.log\\\" 2>&1 &\\n          phase2_pid=$!\\n          (\\n            export COORDINATION_TEST_DATABASE_URL=postgres://postgres:pgcheck@127.0.0.1:5432/omerta_query\\n            node test/director-migration.js --postgres\\n          ) > \\\"$RUNNER_TEMP/questing-director-migration.log\\\" 2>&1 &\\n          director_pid=$!\\n          result=0\\n          wait \\\"$phase2_pid\\\" || result=1\\n          wait \\\"$director_pid\\\" || result=1\\n          cat \\\"$RUNNER_TEMP/questing-phase2-migrations.log\\\"\\n          cat \\\"$RUNNER_TEMP/questing-director-migration.log\\\"\\n          exit \\\"$result\\\"\\n      - name: Native invitation, handoff and receipt races\\n        env:\\n          QUESTING_TEST_DATABASE_URL: postgres://postgres:pgcheck@127.0.0.1:5432/omerta_questing_ci\\n          JWT_SECRET: ci-questing-jwt-not-a-real-secret\\n          MOD_KEY: ci-questing-mod-not-a-real-secret\\n          MARKET_SEED: ciQuestingMarketSeed7Qx2mVb9PwLn4\\n          SOCIAL_VERIFY_MODE: 'off'\\n          POPULATION_OFF: 'on'\\n        run: npm run test:questing:postgres\";\n  const assertQuestJobs = (browserBlock, nativeBlock) => {\n    assert.equal(nativeShape(browserBlock), expectedQuestBrowser, 'The quest browser job retains complete pure guards, cases and real browser commands without database authority');\n    assert.equal(nativeShape(nativeBlock), expectedQuestNative, 'The quest authority job retains its isolated PostgreSQL18 service, owned lock setup and real native endpoint/command');\n"
+        },
+        {
+          "at": 373076,
+          "current": "    expectedQuestNative.replace('job.services.postgres.id', 'inputs.container_id'),\n    expectedQuestNative.replace('test:questing:postgres', 'test:questing:postgres -- --partial'),\n    expectedQuestNative.replace('npm run test:questing:postgres', 'node -e \"process.exit(0)\"'),\n    expectedQuestNative.replace('npm run test:task-puzzles:postgres', 'node -e \"process.exit(0)\"'),\n    expectedQuestNative.replace('test:task-puzzles:postgres', 'test:task-puzzles:postgres -- --partial'),\n    expectedQuestNative.replaceAll('omerta_task_puzzles_ci', 'production'),\n    expectedQuestNative.replace(\"            await client.query('CREATE DATABASE omerta_task_puzzles_ci');\\n\", ''),\n    expectedQuestNative.replace('POSTGRES_PASSWORD: pgcheck', 'POSTGRES_PASSWORD: questing'),\n    expectedQuestNative.replace(\"assert.deepEqual(existing.rows, [], 'Owned migration fixture databases must not pre-exist');\", 'void existing;'),\n    expectedQuestNative.replace('export COORDINATION_TEST_DATABASE_URL=postgres://postgres:pgcheck@127.0.0.1:5432/omerta_query', 'export COORDINATION_TEST_DATABASE_URL=postgres://postgres:pgcheck@127.0.0.1:5432/omerta_check'),\n",
+          "baseline": "    expectedQuestNative.replace('job.services.postgres.id', 'inputs.container_id'),\n    expectedQuestNative.replace('test:questing:postgres', 'test:questing:postgres -- --partial'),\n    expectedQuestNative.replace('npm run test:questing:postgres', 'node -e \"process.exit(0)\"'),\n    expectedQuestNative.replace('POSTGRES_PASSWORD: pgcheck', 'POSTGRES_PASSWORD: questing'),\n    expectedQuestNative.replace(\"assert.deepEqual(existing.rows, [], 'Owned migration fixture databases must not pre-exist');\", 'void existing;'),\n    expectedQuestNative.replace('export COORDINATION_TEST_DATABASE_URL=postgres://postgres:pgcheck@127.0.0.1:5432/omerta_query', 'export COORDINATION_TEST_DATABASE_URL=postgres://postgres:pgcheck@127.0.0.1:5432/omerta_check'),\n"
+        },
+        {
+          "at": 494386,
+          "current": "    const normalized=source.replaceAll('\\r\\n','\\n');\n    if(file!=='src/growth.js'||source.split(original).length!==4||normalized.includes('\\r')\n      ||(source!==normalized&&source!==normalized.replaceAll('\\n','\\r\\n'))\n      ||createHash('sha256').update(normalized).digest('hex')!=='32f6733d566505eeb5407da8dfb65c9cdfd115f717f9890ed329153b62067298')return source;\n    // These three refusals read the permanent provider/post receipt, not a refillable allowance.\n    // Mask only the reviewed error token; a same-named counter or changed claim path remains visible.\n    return source.replaceAll(original,original.replace(\"'proof_used'\",\"'proof'\"));\n",
+          "baseline": "    const normalized=source.replaceAll('\\r\\n','\\n');\n    if(file!=='src/growth.js'||source.split(original).length!==4||normalized.includes('\\r')\n      ||(source!==normalized&&source!==normalized.replaceAll('\\n','\\r\\n'))\n      ||createHash('sha256').update(normalized).digest('hex')!=='a56eef048988290bcab08966e9874b74dd84d1275e062e84b1d26c5d1097657b')return source;\n    // These three refusals read the permanent provider/post receipt, not a refillable allowance.\n    // Mask only the reviewed error token; a same-named counter or changed claim path remains visible.\n    return source.replaceAll(original,original.replace(\"'proof_used'\",\"'proof'\"));\n"
+        }
+      ]
+    },
+    "test/gateway-context.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "d7c0a5e4e6e85dabf65e803b26812dc1c7addc48",
+        "sha256": "5826d478a250ccd2432182d4f06639a14ad98d825663b0337875c2e0a9d703a5",
+        "bytes": 19431
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "4f420b5e556aab70ea9576536917184b0d571572",
+        "sha256": "1c75703a9e278d43759654632ebf0c6d1184f3a5b2914b2200aa46d59ba38b27",
+        "bytes": 19074
+      },
+      "inverses": [
+        {
+          "at": 16762,
+          "current": "  assert.doesNotMatch(JSON.stringify(fullPaths), /foreign-car/);\n  assertNoNumericSecrets(fullPaths, /98765|987/);\n\n  const missionMetadata = await run('get_available_missions');\n  assert.deepEqual([...missionMetadata.missions, ...missionMetadata.blockedMissions]\n    .filter(mission => mission.puzzle?.required).map(mission => mission.id).sort(), ['m11', 'm12', 'm2']);\n  // Every published mission's readiness preview must match its requirements and\n  // cooldown. Selected jobs then stop at the required puzzle gate, before writes.\n  const oldCooldown = process.env.MISSION_CD_MS;\n  process.env.MISSION_CD_MS = '60000';\n  try {\n",
+          "baseline": "  assert.doesNotMatch(JSON.stringify(fullPaths), /foreign-car/);\n  assertNoNumericSecrets(fullPaths, /98765|987/);\n\n  // Every published mission's preview must match its actual refusal/acceptance gate.\n  // The fake query stops exactly at the first write, so no reward is executed here.\n  const oldCooldown = process.env.MISSION_CD_MS;\n  process.env.MISSION_CD_MS = '60000';\n  try {\n"
+        },
+        {
+          "at": 17898,
+          "current": "      const client = { async query(sql) { if (/^SELECT/.test(sql)) return { rows: [] }; throw Object.assign(new Error('mutation boundary'), { code: 'accepted_at_write' }); } };\n      let refusal;\n      try { await doMission(ch, mission.id, client, { owned: { assets: [], gear: [] } }); } catch (error) { refusal = error; }\n      assert.equal(refusal.code, readiness.missing.length ? 'reqs' : readiness.cooldownSeconds ? 'cooldown' :\n        ['m2', 'm11', 'm12'].includes(mission.id) ? 'task_puzzle_required' : 'accepted_at_write');\n      assert.equal(readiness.available, ['accepted_at_write', 'task_puzzle_required'].includes(refusal.code));\n      if (refusal.code === 'reqs') assert.deepEqual(refusal.data.need, Object.fromEntries(readiness.missing.map(({ k, need }) => [k, need])));\n    }\n  } finally {\n",
+          "baseline": "      const client = { async query(sql) { if (/^SELECT/.test(sql)) return { rows: [] }; throw Object.assign(new Error('mutation boundary'), { code: 'accepted_at_write' }); } };\n      let refusal;\n      try { await doMission(ch, mission.id, client, { owned: { assets: [], gear: [] } }); } catch (error) { refusal = error; }\n      assert.equal(refusal.code, readiness.missing.length ? 'reqs' : readiness.cooldownSeconds ? 'cooldown' : 'accepted_at_write');\n      assert.equal(readiness.available, refusal.code === 'accepted_at_write');\n      if (refusal.code === 'reqs') assert.deepEqual(refusal.data.need, Object.fromEntries(readiness.missing.map(({ k, need }) => [k, need])));\n    }\n  } finally {\n"
         }
       ]
     },
@@ -822,6 +1506,32 @@ export const AGE_REMOVAL_SOURCE = freeze({
           "at": 23999,
           "current": "  assert.throws(() => fixtureComparison(fixture, raw, actualEntry)); currentRefusals++;\n  assert.throws(() => fixtureComparison(fixture, raw, actualEntry, actualIndex, {})); currentRefusals++;\n  assert.throws(() => { comparison.proof.native = true; }, TypeError); currentRefusals++;\n  assert.equal(currentPositives, 2); assert.equal(currentRefusals, 31);\n  let siteRefusals = 0;\n  const questCurrent = QUESTING_SOURCE.files[fixture].current;\n  const oldTree = questCurrent.mode + ' blob ' + questCurrent.blob + '\\t' + fixture;\n",
           "baseline": "  assert.throws(() => fixtureComparison(fixture, raw, actualEntry)); currentRefusals++;\n  assert.throws(() => fixtureComparison(fixture, raw, actualEntry, actualIndex, {})); currentRefusals++;\n  assert.throws(() => { comparison.proof.native = true; }, TypeError); currentRefusals++;\n  assert.equal(currentPositives, 2); assert.equal(currentRefusals, 30);\n  let siteRefusals = 0;\n  const questCurrent = QUESTING_SOURCE.files[fixture].current;\n  const oldTree = questCurrent.mode + ' blob ' + questCurrent.blob + '\\t' + fixture;\n"
+        }
+      ]
+    },
+    "test/growth.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "0e1f99df1dd0f5adc07119534a3412ee5c9affa3",
+        "sha256": "e9f98498fc333845ed31c34c9ae1ad06e361dd858a4d163a8f3d59de308e6768",
+        "bytes": 219883
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "4a41b57e05be9421a99666e6bf8ed5146299657a",
+        "sha256": "e153853b12018c5e2e487e67d4fc6507f99a1d53eaff0e436f2606ca0ca8b9bd",
+        "bytes": 219622
+      },
+      "inverses": [
+        {
+          "at": 799,
+          "current": "import { accrue } from '../src/accrual.js';\nimport { sweepGrandReferrals, gainRespect, maybeSparkReferral } from '../src/game.js';\nimport { GOODS_MARKET } from '../src/goodsmarket.js';\nimport { solveTaskPuzzle } from './lib/task-puzzle-solver.js';\n\n// The City Standing / recruiters boards are CACHED in production (standing.js — they were the most\n// expensive polled reads in the game). This suite reads boards it has just written, so it pins the\n",
+          "baseline": "import { accrue } from '../src/accrual.js';\nimport { sweepGrandReferrals, gainRespect, maybeSparkReferral } from '../src/game.js';\nimport { GOODS_MARKET } from '../src/goodsmarket.js';\n\n// The City Standing / recruiters boards are CACHED in production (standing.js — they were the most\n// expensive polled reads in the game). This suite reads boards it has just written, so it pins the\n"
+        },
+        {
+          "at": 188551,
+          "current": "  assert.equal((await call('POST', '/v1/hustle/advance', { token: hus.token })).body.error, 'district',\n    'the work counts, but the CHECK-IN is still location-gated — you have to bring it to the stop');\n  await seedCh(hus.id, `loc='${b1.district}'`);\n  const legworkPuzzle = (await call('POST', '/v1/task-puzzles', { token: hus.token, body: { scope: 'hustle', targetId: 'legwork' } })).body.puzzle;\n  r = await call('POST', '/v1/hustle/advance', { token: hus.token, body: { puzzle: solveTaskPuzzle(legworkPuzzle) } });\n  assert.equal(r.body.step, 2, `the legwork done (${b1.legwork}) advances the chain`);\n  // the payoff: on location, ledgered, level-scaled, once a day\n  const b2 = (await call('GET', '/v1/hustle', { token: hus.token })).body;\n",
+          "baseline": "  assert.equal((await call('POST', '/v1/hustle/advance', { token: hus.token })).body.error, 'district',\n    'the work counts, but the CHECK-IN is still location-gated — you have to bring it to the stop');\n  await seedCh(hus.id, `loc='${b1.district}'`);\n  r = await call('POST', '/v1/hustle/advance', { token: hus.token });\n  assert.equal(r.body.step, 2, `the legwork done (${b1.legwork}) advances the chain`);\n  // the payoff: on location, ledgered, level-scaled, once a day\n  const b2 = (await call('GET', '/v1/hustle', { token: hus.token })).body;\n"
         }
       ]
     },
@@ -939,12 +1649,90 @@ export const AGE_REMOVAL_SOURCE = freeze({
         }
       ]
     },
+    "test/lib/questing-ux-director-reader-source-compatibility.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "d66bd40793b923fd6bd9593a5cf06c4ce001312c",
+        "sha256": "aa8a25d6ecb4576ba91d33b809e338033cd945144b21e4d9bf1d607f959fb114",
+        "bytes": 10560
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "5d4cc4bb41cc2f73fd3eedbc81372b09557239ce",
+        "sha256": "603696309eae395a64ba601ea8e8db07ba48ae0a828a77aa3c7aed21853efeb1",
+        "bytes": 10237
+      },
+      "inverses": [
+        {
+          "at": 0,
+          "current": "import { ageRemovalHistoricalInput, ageRemovalHistoricalEntry } from '../../tools/age-removal-source-transfer.js';\n// Additive source-only reader view; the complete actual HEAD/index/physical source qualifies first.\nimport { QUESTING_SOURCE, qualifyQuestingSource, questingHistoricalEntry } from '../../tools/questing-source-transfer.js';\nexport function questingDirectorReaderView(file, input, entry) {\n",
+          "baseline": "// Additive source-only reader view; the complete actual HEAD/index/physical source qualifies first.\nimport { QUESTING_SOURCE, qualifyQuestingSource, questingHistoricalEntry } from '../../tools/questing-source-transfer.js';\nexport function questingDirectorReaderView(file, input, entry) {\n"
+        },
+        {
+          "at": 966,
+          "current": "  const parsed = entry.match(/^(100644|100755) blob ([a-f0-9]{40})\\t([^\\0\\r\\n]+)$/);\n  assert(parsed && parsed[3] === file, 'Exact regular reader Git entry');\n  assert.equal(crypto.createHash('sha1').update('blob ' + Buffer.byteLength(lf) + '\\0').update(lf).digest('hex'), parsed[2], 'Whole comparison input equals its admitted actual Git blob');\n  // Actual whole bytes and Git entry qualify above; only this pure comparison uses the outer view.\n  input = ageRemovalHistoricalInput(file, input);\n  entry = ageRemovalHistoricalEntry(file, entry, 'tree');\n  const flags = { sourceOnly: true, runtime: false, native: false, financial: false, activation: false, deployment: false, priorResultsTransferred: false };\n  if (!Object.hasOwn(QUESTING_SOURCE.files, file)) return Object.freeze({ input, entry, ...flags });\n  const proof = qualifyQuestingSource(file, input);\n",
+          "baseline": "  const parsed = entry.match(/^(100644|100755) blob ([a-f0-9]{40})\\t([^\\0\\r\\n]+)$/);\n  assert(parsed && parsed[3] === file, 'Exact regular reader Git entry');\n  assert.equal(crypto.createHash('sha1').update('blob ' + Buffer.byteLength(lf) + '\\0').update(lf).digest('hex'), parsed[2], 'Whole comparison input equals its admitted actual Git blob');\n  const flags = { sourceOnly: true, runtime: false, native: false, financial: false, activation: false, deployment: false, priorResultsTransferred: false };\n  if (!Object.hasOwn(QUESTING_SOURCE.files, file)) return Object.freeze({ input, entry, ...flags });\n  const proof = qualifyQuestingSource(file, input);\n"
+        }
+      ]
+    },
+    "test/lib/questing-ux-enterprise-reader-source-compatibility.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "d31e620b3fe0c98b21a63e8c4c36f0e7da7f5dab",
+        "sha256": "918e486d33342c524e32bd9086289c897de68f98e7ce04353cd52d3e84488e62",
+        "bytes": 10259
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "25072693250b1545e046596d9548f1953bd5eb41",
+        "sha256": "29e10bd68ffc4a04004e46bcb51011cce8256e921488f2ce272b2a951bd91978",
+        "bytes": 9936
+      },
+      "inverses": [
+        {
+          "at": 0,
+          "current": "import { ageRemovalHistoricalInput, ageRemovalHistoricalEntry } from '../../tools/age-removal-source-transfer.js';\n// Additive source-only reader view; the complete actual HEAD/index/physical source qualifies first.\nimport { QUESTING_SOURCE, qualifyQuestingSource, questingHistoricalEntry } from '../../tools/questing-source-transfer.js';\nimport { qualifySiteBasicsSource } from '../../tools/site-basics-source-transfer.js';\n",
+          "baseline": "// Additive source-only reader view; the complete actual HEAD/index/physical source qualifies first.\nimport { QUESTING_SOURCE, qualifyQuestingSource, questingHistoricalEntry } from '../../tools/questing-source-transfer.js';\nimport { qualifySiteBasicsSource } from '../../tools/site-basics-source-transfer.js';\n"
+        },
+        {
+          "at": 1079,
+          "current": "  const parsed = entry.match(/^(100644|100755) blob ([a-f0-9]{40})\\t([^\\0\\r\\n]+)$/);\n  assert(parsed && parsed[3] === file, 'Exact regular reader Git entry');\n  assert.equal(crypto.createHash('sha1').update('blob ' + Buffer.byteLength(lf) + '\\0').update(lf).digest('hex'), parsed[2], 'Whole comparison input equals its admitted actual Git blob');\n  // Actual whole bytes and Git entry qualify above; only this pure comparison uses the outer view.\n  input = ageRemovalHistoricalInput(file, input);\n  entry = ageRemovalHistoricalEntry(file, entry, 'tree');\n  const flags = { sourceOnly: true, runtime: false, native: false, financial: false, activation: false, deployment: false, priorResultsTransferred: false };\n  assert(Object.hasOwn(QUESTING_SOURCE.files, file), 'The declared current-only reader has an exact quest comparison domain');\n  const site = qualifySiteBasicsSource(file, input);\n",
+          "baseline": "  const parsed = entry.match(/^(100644|100755) blob ([a-f0-9]{40})\\t([^\\0\\r\\n]+)$/);\n  assert(parsed && parsed[3] === file, 'Exact regular reader Git entry');\n  assert.equal(crypto.createHash('sha1').update('blob ' + Buffer.byteLength(lf) + '\\0').update(lf).digest('hex'), parsed[2], 'Whole comparison input equals its admitted actual Git blob');\n  const flags = { sourceOnly: true, runtime: false, native: false, financial: false, activation: false, deployment: false, priorResultsTransferred: false };\n  assert(Object.hasOwn(QUESTING_SOURCE.files, file), 'The declared current-only reader has an exact quest comparison domain');\n  const site = qualifySiteBasicsSource(file, input);\n"
+        }
+      ]
+    },
+    "test/lib/questing-ux-native-reader-source-compatibility.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "c04adc241ce3c5d3c1e16cc55a9dc1931e04db28",
+        "sha256": "d2dcf536b1b97448b31d5ce6300f5430eecd681fee7558508a2db70af3e8403d",
+        "bytes": 23664
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "5461e1765f868d72ccab93aaffce8a7b44aeffc2",
+        "sha256": "edc637f8492814d77a2433604e3be99d614225c22e0ab4e62030135d23905fc9",
+        "bytes": 23341
+      },
+      "inverses": [
+        {
+          "at": 0,
+          "current": "import { ageRemovalHistoricalInput, ageRemovalHistoricalEntry } from '../../tools/age-removal-source-transfer.js';\n// Additive source-only reader view; the complete actual HEAD/index/physical source qualifies first.\nimport { QUESTING_SOURCE, qualifyQuestingSource, questingHistoricalEntry } from '../../tools/questing-source-transfer.js';\nexport function questingNativeReaderView(file, input, entry) {\n",
+          "baseline": "// Additive source-only reader view; the complete actual HEAD/index/physical source qualifies first.\nimport { QUESTING_SOURCE, qualifyQuestingSource, questingHistoricalEntry } from '../../tools/questing-source-transfer.js';\nexport function questingNativeReaderView(file, input, entry) {\n"
+        },
+        {
+          "at": 1024,
+          "current": "  const parsed = entry.match(/^(100644|100755) blob ([a-f0-9]{40})\\t([^\\0\\r\\n]+)$/);\n  assert(parsed && parsed[3] === file, 'Exact regular reader Git entry');\n  assert.equal(crypto.createHash('sha1').update('blob ' + Buffer.byteLength(lf) + '\\0').update(lf).digest('hex'), parsed[2], 'Whole comparison input equals its admitted actual Git blob');\n  // Actual whole bytes and Git entry qualify above; only this pure comparison uses the outer view.\n  input = ageRemovalHistoricalInput(file, input);\n  entry = ageRemovalHistoricalEntry(file, entry, 'tree');\n  const flags = { sourceOnly: true, runtime: false, native: false, financial: false, activation: false, deployment: false, priorResultsTransferred: false };\n  if (!Object.hasOwn(QUESTING_SOURCE.files, file)) return Object.freeze({ input, entry, ...flags });\n  const proof = qualifyQuestingSource(file, input);\n",
+          "baseline": "  const parsed = entry.match(/^(100644|100755) blob ([a-f0-9]{40})\\t([^\\0\\r\\n]+)$/);\n  assert(parsed && parsed[3] === file, 'Exact regular reader Git entry');\n  assert.equal(crypto.createHash('sha1').update('blob ' + Buffer.byteLength(lf) + '\\0').update(lf).digest('hex'), parsed[2], 'Whole comparison input equals its admitted actual Git blob');\n  const flags = { sourceOnly: true, runtime: false, native: false, financial: false, activation: false, deployment: false, priorResultsTransferred: false };\n  if (!Object.hasOwn(QUESTING_SOURCE.files, file)) return Object.freeze({ input, entry, ...flags });\n  const proof = qualifyQuestingSource(file, input);\n"
+        }
+      ]
+    },
     "test/lib/rc1-historical-source-fixture.js": {
       "current": {
         "mode": "100644",
-        "blob": "37e933f657e337ce3f83e61fa868880f4045b79b",
-        "sha256": "58289bf4ffd2365f5a9b78fe0c27fe9de54cdf4865f591b3002c9283442cffc9",
-        "bytes": 65056
+        "blob": "7e723811c9bc796ffee68d31ad4efb56e36179d3",
+        "sha256": "3c75d14fa7e3eb9a313f7024aa18c504fbc4e51ab72a9574ffaa116c07757768",
+        "bytes": 71502
       },
       "baseline": {
         "mode": "100644",
@@ -955,18 +1743,43 @@ export const AGE_REMOVAL_SOURCE = freeze({
       "inverses": [
         {
           "at": 2245,
-          "current": "import { economyHardeningSourceBaseline } from '../../tools/economy-hardening-source-transfer.js';\nimport { QUESTING_SOURCE, qualifyQuestingSource } from '../../tools/questing-source-transfer.js';\nimport { SITE_BASICS_SOURCE, qualifySiteBasicsSource } from '../../tools/site-basics-source-transfer.js';\nimport { ageRemovalHistoricalRecord } from '../../tools/age-removal-source-transfer.js';\n\nexport const HISTORICAL_SOURCE_FIXTURE_REVISION = 'fe4a75a8b21fc41fd3d3bc75cf7720612c581463';\nconst releaseRevision = 'b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16';\n",
+          "current": "import { economyHardeningSourceBaseline } from '../../tools/economy-hardening-source-transfer.js';\nimport { QUESTING_SOURCE, qualifyQuestingSource } from '../../tools/questing-source-transfer.js';\nimport { SITE_BASICS_SOURCE, qualifySiteBasicsSource } from '../../tools/site-basics-source-transfer.js';\nimport { AGE_REMOVAL_SOURCE, ageRemovalHistoricalRecord } from '../../tools/age-removal-source-transfer.js';\n\nexport const HISTORICAL_SOURCE_FIXTURE_REVISION = 'fe4a75a8b21fc41fd3d3bc75cf7720612c581463';\nconst releaseRevision = 'b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16';\n",
           "baseline": "import { economyHardeningSourceBaseline } from '../../tools/economy-hardening-source-transfer.js';\nimport { QUESTING_SOURCE, qualifyQuestingSource } from '../../tools/questing-source-transfer.js';\nimport { SITE_BASICS_SOURCE, qualifySiteBasicsSource } from '../../tools/site-basics-source-transfer.js';\n\nexport const HISTORICAL_SOURCE_FIXTURE_REVISION = 'fe4a75a8b21fc41fd3d3bc75cf7720612c581463';\nconst releaseRevision = 'b12c1cbcbcf88bd4510cc8316c5cd5ca08eb4e16';\n"
         },
         {
-          "at": 18886,
+          "at": 7741,
+          "current": "  'src/wire.js',\n]);\nconst combinedSiteComparisonFiles = Object.freeze(['src/auth.js', 'src/business.js', 'src/population.js', 'src/social/combat.js']);\nconst combinedTaskPuzzleComparisonFiles = Object.freeze(['src/growth.js', 'src/hustle.js']);\nconst economicReceiptHistoricalFiles = Object.freeze(['src/store.js', 'src/router.js', 'src/treasury.js', 'src/watcher.js']);\nconst npcEntries = new Set([\n  'test/rc1-npc-retirement-journal.js', 'test/rc1-car-melt-provenance.js',\n",
+          "baseline": "  'src/wire.js',\n]);\nconst combinedSiteComparisonFiles = Object.freeze(['src/auth.js', 'src/business.js', 'src/population.js', 'src/social/combat.js']);\nconst economicReceiptHistoricalFiles = Object.freeze(['src/store.js', 'src/router.js', 'src/treasury.js', 'src/watcher.js']);\nconst npcEntries = new Set([\n  'test/rc1-npc-retirement-journal.js', 'test/rc1-car-melt-provenance.js',\n"
+        },
+        {
+          "at": 18999,
           "current": "}\nfunction qualifyCurrentCombinedSite(file, actual) {\n  assert.equal(arguments.length, 2); assert(combinedSiteComparisonFiles.includes(file), 'Only the four declared current combined comparisons');\n  actual = ageRemovalHistoricalRecord(file, actual);\n  assert(Object.hasOwn(SITE_BASICS_SOURCE.files, file), 'Exact site comparison domain required');\n  assert.deepEqual(Object.keys(actual).sort(), ['head', 'index', 'committed', 'physical', 'regular', 'symbolic'].sort());\n  const pin = SITE_BASICS_SOURCE.files[file].current;\n",
           "baseline": "}\nfunction qualifyCurrentCombinedSite(file, actual) {\n  assert.equal(arguments.length, 2); assert(combinedSiteComparisonFiles.includes(file), 'Only the four declared current combined comparisons');\n  assert(Object.hasOwn(SITE_BASICS_SOURCE.files, file), 'Exact site comparison domain required');\n  assert.deepEqual(Object.keys(actual).sort(), ['head', 'index', 'committed', 'physical', 'regular', 'symbolic'].sort());\n  const pin = SITE_BASICS_SOURCE.files[file].current;\n"
         },
         {
-          "at": 21342,
+          "at": 20705,
+          "current": "    [true, false, false, false, false, false, false]);\n  return proof;\n}\nfunction taskPuzzleCombinedComparison(file, actual) {\n  assert.equal(arguments.length, 2);\n  assert(combinedTaskPuzzleComparisonFiles.includes(file), 'Only the two declared task-puzzle combined comparisons');\n  // Validate complete actual identities before projecting text for comparison. The cold loader\n  // still selects only its independently archived bodies; this source is never executed.\n  return ageRemovalHistoricalRecord(file, actual).committed.toString('utf8');\n}\nfunction qualifyCurrentQuestingWorldHelper(file, actual) {\n  assert.equal(arguments.length, 2);\n  assert.equal(file, cityActivityWorldHelper.file, 'Only the exact qualification helper comparison');\n",
+          "baseline": "    [true, false, false, false, false, false, false]);\n  return proof;\n}\nfunction qualifyCurrentQuestingWorldHelper(file, actual) {\n  assert.equal(arguments.length, 2);\n  assert.equal(file, cityActivityWorldHelper.file, 'Only the exact qualification helper comparison');\n"
+        },
+        {
+          "at": 21930,
           "current": "  return qualifyCurrentHistoricalHelper(file, actual, SITE_BASICS_SOURCE.files[file].current, qualifySiteBasicsSource);\n}\nfunction qualifyCurrentHistoricalHelper(file, actual, pin, qualify) {\n  actual = ageRemovalHistoricalRecord(file, actual);\n  assert.deepEqual(Object.keys(actual).sort(), ['head', 'index', 'committed', 'physical', 'regular', 'symbolic'].sort());\n  assert.deepEqual(actual.head, { mode: pin.mode, blob: pin.blob }, 'Actual helper HEAD equals its current source pin');\n  assert.equal(actual.index, pin.mode + ' ' + pin.blob + ' 0\\t' + file, 'Actual helper index equals its complete HEAD identity');\n",
           "baseline": "  return qualifyCurrentHistoricalHelper(file, actual, SITE_BASICS_SOURCE.files[file].current, qualifySiteBasicsSource);\n}\nfunction qualifyCurrentHistoricalHelper(file, actual, pin, qualify) {\n  assert.deepEqual(Object.keys(actual).sort(), ['head', 'index', 'committed', 'physical', 'regular', 'symbolic'].sort());\n  assert.deepEqual(actual.head, { mode: pin.mode, blob: pin.blob }, 'Actual helper HEAD equals its current source pin');\n  assert.equal(actual.index, pin.mode + ' ' + pin.blob + ' 0\\t' + file, 'Actual helper index equals its complete HEAD identity');\n"
+        },
+        {
+          "at": 51254,
+          "current": "}\nfunction rejectHistoricalApplicationSources() {\n  rejectCurrentCombinedSiteSources();\n  rejectCurrentTaskPuzzleCombinedSources();\n  const files = ['schema.sql', 'src/agentgateway.js', 'src/content/phase1.js', 'src/content/phase1-policy.js',\n    'src/db.js', 'src/deeds.js', 'src/explore.js'];\n  let positives = 0, refusals = 0;\n",
+          "baseline": "}\nfunction rejectHistoricalApplicationSources() {\n  rejectCurrentCombinedSiteSources();\n  const files = ['schema.sql', 'src/agentgateway.js', 'src/content/phase1.js', 'src/content/phase1-policy.js',\n    'src/db.js', 'src/deeds.js', 'src/explore.js'];\n  let positives = 0, refusals = 0;\n"
+        },
+        {
+          "at": 55149,
+          "current": "      const actual = currentCombinedSiteRecord(combinedFile);\n      assert.equal(physicalRaw, canonical(actual.physical), 'The physical combined comparison remains the same complete source');\n      comparisonRaw = qualifyCurrentCombinedSite(combinedFile, actual).baselineText;\n    } else if (combinedTaskPuzzleComparisonFiles.includes(combinedFile)) {\n      const actual = currentHistoricalHelperRecord(combinedFile);\n      assert.equal(physicalRaw, canonical(actual.physical), 'The physical task-puzzle comparison remains the same complete source');\n      comparisonRaw = taskPuzzleCombinedComparison(combinedFile, actual);\n    }\n    const physicalCurrent = canonical(economyUxMergeCandidateHistoricalInput(combinedFile, comparisonRaw));\n    const combinedCurrent = String(git(['cat-file', 'blob', combinedRow.after.blob]));\n",
+          "baseline": "      const actual = currentCombinedSiteRecord(combinedFile);\n      assert.equal(physicalRaw, canonical(actual.physical), 'The physical combined comparison remains the same complete source');\n      comparisonRaw = qualifyCurrentCombinedSite(combinedFile, actual).baselineText;\n    }\n    const physicalCurrent = canonical(economyUxMergeCandidateHistoricalInput(combinedFile, comparisonRaw));\n    const combinedCurrent = String(git(['cat-file', 'blob', combinedRow.after.blob]));\n"
+        },
+        {
+          "at": 58979,
+          "current": "  console.log(`PASS_HISTORICAL_APPLICATION_GUARDS: ${positives} exact fe4-body controls; ${refusals} raw/inverse/domain refusals; no current runtime execution`);\n}\n\nfunction rejectCurrentTaskPuzzleCombinedSources() {\n  assert.deepEqual(enterpriseCombinedHistoricalFiles.filter(file => Object.hasOwn(AGE_REMOVAL_SOURCE.files, file)\n    && !combinedSiteComparisonFiles.includes(file)), combinedTaskPuzzleComparisonFiles,\n  'Only the two sealed task-puzzle sources add a combined comparison outside the existing site controls');\n  let positives = 0, refusals = 0, inverseMutations = 0;\n  const actuals = new Map(combinedTaskPuzzleComparisonFiles.map(file => [file, currentHistoricalHelperRecord(file)]));\n  for (const [file, actual] of actuals) {\n    const text = actual.committed.toString('utf8'), row = AGE_REMOVAL_SOURCE.files[file];\n    const predecessor = git(['--no-replace-objects', 'show', AGE_REMOVAL_SOURCE.predecessor + ':' + file]);\n    assert.equal(sha256(predecessor), row.baseline.sha256); assert.equal(blobHash(predecessor), row.baseline.blob);\n    const combinedRows = ENTERPRISE_NATIVE_RELEASE_INPUTS.replacements.filter(item => item.file === file);\n    assert.equal(combinedRows.length, 1);\n    const combined = git(['--no-replace-objects', 'show', ENTERPRISE_NATIVE_RELEASE_INPUTS.revision + ':' + file]);\n    assert.equal(sha256(combined), combinedRows[0].after.sha256); assert.equal(blobHash(combined), combinedRows[0].after.blob);\n    const frozen = blob(file, release), expected = blob(file, history);\n    for (const physical of [actual.committed, Buffer.from(text.replaceAll('\\n', '\\r\\n'))]) {\n      const comparison = taskPuzzleCombinedComparison(file, { ...actual, physical });\n      assert.equal(comparison, predecessor.toString('utf8'), 'Actual task-puzzle source reaches its complete archived predecessor: ' + file);\n      const candidate = economyUxMergeCandidateHistoricalInput(file, comparison);\n      assert.equal(candidate, combined.toString('utf8'), 'The admitted predecessor reaches the unchanged combined enterprise source: ' + file);\n      assert.equal(enterpriseCombinedHistoricalInput(file, candidate, frozen), frozen.toString('utf8'));\n      assert.deepEqual(currentHistoricalApplicationSource(file, candidate), expected);\n      positives++;\n    }\n    const reject = record => { assert.throws(() => taskPuzzleCombinedComparison(file, record)); refusals++; };\n    const badBlob = '0'.repeat(40), otherMode = actual.head.mode === '100644' ? '100755' : '100644';\n    for (const patch of [\n      { head: { ...actual.head, blob: badBlob } }, { head: { ...actual.head, mode: otherMode } },\n      { head: { ...actual.head, mode: '120000' } }, { index: actual.index.replace(actual.head.blob, badBlob) },\n      { index: otherMode + actual.index.slice(6) }, { index: actual.index.replace(' 0\\t', ' 2\\t') },\n      { index: '' }, { index: actual.index + '\\n' }, { regular: false }, { symbolic: true },\n      { committed: predecessor }, { committed: Buffer.from(text.replaceAll('\\n', '\\r\\n')) },\n      { physical: text }, { unknown: true },\n    ]) reject({ ...actual, ...patch });\n    const { physical: omitted, ...missingPhysical } = actual;\n    reject(missingPhysical); reject(null);\n    // A consistent old HEAD/index/physical tuple must not masquerade as actual current source.\n    reject({ ...actual, head: { mode: row.baseline.mode, blob: row.baseline.blob },\n      index: row.baseline.mode + ' ' + row.baseline.blob + ' 0\\t' + file, committed: predecessor, physical: predecessor });\n    const rejectBytes = changed => {\n      assert(Buffer.isBuffer(changed) && !changed.equals(actual.committed), 'Every causal mutation changes the actual source');\n      reject({ ...actual, physical: changed });\n      // Keeping both byte buffers equal prevents the physical equality check from hiding a missing whole-source check.\n      reject({ ...actual, committed: changed, physical: changed });\n    };\n    for (const changed of ['// unreviewed prefix\\n' + text, text + '\\n// unreviewed suffix\\n', text.slice(1),\n      text.replace(/\\S/, '?'), '\\ufeff' + text, text + '\\0', text.replace('\\n', '\\r\\n'), text.replace('\\n', '\\r')])\n      rejectBytes(Buffer.from(changed));\n    rejectBytes(Buffer.concat([actual.committed, Buffer.from([255])]));\n    for (const inverse of row.inverses) {\n      assert.equal(text.slice(inverse.at, inverse.at + inverse.current.length), inverse.current);\n      for (const replacement of ['', inverse.current + inverse.current, inverse.baseline]) {\n        rejectBytes(Buffer.from(text.slice(0, inverse.at) + replacement + text.slice(inverse.at + inverse.current.length)));\n        inverseMutations++;\n      }\n    }\n    for (const other of combinedTaskPuzzleComparisonFiles.filter(name => name !== file)) reject(actuals.get(other));\n    for (const unsupported of ['src/auth.js', 'src/store.js', '../' + file, './' + file, file.replaceAll('/', '\\\\'), '__proto__', 'constructor', null]) {\n      assert.throws(() => taskPuzzleCombinedComparison(unsupported, actual)); refusals++;\n    }\n    assert.throws(() => taskPuzzleCombinedComparison(file)); refusals++;\n    assert.throws(() => taskPuzzleCombinedComparison(file, actual, {})); refusals++;\n  }\n  assert.throws(() => taskPuzzleCombinedComparison()); refusals++;\n  console.log(JSON.stringify({ phase: 'TASK_PUZZLE_COMBINED_PHYSICAL_CONTROLS', domains: combinedTaskPuzzleComparisonFiles.length,\n    positives, refusals, inverseMutations, sourceOnly: true, runtime: false, native: false,\n    migration: false, financial: false, activation: false, deployment: false, priorResultsTransferred: false, projectedSourceExecuted: false }));\n}\n\nfunction rejectCityActivityHistoricalSources() {\n  const file = 'src/server.js', actualCurrentUnionRaw = String(originalRead(path.join(root, file))),\n    unionRaw = hasCommerceCurrentEnterpriseSource(file) ? commerceOverCurrentEnterpriseSourceBaseline(file, actualCurrentUnionRaw) : continuousCityHistoricalInput(file, actualCurrentUnionRaw);\n",
+          "baseline": "  console.log(`PASS_HISTORICAL_APPLICATION_GUARDS: ${positives} exact fe4-body controls; ${refusals} raw/inverse/domain refusals; no current runtime execution`);\n}\n\nfunction rejectCityActivityHistoricalSources() {\n  const file = 'src/server.js', actualCurrentUnionRaw = String(originalRead(path.join(root, file))),\n    unionRaw = hasCommerceCurrentEnterpriseSource(file) ? commerceOverCurrentEnterpriseSourceBaseline(file, actualCurrentUnionRaw) : continuousCityHistoricalInput(file, actualCurrentUnionRaw);\n"
         }
       ]
     },
@@ -1027,6 +1840,48 @@ export const AGE_REMOVAL_SOURCE = freeze({
         }
       ]
     },
+    "test/migrate.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "35576bd87ce5ad52904ae5fb3ac87b8c8c3c970f",
+        "sha256": "f68042c5d074b5afc36b433e1be0ee4dbe004abe2a7009560c78659c0d74424a",
+        "bytes": 102284
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "f4fe85900eceda1a420e2503b6849c6cbea4b005",
+        "sha256": "c0490da287e43ae591b91b4fb31171ae56640653244de2d6ac657aae8946cad1",
+        "bytes": 102102
+      },
+      "inverses": [
+        {
+          "at": 34077,
+          "current": "// resolve with a `*:death` burn — deliberately NOT wiped so the frozen field resolves), ledger/log\n// (immutable §10.4/audit/historical rows — intentionally never wiped; a dead id is a valid historical ref).\nconst DISPOSITION = {\n  task_puzzles: 'ledger', // issued constraints and consumed receipts retain the original dead character; current-character lookup grants an heir no completion or recovery authority\n  // Original character/generation-bound consent and private puzzle outcomes are\n  // historical. Room/host lifecycle closes active rounds; heirs never inherit a\n  // member's participation or its private history.\n",
+          "baseline": "// resolve with a `*:death` burn — deliberately NOT wiped so the frozen field resolves), ledger/log\n// (immutable §10.4/audit/historical rows — intentionally never wiped; a dead id is a valid historical ref).\nconst DISPOSITION = {\n  // Original character/generation-bound consent and private puzzle outcomes are\n  // historical. Room/host lifecycle closes active rounds; heirs never inherit a\n  // member's participation or its private history.\n"
+        }
+      ]
+    },
+    "test/phase2-postgres.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "ad44c1827bfc472b003112538ca2f9462879c554",
+        "sha256": "95e46eb6c479466a49675b645266f836cf453581079fd4268aea8c4b8fa290c1",
+        "bytes": 89727
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "067affc62ac84f53ec9cec3c73f49c79932a27f3",
+        "sha256": "4972db279a1f24355f122b8c38128abbbbe4cae39c4d911914e0653b2befdf91",
+        "bytes": 89519
+      },
+      "inverses": [
+        {
+          "at": 864,
+          "current": "import { createCityGameplayMigrationCatalog, readCityGameplayMigrationMetadata,\n  cityGameplayMigrationPredecessorSchema, cityGameplayMigrationEndpoint, CITY_GAMEPLAY_MIGRATION_TABLES } from './lib/city-gameplay-migration-catalog.js';\nimport { equipmentEconomyMigrationProjection, EQUIPMENT_ECONOMY_MIGRATION_TABLES } from './lib/equipment-economy-migration-catalog.js';\nimport { createTaskPuzzleReleasePhase2MigrationCatalog as createCommerceReleasePhase2MigrationCatalog, readTaskPuzzleReleasePhase2Metadata as readCommerceReleasePhase2Metadata,\n  verifyTaskPuzzleReleasePhase2CausalNegatives as verifyCommerceReleasePhase2CausalNegatives, verifyTaskPuzzleNativeBranches as verifyCommerceNativeBranches, assertTaskPuzzlePhase2SourceInputs as assertQuestingPhase2SourceInputs } from '../tools/questing-ux-release-phase2-native-catalog.js';\n\nconst architectureUpgradeCatalog = JSON.parse(fs.readFileSync(\n  new URL('./lib/phase2-architecture-upgrade-catalog.json', import.meta.url), 'utf8'));\n",
+          "baseline": "import { createCityGameplayMigrationCatalog, readCityGameplayMigrationMetadata,\n  cityGameplayMigrationPredecessorSchema, cityGameplayMigrationEndpoint, CITY_GAMEPLAY_MIGRATION_TABLES } from './lib/city-gameplay-migration-catalog.js';\nimport { equipmentEconomyMigrationProjection, EQUIPMENT_ECONOMY_MIGRATION_TABLES } from './lib/equipment-economy-migration-catalog.js';\nimport { createCommerceReleasePhase2MigrationCatalog, readCommerceReleasePhase2Metadata,\n  verifyCommerceReleasePhase2CausalNegatives, verifyCommerceNativeBranches, assertQuestingPhase2SourceInputs } from '../tools/questing-ux-release-phase2-native-catalog.js';\n\nconst architectureUpgradeCatalog = JSON.parse(fs.readFileSync(\n  new URL('./lib/phase2-architecture-upgrade-catalog.json', import.meta.url), 'utf8'));\n"
+        }
+      ]
+    },
     "test/player-intel-browser.js": {
       "current": {
         "mode": "100644",
@@ -1045,6 +1900,27 @@ export const AGE_REMOVAL_SOURCE = freeze({
           "at": 3713,
           "current": "  return page;\n};\nconst wetWork = async (page) => {\n  const directory = page.locator('#city-directory');\n  if (!await directory.evaluate(node => node.open)) await directory.locator(':scope > summary').click();\n  await page.locator('#grouprail [data-group=\"blood\"]').click();\n  if (!await directory.evaluate(node => node.open)) await directory.locator(':scope > summary').click();\n  await page.locator('#tabs [data-tab=\"pvp\"]').click();\n  await page.locator('#tab-pvp h2').filter({ hasText: 'People you know' }).waitFor();\n};\n",
           "baseline": "  return page;\n};\nconst wetWork = async (page) => {\n  await page.locator('#grouprail [data-group=\"blood\"]').click();\n  await page.locator('#tabs [data-tab=\"pvp\"]').click();\n  await page.locator('#tab-pvp h2').filter({ hasText: 'People you know' }).waitFor();\n};\n"
+        }
+      ]
+    },
+    "test/playthrough-truth.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "dc312070966cccc4bfd1a80e244805b32cf57c53",
+        "sha256": "f735e49b8a7f5c5e7f1a99863510eb0b17bbd6508f8074caee46a3cec30c97f8",
+        "bytes": 3019
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "040f9f9d9284420ff778a1023218e1c9950ee76b",
+        "sha256": "a31002d2c3f3a871fc2ed206982a66d243fd470d20155ddd19b9215e647304d2",
+        "bytes": 2975
+      },
+      "inverses": [
+        {
+          "at": 0,
+          "current": "import './playthrough-firstblood-truth.js';\nimport assert from 'node:assert/strict';\nimport { execFile } from 'node:child_process';\nimport { promisify } from 'node:util';\n",
+          "baseline": "import assert from 'node:assert/strict';\nimport { execFile } from 'node:child_process';\nimport { promisify } from 'node:util';\n"
         }
       ]
     },
@@ -1092,6 +1968,58 @@ export const AGE_REMOVAL_SOURCE = freeze({
           "at": 2110,
           "current": "assert.deepEqual(Object.keys(source.additions), changed('A').filter(file => /\\.(?:js|json|html|css|sql)$/.test(file)));\nassert.equal(fs.readFileSync(new URL('../tools/quest-quality-source-data.js', import.meta.url), 'utf8').replaceAll('\\r\\n', '\\n'), questQualitySourceDataBytes(source));\nfunction actual(file, pin) {\n  const committed = git('show', 'HEAD:' + file), authored = git('show', source.revision + ':' + file);\n  const stat = fs.lstatSync(file), physical = fs.readFileSync(file); assert(stat.isFile() && !stat.isSymbolicLink());\n  const actualEntry = git('ls-tree', 'HEAD', '--', file).trim();\n  const match = actualEntry.match(/^(100644|100755) blob ([a-f0-9]{40})\\t(.+)$/);\n  assert(match && match[3] === file, 'Actual regular Git source qualifies first');\n  assert.equal(blob(committed), match[2], 'Complete actual source bytes equal the raw HEAD blob');\n  const index = git('ls-files', '--stage', '--', file).trim();\n  assert.equal(index, match[1] + ' ' + match[2] + ' 0\\t' + file);\n  assert(physical.equals(Buffer.from(committed)) || physical.equals(Buffer.from(committed.replaceAll('\\n', '\\r\\n'))));\n  const historical = ageRemovalHistoricalRecord(file, { head: { mode: match[1], blob: match[2] }, index,\n    committed: Buffer.from(committed), physical, regular: stat.isFile(), symbolic: stat.isSymbolicLink() });\n  const text = historical.committed.toString('utf8'), raw = historical.physical;\n  assert.equal(text, authored, 'Independently admitted current source reconstructs the unchanged quality source: ' + file);\n  assert.equal(sha(text), pin.sha256); assert.equal(blob(text), pin.blob); assert.equal(Buffer.byteLength(text), pin.bytes);\n  const entry = pin.mode + ' blob ' + pin.blob + '\\t' + file;\n  assert.deepEqual(historical.head, { mode: pin.mode, blob: pin.blob });\n  assert.equal(historical.index, pin.mode + ' ' + pin.blob + ' 0\\t' + file);\n  return { text, raw, entry };\n}\nlet positives = 0, refusals = 0, inverseControls = 0;\n",
           "baseline": "assert.deepEqual(Object.keys(source.additions), changed('A').filter(file => /\\.(?:js|json|html|css|sql)$/.test(file)));\nassert.equal(fs.readFileSync(new URL('../tools/quest-quality-source-data.js', import.meta.url), 'utf8').replaceAll('\\r\\n', '\\n'), questQualitySourceDataBytes(source));\nfunction actual(file, pin) {\n  const text = git('show', 'HEAD:' + file), authored = git('show', source.revision + ':' + file);\n  assert.equal(text, authored, 'Whole reviewed source remains the actual committed source: ' + file);\n  const stat = fs.lstatSync(file), raw = fs.readFileSync(file); assert(stat.isFile() && !stat.isSymbolicLink());\n  assert(raw.equals(Buffer.from(text)) || raw.equals(Buffer.from(text.replaceAll('\\n', '\\r\\n'))));\n  assert.equal(sha(text), pin.sha256); assert.equal(blob(text), pin.blob); assert.equal(Buffer.byteLength(text), pin.bytes);\n  const entry = pin.mode + ' blob ' + pin.blob + '\\t' + file;\n  assert.equal(git('ls-tree', 'HEAD', '--', file).trim(), entry);\n  assert.equal(git('ls-files', '--stage', '--', file).trim(), pin.mode + ' ' + pin.blob + ' 0\\t' + file);\n  return { text, raw, entry };\n}\nlet positives = 0, refusals = 0, inverseControls = 0;\n"
+        }
+      ]
+    },
+    "test/questing-enterprise-catalog-guard.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "a338bcbf4af414d0d53e274fe65f5529722ddab1",
+        "sha256": "d1e67a177042e8b37a39341b9d26c79bdce5c386b59f2e12e8cc4222239e7f84",
+        "bytes": 10708
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "a6045d7c764babc1d0572cf4774a0ecc3f29e8df",
+        "sha256": "e75b585345f259e07769fc0dc5a39992a9d583e827c1a89710d09194f1b14aef",
+        "bytes": 10340
+      },
+      "inverses": [
+        {
+          "at": 0,
+          "current": "import assert from 'node:assert/strict';\nimport fs from 'node:fs';\nimport { execFileSync } from 'node:child_process';\nimport './task-puzzle-native-catalog-guard.js';\nimport { questingCatalogSource, questingCatalogProjection, QUESTING_CATALOG_COLUMNS as columns,\n  QUESTING_CATALOG_TABLES as tables, questingCasinoCatalogProjection } from '../tools/questing-enterprise-catalog.js';\n\nconst raw = fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8');\nassert.throws(() => questingCatalogSource(raw), /Exact complete actual quest585/);\nconst pinned585 = execFileSync('git', ['--no-replace-objects', 'cat-file', 'blob', '86b671c5d6f6928ff3e66f1ad0fca5f46a7364e3'], { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 });\nconst source = questingCatalogSource(pinned585);\nassert.equal(questingCatalogSource(source.current.replaceAll('\\n', '\\r\\n')).current, source.current);\nlet refusals = 0;\nfor (const bad of [source.baseline, source.archivedBaseline, source.archived, source.current + '\\n', source.current.slice(1), '\\ufeff' + source.current,\n",
+          "baseline": "import assert from 'node:assert/strict';\nimport fs from 'node:fs';\nimport { questingCatalogSource, questingCatalogProjection, QUESTING_CATALOG_COLUMNS as columns,\n  QUESTING_CATALOG_TABLES as tables, questingCasinoCatalogProjection } from '../tools/questing-enterprise-catalog.js';\n\nconst raw = fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8');\nconst source = questingCatalogSource(raw);\nassert.equal(questingCatalogSource(source.current.replaceAll('\\n', '\\r\\n')).current, source.current);\nlet refusals = 0;\nfor (const bad of [source.baseline, source.archivedBaseline, source.archived, source.current + '\\n', source.current.slice(1), '\\ufeff' + source.current,\n"
+        }
+      ]
+    },
+    "test/questing-ux-release-phase2-native-catalog-guard.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "c2b7f681775d3f70b05ffc502d2dca6db45ddce1",
+        "sha256": "4e3f2bd2756c24f6716302c930224a8a1fdd634788a2ab412a9d2da8e5933007",
+        "bytes": 29433
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "c70143519c1de9b10d560b62305ca5d467a7859b",
+        "sha256": "34a493ce4e8ddc005abcc25625c3287cff446deb8e4fdced7a3298de8e5b4949",
+        "bytes": 29213
+      },
+      "inverses": [
+        {
+          "at": 0,
+          "current": "// Pure controls only; no mocked backend result is native qualification.\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs';\nimport { ageRemovalHistoricalInput } from '../tools/age-removal-source-transfer.js';\nimport './task-puzzle-native-integration-guard.js';\nimport crypto from 'node:crypto';\nimport {execFileSync} from 'node:child_process';\nimport {questingNativeQuestProjection, questingNativeCatalogProjection, assertQuestingPhase2SourceInputs,\n",
+          "baseline": "// Pure controls only; no mocked backend result is native qualification.\nimport assert from 'node:assert/strict';\nimport fs from 'node:fs';\nimport crypto from 'node:crypto';\nimport {execFileSync} from 'node:child_process';\nimport {questingNativeQuestProjection, questingNativeCatalogProjection, assertQuestingPhase2SourceInputs,\n"
+        },
+        {
+          "at": 3171,
+          "current": "const oldRaw=fs.readFileSync(protectedFile),oldStat=fs.lstatSync(protectedFile);\nassert(oldStat.isFile()&&!oldStat.isSymbolicLink());\nassert(oldRaw.equals(protectedBytes)||oldRaw.equals(Buffer.from(protectedSource.replaceAll('\\n','\\r\\n'))));\nconst successor=ageRemovalHistoricalInput(successorFile,fs.readFileSync(successorFile,'utf8')).replaceAll('\\r\\n','\\n');\nconst raw=fs.readFileSync('schema.sql','utf8');\nconst baseline={relations:[{name:'accounts',kind:'r',persistence:'p'}],columns:[],constraints:[],indexes:[]};\nfunction fixture(version) {\n",
+          "baseline": "const oldRaw=fs.readFileSync(protectedFile),oldStat=fs.lstatSync(protectedFile);\nassert(oldStat.isFile()&&!oldStat.isSymbolicLink());\nassert(oldRaw.equals(protectedBytes)||oldRaw.equals(Buffer.from(protectedSource.replaceAll('\\n','\\r\\n'))));\nconst successor=fs.readFileSync(successorFile,'utf8').replaceAll('\\r\\n','\\n');\nconst raw=fs.readFileSync('schema.sql','utf8');\nconst baseline={relations:[{name:'accounts',kind:'r',persistence:'p'}],columns:[],constraints:[],indexes:[]};\nfunction fixture(version) {\n"
+        },
+        {
+          "at": 24644,
+          "current": "  const stat = fs.lstatSync(record.original); assert(stat.isFile() && !stat.isSymbolicLink());\n  assert(oldPhysical.equals(oldCommitted) || oldPhysical.equals(Buffer.from(oldText.replaceAll('\\n','\\r\\n'))));\n  const newStat = fs.lstatSync(record.target); assert(newStat.isFile() && !newStat.isSymbolicLink());\n  const source = ageRemovalHistoricalInput(record.target, fs.readFileSync(record.target, 'utf8')).replaceAll('\\r\\n','\\n');\n  assert(qualifyPureReaderCopy(source, record));\n  const crlfSource = source.replaceAll('\\n','\\r\\n'); assert.notEqual(crlfSource, source); assert(qualifyPureReaderCopy(crlfSource, record));\n  for (const bad of [source+'\\n', source.slice(1), '\\ufeff'+source, source.replace('\\n','\\r\\n'),\n",
+          "baseline": "  const stat = fs.lstatSync(record.original); assert(stat.isFile() && !stat.isSymbolicLink());\n  assert(oldPhysical.equals(oldCommitted) || oldPhysical.equals(Buffer.from(oldText.replaceAll('\\n','\\r\\n'))));\n  const newStat = fs.lstatSync(record.target); assert(newStat.isFile() && !newStat.isSymbolicLink());\n  const source = fs.readFileSync(record.target, 'utf8').replaceAll('\\r\\n','\\n');\n  assert(qualifyPureReaderCopy(source, record));\n  const crlfSource = source.replaceAll('\\n','\\r\\n'); assert.notEqual(crlfSource, source); assert(qualifyPureReaderCopy(crlfSource, record));\n  for (const bad of [source+'\\n', source.slice(1), '\\ufeff'+source, source.replace('\\n','\\r\\n'),\n"
         }
       ]
     },
@@ -1418,9 +2346,9 @@ export const AGE_REMOVAL_SOURCE = freeze({
     "test/ux-shell-browser.js": {
       "current": {
         "mode": "100644",
-        "blob": "236d6c0b536bcb2d103775a0e0a74e38f4e7d37f",
-        "sha256": "408deccd8d2c6ccefd5589e2afcdc7b35ab3330303104f2b85a49d71f5255648",
-        "bytes": 13698
+        "blob": "aa1395f9163ffcccf49a4ff7bc8aa9e9a5558d49",
+        "sha256": "d46f6226abfdde44cee41da50406740fe911e457a532f2f86e403caf6f3c26b4",
+        "bytes": 20368
       },
       "baseline": {
         "mode": "100644",
@@ -1435,29 +2363,44 @@ export const AGE_REMOVAL_SOURCE = freeze({
           "baseline": "  const size = await page.evaluate(() => ({ width: innerWidth, scroll: document.documentElement.scrollWidth }));\n  assert.ok(size.scroll <= size.width + 2, `${label} overflows: ${JSON.stringify(size)}`);\n}\nasync function aboveFold(page, selector, label) {\n  const position = await page.locator(selector).evaluate(element => {\n    const rect = element.getBoundingClientRect();\n"
         },
         {
-          "at": 4033,
+          "at": 2199,
+          "current": "  assert.ok(position.top >= 0 && position.bottom <= position.height, `${label} is below the fold: ${JSON.stringify(position)}`);\n}\n\nasync function reachableCrimePocket(page, label) {\n  // Let the existing, finite menu notification expire. Never hide an overlay to pass hit tests.\n  await page.waitForFunction(() => !document.querySelector('#toast.show'));\n  const geometry = await page.locator('#ux-action-pocket').evaluate(pocket => {\n    const bounds = element => {\n      const r = element.getBoundingClientRect();\n      return { top: r.top, bottom: r.bottom, left: r.left, right: r.right, width: r.width, height: r.height };\n    };\n    const terms = pocket.querySelector('.operation-action-terms');\n    return {\n      pocket: bounds(pocket),\n      terms: { ...bounds(terms), lineHeight: parseFloat(getComputedStyle(terms).lineHeight), text: terms.textContent },\n      buttons: [...pocket.querySelectorAll('.verbrow button')].map(button => {\n        const rect = bounds(button);\n        const clip = { top: 0, bottom: innerHeight, left: 0, right: innerWidth };\n        for (let ancestor = button.parentElement; ancestor; ancestor = ancestor.parentElement) {\n          const r = ancestor.getBoundingClientRect(), style = getComputedStyle(ancestor);\n          if (/(auto|scroll|hidden|clip)/.test(style.overflowX)) {\n            clip.left = Math.max(clip.left, r.left + ancestor.clientLeft);\n            clip.right = Math.min(clip.right, r.left + ancestor.clientLeft + ancestor.clientWidth);\n          }\n          if (/(auto|scroll|hidden|clip)/.test(style.overflowY)) {\n            clip.top = Math.max(clip.top, r.top + ancestor.clientTop);\n            clip.bottom = Math.min(clip.bottom, r.top + ancestor.clientTop + ancestor.clientHeight);\n          }\n        }\n        const points = [[rect.left + 3, rect.top + 3], [rect.right - 3, rect.top + 3],\n          [rect.left + 3, rect.bottom - 3], [rect.right - 3, rect.bottom - 3],\n          [(rect.left + rect.right) / 2, (rect.top + rect.bottom) / 2]];\n        return { text: button.textContent, ...rect,\n          unclipped: rect.top >= clip.top && rect.bottom <= clip.bottom && rect.left >= clip.left && rect.right <= clip.right,\n          hit: points.every(([x, y]) => button.contains(document.elementFromPoint(x, y))) };\n      }),\n    };\n  });\n  assert.equal(geometry.buttons.length, 4, `${label}: all three approaches and optional preparation remain available`);\n  for (const button of geometry.buttons) {\n    assert.ok(button.width >= 44 && button.height >= 44, `${label}: 44px touch target: ${JSON.stringify(button)}`);\n    assert.ok(button.unclipped && button.hit, `${label}: action is clipped or covered: ${JSON.stringify(button)}`);\n  }\n  assert.ok(geometry.terms.height >= 3 * geometry.terms.lineHeight,\n    `${label}: costs and risks need at least three readable lines, not a scroll sliver: ${JSON.stringify(geometry.terms)}`);\n  assert.match(geometry.terms.text, /COST.*BASELINE WIN[\\s\\S]*QUIET[\\s\\S]*STANDARD[\\s\\S]*LOUD/);\n  fs.writeFileSync(path.join(artifacts, `shell-pocket-${label.replace(/[^a-z0-9]+/gi, '-')}.json`), JSON.stringify(geometry, null, 2));\n  return geometry;\n}\n\ntry {\n  const { token } = await call('POST', '/v1/auth/guest');\n  await call('POST', '/v1/character', token, { name: 'Shell First Job' });\n",
+          "baseline": "  assert.ok(position.top >= 0 && position.bottom <= position.height, `${label} is below the fold: ${JSON.stringify(position)}`);\n}\n\ntry {\n  const { token } = await call('POST', '/v1/auth/guest');\n  await call('POST', '/v1/character', token, { name: 'Shell First Job' });\n"
+        },
+        {
+          "at": 7047,
           "current": "  assert.equal(await page.locator('#tabpanel #coachwrap').count(), 1, 'next action belongs beside the operation');\n  assert.equal(await page.locator('#game-menu[open]').count(), 0, 'secondary utilities start closed');\n  assert.equal(await page.locator('#ux-screen-tools[open]').count(), 0, 'workspace controls do not precede gameplay by default');\n  assert.equal(await page.locator('#city-directory[open]').count(), 0, 'the complete directory starts collapsed beside the five main destinations');\n  assert.equal(await page.locator('#game-menu #btn-logout').count(), 1, 'account controls remain available in the utility menu');\n  await aboveFold(page, '#tab-start .start-next-card .act', 'desktop first-week action');\n  const onboardingOrder = await page.evaluate(() => {\n",
           "baseline": "  assert.equal(await page.locator('#tabpanel #coachwrap').count(), 1, 'next action belongs beside the operation');\n  assert.equal(await page.locator('#game-menu[open]').count(), 0, 'secondary utilities start closed');\n  assert.equal(await page.locator('#ux-screen-tools[open]').count(), 0, 'workspace controls do not precede gameplay by default');\n  assert.equal(await page.locator('#city-directory[open]').count(), 1, 'desktop navigation remains visible');\n  assert.equal(await page.locator('#game-menu #btn-logout').count(), 1, 'account controls remain available in the utility menu');\n  await aboveFold(page, '#tab-start .start-next-card .act', 'desktop first-week action');\n  const onboardingOrder = await page.evaluate(() => {\n"
         },
         {
-          "at": 5455,
+          "at": 8469,
           "current": "  await noOverflow(page, 'desktop Start Here');\n  await page.screenshot({ path: path.join(artifacts, 'shell-desktop.png') });\n\n  await openDirectory(page);\n  await page.locator('#city-sidebar #tabs [data-tab=\"start\"]').focus();\n  await page.keyboard.press('ArrowDown');\n  await page.locator('#tab-streets.on').waitFor();\n",
           "baseline": "  await noOverflow(page, 'desktop Start Here');\n  await page.screenshot({ path: path.join(artifacts, 'shell-desktop.png') });\n\n  await page.locator('#city-sidebar #tabs [data-tab=\"start\"]').focus();\n  await page.keyboard.press('ArrowDown');\n  await page.locator('#tab-streets.on').waitFor();\n"
         },
         {
-          "at": 5917,
+          "at": 8931,
           "current": "    'vertical navigation follows ArrowDown and retains keyboard focus');\n  await openTab(page, 'start');\n  await page.locator('#tab-start .start-next-card').waitFor();\n  await page.locator('#city-directory > summary').click();\n\n  const menu = page.locator('#game-menu > summary');\n  await menu.click();\n",
           "baseline": "    'vertical navigation follows ArrowDown and retains keyboard focus');\n  await openTab(page, 'start');\n  await page.locator('#tab-start .start-next-card').waitFor();\n\n  const menu = page.locator('#game-menu > summary');\n  await menu.click();\n"
         },
         {
-          "at": 7982,
+          "at": 10996,
           "current": "  // Secondary onboarding remains useful after a live server refresh.\n  await page.locator('#tab-start details[data-sect=\"start-outreach\"] > summary').click();\n  await page.locator('#ref-claim-name').fill('Unsent referral draft');\n  await openDirectory(page);\n  await page.locator('#character-sheet > summary').click();\n  const sheetRefreshed = page.waitForResponse(response => [`${base}/v1/me`, `${base}/v1/projections/player`].includes(response.url()) && response.status() === 200);\n  await page.locator('#btn-refresh').click();\n",
           "baseline": "  // Secondary onboarding remains useful after a live server refresh.\n  await page.locator('#tab-start details[data-sect=\"start-outreach\"] > summary').click();\n  await page.locator('#ref-claim-name').fill('Unsent referral draft');\n  await page.locator('#character-sheet > summary').click();\n  const sheetRefreshed = page.waitForResponse(response => [`${base}/v1/me`, `${base}/v1/projections/player`].includes(response.url()) && response.status() === 200);\n  await page.locator('#btn-refresh').click();\n"
         },
         {
-          "at": 9454,
+          "at": 12468,
           "current": "  await aboveFold(page, `${standardCrime} >> nth=0`, 'desktop crime action');\n  await noOverflow(page, 'desktop Streets');\n  await page.screenshot({ path: path.join(artifacts, 'shell-streets-desktop.png') });\n  await openDirectory(page);\n  await page.locator('#tabs-more').click();\n  assert.ok(await page.locator('#grouprail [data-group]:visible').count() >= 8, 'the whole city exposes every navigation group');\n  await page.locator('#grouprail [data-group=\"earners\"]').click();\n",
           "baseline": "  await aboveFold(page, `${standardCrime} >> nth=0`, 'desktop crime action');\n  await noOverflow(page, 'desktop Streets');\n  await page.screenshot({ path: path.join(artifacts, 'shell-streets-desktop.png') });\n  await page.locator('#tabs-more').click();\n  assert.ok(await page.locator('#grouprail [data-group]:visible').count() >= 8, 'the whole city exposes every navigation group');\n  await page.locator('#grouprail [data-group=\"earners\"]').click();\n"
+        },
+        {
+          "at": 14164,
+          "current": "  await page.locator('#tab-streets.on').waitFor();\n  await page.locator('#tab-streets [data-do^=\"POST /v1/crimes/\"]:enabled').first().waitFor();\n  await page.locator('#tab-streets #ux-action-pocket [data-do^=\"POST /v1/crimes/\"][data-body*=standard]:enabled').waitFor();\n  await reachableCrimePocket(page, 'mobile crime pocket');\n  await aboveFold(page, '#tab-streets #ux-action-pocket [data-do^=\"POST /v1/crimes/\"][data-body*=standard]:enabled', 'mobile crime action');\n  assert.equal(await page.locator('#ux-action-pocket .operation-action-terms').count(), 1, 'the mobile action retains its live cost and risk terms');\n  await noOverflow(page, 'mobile Streets');\n  await page.screenshot({ path: path.join(artifacts, 'shell-streets-mobile.png') });\n\n  const crimeRequests = [];\n  page.on('request', request => {\n    if (request.method() === 'POST' && new URL(request.url()).pathname.startsWith('/v1/crimes/')) crimeRequests.push(request.url());\n  });\n  const pocketViewports = [{ width: 390, height: 844 }, { width: 320, height: 568 },\n    { width: 568, height: 320 }, { width: 480, height: 320 },\n    { width: 760, height: 360 }, { width: 320, height: 568 }];\n  for (const [rotation, viewport] of pocketViewports.entries()) {\n    await page.setViewportSize(viewport);\n    await reachableCrimePocket(page, `${viewport.width}x${viewport.height} rotation ${rotation}`);\n    for (let visit = 0; visit < 2; visit++) {\n      await openTab(page, 'start');\n      await openTab(page, 'streets');\n      const label = `${viewport.width}x${viewport.height} rotation ${rotation} visit ${visit + 1}`;\n      await page.locator('#ux-action-pocket [data-task-crime]').waitFor();\n      await reachableCrimePocket(page, label);\n      await noOverflow(page, label);\n      const terms = page.locator('#ux-action-pocket .operation-action-terms');\n      // Wide landscape may already show every term; scroll only real overflow.\n      if (await terms.evaluate(element => element.scrollHeight > element.clientHeight)) {\n        await terms.hover();\n        await page.mouse.wheel(0, 500);\n        await page.waitForFunction(() => {\n          const terms = document.querySelector('#ux-action-pocket .operation-action-terms');\n          return terms.scrollTop > 0 && terms.scrollTop + terms.clientHeight >= terms.scrollHeight - 1;\n        });\n        await reachableCrimePocket(page, `${label} after reading all terms`);\n        await page.mouse.wheel(0, -500);\n        await page.waitForFunction(() => document.querySelector('#ux-action-pocket .operation-action-terms').scrollTop === 0);\n      }\n      const prepare = page.locator('#ux-action-pocket [data-task-crime]');\n      await prepare.focus();\n      assert.equal(await prepare.evaluate(element => element === document.activeElement), true, `${label}: keyboard focus reaches preparation`);\n      await page.keyboard.press('Enter');\n      const puzzle = page.getByRole('dialog', { name: /Task puzzle/ });\n      await puzzle.getByRole('button', { name: 'Solve and attempt crime' }).waitFor();\n      await page.keyboard.press('Escape');\n      await puzzle.waitFor({ state: 'detached' });\n      assert.equal(await prepare.evaluate(element => element === document.activeElement), true, `${label}: closing restores preparation focus`);\n      await reachableCrimePocket(page, `${label} after puzzle dismissal`);\n      assert.equal(crimeRequests.length, 0, 'Opening and closing optional preparation never attempts the crime');\n      await page.screenshot({ path: path.join(artifacts, `shell-pocket-${viewport.width}-${viewport.height}-${rotation}-${visit + 1}.png`) });\n    }\n  }\n\n  const firstSession = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });\n  await firstSession.addInitScript(value => localStorage.setItem('omerta_token', value), token);\n  const freshPage = await firstSession.newPage();\n",
+          "baseline": "  await page.locator('#tab-streets.on').waitFor();\n  await page.locator('#tab-streets [data-do^=\"POST /v1/crimes/\"]:enabled').first().waitFor();\n  await page.locator('#tab-streets #ux-action-pocket [data-do^=\"POST /v1/crimes/\"][data-body*=standard]:enabled').waitFor();\n  await aboveFold(page, '#tab-streets #ux-action-pocket [data-do^=\"POST /v1/crimes/\"][data-body*=standard]:enabled', 'mobile crime action');\n  assert.equal(await page.locator('#ux-action-pocket .operation-action-terms').count(), 1, 'the mobile action retains its live cost and risk terms');\n  await noOverflow(page, 'mobile Streets');\n  await page.screenshot({ path: path.join(artifacts, 'shell-streets-mobile.png') });\n\n  const firstSession = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });\n  await firstSession.addInitScript(value => localStorage.setItem('omerta_token', value), token);\n  const freshPage = await firstSession.newPage();\n"
+        },
+        {
+          "at": 18455,
+          "current": "  await aboveFold(freshPage, '#tab-start .start-next-card .act', 'fresh mobile first-week action');\n  await noOverflow(freshPage, 'fresh mobile onboarding');\n  await freshPage.screenshot({ path: path.join(artifacts, 'shell-first-session.png') });\n  const primary = page.locator('#ux-action-pocket [data-do^=\"POST /v1/crimes/\"][data-body*=standard]:enabled');\n  await primary.focus();\n  assert.equal(await primary.evaluate(element => element === document.activeElement), true, 'The ordinary crime remains keyboard reachable after repeated preparation and navigation');\n  const ordinaryAttempt = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.startsWith('/v1/crimes/'));\n  await page.keyboard.press('Enter');\n  assert.equal((await ordinaryAttempt).status(), 200, 'Keyboard activation reaches the real ordinary crime endpoint');\n  assert.equal(crimeRequests.length, 1, 'One keyboard activation attempts exactly one ordinary crime');\n  assert.deepEqual(faults, [], 'the redesigned shell introduces no runtime failures');\n  console.log('ux-shell-browser: PASS (focused onboarding, desktop/mobile navigation, utilities, feed, refresh, full city access)');\n  console.log(`Screenshots: ${artifacts}`);\n",
+          "baseline": "  await aboveFold(freshPage, '#tab-start .start-next-card .act', 'fresh mobile first-week action');\n  await noOverflow(freshPage, 'fresh mobile onboarding');\n  await freshPage.screenshot({ path: path.join(artifacts, 'shell-first-session.png') });\n  assert.deepEqual(faults, [], 'the redesigned shell introduces no runtime failures');\n  console.log('ux-shell-browser: PASS (focused onboarding, desktop/mobile navigation, utilities, feed, refresh, full city access)');\n  console.log(`Screenshots: ${artifacts}`);\n"
         }
       ]
     },
@@ -1600,6 +2543,53 @@ export const AGE_REMOVAL_SOURCE = freeze({
         }
       ]
     },
+    "tools/deed-quest-source-transfer.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "c0814082ece20a4de4a4404cce5a9bc819c62622",
+        "sha256": "1dacd21c2d82b49982f5f28ab6d90da47af24fce111404c6cdeab1ccb1d51e8f",
+        "bytes": 93966
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "5129b649ea2b4f1f6a706ff7aa229d22d04a85b2",
+        "sha256": "fff27845a14ff36311b7446bf2c640bdbe61d5950eac9441d0919d2b2799b31a",
+        "bytes": 93651
+      },
+      "inverses": [
+        {
+          "at": 196,
+          "current": "import assert from 'node:assert/strict';\nimport crypto from 'node:crypto';\nimport { economyHardeningSourceBaseline } from './economy-hardening-source-transfer.js';\nimport { ageRemovalHistoricalInput } from './age-removal-source-transfer.js';\nexport const DEED_QUEST_SOURCE_PREDECESSOR = \"2c8eaacf104e8555d5140136b5ed19027ecd4766\";\nexport const DEED_QUEST_SOURCE_PHASE = 'exact-source-transfer-only; no historical runtime, native, migration, financial, genesis or deployment clearance';\nexport const DEED_QUEST_SOURCE_DOMAINS = {\n",
+          "baseline": "import assert from 'node:assert/strict';\nimport crypto from 'node:crypto';\nimport { economyHardeningSourceBaseline } from './economy-hardening-source-transfer.js';\nexport const DEED_QUEST_SOURCE_PREDECESSOR = \"2c8eaacf104e8555d5140136b5ed19027ecd4766\";\nexport const DEED_QUEST_SOURCE_PHASE = 'exact-source-transfer-only; no historical runtime, native, migration, financial, genesis or deployment clearance';\nexport const DEED_QUEST_SOURCE_DOMAINS = {\n"
+        },
+        {
+          "at": 93198,
+          "current": "    inverseChunks: pin.inverses.length, phase: DEED_QUEST_SOURCE_PHASE, sourceOnly: true };\n}\nexport function deedQuestSourceBaseline(file, input) {\n  if (typeof input === 'string' && (file === 'deed-quest-source-transfer.js' || file === 'tools/deed-quest-source-transfer.js')) {\n    file = 'tools/deed-quest-source-transfer.js';\n    input = ageRemovalHistoricalInput(file, input);\n  }\n  input = economyHardeningSourceBaseline(file, input);\n  if (!Object.hasOwn(DEED_QUEST_SOURCE_DOMAINS, file) || typeof input !== 'string' || !uniform(input)) return input;\n  return hash(lf(input)) === DEED_QUEST_SOURCE_DOMAINS[file].currentSha256\n",
+          "baseline": "    inverseChunks: pin.inverses.length, phase: DEED_QUEST_SOURCE_PHASE, sourceOnly: true };\n}\nexport function deedQuestSourceBaseline(file, input) {\n  input = economyHardeningSourceBaseline(file, input);\n  if (!Object.hasOwn(DEED_QUEST_SOURCE_DOMAINS, file) || typeof input !== 'string' || !uniform(input)) return input;\n  return hash(lf(input)) === DEED_QUEST_SOURCE_DOMAINS[file].currentSha256\n"
+        }
+      ]
+    },
+    "tools/enterprise-native-questing.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "ed54afe500d395be798cef44490dcc3f0610c8a9",
+        "sha256": "18f9542d5fb438c37f2fa4d3768ee010b2124289a2f689d113d8ac464a97762e",
+        "bytes": 26688
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "93991a6444e0f58eb6e6a1c0249ead248415d6ef",
+        "sha256": "76860a00443a23916ebab3263c9b09ab1883d040d498b70da36a0457b7c38a4d",
+        "bytes": 26510
+      },
+      "inverses": [
+        {
+          "at": 1261,
+          "current": "export const QUESTING_NATIVE_PREDECESSOR_METADATA = 'tools/enterprise-native-contract-release-inputs.js';\nexport { declaration as QUESTING_ENTERPRISE_NATIVE_INPUTS };\nexport const QUESTING_NATIVE_SUPPORT = Object.freeze([\n  'tools/task-puzzle-native-catalog.js', 'tools/task-puzzle-enterprise-catalog.js',\n  'test/task-puzzle-native-catalog-guard.js', 'test/task-puzzle-native-integration-guard.js',\n  'tools/enterprise-native-questing.js', 'tools/enterprise-native-questing-seal.js',\n  'tools/install-foundry-verified.sh',\n  'test/enterprise-native-questing-guard.js', QUESTING_NATIVE_PREDECESSOR_METADATA,\n",
+          "baseline": "export const QUESTING_NATIVE_PREDECESSOR_METADATA = 'tools/enterprise-native-contract-release-inputs.js';\nexport { declaration as QUESTING_ENTERPRISE_NATIVE_INPUTS };\nexport const QUESTING_NATIVE_SUPPORT = Object.freeze([\n  'tools/enterprise-native-questing.js', 'tools/enterprise-native-questing-seal.js',\n  'tools/install-foundry-verified.sh',\n  'test/enterprise-native-questing-guard.js', QUESTING_NATIVE_PREDECESSOR_METADATA,\n"
+        }
+      ]
+    },
     "tools/mobile.js": {
       "current": {
         "mode": "100644",
@@ -1648,6 +2638,48 @@ export const AGE_REMOVAL_SOURCE = freeze({
           "at": 74967,
           "current": "  page.on('pageerror', (e) => errs.push(String(e).split('\\n')[0]));\n  await page.goto(BASE, { waitUntil: 'domcontentloaded' });\n  await page.click('#btn-guest');\n  await page.waitForSelector('#screen-create:not(.hidden)', { timeout: 20000 });\n  await page.fill('#new-name', 'Xss Probe');\n  await page.click('#btn-create');\n",
           "baseline": "  page.on('pageerror', (e) => errs.push(String(e).split('\\n')[0]));\n  await page.goto(BASE, { waitUntil: 'domcontentloaded' });\n  await page.click('#btn-guest');\n  await page.waitForSelector('#age-date');\n  await page.fill('#age-date', '1990-01-01');\n  await page.locator('#age-date').evaluate((input) => input.form.requestSubmit());\n  await page.waitForSelector('#screen-create:not(.hidden)', { timeout: 20000 });\n  await page.fill('#new-name', 'Xss Probe');\n  await page.click('#btn-create');\n"
+        }
+      ]
+    },
+    "tools/pgquery.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "c9187f19aa83fe3a691523add9ace7848d984235",
+        "sha256": "c8d7eeddb573e4ab6abf437a981daba849eae02c965ece6c0025c3a46a6cb644",
+        "bytes": 41576
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "40f24c96132606a3ffa4986790ed00606a702089",
+        "sha256": "9d5ced1d591ab0d5328b686a0f1f0b5937148c721b626c73b6cebf5833a861c6",
+        "bytes": 41576
+      },
+      "inverses": [
+        {
+          "at": 4305,
+          "current": "  const sourcePins = Object.freeze({\n    'src/accountdaily.js': 'ec1c5b770146297f4471a839ff8bfbbbeeec44fe607eeadb926fc5c91f39aca3',\n    'src/db.js': '9d8ef3f15ed9141792679808d791b51dd679daf28f9f70768ba9472d3b84cae4',\n    'src/growth.js': '32f6733d566505eeb5407da8dfb65c9cdfd115f717f9890ed329153b62067298',\n  });\n  const verifyPinnedSource = (rel, raw, expectedHash) => {\n    const lf = canonicalSql(raw);\n",
+          "baseline": "  const sourcePins = Object.freeze({\n    'src/accountdaily.js': 'ec1c5b770146297f4471a839ff8bfbbbeeec44fe607eeadb926fc5c91f39aca3',\n    'src/db.js': '9d8ef3f15ed9141792679808d791b51dd679daf28f9f70768ba9472d3b84cae4',\n    'src/growth.js': 'a56eef048988290bcab08966e9874b74dd84d1275e062e84b1d26c5d1097657b',\n  });\n  const verifyPinnedSource = (rel, raw, expectedHash) => {\n    const lf = canonicalSql(raw);\n"
+        }
+      ]
+    },
+    "tools/playthrough.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "1ee60ba79a5f5ec4a28833ec1bcc21869b8a0c8d",
+        "sha256": "1a35da44cacf27e8868f453bfabf1c83ce17c9025b8278a131384d06d573002b",
+        "bytes": 88867
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "82b2b301ae85aa8ef20b57909f0e21383a6395fe",
+        "sha256": "7bf9b30682a99f61b4186b554c3a762b6df606c91e4b27c9591b01fba1d5221f",
+        "bytes": 88514
+      },
+      "inverses": [
+        {
+          "at": 33524,
+          "current": "    const mark = named ? list.find((x) => x.name === named) : null;\n    if (!mark) { coachCantAct.set(label, `the coach names \"${named}\", who is not on the roster — a rung pointing at somebody gone`); return false; }\n    const r = await call('POST', `/v1/streets/${mark.id}/jump`, { token, body: { intent: 'standard' } });\n    if (r.code === 200) {\n      did('jump'); first('jump');\n      // A lost jump is also HTTP 200. Only the assigned-rival settlement\n      // completes First Blood; an attempted fight must not start the pin clock.\n      if (!r.body?.win) return false;\n      if (!r.body.firstBlood)\n        throw new Error(`First Blood anomaly: won against assigned rival ${named} without a settlement receipt`);\n      return obeyed();\n    }\n    hit('jump', r.body?.error || r.code);\n    return false;\n  }\n",
+          "baseline": "    const mark = named ? list.find((x) => x.name === named) : null;\n    if (!mark) { coachCantAct.set(label, `the coach names \"${named}\", who is not on the roster — a rung pointing at somebody gone`); return false; }\n    const r = await call('POST', `/v1/streets/${mark.id}/jump`, { token, body: { intent: 'standard' } });\n    if (r.code === 200) { did('jump'); first('jump'); return obeyed(); }\n    hit('jump', r.body?.error || r.code);\n    return false;\n  }\n"
         }
       ]
     },
@@ -1705,6 +2737,52 @@ export const AGE_REMOVAL_SOURCE = freeze({
           "at": 4375,
           "current": "}\nexport function questQualityHistoricalEntry(file, entry, kind) {\n  assert(kind === 'tree' || kind === 'index');\n  entry = ageRemovalHistoricalEntry(file, entry, kind);\n  if (!known(file)) return entry;\n  const row = QUEST_QUALITY_SOURCE.files[file];\n  const format = pin => kind === 'tree' ? pin.mode + ' blob ' + pin.blob + '\\t' + file\n",
           "baseline": "}\nexport function questQualityHistoricalEntry(file, entry, kind) {\n  assert(kind === 'tree' || kind === 'index');\n  if (!known(file)) return entry;\n  const row = QUEST_QUALITY_SOURCE.files[file];\n  const format = pin => kind === 'tree' ? pin.mode + ' blob ' + pin.blob + '\\t' + file\n"
+        }
+      ]
+    },
+    "tools/questing-ux-release-phase2-native-catalog.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "3c0b5bb5273c494bc5d0e9739f9e60df7806b233",
+        "sha256": "cebaa259f97f182fcaa3bea08e7bb43858fc229af111e1ba7e77102d6f27e443",
+        "bytes": 63655
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "2b987db6920def5e2a34e04e861c335be2e3be49",
+        "sha256": "65cd8de2870f545c34ed2e869d2cbc1b892a0cdb23feee594e593ed247b40d63",
+        "bytes": 54498
+      },
+      "inverses": [
+        {
+          "at": 35361,
+          "current": "  return { type: 'blob', mode: match[1], blob: match[2] };\n}\nexport function assertQuestingPhase2SourceInputs() {\n  assert.equal(arguments.length, 0); return phase2SourceInputs(false);\n}\nexport function assertTaskPuzzlePhase2SourceInputs() {\n  assert.equal(arguments.length, 0); return phase2SourceInputs(true);\n}\nfunction phase2SourceInputs(taskPuzzle) {\n  assert.equal(process.execArgv.length, 0); assert.equal(process.argv.length, 3);\n  const main = path.resolve(process.argv[1]);\n  const caller = main === path.join(questRoot, 'test', 'phase2-postgres.js')\n",
+          "baseline": "  return { type: 'blob', mode: match[1], blob: match[2] };\n}\nexport function assertQuestingPhase2SourceInputs() {\n  assert.equal(arguments.length, 0);\n  assert.equal(process.execArgv.length, 0); assert.equal(process.argv.length, 3);\n  const main = path.resolve(process.argv[1]);\n  const caller = main === path.join(questRoot, 'test', 'phase2-postgres.js')\n"
+        },
+        {
+          "at": 36284,
+          "current": "  if (!questSourceCapture) questSourceCapture = captureQuestingEnterpriseSource();\n  else assertQuestingEnterpriseStable(questSourceCapture);\n  const inputs = ['schema.sql', 'tools/questing-ux-release-phase2-native-catalog.js',\n    'tools/questing-enterprise-catalog.js', 'test/questing-ux-release-phase2-native-catalog-guard.js', caller,\n    ...(taskPuzzle ? ['tools/task-puzzle-native-catalog.js', 'tools/task-puzzle-enterprise-catalog.js',\n      'test/task-puzzle-native-catalog-guard.js', 'test/task-puzzle-native-integration-guard.js'] : [])];\n  for (const file of inputs) {\n    const current = questEntry('HEAD', file), authored = questEntry(questDeclaration.authoredRevision, file);\n    assert.equal(questGit('ls-files', '--stage', '--', file).toString('utf8').trim(),\n",
+          "baseline": "  if (!questSourceCapture) questSourceCapture = captureQuestingEnterpriseSource();\n  else assertQuestingEnterpriseStable(questSourceCapture);\n  const inputs = ['schema.sql', 'tools/questing-ux-release-phase2-native-catalog.js',\n    'tools/questing-enterprise-catalog.js', 'test/questing-ux-release-phase2-native-catalog-guard.js', caller];\n  for (const file of inputs) {\n    const current = questEntry('HEAD', file), authored = questEntry(questDeclaration.authoredRevision, file);\n    assert.equal(questGit('ls-files', '--stage', '--', file).toString('utf8').trim(),\n"
+        },
+        {
+          "at": 37700,
+          "current": "    assertQuestingEnterpriseTrackedInput(file, current, authored, committed);\n  }\n  const raw = fs.readFileSync(path.join(questRoot, 'schema.sql'), 'utf8').replaceAll('\\r\\n', '\\n');\n  if (taskPuzzle) taskPuzzleCatalogSource(raw);\n  else assert.equal(questSha(raw), QUESTING_CATALOG_SOURCE.sha256);\n  return raw;\n}\nfunction archived582ComparisonSource() {\n",
+          "baseline": "    assertQuestingEnterpriseTrackedInput(file, current, authored, committed);\n  }\n  const raw = fs.readFileSync(path.join(questRoot, 'schema.sql'), 'utf8').replaceAll('\\r\\n', '\\n');\n  assert.equal(questSha(raw), QUESTING_CATALOG_SOURCE.sha256);\n  return raw;\n}\nfunction archived582ComparisonSource() {\n"
+        },
+        {
+          "at": 51698,
+          "current": "export async function createCommerceReleasePhase2MigrationCatalog(pool, endpoint, input, options) {\n  assert.equal(arguments.length, 4);\n  const actual = questActualInput(input);\n  return createQuestCatalogComparison(pool, endpoint, actual, options);\n}\nasync function createQuestCatalogComparison(pool, endpoint, actual, options) {\n  await assertNativeCaller(pool, endpoint, options?.legacyProfile, options?.includeNotNull);\n  const version = await questVersion(pool), compiled = await compileQuestReference(pool, endpoint, actual.addition, version);\n  const reference = freeze({ ...compiled, version });\n",
+          "baseline": "export async function createCommerceReleasePhase2MigrationCatalog(pool, endpoint, input, options) {\n  assert.equal(arguments.length, 4);\n  const actual = questActualInput(input);\n  await assertNativeCaller(pool, endpoint, options?.legacyProfile, options?.includeNotNull);\n  const version = await questVersion(pool), compiled = await compileQuestReference(pool, endpoint, actual.addition, version);\n  const reference = freeze({ ...compiled, version });\n"
+        },
+        {
+          "at": 52992,
+          "current": "export async function verifyCommerceNativeBranches(pool, endpoint) {\n  assert.equal(arguments.length, 2);\n  const actual = questActualInput(fs.readFileSync(path.join(questRoot, 'schema.sql'), 'utf8'));\n  return verifyQuestCatalogComparison(pool, endpoint, actual);\n}\nasync function verifyQuestCatalogComparison(pool, endpoint, actual) {\n  await assertNativeCaller(pool, endpoint, 'fresh', true);\n  const version = await questVersion(pool), compiled = await compileQuestReference(pool, endpoint, actual.addition, version);\n  const reference = freeze({ ...compiled, version });\n",
+          "baseline": "export async function verifyCommerceNativeBranches(pool, endpoint) {\n  assert.equal(arguments.length, 2);\n  const actual = questActualInput(fs.readFileSync(path.join(questRoot, 'schema.sql'), 'utf8'));\n  await assertNativeCaller(pool, endpoint, 'fresh', true);\n  const version = await questVersion(pool), compiled = await compileQuestReference(pool, endpoint, actual.addition, version);\n  const reference = freeze({ ...compiled, version });\n"
+        },
+        {
+          "at": 55180,
+          "current": "  assertQuestingEnterpriseStable(questSourceCapture);\n  return result;\n}\n\n// Distinct current586 admission; the old exported585 entrypoints above remain strict.\nimport { taskPuzzleCatalogSource, verifyTaskPuzzleCatalogDelta, taskPuzzleComparisonMetadata,\n  taskPuzzleComparisonConstraints, readTaskPuzzleSequenceMetadata, compileTaskPuzzleCallerReferences,\n  TASK_PUZZLE_DDL_CONTROLS } from './task-puzzle-native-catalog.js';\nimport { isDeepStrictEqual } from 'node:util';\nconst taskStates=new WeakMap(),taskProfiles=new WeakMap();\nfunction taskActualInput(input){\n  const physical=assertTaskPuzzlePhase2SourceInputs(),actual=taskPuzzleCatalogSource(input);\n  assert.equal(actual.current,physical,'Native current586 input is the complete actual physical schema');return actual;\n}\nasync function taskMetadata(client){\n  return {...await readCommerceReleasePhase2Metadata(client),sequences:await readTaskPuzzleSequenceMetadata(client)};\n}\nexport async function readTaskPuzzleReleasePhase2Metadata(pool){\n  assert.equal(arguments.length,1);assertTaskPuzzlePhase2SourceInputs();\n  const profile=taskProfiles.get(pool);assert(profile,'Only a pool admitted by a current586 native catalog');\n  const metadata=await taskMetadata(pool);verifyTaskPuzzleCatalogDelta(metadata,await questVersion(pool),profile,false);return metadata;\n}\nexport async function readTaskPuzzleDeltaMetadata(queryable){\n  assert.equal(arguments.length,1);\n  const restricted={query:async(sql,values)=>{\n    assert(values===undefined||Array.isArray(values)&&values.length===0,'Closed task delta query parameters');\n    if(sql===catalogQueries[0])return queryable.query(sql,values);\n    const field=catalogFields.get(sql);assert(field,'Closed task delta metadata query');\n    const anchor='WHERE n.nspname=current_schema()';assert.equal(sql.split(anchor).length,2);\n    return queryable.query(sql.replace(anchor,anchor+' AND '+(field==='relations'?'c':'t')+'.relname IN ($1,$2,$3)'),\n      ['characters','task_puzzles','task_puzzles_issue_order_seq']);\n  }};\n  return {...await original.readCommerceReleasePhase2Metadata(restricted),sequences:await readTaskPuzzleSequenceMetadata(queryable)};\n}\nasync function taskProjectedCaller(pool,version,profile){\n  const wrap=async queryable=>{\n    const qualify=async()=>{const metadata=await readTaskPuzzleDeltaMetadata(queryable);verifyTaskPuzzleCatalogDelta(metadata,version,profile,false);return metadata;};\n    await qualify();const context=(await queryable.query(catalogQueries[0])).rows[0];\n    return {query:async(sql,values)=>{\n      const field=catalogFields.get(sql),metadata=field||sql===catalogQueries[0]?await qualify():null;\n      const result=await queryable.query(sql,values);if(!field)return result;\n      const rows=field==='indexes'?result.rows.map(row=>{const anchor=' ON '+context.schema+'.';assert.equal(row.definition.split(anchor).length,2);return {...row,definition:row.definition.replace(anchor,' ON $self.')};}):result.rows;\n      const projected=taskPuzzleComparisonMetadata({...metadata,[field]:rows},version,profile,false)[field];\n      return {...result,rows:field==='indexes'?projected.map(row=>({...row,definition:row.definition.replace(' ON $self.',' ON '+context.schema+'.')})):projected};\n    }};\n  };\n  return {...await wrap(pool),connect:async()=>{const client=await pool.connect();try{return {...await wrap(client),release:client.release.bind(client)};}catch(error){client.release();throw error;}}};\n}\nasync function taskDdlControls(pool,version,profile){\n  const client=await pool.connect();let causal=0;\n  try{\n    const originalMetadata=await taskMetadata(client);verifyTaskPuzzleCatalogDelta(originalMetadata,version,profile,false);\n    for(const ddl of TASK_PUZZLE_DDL_CONTROLS){\n      await client.query('BEGIN');try{await client.query(ddl);await assert.rejects(async()=>assert(isDeepStrictEqual(await taskMetadata(client),originalMetadata),'Complete current task DDL metadata'),error=>error?.code==='ERR_ASSERTION');causal++;}finally{await client.query('ROLLBACK');}\n      const restored=await taskMetadata(client);verifyTaskPuzzleCatalogDelta(restored,version,profile,false);assert.deepEqual(restored,originalMetadata,'Exact same-client task DDL rollback reread');\n    }\n  }finally{client.release();}return causal;\n}\nfunction extendTaskCatalog(prior,current,version,profile,includeNotNull,projected,references,ddlCausal){\n  assert.equal(references.scope,'independent-positive-current586-references');\n  assert.deepEqual(references.referenceDdl,{status:'not-run',owner:'test/enterprise-release-phase2-migration-catalog.js --postgres'});\n  assert.equal(references.actualTables,586);assert.equal(references.baselineTables,585);assert.equal(references.idempotent,2);assert.equal(ddlCausal,47);\n  const project=metadata=>taskPuzzleComparisonMetadata(metadata,version,profile,false);\n  const verifyMetadata=metadata=>{const result=project(metadata);prior.verifyMetadata(result);assert.deepEqual(metadata,current,'Complete admitted current586 catalog');return true;};\n  verifyMetadata(current);freeze(current);\n  const result=Object.freeze({...prior,reference:current,...(prior.current?{current}:{}),verifyMetadata,\n    ...(prior.verify?{verify:verifyMetadata}:{}),\n    ...(prior.normalize?{normalize:rows=>prior.normalize(taskPuzzleComparisonConstraints(rows,version,includeNotNull,profile))}:{}),\n    actualTables:586,taskPuzzleReferences:references,taskPuzzleDdlCausal:ddlCausal,\n    phase:'Actual586 live profile catalog with independently compiled positive raw references; reference DDL adversarial proof is a separate Enterprise obligation; '+prior.phase});\n  taskStates.set(result,{prior,projected,version,profile,includeNotNull,current});return result;\n}\nexport async function createTaskPuzzleReleasePhase2MigrationCatalog(pool,endpoint,input,options){\n  assert.equal(arguments.length,4);const actual=taskActualInput(input);\n  await assertNativeCaller(pool,endpoint,options?.legacyProfile,options?.includeNotNull);\n  const profile=options.legacyProfile;assert(['phase2','director'].includes(profile));const version=await questVersion(pool);\n  const before=await taskMetadata(pool);verifyTaskPuzzleCatalogDelta(before,version,profile,false);\n  const references=await compileTaskPuzzleCallerReferences(pool,endpoint,actual.current),ddlCausal=await taskDdlControls(pool,version,profile);\n  const projected=await taskProjectedCaller(pool,version,profile);\n  const prior=await createQuestCatalogComparison(projected,endpoint,actual.quest,options);\n  taskProfiles.set(pool,profile);const current=await readTaskPuzzleReleasePhase2Metadata(pool);assertQuestingEnterpriseStable(questSourceCapture);\n  return extendTaskCatalog(prior,current,version,profile,options.includeNotNull,projected,references,ddlCausal);\n}\nexport async function verifyTaskPuzzleNativeBranches(pool,endpoint){\n  assert.equal(arguments.length,2);const actual=taskActualInput(fs.readFileSync(path.join(questRoot,'schema.sql'),'utf8'));\n  await assertNativeCaller(pool,endpoint,'fresh',true);const version=await questVersion(pool);\n  verifyTaskPuzzleCatalogDelta(await taskMetadata(pool),version,'fresh',false);\n  const references=await compileTaskPuzzleCallerReferences(pool,endpoint,actual.current),ddlCausal=await taskDdlControls(pool,version,'fresh');\n  const projected=await taskProjectedCaller(pool,version,'fresh'),prior=await verifyQuestCatalogComparison(projected,endpoint,actual.quest);\n  taskProfiles.set(pool,'fresh');const current=await readTaskPuzzleReleasePhase2Metadata(pool);assertQuestingEnterpriseStable(questSourceCapture);\n  return extendTaskCatalog(prior,current,version,'fresh',true,projected,references,ddlCausal);\n}\nexport async function verifyTaskPuzzleReleasePhase2CausalNegatives(pool,catalog,rows,verifyRows){\n  assert.equal(arguments.length,4);const state=taskStates.get(catalog);assert(state,'Only this invocation\\'s actual current586 catalog');assertTaskPuzzlePhase2SourceInputs();\n  const {prior,projected,version,profile,includeNotNull,current}=state;\n  assert.deepEqual(await taskMetadata(pool),current);\n  const parentRows=taskPuzzleComparisonConstraints(rows,version,includeNotNull,profile),addedRows=rows.filter(row=>!parentRows.includes(row));\n  const result=await verifyCommerceReleasePhase2CausalNegatives(projected,prior,parentRows,candidate=>verifyRows(questOrder([...candidate,...addedRows])));\n  assert.deepEqual(await taskMetadata(pool),current);assertQuestingEnterpriseStable(questSourceCapture);return result;\n}\n",
+          "baseline": "  assertQuestingEnterpriseStable(questSourceCapture);\n  return result;\n}\n"
         }
       ]
     },
@@ -1767,11 +2845,29 @@ export const AGE_REMOVAL_SOURCE = freeze({
     }
   },
   "additions": {
+    "docs/TASK-PUZZLES.md": {
+      "mode": "100644",
+      "blob": "7090e5664f79742fc53e235d785f0fa66196c520",
+      "sha256": "d4fcac0a9957ec686b327aea3fe836dec74ec00032cfb1337025daffccadb6c4",
+      "bytes": 5393
+    },
     "docs/superpowers/plans/2026-11-09-business-deadlines.md": {
       "mode": "100644",
       "blob": "bf61f42a0ca68abd77cdd0675c2979f1f43be146",
       "sha256": "a17dba5c71a513c63b91565ac5ec1bd3b632e95aacd92cbb77c33b2931ffb1b6",
       "bytes": 4168
+    },
+    "docs/superpowers/plans/2026-11-10-task-puzzles.md": {
+      "mode": "100644",
+      "blob": "b71850687d0b96c02bbb9301eea0108d2ab11e90",
+      "sha256": "5ad2b0f12bf414b89885ad86e27a75207fce4cc144a084c2d2047af71c61743e",
+      "bytes": 8847
+    },
+    "docs/superpowers/specs/2026-11-10-task-puzzles.md": {
+      "mode": "100644",
+      "blob": "fe2ed28739ecba509bd2106b67c5f94941b532ce",
+      "sha256": "709d57fb021606c04f1ad01fd855c6fbb0a4a1926895ff0935f1dbf9113ce18a",
+      "bytes": 1576
     },
     "public/noir-landing.css": {
       "mode": "100644",
@@ -1803,6 +2899,18 @@ export const AGE_REMOVAL_SOURCE = freeze({
       "sha256": "c78e8e2cd8d5ee8e566efb0b26452624384b8d41c30f21a4354cdb822325c500",
       "bytes": 17672
     },
+    "public/ux-task-puzzles.css": {
+      "mode": "100644",
+      "blob": "1834c6b4d80c6290858ca2fb908dcc771f9e512c",
+      "sha256": "a01d0d4f0db3e3b8ea2733c7de82fefae95f042634b897519a967141fb23fd42",
+      "bytes": 4602
+    },
+    "public/ux-task-puzzles.js": {
+      "mode": "100644",
+      "blob": "29f011bd0a8cdaabc1dd10d34c0087ba0f62c80b",
+      "sha256": "98e9943994e77e20f621297fc84d658c0b12c9de053b6b6ae167e2db214b363e",
+      "bytes": 16300
+    },
     "public/vendor/strategy-city-renderer.LICENSE.txt": {
       "mode": "100644",
       "blob": "eb5f126d7a44f8b8851cda126679fcc8991421ce",
@@ -1821,11 +2929,41 @@ export const AGE_REMOVAL_SOURCE = freeze({
       "sha256": "cc7cc7e2f53d5db0235ab2226e85fc6e91655161573b39813b41bb00e5919674",
       "bytes": 188
     },
+    "src/task-puzzle-contract.js": {
+      "mode": "100644",
+      "blob": "153a1a976a5091b31b5a3ab650ca5d6786434cca",
+      "sha256": "10805e0a58ccff1ebaffef3ff06879cdd7ff26b5ed83168dde03a953324315ca",
+      "bytes": 3527
+    },
+    "src/task-puzzle-engine.js": {
+      "mode": "100644",
+      "blob": "5b19916e75a1b8e3ca883003e22015ee05ba169e",
+      "sha256": "63f27241f4c1b3682ee93b483b5c746308fc020751897d07042c65081d53cf1c",
+      "bytes": 11339
+    },
+    "src/task-puzzle-jobs.js": {
+      "mode": "100644",
+      "blob": "a17d1d71346691206d2e38a210469135f01b868c",
+      "sha256": "a500eeadb12330d8a7d364231526663851916fe897f3497e7e5049b4d6792551",
+      "bytes": 2302
+    },
+    "src/task-puzzles.js": {
+      "mode": "100644",
+      "blob": "e5d9fc3a21eade98fd71e37a317a89bff242592d",
+      "sha256": "730fdce2e07b47de81f83d90d201c6ac3d8f588c5d9ff20b1d203ba742aaa6ca",
+      "bytes": 5609
+    },
     "test/lib/age-removal-source-transfer-proof.js": {
       "mode": "100644",
-      "blob": "914db9dc5a5dd0d848a1da75f667786c30ec067c",
-      "sha256": "eba04ba9ee8a53ae55d31cc394b7c88c66948e902ee736b65c82c09c99173d41",
-      "bytes": 15106
+      "blob": "b255b552a7faf371b7d6888d331b1ee77dbd3ecd",
+      "sha256": "978b6bfbbbff006e0feab7c7143c80922f3570ec99abed3300e54b71db955b8b",
+      "bytes": 16904
+    },
+    "test/lib/task-puzzle-solver.js": {
+      "mode": "100644",
+      "blob": "1c635b6cdbbc265990db632ef28d490985bcd65a",
+      "sha256": "86d4a767da41178c5c0b3e0e17cb4f030a7b6c1b9b6736dc0d5e9a219368866f",
+      "bytes": 1685
     },
     "test/lib/ux-disclosure-browser.js": {
       "mode": "100644",
@@ -1839,17 +2977,65 @@ export const AGE_REMOVAL_SOURCE = freeze({
       "sha256": "626cdced36ba412e492237d97adcac5e1fe5c0eca08342700a233556a666f027",
       "bytes": 8705
     },
+    "test/playthrough-firstblood-truth.js": {
+      "mode": "100644",
+      "blob": "ffe52792e3077b06fa9adda78b5c3660acc526dd",
+      "sha256": "a5433a8ef950462a840017f3d73fd42985f3eac28e30b326e9034275e47a0da1",
+      "bytes": 2895
+    },
     "test/strategy-command-browser.js": {
       "mode": "100644",
       "blob": "d7019399a540e555c73e970ebd5489bd618b23bc",
       "sha256": "20628b023bc0ba02069c6e46cc685fc0d3497d54ee3f74c9b4400948ab88c7c7",
       "bytes": 16507
     },
+    "test/task-puzzle-engine.js": {
+      "mode": "100644",
+      "blob": "4e807e5888e22bb7d38ab5ff6ea00707cf56106a",
+      "sha256": "056c57025c55dbc9bc50bc987aab1f17aab197f5d1167184cb2002ee8525d8cf",
+      "bytes": 6499
+    },
+    "test/task-puzzle-jobs.js": {
+      "mode": "100644",
+      "blob": "8ee0b2fddb43cf33cfbf02396ba9c1ddcca9d7ee",
+      "sha256": "6b80ba7c3a1016daecb63e07b5c57dfa529ea4acf22c70293271c97ef12b0c4b",
+      "bytes": 14612
+    },
+    "test/task-puzzle-native-catalog-guard.js": {
+      "mode": "100644",
+      "blob": "e505d2dcaeec6c34b6b64a162b3c5a36f9e3d528",
+      "sha256": "9958edd308423bc8e8494225e307592df72bdab7255ac9788011d421237eb4ee",
+      "bytes": 14521
+    },
+    "test/task-puzzle-native-integration-guard.js": {
+      "mode": "100644",
+      "blob": "6740b98c8498de90102519ac97d86a777cfaa287",
+      "sha256": "43aa717a602f60fb3cf1f81c0c0457fae2b46f9f0785e862c1e2e1f6cf331ba4",
+      "bytes": 75588
+    },
+    "test/task-puzzle-postgres.js": {
+      "mode": "100644",
+      "blob": "75bf18f388431f5076f4b3a4e24032f0cc2ef702",
+      "sha256": "3fb0df0a12894567e5a08c1b9208ed49dbc4f532939d775f6cdd54176ac47113",
+      "bytes": 12064
+    },
+    "test/task-puzzles-browser.js": {
+      "mode": "100644",
+      "blob": "049a6f2c4a9503fa1b7d7751ad50b83a6954ee32",
+      "sha256": "0011fcfa2b5ece16526952cdefbdb2b7a4b4837fb11a634c15ff44cb766f1519",
+      "bytes": 22734
+    },
+    "test/task-puzzles.js": {
+      "mode": "100644",
+      "blob": "e799df73ab8be8793068b99bcebe7dfd671de8c7",
+      "sha256": "aec1182cf38684f913c1df855722a9dbfd3a11dba1d8a672aab664bd7f4e33e7",
+      "bytes": 7498
+    },
     "tools/age-removal-source-seal.js": {
       "mode": "100644",
-      "blob": "7216ceb3998d38d01220f7bce2fa376db05ee8e2",
-      "sha256": "4e682a022010b23ee28ad6716c7950d0ad35ca61be9e5752d8bbb01e106d74ad",
-      "bytes": 14134
+      "blob": "86400c9e676c1d511f643219c0efe7b74570299b",
+      "sha256": "2b997048b7fde5ee2926ac5aeb695fc97eb1e5cca06109b6d5e2c85b14d05c8e",
+      "bytes": 18391
     },
     "tools/age-removal-source-transfer.js": {
       "mode": "100644",
@@ -1868,7 +3054,19 @@ export const AGE_REMOVAL_SOURCE = freeze({
       "blob": "00cefd5b28acbc9c06e174fcd456efe59034ab47",
       "sha256": "11e31e905979ae7d3318c1c23129e729b9c72bd8e22444c5ec152f71492c7863",
       "bytes": 27895
+    },
+    "tools/task-puzzle-enterprise-catalog.js": {
+      "mode": "100644",
+      "blob": "d7bf8ee9e30bc9ef0c5df921e97eb77ec8110fdf",
+      "sha256": "57d43acf4548d3a0fa701f0a3cd64f8a62ddbf63feaaab191a1127de177446ba",
+      "bytes": 3227
+    },
+    "tools/task-puzzle-native-catalog.js": {
+      "mode": "100644",
+      "blob": "d09ad3e5edde9e585edc4a821e216efeba494788",
+      "sha256": "ad1570d102164092a324361b8a716f23d83f4d4540d7550a1e7f04d9ac72e747",
+      "bytes": 26933
     }
   }
 });
-export const AGE_REMOVAL_SOURCE_SHA256 = '3492e128744d1d7b290dd50eb481aa9a32822e096864498b0d5f9972af753322';
+export const AGE_REMOVAL_SOURCE_SHA256 = 'fd6a5afb21f34a67fffa51870c37a107bc011d73d7c2456e0b8e91a3eeec7f96';

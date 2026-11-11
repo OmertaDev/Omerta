@@ -19,6 +19,8 @@ export const QUESTING_NATIVE_METADATA = 'tools/enterprise-native-questing-inputs
 export const QUESTING_NATIVE_PREDECESSOR_METADATA = 'tools/enterprise-native-contract-release-inputs.js';
 export { declaration as QUESTING_ENTERPRISE_NATIVE_INPUTS };
 export const QUESTING_NATIVE_SUPPORT = Object.freeze([
+  'tools/task-puzzle-native-catalog.js', 'tools/task-puzzle-enterprise-catalog.js',
+  'test/task-puzzle-native-catalog-guard.js', 'test/task-puzzle-native-integration-guard.js',
   'tools/enterprise-native-questing.js', 'tools/enterprise-native-questing-seal.js',
   'tools/install-foundry-verified.sh',
   'test/enterprise-native-questing-guard.js', QUESTING_NATIVE_PREDECESSOR_METADATA,

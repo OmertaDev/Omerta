@@ -26,6 +26,8 @@ import { dbCaps } from './db.js';
 import { accrue } from './accrual.js';
 import { captureAccrualEconomy, accrualEconomyIssues } from './economy-monitor.js';
 import { consumeStreetActionCooldown } from './actioncooldown.js';
+import { taskPuzzleContext } from './task-puzzle-jobs.js';
+import { consumeTaskPuzzle } from './task-puzzles.js';
 import { resolvedBoundedClaimIds, takeAccountDailyClaim } from './accountdaily.js';
 import { logCollect } from './collection.js';
 import { claimFirst, firstTaken, __setAnnouncer } from './firsts.js';
@@ -2226,14 +2228,20 @@ async function takeFromMark(client, h, ch, markRow, take) {
 }
 
 // ── §7.2 CRIME ──
-export async function doCrime(ch, crimeId, client, h, approach) {
+export async function doCrime(ch, crimeId, client, h, approach, puzzle) {
   const c = CRIMES.find((x) => x.id === crimeId);
   if (!c) throw new GameError('bad_crime', 'No such job.');
   const lvl = levelOf(Number(ch.respect));
   if (jailed(ch)) throw new GameError('jailed', 'You are in lockup.');
   if (lvl < c.lvl) throw new GameError('level', `That job needs level ${c.lvl}.`);
   if (Number(ch.nerve) < c.nerve) throw new GameError('nerve', `Takes ${c.nerve} nerve.`);
+  // Retain cooldown error priority, but do not consume prep before a known refusal.
+  const streetCool = coolLeft(ch.street_action_at);
+  if (streetCool) throw new GameError('cooldown', `Let the street settle. Next job or deal in ${coolWait(streetCool)}.`, { cooldownSeconds: streetCool });
+  const puzzleFeedback = puzzle !== undefined
+    ? await consumeTaskPuzzle(ch, await taskPuzzleContext(ch, { scope: 'crime', targetId: crimeId }, client), puzzle, client) : null;
   await consumeStreetActionCooldown(ch, client);
+  await client.query('UPDATE characters SET crime_puzzle_revision=crime_puzzle_revision+1 WHERE id=$1', [ch.id]);
   // D6a — THE APPROACH: the per-job risk/reward choice. An unknown/omitted approach falls back to
   // 'standard' (the signed baseline, byte-identical to the old single-click behaviour). Cash EV is
   // held ~flat by payMult ≈ 1/successMult, so the §7.2 cash faucet is untouched; the choice moves the
@@ -2264,7 +2272,7 @@ export async function doCrime(ch, crimeId, client, h, approach) {
   const chance = Math.min(0.97, (c.base + statEdge
     + gangLevel * 0.02 + (held.includes('brick') ? 0.02 : 0) + (rIdx >= 9 ? 0.02 : 0)) * ap.successMult);
   const roll = Math.random();
-  return (async () => {
+  const outcome = await (async () => {
     // SOLDIERS: the assigned, fit second rides along (assists + takes a cut + carries the risk)
     const second = await assignedSoldier(client, ch.id);
     // THE MARK (founder: "crimes can't just be committed against nobody") — every job names a
@@ -2397,6 +2405,7 @@ export async function doCrime(ch, crimeId, client, h, approach) {
     return { ok: true, success: false, approach: ap.id, jailSeconds: jailS, victim: mark, soldier,
       cooldownMs: PACING.STREET_ACTION_CD_MS };
   })();
+  return { ...outcome, ...(puzzleFeedback ? { puzzle: puzzleFeedback } : {}) };
 }
 
 // ── §7.3 TRAIN ──

@@ -215,8 +215,11 @@ try {
   assert.doesNotMatch(JSON.stringify(fullPaths), /foreign-car/);
   assertNoNumericSecrets(fullPaths, /98765|987/);
 
-  // Every published mission's preview must match its actual refusal/acceptance gate.
-  // The fake query stops exactly at the first write, so no reward is executed here.
+  const missionMetadata = await run('get_available_missions');
+  assert.deepEqual([...missionMetadata.missions, ...missionMetadata.blockedMissions]
+    .filter(mission => mission.puzzle?.required).map(mission => mission.id).sort(), ['m11', 'm12', 'm2']);
+  // Every published mission's readiness preview must match its requirements and
+  // cooldown. Selected jobs then stop at the required puzzle gate, before writes.
   const oldCooldown = process.env.MISSION_CD_MS;
   process.env.MISSION_CD_MS = '60000';
   try {
@@ -229,8 +232,9 @@ try {
       const client = { async query(sql) { if (/^SELECT/.test(sql)) return { rows: [] }; throw Object.assign(new Error('mutation boundary'), { code: 'accepted_at_write' }); } };
       let refusal;
       try { await doMission(ch, mission.id, client, { owned: { assets: [], gear: [] } }); } catch (error) { refusal = error; }
-      assert.equal(refusal.code, readiness.missing.length ? 'reqs' : readiness.cooldownSeconds ? 'cooldown' : 'accepted_at_write');
-      assert.equal(readiness.available, refusal.code === 'accepted_at_write');
+      assert.equal(refusal.code, readiness.missing.length ? 'reqs' : readiness.cooldownSeconds ? 'cooldown' :
+        ['m2', 'm11', 'm12'].includes(mission.id) ? 'task_puzzle_required' : 'accepted_at_write');
+      assert.equal(readiness.available, ['accepted_at_write', 'task_puzzle_required'].includes(refusal.code));
       if (refusal.code === 'reqs') assert.deepEqual(refusal.data.need, Object.fromEntries(readiness.missing.map(({ k, need }) => [k, need])));
     }
   } finally {

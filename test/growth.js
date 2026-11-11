@@ -13,6 +13,7 @@ import { socialRewardsLive } from '../src/growth.js';
 import { accrue } from '../src/accrual.js';
 import { sweepGrandReferrals, gainRespect, maybeSparkReferral } from '../src/game.js';
 import { GOODS_MARKET } from '../src/goodsmarket.js';
+import { solveTaskPuzzle } from './lib/task-puzzle-solver.js';
 
 // The City Standing / recruiters boards are CACHED in production (standing.js — they were the most
 // expensive polled reads in the game). This suite reads boards it has just written, so it pins the
@@ -2425,7 +2426,8 @@ assert.equal((await call('POST', '/v1/respec', { token: chef.token, body: { musc
   assert.equal((await call('POST', '/v1/hustle/advance', { token: hus.token })).body.error, 'district',
     'the work counts, but the CHECK-IN is still location-gated — you have to bring it to the stop');
   await seedCh(hus.id, `loc='${b1.district}'`);
-  r = await call('POST', '/v1/hustle/advance', { token: hus.token });
+  const legworkPuzzle = (await call('POST', '/v1/task-puzzles', { token: hus.token, body: { scope: 'hustle', targetId: 'legwork' } })).body.puzzle;
+  r = await call('POST', '/v1/hustle/advance', { token: hus.token, body: { puzzle: solveTaskPuzzle(legworkPuzzle) } });
   assert.equal(r.body.step, 2, `the legwork done (${b1.legwork}) advances the chain`);
   // the payoff: on location, ledgered, level-scaled, once a day
   const b2 = (await call('GET', '/v1/hustle', { token: hus.token })).body;

@@ -280,6 +280,12 @@ const searchExcerpt = (text, query) => {
   return `${from ? '…' : ''}${escText(before)}<mark>${escText(match)}</mark>${escText(after)}${to < clean.length ? '…' : ''}`;
 };
 const SECTIONS = [
+  { id: 'task-puzzles', group: 'Start', title: 'Task puzzles', tag: 'missions, Hustle and optional preparation',
+    html: `<p>Family Missions <code>m2</code>, <code>m11</code>, <code>m12</code> and the Hustle legwork check-in require a short puzzle as well as their normal requirements. Open Family missions on Start Here or the check-in on Streets. The Hustle still needs real legwork and the correct district.</p>
+      <p>Crime cards offer optional preparation with feedback only, never improved odds or rewards. Choose an approach before submitting. <b>Solving and submitting executes the job</b> with its usual resources and risks; closing does not.</p>
+      <p>Choose a patrol start time, build an ordered courier route, match parcels to contacts, or deduce a suspect from evidence. Use touch or Tab, arrow keys, Space and Enter, with hints, visible focus and no dragging or fast reactions. Close with the button or Escape.</p>
+      <p>Refresh and reopening keep the issued challenge and a local answer draft when storage is available. After a lost response, use <b>Check task status</b> to read the receipt without resending. If needed, explicitly retry the exact original submission and request key. A changed occurrence requires <b>Reopen current task</b>; any committed crime attempt invalidates previous preparation.</p>
+      <p>Agents solve the same public constraints: <code>POST /v1/task-puzzles</code> with <code>{scope,targetId}</code>, or read with <code>GET /v1/task-puzzles?scope=…&amp;targetId=…</code>. Submit <code>puzzle:{id,answer}</code> with the existing job request. Verification and consumption commit with the job. See <code>/openapi.json</code> and the <a href="/agents#task-puzzles">agent guide</a>. Puzzles are gameplay, not human verification.</p>` },
   { id: 'welcome', group: 'Start', title: 'The city', tag: 'rules and reference',
     html: `<p class="lead">OMERTÀ is a persistent multiplayer mafia RPG. The server runs the rules. You start in the Docks with $500 and share the city with human and autonomous players. Other players can kill your character; your account and bloodline records survive.</p>
       <p>Use the search box to find a system, risk, or route. The numbers here are the current settings and can change. "Level N" is your

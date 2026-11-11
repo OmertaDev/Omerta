@@ -200,6 +200,57 @@ assert.throws(() => assertEmptyDecisionReplay(missingReplayKind, 'intelligence_p
 for (const kind of ['intelligence_purchase', 'forecast_memory'])
   assertEmptyDecisionReplay(await j('GET', '/v1/agent/decision-replay?kind=' + kind, token), kind);
 
+// Puzzle reads need a published task selector, not an already issued puzzle or a seeded world.
+const puzzleRules = await j('GET', '/v1/rules', token);
+assert.equal(puzzleRules.code, 200, 'the first player can discover actual task selectors');
+const missionSelector = puzzleRules.body.missions.find(mission => mission.id === 'm2')?.puzzle;
+assert.deepEqual(missionSelector, { required: true, scope: 'mission', targetId: 'm2' });
+const taskPuzzleReadPath = '/v1/task-puzzles?' + new URLSearchParams({
+  scope: missionSelector.scope, targetId: missionSelector.targetId,
+});
+const assertEmptyTaskPuzzle = response => {
+  assert.equal(response.code, 200, 'a valid task selector must serve the first player without issuance');
+  assert.deepEqual(response.body, { puzzle: null }, 'an unissued task has an explicit empty puzzle');
+};
+const taskPuzzleCount = async () => Number((await app.pool.query('SELECT COUNT(*) AS n FROM task_puzzles')).rows[0].n);
+assert.equal(await taskPuzzleCount(), 0, 'the cold-start fixture has no issued puzzles');
+for (const url of [
+  '/v1/task-puzzles',
+  '/v1/task-puzzles?scope=mission',
+  '/v1/task-puzzles?targetId=m2',
+  '/v1/task-puzzles?scope=unknown&targetId=m2',
+  '/v1/task-puzzles?scope=mission&targetId=m1',
+  '/v1/task-puzzles?scope=crime&targetId=no-such-crime',
+  taskPuzzleReadPath + '&contextKey=forged',
+  taskPuzzleReadPath + '&characterId=foreign',
+]) {
+  const malformed = await j('GET', url, token);
+  assert.equal(malformed.code, 400, 'missing, partial, unknown and extra task selectors remain malformed: ' + url);
+  assert.equal(malformed.body?.error, 'task_puzzle_context');
+  assert.throws(() => assertEmptyTaskPuzzle(malformed), { name: 'AssertionError' },
+    'a malformed selector cannot pass as an empty task puzzle');
+}
+for (const response of [{ code: 200, body: {} }, { code: 400, body: { error: 'unrelated_refusal' } },
+  { code: 500, body: { error: 'server_error' } }])
+  assert.throws(() => assertEmptyTaskPuzzle(response), { name: 'AssertionError' },
+    'a missing puzzle field, unrelated refusal or server error cannot pass the empty-task oracle');
+assertEmptyTaskPuzzle(await j('GET', taskPuzzleReadPath, token));
+const crimeSelector = puzzleRules.body.crimes.find(crime => crime.id === 'pick')?.puzzle;
+assert.deepEqual(crimeSelector, { required: false, scope: 'crime', targetId: 'pick', benefit: 'feedback_only' });
+assertEmptyTaskPuzzle(await j('GET', '/v1/task-puzzles?' + new URLSearchParams({
+  scope: crimeSelector.scope, targetId: crimeSelector.targetId,
+}), token));
+const hustleSelector = puzzleRules.body.hustle.puzzle;
+assert.deepEqual(hustleSelector, { required: true, scope: 'hustle', targetId: 'legwork', step: 1 });
+const beforeContact = await j('GET', '/v1/task-puzzles?' + new URLSearchParams({
+  scope: hustleSelector.scope, targetId: hustleSelector.targetId,
+}), token);
+assert.equal(beforeContact.code, 400, 'a scoped Hustle read still requires meeting the contact');
+assert.equal(beforeContact.body?.error, 'hustle_step', 'valid context must report its precise gameplay prerequisite');
+assert.throws(() => assertEmptyTaskPuzzle(beforeContact), { name: 'AssertionError' },
+  'the Hustle prerequisite cannot waive the shared route\'s valid mission read');
+assert.equal(await taskPuzzleCount(), 0, 'valid and refused GETs never issue a task puzzle');
+
 // Every mounted authed GET, minus the mod perimeter (its own credential) and param routes (they need
 // an id, which by definition means data exists — that is what the client guard's fixtures cover).
 const parameterlessGets = (app.routes || [])
@@ -245,6 +296,7 @@ assert(paths.includes('/v1/city/homes'), 'the home directory remains in the comp
 assert(paths.includes('/v1/city/home/interior'), 'the interior remains in the complete cold-start enumeration');
 assert(paths.includes('/v1/agent/decision-replay'), 'the history board remains in the complete cold-start enumeration');
 assert(paths.includes('/v1/equipment-recovery'), 'the equipment inspection remains in the complete cold-start enumeration');
+assert(paths.includes('/v1/task-puzzles'), 'the scoped puzzle read remains in the complete cold-start enumeration');
 
 // Anti-vacuity: an empty list is what a broken route registry looks like, and it would pass silently.
 assert(paths.length >= 120,
@@ -259,12 +311,14 @@ for (const p of paths) {
       : p === '/v1/city/homes' ? homesReadPath
         : p === '/v1/city/home/interior' ? interiorReadPath
           : p === '/v1/agent/decision-replay' ? decisionReplayReadPath
-            : p === '/v1/equipment-recovery' ? equipmentRecoveryReadPath : p;
+            : p === '/v1/equipment-recovery' ? equipmentRecoveryReadPath
+              : p === '/v1/task-puzzles' ? taskPuzzleReadPath : p;
   const r = await j('GET', readPath, token);
   if (p === '/v1/market/feed') assert.equal(r.code, 200, 'the scoped public feed serves an empty world');
   if (p === '/v1/city/homes') assertEmptyHomes(r);
   if (p === '/v1/agent/decision-replay') assertEmptyDecisionReplay(r, 'intelligence_purchase');
   if (p === '/v1/equipment-recovery') assertEquipmentRecoveryInspection(r);
+  if (p === '/v1/task-puzzles') assertEmptyTaskPuzzle(r);
   if (r.code < 400) continue;
   if (DECLARED[p]) {
     if (p === '/v1/genesis-auction') {
@@ -300,6 +354,7 @@ assert.equal(broke.length, 0,
 const stale = Object.keys(DECLARED).filter((p) => paths.includes(p) && !declaredHit.has(p));
 assert.equal(stale.length, 0,
   `DECLARED lists route(s) that no longer refuse — remove them, or the waiver hides the next regression:\n   - ${stale.join('\n   - ')}`);
+assert.equal(await taskPuzzleCount(), 0, 'the complete cold-start GET enumeration never issues a puzzle');
 
 // After the default-off enumeration, the actual issued Join action opens an empty district feed.
 const join = social.body.actions.find(action => action.id === 'chat:enable');

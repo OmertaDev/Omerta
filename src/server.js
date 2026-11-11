@@ -228,6 +228,7 @@ import { register as registerUxCommunity } from './ux-community.js';
 import { register as registerUxCoordination } from './ux-coordination.js';
 import { register as registerUxInvestigation } from './ux-investigation.js';
 import { registerTacticsRoutes, crimeWithDecisionContext } from './ux-tactics.js';
+import { jobTaskPuzzle, missionPuzzle, crimePuzzle } from './task-puzzle-jobs.js';
 import * as Duels from './duels.js';
 import * as Clues from './clues.js';
 import * as Estate from './estate.js';
@@ -703,7 +704,7 @@ export async function buildServer() {
     ['ux-progression.js', 'application/javascript'], ['ux-progression.css', 'text/css'],
     ['ux-social.js', 'application/javascript'], ['ux-social.css', 'text/css'],
     ['ux-navigation.js', 'application/javascript'], ['ux-navigation.css', 'text/css'],
-    ...['feel', 'tools', 'identity', 'story', 'community', 'quests', 'clues'].flatMap(name => [[`ux-${name}.js`, 'application/javascript'], [`ux-${name}.css`, 'text/css']]),
+    ...['feel', 'tools', 'identity', 'story', 'community', 'quests', 'clues', 'task-puzzles'].flatMap(name => [[`ux-${name}.js`, 'application/javascript'], [`ux-${name}.css`, 'text/css']]),
     ['ux-quest-quality.js', 'application/javascript'], ['ux-quest-quality.css', 'text/css'],
     ['ux-workspace.js', 'application/javascript'], ['ux-world.js', 'application/javascript'], ['ux-world.css', 'text/css'],
     ['ux-tactics.js', 'application/javascript'], ['ux-tactics.css', 'text/css'],
@@ -1838,7 +1839,13 @@ export async function buildServer() {
 
   // ── M1 actions (crimes/gym/doc/checkin/bank/travel) ──
   app.post('/v1/crimes/:id', { preHandler: auth }, async (req) =>
-    G.withCharacter(pool, req.user.sub, (ch, client, h) => crimeWithDecisionContext(ch, req.params.id, client, h, req.body?.approach)));
+    G.withCharacter(pool, req.user.sub, (ch, client, h) => crimeWithDecisionContext(ch, req.params.id, client, h, req.body?.approach, req.body?.puzzle)));
+  app.post('/v1/task-puzzles', { preHandler: auth }, async req =>
+    G.withCharacter(pool, req.user.sub, (ch, client) => jobTaskPuzzle(ch, req.body, client, true)));
+  app.get('/v1/task-puzzles', { preHandler: auth }, async req => {
+    const { puzzle } = await G.readCharacter(pool, req.user.sub, (ch, client) => jobTaskPuzzle(ch, req.query, client));
+    return { puzzle };
+  });
   app.post('/v1/train/:stat', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => G.train(ch, req.params.stat, client, h)));
   // THE REGIMEN — the expanded gym: five disciplines on the SAME train_at clock + NPC trainer drills
@@ -1852,7 +1859,7 @@ export async function buildServer() {
   app.get('/v1/hustle', { preHandler: auth }, async (req) =>
     G.readCharacter(pool, req.user.sub, (ch, client) => Hustle.hustleBoard(ch, client)));
   app.post('/v1/hustle/advance', { preHandler: auth }, async (req) =>
-    G.withCharacter(pool, req.user.sub, (ch, client, h) => Hustle.advanceHustle(ch, client, h)));
+    G.withCharacter(pool, req.user.sub, (ch, client, h) => Hustle.advanceHustle(ch, client, h, req.body?.puzzle)));
   // WORD ON THE STREET — each district's seed-drawn daily quest board (accept where you stand,
   // do the work, claim the envelope; the counter DELTA proves it — the hustle rule)
   app.get('/v1/corner', { preHandler: auth }, async (req) =>
@@ -2048,7 +2055,7 @@ export async function buildServer() {
   app.get('/v1/rules', async (req, reply) => {
     reply.header('cache-control', 'public, max-age=300, stale-while-revalidate=3600');
     return jsonEtag(req, reply, {
-    crimes: CRIMES.map((c) => ({ id: c.id, name: c.name, lvl: c.lvl, nerve: c.nerve, cash: c.cash, base: c.base, jail: c.jail })),
+    crimes: CRIMES.map((c) => ({ id: c.id, name: c.name, lvl: c.lvl, nerve: c.nerve, cash: c.cash, base: c.base, jail: c.jail, puzzle: crimePuzzle(c.id) })),
     respecOmr: M8.RESPEC_OMR, // stat respec cost — so The Life tab can price the tradeoff before you commit
     respecStatMin: M8.RESPEC_STAT_MIN,
     respecCdHours: Math.round(M8.RESPEC_CD_MS / 3600000), // ...and the CADENCE, which the card priced nowhere
@@ -2077,7 +2084,7 @@ export async function buildServer() {
     regimen: { disciplines: REGIMEN.DISCIPLINES, cap: REGIMEN.CAP,
       drillXp: REGIMEN.DRILL_XP, trainers: REGIMEN.TRAINERS, energy: REGIMEN.ENERGY },
     // THE HUSTLE — the daily three-stop chain's config (the live chain is GET /v1/hustle)
-    hustle: { payPerLvl: HUSTLE.PAY_PER_LVL, payMin: HUSTLE.PAY_MIN },
+    hustle: { payPerLvl: HUSTLE.PAY_PER_LVL, payMin: HUSTLE.PAY_MIN, puzzle: { required: true, scope: 'hustle', targetId: 'legwork', step: 1 } },
     // WORD ON THE STREET — the district quest boards' config (the live board is GET /v1/corner)
     corner: { perDay: CORNER.PER_DAY, maxDay: CORNER.MAX_DAY, cash: CORNER.CASH, respect: CORNER.RESPECT,
       chainSteps: CORNER.CHAIN_STEPS, chainBonus: CORNER.CHAIN_BONUS, chainRespect: CORNER.CHAIN_RESPECT },
@@ -2206,7 +2213,7 @@ export async function buildServer() {
       // BUSINESS EMPIRE Tier-4 — the launderer legend + the front specializations + the takeover surface
       launderer: BUSINESS_EMPIRE.LAUNDERER_RANKS, specs: BUSINESS_EMPIRE.SPECS, specOmr: BUSINESS_EMPIRE.SPEC_OMR,
       takeover: { fee: BUSINESS_EMPIRE.TAKEOVER.FEE, minLevel: BUSINESS_EMPIRE.TAKEOVER.MIN_LEVEL } },
-    missions: MISSIONS.map((m) => ({ id: m.id, name: m.name, req: m.req, reward: m.reward, brief: m.brief })),
+    missions: MISSIONS.map((m) => ({ id: m.id, name: m.name, req: m.req, reward: m.reward, brief: m.brief, puzzle: missionPuzzle(m.id) })),
     seals: { ladder: GANG_SEALS, colorOmr: VANITY.GANG_COLOR_OMR, renameOmr: VANITY.GANG_RENAME_OMR },
     // the shop's own price list, so the console never restates a lever (the terms ride with the price)
     vanity: { nameOmr: VANITY.NAME_CHANGE_OMR, titleOmr: VANITY.TITLE_OMR, plateOmr: VANITY.PLATE_OMR },
@@ -2939,7 +2946,7 @@ export async function buildServer() {
   const performAgentAction = async (action, ch, client, h, lender = null, policy = null) => {
     const tail = (prefix) => action.path.startsWith(prefix) ? action.path.slice(prefix.length) : null;
     switch (action.kind) {
-      case 'crime': return G.doCrime(ch, tail('/v1/crimes/'), client, h, action.body?.approach);
+      case 'crime': return G.doCrime(ch, tail('/v1/crimes/'), client, h, action.body?.approach, action.body?.puzzle);
       case 'business_buy': return Business.buyBusiness(ch, tail('/v1/business/').replace(/\/buy$/, ''), client, h);
       case 'business_upkeep': return Business.payBusinessUpkeep(ch, client, h,
         { maxCash: action.cost.cash, minimumReserve: policy.cashReserve });
@@ -3671,7 +3678,7 @@ export async function buildServer() {
   app.post('/v1/heist', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => W.heist(ch, client, h)));
   app.post('/v1/missions/:id', { preHandler: auth }, async (req) =>
-    G.withCharacter(pool, req.user.sub, (ch, client, h) => W.doMission(ch, req.params.id, client, h)));
+    G.withCharacter(pool, req.user.sub, (ch, client, h) => W.doMission(ch, req.params.id, client, h, req.body?.puzzle)));
   app.get('/v1/daily', { preHandler: auth }, async (req) => {
     const me = (await pool.query('SELECT id FROM characters WHERE account_id=$1 AND alive', [req.user.sub])).rows[0];
     if (!me) throw new G.GameError('no_character', 'Create a character first.');

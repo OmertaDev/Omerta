@@ -456,7 +456,12 @@ function questEntry(revision, file) {
   return { type: 'blob', mode: match[1], blob: match[2] };
 }
 export function assertQuestingPhase2SourceInputs() {
-  assert.equal(arguments.length, 0);
+  assert.equal(arguments.length, 0); return phase2SourceInputs(false);
+}
+export function assertTaskPuzzlePhase2SourceInputs() {
+  assert.equal(arguments.length, 0); return phase2SourceInputs(true);
+}
+function phase2SourceInputs(taskPuzzle) {
   assert.equal(process.execArgv.length, 0); assert.equal(process.argv.length, 3);
   const main = path.resolve(process.argv[1]);
   const caller = main === path.join(questRoot, 'test', 'phase2-postgres.js')
@@ -468,7 +473,9 @@ export function assertQuestingPhase2SourceInputs() {
   if (!questSourceCapture) questSourceCapture = captureQuestingEnterpriseSource();
   else assertQuestingEnterpriseStable(questSourceCapture);
   const inputs = ['schema.sql', 'tools/questing-ux-release-phase2-native-catalog.js',
-    'tools/questing-enterprise-catalog.js', 'test/questing-ux-release-phase2-native-catalog-guard.js', caller];
+    'tools/questing-enterprise-catalog.js', 'test/questing-ux-release-phase2-native-catalog-guard.js', caller,
+    ...(taskPuzzle ? ['tools/task-puzzle-native-catalog.js', 'tools/task-puzzle-enterprise-catalog.js',
+      'test/task-puzzle-native-catalog-guard.js', 'test/task-puzzle-native-integration-guard.js'] : [])];
   for (const file of inputs) {
     const current = questEntry('HEAD', file), authored = questEntry(questDeclaration.authoredRevision, file);
     assert.equal(questGit('ls-files', '--stage', '--', file).toString('utf8').trim(),
@@ -483,7 +490,8 @@ export function assertQuestingPhase2SourceInputs() {
     assertQuestingEnterpriseTrackedInput(file, current, authored, committed);
   }
   const raw = fs.readFileSync(path.join(questRoot, 'schema.sql'), 'utf8').replaceAll('\r\n', '\n');
-  assert.equal(questSha(raw), QUESTING_CATALOG_SOURCE.sha256);
+  if (taskPuzzle) taskPuzzleCatalogSource(raw);
+  else assert.equal(questSha(raw), QUESTING_CATALOG_SOURCE.sha256);
   return raw;
 }
 function archived582ComparisonSource() {
@@ -703,6 +711,9 @@ async function questDdlControls(pool, reference) {
 export async function createCommerceReleasePhase2MigrationCatalog(pool, endpoint, input, options) {
   assert.equal(arguments.length, 4);
   const actual = questActualInput(input);
+  return createQuestCatalogComparison(pool, endpoint, actual, options);
+}
+async function createQuestCatalogComparison(pool, endpoint, actual, options) {
   await assertNativeCaller(pool, endpoint, options?.legacyProfile, options?.includeNotNull);
   const version = await questVersion(pool), compiled = await compileQuestReference(pool, endpoint, actual.addition, version);
   const reference = freeze({ ...compiled, version });
@@ -718,6 +729,9 @@ export async function createCommerceReleasePhase2MigrationCatalog(pool, endpoint
 export async function verifyCommerceNativeBranches(pool, endpoint) {
   assert.equal(arguments.length, 2);
   const actual = questActualInput(fs.readFileSync(path.join(questRoot, 'schema.sql'), 'utf8'));
+  return verifyQuestCatalogComparison(pool, endpoint, actual);
+}
+async function verifyQuestCatalogComparison(pool, endpoint, actual) {
   await assertNativeCaller(pool, endpoint, 'fresh', true);
   const version = await questVersion(pool), compiled = await compileQuestReference(pool, endpoint, actual.addition, version);
   const reference = freeze({ ...compiled, version });
@@ -744,4 +758,101 @@ export async function verifyCommerceReleasePhase2CausalNegatives(pool, catalog, 
   assert.deepEqual(await questOnlyRows(pool, reference.version), reference.full);
   assertQuestingEnterpriseStable(questSourceCapture);
   return result;
+}
+
+// Distinct current586 admission; the old exported585 entrypoints above remain strict.
+import { taskPuzzleCatalogSource, verifyTaskPuzzleCatalogDelta, taskPuzzleComparisonMetadata,
+  taskPuzzleComparisonConstraints, readTaskPuzzleSequenceMetadata, compileTaskPuzzleCallerReferences,
+  TASK_PUZZLE_DDL_CONTROLS } from './task-puzzle-native-catalog.js';
+import { isDeepStrictEqual } from 'node:util';
+const taskStates=new WeakMap(),taskProfiles=new WeakMap();
+function taskActualInput(input){
+  const physical=assertTaskPuzzlePhase2SourceInputs(),actual=taskPuzzleCatalogSource(input);
+  assert.equal(actual.current,physical,'Native current586 input is the complete actual physical schema');return actual;
+}
+async function taskMetadata(client){
+  return {...await readCommerceReleasePhase2Metadata(client),sequences:await readTaskPuzzleSequenceMetadata(client)};
+}
+export async function readTaskPuzzleReleasePhase2Metadata(pool){
+  assert.equal(arguments.length,1);assertTaskPuzzlePhase2SourceInputs();
+  const profile=taskProfiles.get(pool);assert(profile,'Only a pool admitted by a current586 native catalog');
+  const metadata=await taskMetadata(pool);verifyTaskPuzzleCatalogDelta(metadata,await questVersion(pool),profile,false);return metadata;
+}
+export async function readTaskPuzzleDeltaMetadata(queryable){
+  assert.equal(arguments.length,1);
+  const restricted={query:async(sql,values)=>{
+    assert(values===undefined||Array.isArray(values)&&values.length===0,'Closed task delta query parameters');
+    if(sql===catalogQueries[0])return queryable.query(sql,values);
+    const field=catalogFields.get(sql);assert(field,'Closed task delta metadata query');
+    const anchor='WHERE n.nspname=current_schema()';assert.equal(sql.split(anchor).length,2);
+    return queryable.query(sql.replace(anchor,anchor+' AND '+(field==='relations'?'c':'t')+'.relname IN ($1,$2,$3)'),
+      ['characters','task_puzzles','task_puzzles_issue_order_seq']);
+  }};
+  return {...await original.readCommerceReleasePhase2Metadata(restricted),sequences:await readTaskPuzzleSequenceMetadata(queryable)};
+}
+async function taskProjectedCaller(pool,version,profile){
+  const wrap=async queryable=>{
+    const qualify=async()=>{const metadata=await readTaskPuzzleDeltaMetadata(queryable);verifyTaskPuzzleCatalogDelta(metadata,version,profile,false);return metadata;};
+    await qualify();const context=(await queryable.query(catalogQueries[0])).rows[0];
+    return {query:async(sql,values)=>{
+      const field=catalogFields.get(sql),metadata=field||sql===catalogQueries[0]?await qualify():null;
+      const result=await queryable.query(sql,values);if(!field)return result;
+      const rows=field==='indexes'?result.rows.map(row=>{const anchor=' ON '+context.schema+'.';assert.equal(row.definition.split(anchor).length,2);return {...row,definition:row.definition.replace(anchor,' ON $self.')};}):result.rows;
+      const projected=taskPuzzleComparisonMetadata({...metadata,[field]:rows},version,profile,false)[field];
+      return {...result,rows:field==='indexes'?projected.map(row=>({...row,definition:row.definition.replace(' ON $self.',' ON '+context.schema+'.')})):projected};
+    }};
+  };
+  return {...await wrap(pool),connect:async()=>{const client=await pool.connect();try{return {...await wrap(client),release:client.release.bind(client)};}catch(error){client.release();throw error;}}};
+}
+async function taskDdlControls(pool,version,profile){
+  const client=await pool.connect();let causal=0;
+  try{
+    const originalMetadata=await taskMetadata(client);verifyTaskPuzzleCatalogDelta(originalMetadata,version,profile,false);
+    for(const ddl of TASK_PUZZLE_DDL_CONTROLS){
+      await client.query('BEGIN');try{await client.query(ddl);await assert.rejects(async()=>assert(isDeepStrictEqual(await taskMetadata(client),originalMetadata),'Complete current task DDL metadata'),error=>error?.code==='ERR_ASSERTION');causal++;}finally{await client.query('ROLLBACK');}
+      const restored=await taskMetadata(client);verifyTaskPuzzleCatalogDelta(restored,version,profile,false);assert.deepEqual(restored,originalMetadata,'Exact same-client task DDL rollback reread');
+    }
+  }finally{client.release();}return causal;
+}
+function extendTaskCatalog(prior,current,version,profile,includeNotNull,projected,references,ddlCausal){
+  assert.equal(references.scope,'independent-positive-current586-references');
+  assert.deepEqual(references.referenceDdl,{status:'not-run',owner:'test/enterprise-release-phase2-migration-catalog.js --postgres'});
+  assert.equal(references.actualTables,586);assert.equal(references.baselineTables,585);assert.equal(references.idempotent,2);assert.equal(ddlCausal,47);
+  const project=metadata=>taskPuzzleComparisonMetadata(metadata,version,profile,false);
+  const verifyMetadata=metadata=>{const result=project(metadata);prior.verifyMetadata(result);assert.deepEqual(metadata,current,'Complete admitted current586 catalog');return true;};
+  verifyMetadata(current);freeze(current);
+  const result=Object.freeze({...prior,reference:current,...(prior.current?{current}:{}),verifyMetadata,
+    ...(prior.verify?{verify:verifyMetadata}:{}),
+    ...(prior.normalize?{normalize:rows=>prior.normalize(taskPuzzleComparisonConstraints(rows,version,includeNotNull,profile))}:{}),
+    actualTables:586,taskPuzzleReferences:references,taskPuzzleDdlCausal:ddlCausal,
+    phase:'Actual586 live profile catalog with independently compiled positive raw references; reference DDL adversarial proof is a separate Enterprise obligation; '+prior.phase});
+  taskStates.set(result,{prior,projected,version,profile,includeNotNull,current});return result;
+}
+export async function createTaskPuzzleReleasePhase2MigrationCatalog(pool,endpoint,input,options){
+  assert.equal(arguments.length,4);const actual=taskActualInput(input);
+  await assertNativeCaller(pool,endpoint,options?.legacyProfile,options?.includeNotNull);
+  const profile=options.legacyProfile;assert(['phase2','director'].includes(profile));const version=await questVersion(pool);
+  const before=await taskMetadata(pool);verifyTaskPuzzleCatalogDelta(before,version,profile,false);
+  const references=await compileTaskPuzzleCallerReferences(pool,endpoint,actual.current),ddlCausal=await taskDdlControls(pool,version,profile);
+  const projected=await taskProjectedCaller(pool,version,profile);
+  const prior=await createQuestCatalogComparison(projected,endpoint,actual.quest,options);
+  taskProfiles.set(pool,profile);const current=await readTaskPuzzleReleasePhase2Metadata(pool);assertQuestingEnterpriseStable(questSourceCapture);
+  return extendTaskCatalog(prior,current,version,profile,options.includeNotNull,projected,references,ddlCausal);
+}
+export async function verifyTaskPuzzleNativeBranches(pool,endpoint){
+  assert.equal(arguments.length,2);const actual=taskActualInput(fs.readFileSync(path.join(questRoot,'schema.sql'),'utf8'));
+  await assertNativeCaller(pool,endpoint,'fresh',true);const version=await questVersion(pool);
+  verifyTaskPuzzleCatalogDelta(await taskMetadata(pool),version,'fresh',false);
+  const references=await compileTaskPuzzleCallerReferences(pool,endpoint,actual.current),ddlCausal=await taskDdlControls(pool,version,'fresh');
+  const projected=await taskProjectedCaller(pool,version,'fresh'),prior=await verifyQuestCatalogComparison(projected,endpoint,actual.quest);
+  taskProfiles.set(pool,'fresh');const current=await readTaskPuzzleReleasePhase2Metadata(pool);assertQuestingEnterpriseStable(questSourceCapture);
+  return extendTaskCatalog(prior,current,version,'fresh',true,projected,references,ddlCausal);
+}
+export async function verifyTaskPuzzleReleasePhase2CausalNegatives(pool,catalog,rows,verifyRows){
+  assert.equal(arguments.length,4);const state=taskStates.get(catalog);assert(state,'Only this invocation\'s actual current586 catalog');assertTaskPuzzlePhase2SourceInputs();
+  const {prior,projected,version,profile,includeNotNull,current}=state;
+  assert.deepEqual(await taskMetadata(pool),current);
+  const parentRows=taskPuzzleComparisonConstraints(rows,version,includeNotNull,profile),addedRows=rows.filter(row=>!parentRows.includes(row));
+  const result=await verifyCommerceReleasePhase2CausalNegatives(projected,prior,parentRows,candidate=>verifyRows(questOrder([...candidate,...addedRows])));
+  assert.deepEqual(await taskMetadata(pool),current);assertQuestingEnterpriseStable(questSourceCapture);return result;
 }
