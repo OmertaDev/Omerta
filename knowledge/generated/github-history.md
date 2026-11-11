@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `d43841ac8785`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `70b1c4d22217`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 5835 |
+| Commits in clone | 5839 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-11-11 — chore: seal current jail fixture native inputs |
+| Latest commit | 2026-11-11 — chore: seal current mobile crime layout native inputs |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 4700 |
+| OmertaDev | 4704 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 152 |
@@ -31,10 +31,10 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 970 | historical |
-| knowledge/generated/graph-summary.md | 970 | historical |
-| knowledge/generated/graph.json | 970 | historical |
-| knowledge/generated/inventory.md | 970 | historical |
+| knowledge/generated/github-history.md | 971 | historical |
+| knowledge/generated/graph-summary.md | 971 | historical |
+| knowledge/generated/graph.json | 971 | historical |
+| knowledge/generated/inventory.md | 971 | historical |
 | [SPEC.md](../../SPEC.md) | 663 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [public/index.html](../../public/index.html) | 515 | yes |
@@ -42,8 +42,8 @@
 | knowledge/generated/documents.md | 422 | historical |
 | [schema.sql](../../schema.sql) | 388 | yes |
 | [package.json](../../package.json) | 380 | yes |
-| knowledge/generated/modules.md | 328 | historical |
-| knowledge/generated/graph.mmd | 258 | historical |
+| knowledge/generated/modules.md | 329 | historical |
+| knowledge/generated/graph.mmd | 259 | historical |
 | [BALANCE.md](../../BALANCE.md) | 258 | yes |
 | [test/gates.js](../../test/gates.js) | 228 | yes |
 | [src/game.js](../../src/game.js) | 200 | yes |
@@ -64,7 +64,7 @@
 | [test/levers.js](../../test/levers.js) | 98 | yes |
 | [test/growth.js](../../test/growth.js) | 97 | yes |
 | [test/migrate.js](../../test/migrate.js) | 95 | yes |
-| [tools/enterprise-native-questing-inputs.js](../../tools/enterprise-native-questing-inputs.js) | 93 | yes |
+| [tools/enterprise-native-questing-inputs.js](../../tools/enterprise-native-questing-inputs.js) | 94 | yes |
 | [docs/WIKI.md](../../docs/WIKI.md) | 93 | yes |
 | [test/social.js](../../test/social.js) | 88 | yes |
 | [test/hardening.js](../../test/hardening.js) | 73 | yes |
