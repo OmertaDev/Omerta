@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const AGE_REMOVAL_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_AGE_REMOVAL_SOURCE_COMPARISON_ONLY",
-  "revision": "e2d24f4fb7bd50f0cd56282eea9ddb4910e26bb4",
-  "tree": "9f5b66c0be86dc545070dce6117fac0797db6105",
+  "revision": "39b799c7556472b23056f86686aa52011ae7f135",
+  "tree": "99f6cd1a74aa28135a15c43cee43ba446586f157",
   "predecessor": "35913ec1b448275b227019ede2a2ef8047be55aa",
   "predecessorTree": "c74c606d97ee2f8ebb6c5201a4ddd2c2781d5db0",
   "files": {
@@ -2346,9 +2346,9 @@ export const AGE_REMOVAL_SOURCE = freeze({
     "test/ux-shell-browser.js": {
       "current": {
         "mode": "100644",
-        "blob": "236d6c0b536bcb2d103775a0e0a74e38f4e7d37f",
-        "sha256": "408deccd8d2c6ccefd5589e2afcdc7b35ab3330303104f2b85a49d71f5255648",
-        "bytes": 13698
+        "blob": "aa1395f9163ffcccf49a4ff7bc8aa9e9a5558d49",
+        "sha256": "d46f6226abfdde44cee41da50406740fe911e457a532f2f86e403caf6f3c26b4",
+        "bytes": 20368
       },
       "baseline": {
         "mode": "100644",
@@ -2363,29 +2363,44 @@ export const AGE_REMOVAL_SOURCE = freeze({
           "baseline": "  const size = await page.evaluate(() => ({ width: innerWidth, scroll: document.documentElement.scrollWidth }));\n  assert.ok(size.scroll <= size.width + 2, `${label} overflows: ${JSON.stringify(size)}`);\n}\nasync function aboveFold(page, selector, label) {\n  const position = await page.locator(selector).evaluate(element => {\n    const rect = element.getBoundingClientRect();\n"
         },
         {
-          "at": 4033,
+          "at": 2199,
+          "current": "  assert.ok(position.top >= 0 && position.bottom <= position.height, `${label} is below the fold: ${JSON.stringify(position)}`);\n}\n\nasync function reachableCrimePocket(page, label) {\n  // Let the existing, finite menu notification expire. Never hide an overlay to pass hit tests.\n  await page.waitForFunction(() => !document.querySelector('#toast.show'));\n  const geometry = await page.locator('#ux-action-pocket').evaluate(pocket => {\n    const bounds = element => {\n      const r = element.getBoundingClientRect();\n      return { top: r.top, bottom: r.bottom, left: r.left, right: r.right, width: r.width, height: r.height };\n    };\n    const terms = pocket.querySelector('.operation-action-terms');\n    return {\n      pocket: bounds(pocket),\n      terms: { ...bounds(terms), lineHeight: parseFloat(getComputedStyle(terms).lineHeight), text: terms.textContent },\n      buttons: [...pocket.querySelectorAll('.verbrow button')].map(button => {\n        const rect = bounds(button);\n        const clip = { top: 0, bottom: innerHeight, left: 0, right: innerWidth };\n        for (let ancestor = button.parentElement; ancestor; ancestor = ancestor.parentElement) {\n          const r = ancestor.getBoundingClientRect(), style = getComputedStyle(ancestor);\n          if (/(auto|scroll|hidden|clip)/.test(style.overflowX)) {\n            clip.left = Math.max(clip.left, r.left + ancestor.clientLeft);\n            clip.right = Math.min(clip.right, r.left + ancestor.clientLeft + ancestor.clientWidth);\n          }\n          if (/(auto|scroll|hidden|clip)/.test(style.overflowY)) {\n            clip.top = Math.max(clip.top, r.top + ancestor.clientTop);\n            clip.bottom = Math.min(clip.bottom, r.top + ancestor.clientTop + ancestor.clientHeight);\n          }\n        }\n        const points = [[rect.left + 3, rect.top + 3], [rect.right - 3, rect.top + 3],\n          [rect.left + 3, rect.bottom - 3], [rect.right - 3, rect.bottom - 3],\n          [(rect.left + rect.right) / 2, (rect.top + rect.bottom) / 2]];\n        return { text: button.textContent, ...rect,\n          unclipped: rect.top >= clip.top && rect.bottom <= clip.bottom && rect.left >= clip.left && rect.right <= clip.right,\n          hit: points.every(([x, y]) => button.contains(document.elementFromPoint(x, y))) };\n      }),\n    };\n  });\n  assert.equal(geometry.buttons.length, 4, `${label}: all three approaches and optional preparation remain available`);\n  for (const button of geometry.buttons) {\n    assert.ok(button.width >= 44 && button.height >= 44, `${label}: 44px touch target: ${JSON.stringify(button)}`);\n    assert.ok(button.unclipped && button.hit, `${label}: action is clipped or covered: ${JSON.stringify(button)}`);\n  }\n  assert.ok(geometry.terms.height >= 3 * geometry.terms.lineHeight,\n    `${label}: costs and risks need at least three readable lines, not a scroll sliver: ${JSON.stringify(geometry.terms)}`);\n  assert.match(geometry.terms.text, /COST.*BASELINE WIN[\\s\\S]*QUIET[\\s\\S]*STANDARD[\\s\\S]*LOUD/);\n  fs.writeFileSync(path.join(artifacts, `shell-pocket-${label.replace(/[^a-z0-9]+/gi, '-')}.json`), JSON.stringify(geometry, null, 2));\n  return geometry;\n}\n\ntry {\n  const { token } = await call('POST', '/v1/auth/guest');\n  await call('POST', '/v1/character', token, { name: 'Shell First Job' });\n",
+          "baseline": "  assert.ok(position.top >= 0 && position.bottom <= position.height, `${label} is below the fold: ${JSON.stringify(position)}`);\n}\n\ntry {\n  const { token } = await call('POST', '/v1/auth/guest');\n  await call('POST', '/v1/character', token, { name: 'Shell First Job' });\n"
+        },
+        {
+          "at": 7047,
           "current": "  assert.equal(await page.locator('#tabpanel #coachwrap').count(), 1, 'next action belongs beside the operation');\n  assert.equal(await page.locator('#game-menu[open]').count(), 0, 'secondary utilities start closed');\n  assert.equal(await page.locator('#ux-screen-tools[open]').count(), 0, 'workspace controls do not precede gameplay by default');\n  assert.equal(await page.locator('#city-directory[open]').count(), 0, 'the complete directory starts collapsed beside the five main destinations');\n  assert.equal(await page.locator('#game-menu #btn-logout').count(), 1, 'account controls remain available in the utility menu');\n  await aboveFold(page, '#tab-start .start-next-card .act', 'desktop first-week action');\n  const onboardingOrder = await page.evaluate(() => {\n",
           "baseline": "  assert.equal(await page.locator('#tabpanel #coachwrap').count(), 1, 'next action belongs beside the operation');\n  assert.equal(await page.locator('#game-menu[open]').count(), 0, 'secondary utilities start closed');\n  assert.equal(await page.locator('#ux-screen-tools[open]').count(), 0, 'workspace controls do not precede gameplay by default');\n  assert.equal(await page.locator('#city-directory[open]').count(), 1, 'desktop navigation remains visible');\n  assert.equal(await page.locator('#game-menu #btn-logout').count(), 1, 'account controls remain available in the utility menu');\n  await aboveFold(page, '#tab-start .start-next-card .act', 'desktop first-week action');\n  const onboardingOrder = await page.evaluate(() => {\n"
         },
         {
-          "at": 5455,
+          "at": 8469,
           "current": "  await noOverflow(page, 'desktop Start Here');\n  await page.screenshot({ path: path.join(artifacts, 'shell-desktop.png') });\n\n  await openDirectory(page);\n  await page.locator('#city-sidebar #tabs [data-tab=\"start\"]').focus();\n  await page.keyboard.press('ArrowDown');\n  await page.locator('#tab-streets.on').waitFor();\n",
           "baseline": "  await noOverflow(page, 'desktop Start Here');\n  await page.screenshot({ path: path.join(artifacts, 'shell-desktop.png') });\n\n  await page.locator('#city-sidebar #tabs [data-tab=\"start\"]').focus();\n  await page.keyboard.press('ArrowDown');\n  await page.locator('#tab-streets.on').waitFor();\n"
         },
         {
-          "at": 5917,
+          "at": 8931,
           "current": "    'vertical navigation follows ArrowDown and retains keyboard focus');\n  await openTab(page, 'start');\n  await page.locator('#tab-start .start-next-card').waitFor();\n  await page.locator('#city-directory > summary').click();\n\n  const menu = page.locator('#game-menu > summary');\n  await menu.click();\n",
           "baseline": "    'vertical navigation follows ArrowDown and retains keyboard focus');\n  await openTab(page, 'start');\n  await page.locator('#tab-start .start-next-card').waitFor();\n\n  const menu = page.locator('#game-menu > summary');\n  await menu.click();\n"
         },
         {
-          "at": 7982,
+          "at": 10996,
           "current": "  // Secondary onboarding remains useful after a live server refresh.\n  await page.locator('#tab-start details[data-sect=\"start-outreach\"] > summary').click();\n  await page.locator('#ref-claim-name').fill('Unsent referral draft');\n  await openDirectory(page);\n  await page.locator('#character-sheet > summary').click();\n  const sheetRefreshed = page.waitForResponse(response => [`${base}/v1/me`, `${base}/v1/projections/player`].includes(response.url()) && response.status() === 200);\n  await page.locator('#btn-refresh').click();\n",
           "baseline": "  // Secondary onboarding remains useful after a live server refresh.\n  await page.locator('#tab-start details[data-sect=\"start-outreach\"] > summary').click();\n  await page.locator('#ref-claim-name').fill('Unsent referral draft');\n  await page.locator('#character-sheet > summary').click();\n  const sheetRefreshed = page.waitForResponse(response => [`${base}/v1/me`, `${base}/v1/projections/player`].includes(response.url()) && response.status() === 200);\n  await page.locator('#btn-refresh').click();\n"
         },
         {
-          "at": 9454,
+          "at": 12468,
           "current": "  await aboveFold(page, `${standardCrime} >> nth=0`, 'desktop crime action');\n  await noOverflow(page, 'desktop Streets');\n  await page.screenshot({ path: path.join(artifacts, 'shell-streets-desktop.png') });\n  await openDirectory(page);\n  await page.locator('#tabs-more').click();\n  assert.ok(await page.locator('#grouprail [data-group]:visible').count() >= 8, 'the whole city exposes every navigation group');\n  await page.locator('#grouprail [data-group=\"earners\"]').click();\n",
           "baseline": "  await aboveFold(page, `${standardCrime} >> nth=0`, 'desktop crime action');\n  await noOverflow(page, 'desktop Streets');\n  await page.screenshot({ path: path.join(artifacts, 'shell-streets-desktop.png') });\n  await page.locator('#tabs-more').click();\n  assert.ok(await page.locator('#grouprail [data-group]:visible').count() >= 8, 'the whole city exposes every navigation group');\n  await page.locator('#grouprail [data-group=\"earners\"]').click();\n"
+        },
+        {
+          "at": 14164,
+          "current": "  await page.locator('#tab-streets.on').waitFor();\n  await page.locator('#tab-streets [data-do^=\"POST /v1/crimes/\"]:enabled').first().waitFor();\n  await page.locator('#tab-streets #ux-action-pocket [data-do^=\"POST /v1/crimes/\"][data-body*=standard]:enabled').waitFor();\n  await reachableCrimePocket(page, 'mobile crime pocket');\n  await aboveFold(page, '#tab-streets #ux-action-pocket [data-do^=\"POST /v1/crimes/\"][data-body*=standard]:enabled', 'mobile crime action');\n  assert.equal(await page.locator('#ux-action-pocket .operation-action-terms').count(), 1, 'the mobile action retains its live cost and risk terms');\n  await noOverflow(page, 'mobile Streets');\n  await page.screenshot({ path: path.join(artifacts, 'shell-streets-mobile.png') });\n\n  const crimeRequests = [];\n  page.on('request', request => {\n    if (request.method() === 'POST' && new URL(request.url()).pathname.startsWith('/v1/crimes/')) crimeRequests.push(request.url());\n  });\n  const pocketViewports = [{ width: 390, height: 844 }, { width: 320, height: 568 },\n    { width: 568, height: 320 }, { width: 480, height: 320 },\n    { width: 760, height: 360 }, { width: 320, height: 568 }];\n  for (const [rotation, viewport] of pocketViewports.entries()) {\n    await page.setViewportSize(viewport);\n    await reachableCrimePocket(page, `${viewport.width}x${viewport.height} rotation ${rotation}`);\n    for (let visit = 0; visit < 2; visit++) {\n      await openTab(page, 'start');\n      await openTab(page, 'streets');\n      const label = `${viewport.width}x${viewport.height} rotation ${rotation} visit ${visit + 1}`;\n      await page.locator('#ux-action-pocket [data-task-crime]').waitFor();\n      await reachableCrimePocket(page, label);\n      await noOverflow(page, label);\n      const terms = page.locator('#ux-action-pocket .operation-action-terms');\n      // Wide landscape may already show every term; scroll only real overflow.\n      if (await terms.evaluate(element => element.scrollHeight > element.clientHeight)) {\n        await terms.hover();\n        await page.mouse.wheel(0, 500);\n        await page.waitForFunction(() => {\n          const terms = document.querySelector('#ux-action-pocket .operation-action-terms');\n          return terms.scrollTop > 0 && terms.scrollTop + terms.clientHeight >= terms.scrollHeight - 1;\n        });\n        await reachableCrimePocket(page, `${label} after reading all terms`);\n        await page.mouse.wheel(0, -500);\n        await page.waitForFunction(() => document.querySelector('#ux-action-pocket .operation-action-terms').scrollTop === 0);\n      }\n      const prepare = page.locator('#ux-action-pocket [data-task-crime]');\n      await prepare.focus();\n      assert.equal(await prepare.evaluate(element => element === document.activeElement), true, `${label}: keyboard focus reaches preparation`);\n      await page.keyboard.press('Enter');\n      const puzzle = page.getByRole('dialog', { name: /Task puzzle/ });\n      await puzzle.getByRole('button', { name: 'Solve and attempt crime' }).waitFor();\n      await page.keyboard.press('Escape');\n      await puzzle.waitFor({ state: 'detached' });\n      assert.equal(await prepare.evaluate(element => element === document.activeElement), true, `${label}: closing restores preparation focus`);\n      await reachableCrimePocket(page, `${label} after puzzle dismissal`);\n      assert.equal(crimeRequests.length, 0, 'Opening and closing optional preparation never attempts the crime');\n      await page.screenshot({ path: path.join(artifacts, `shell-pocket-${viewport.width}-${viewport.height}-${rotation}-${visit + 1}.png`) });\n    }\n  }\n\n  const firstSession = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });\n  await firstSession.addInitScript(value => localStorage.setItem('omerta_token', value), token);\n  const freshPage = await firstSession.newPage();\n",
+          "baseline": "  await page.locator('#tab-streets.on').waitFor();\n  await page.locator('#tab-streets [data-do^=\"POST /v1/crimes/\"]:enabled').first().waitFor();\n  await page.locator('#tab-streets #ux-action-pocket [data-do^=\"POST /v1/crimes/\"][data-body*=standard]:enabled').waitFor();\n  await aboveFold(page, '#tab-streets #ux-action-pocket [data-do^=\"POST /v1/crimes/\"][data-body*=standard]:enabled', 'mobile crime action');\n  assert.equal(await page.locator('#ux-action-pocket .operation-action-terms').count(), 1, 'the mobile action retains its live cost and risk terms');\n  await noOverflow(page, 'mobile Streets');\n  await page.screenshot({ path: path.join(artifacts, 'shell-streets-mobile.png') });\n\n  const firstSession = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });\n  await firstSession.addInitScript(value => localStorage.setItem('omerta_token', value), token);\n  const freshPage = await firstSession.newPage();\n"
+        },
+        {
+          "at": 18455,
+          "current": "  await aboveFold(freshPage, '#tab-start .start-next-card .act', 'fresh mobile first-week action');\n  await noOverflow(freshPage, 'fresh mobile onboarding');\n  await freshPage.screenshot({ path: path.join(artifacts, 'shell-first-session.png') });\n  const primary = page.locator('#ux-action-pocket [data-do^=\"POST /v1/crimes/\"][data-body*=standard]:enabled');\n  await primary.focus();\n  assert.equal(await primary.evaluate(element => element === document.activeElement), true, 'The ordinary crime remains keyboard reachable after repeated preparation and navigation');\n  const ordinaryAttempt = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.startsWith('/v1/crimes/'));\n  await page.keyboard.press('Enter');\n  assert.equal((await ordinaryAttempt).status(), 200, 'Keyboard activation reaches the real ordinary crime endpoint');\n  assert.equal(crimeRequests.length, 1, 'One keyboard activation attempts exactly one ordinary crime');\n  assert.deepEqual(faults, [], 'the redesigned shell introduces no runtime failures');\n  console.log('ux-shell-browser: PASS (focused onboarding, desktop/mobile navigation, utilities, feed, refresh, full city access)');\n  console.log(`Screenshots: ${artifacts}`);\n",
+          "baseline": "  await aboveFold(freshPage, '#tab-start .start-next-card .act', 'fresh mobile first-week action');\n  await noOverflow(freshPage, 'fresh mobile onboarding');\n  await freshPage.screenshot({ path: path.join(artifacts, 'shell-first-session.png') });\n  assert.deepEqual(faults, [], 'the redesigned shell introduces no runtime failures');\n  console.log('ux-shell-browser: PASS (focused onboarding, desktop/mobile navigation, utilities, feed, refresh, full city access)');\n  console.log(`Screenshots: ${artifacts}`);\n"
         }
       ]
     },
@@ -2886,9 +2901,9 @@ export const AGE_REMOVAL_SOURCE = freeze({
     },
     "public/ux-task-puzzles.css": {
       "mode": "100644",
-      "blob": "af5f4a9baa675b23b4e060655db2152d44b8e634",
-      "sha256": "b023117f75af1230983073758e5fefdcc06e0d7623b759f68c7f83ec8ff775c1",
-      "bytes": 2889
+      "blob": "1834c6b4d80c6290858ca2fb908dcc771f9e512c",
+      "sha256": "a01d0d4f0db3e3b8ea2733c7de82fefae95f042634b897519a967141fb23fd42",
+      "bytes": 4602
     },
     "public/ux-task-puzzles.js": {
       "mode": "100644",
@@ -3054,4 +3069,4 @@ export const AGE_REMOVAL_SOURCE = freeze({
     }
   }
 });
-export const AGE_REMOVAL_SOURCE_SHA256 = '302664ad1a79dcd0ea70dac8d274b17d09262f552230ad1e2c70a3ba3896ef34';
+export const AGE_REMOVAL_SOURCE_SHA256 = 'fd6a5afb21f34a67fffa51870c37a107bc011d73d7c2456e0b8e91a3eeec7f96';
