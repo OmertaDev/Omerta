@@ -4,7 +4,7 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "ACTUAL_CURRENT_QUESTING_ENTERPRISE_NATIVE_INPUTS",
-  "authoredRevision": "eccbe16da33ceab1ab894f0c84297b9e80c25afa",
+  "authoredRevision": "295bae6976a60e19b997da425ca44487a07fed27",
   "predecessorDefinitionSha256": "6b9128d3311945fc511748f852803354ac415a23082b6b5ce017980a2b7596bf",
   "proofInventorySha256": "3fd878600cd363ebdd9d89bb59b7cc3de7650f895062d83711b2bd1774c298e9",
   "files": [
@@ -11339,8 +11339,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/age-removal-source-data.js",
       "mode": "100644",
-      "blob": "802acb09303441bce3b688e6144448dd9ce0099b",
-      "sha256": "3a22dd3770e75104df494acbaeafbf9716d73a344cfec6de0d761080fa822ed9"
+      "blob": "d8d00dfdf92a7bbda2d26da619df8201e23bb96d",
+      "sha256": "201219beb92d0eecabd18bf56f2242130a24da0fc3032361ac6bbfdd4d5ca9d8"
     },
     {
       "file": "tools/age-removal-source-transfer.js",
@@ -13083,8 +13083,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/age-removal-source-data.js",
       "mode": "100644",
-      "blob": "802acb09303441bce3b688e6144448dd9ce0099b",
-      "sha256": "3a22dd3770e75104df494acbaeafbf9716d73a344cfec6de0d761080fa822ed9"
+      "blob": "d8d00dfdf92a7bbda2d26da619df8201e23bb96d",
+      "sha256": "201219beb92d0eecabd18bf56f2242130a24da0fc3032361ac6bbfdd4d5ca9d8"
     },
     {
       "file": "tools/age-removal-source-transfer.js",
@@ -13172,4 +13172,4 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     }
   ]
 });
-export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "d4a1aebc869b72cf26dae64acc2f3b223f1a07991a08f4fffa6cec1e52e02ac2";
+export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "c32a6e09f83d677c1007baa2c5303478ab2b86cb4407a743383cdcba6723164c";
