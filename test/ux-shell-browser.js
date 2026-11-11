@@ -47,6 +47,53 @@ async function aboveFold(page, selector, label) {
   assert.ok(position.top >= 0 && position.bottom <= position.height, `${label} is below the fold: ${JSON.stringify(position)}`);
 }
 
+async function reachableCrimePocket(page, label) {
+  // Let the existing, finite menu notification expire. Never hide an overlay to pass hit tests.
+  await page.waitForFunction(() => !document.querySelector('#toast.show'));
+  const geometry = await page.locator('#ux-action-pocket').evaluate(pocket => {
+    const bounds = element => {
+      const r = element.getBoundingClientRect();
+      return { top: r.top, bottom: r.bottom, left: r.left, right: r.right, width: r.width, height: r.height };
+    };
+    const terms = pocket.querySelector('.operation-action-terms');
+    return {
+      pocket: bounds(pocket),
+      terms: { ...bounds(terms), lineHeight: parseFloat(getComputedStyle(terms).lineHeight), text: terms.textContent },
+      buttons: [...pocket.querySelectorAll('.verbrow button')].map(button => {
+        const rect = bounds(button);
+        const clip = { top: 0, bottom: innerHeight, left: 0, right: innerWidth };
+        for (let ancestor = button.parentElement; ancestor; ancestor = ancestor.parentElement) {
+          const r = ancestor.getBoundingClientRect(), style = getComputedStyle(ancestor);
+          if (/(auto|scroll|hidden|clip)/.test(style.overflowX)) {
+            clip.left = Math.max(clip.left, r.left + ancestor.clientLeft);
+            clip.right = Math.min(clip.right, r.left + ancestor.clientLeft + ancestor.clientWidth);
+          }
+          if (/(auto|scroll|hidden|clip)/.test(style.overflowY)) {
+            clip.top = Math.max(clip.top, r.top + ancestor.clientTop);
+            clip.bottom = Math.min(clip.bottom, r.top + ancestor.clientTop + ancestor.clientHeight);
+          }
+        }
+        const points = [[rect.left + 3, rect.top + 3], [rect.right - 3, rect.top + 3],
+          [rect.left + 3, rect.bottom - 3], [rect.right - 3, rect.bottom - 3],
+          [(rect.left + rect.right) / 2, (rect.top + rect.bottom) / 2]];
+        return { text: button.textContent, ...rect,
+          unclipped: rect.top >= clip.top && rect.bottom <= clip.bottom && rect.left >= clip.left && rect.right <= clip.right,
+          hit: points.every(([x, y]) => button.contains(document.elementFromPoint(x, y))) };
+      }),
+    };
+  });
+  assert.equal(geometry.buttons.length, 4, `${label}: all three approaches and optional preparation remain available`);
+  for (const button of geometry.buttons) {
+    assert.ok(button.width >= 44 && button.height >= 44, `${label}: 44px touch target: ${JSON.stringify(button)}`);
+    assert.ok(button.unclipped && button.hit, `${label}: action is clipped or covered: ${JSON.stringify(button)}`);
+  }
+  assert.ok(geometry.terms.height >= 3 * geometry.terms.lineHeight,
+    `${label}: costs and risks need at least three readable lines, not a scroll sliver: ${JSON.stringify(geometry.terms)}`);
+  assert.match(geometry.terms.text, /COST.*BASELINE WIN[\s\S]*QUIET[\s\S]*STANDARD[\s\S]*LOUD/);
+  fs.writeFileSync(path.join(artifacts, `shell-pocket-${label.replace(/[^a-z0-9]+/gi, '-')}.json`), JSON.stringify(geometry, null, 2));
+  return geometry;
+}
+
 try {
   const { token } = await call('POST', '/v1/auth/guest');
   await call('POST', '/v1/character', token, { name: 'Shell First Job' });
@@ -187,10 +234,56 @@ try {
   await page.locator('#tab-streets.on').waitFor();
   await page.locator('#tab-streets [data-do^="POST /v1/crimes/"]:enabled').first().waitFor();
   await page.locator('#tab-streets #ux-action-pocket [data-do^="POST /v1/crimes/"][data-body*=standard]:enabled').waitFor();
+  await reachableCrimePocket(page, 'mobile crime pocket');
   await aboveFold(page, '#tab-streets #ux-action-pocket [data-do^="POST /v1/crimes/"][data-body*=standard]:enabled', 'mobile crime action');
   assert.equal(await page.locator('#ux-action-pocket .operation-action-terms').count(), 1, 'the mobile action retains its live cost and risk terms');
   await noOverflow(page, 'mobile Streets');
   await page.screenshot({ path: path.join(artifacts, 'shell-streets-mobile.png') });
+
+  const crimeRequests = [];
+  page.on('request', request => {
+    if (request.method() === 'POST' && new URL(request.url()).pathname.startsWith('/v1/crimes/')) crimeRequests.push(request.url());
+  });
+  const pocketViewports = [{ width: 390, height: 844 }, { width: 320, height: 568 },
+    { width: 568, height: 320 }, { width: 480, height: 320 },
+    { width: 760, height: 360 }, { width: 320, height: 568 }];
+  for (const [rotation, viewport] of pocketViewports.entries()) {
+    await page.setViewportSize(viewport);
+    await reachableCrimePocket(page, `${viewport.width}x${viewport.height} rotation ${rotation}`);
+    for (let visit = 0; visit < 2; visit++) {
+      await openTab(page, 'start');
+      await openTab(page, 'streets');
+      const label = `${viewport.width}x${viewport.height} rotation ${rotation} visit ${visit + 1}`;
+      await page.locator('#ux-action-pocket [data-task-crime]').waitFor();
+      await reachableCrimePocket(page, label);
+      await noOverflow(page, label);
+      const terms = page.locator('#ux-action-pocket .operation-action-terms');
+      // Wide landscape may already show every term; scroll only real overflow.
+      if (await terms.evaluate(element => element.scrollHeight > element.clientHeight)) {
+        await terms.hover();
+        await page.mouse.wheel(0, 500);
+        await page.waitForFunction(() => {
+          const terms = document.querySelector('#ux-action-pocket .operation-action-terms');
+          return terms.scrollTop > 0 && terms.scrollTop + terms.clientHeight >= terms.scrollHeight - 1;
+        });
+        await reachableCrimePocket(page, `${label} after reading all terms`);
+        await page.mouse.wheel(0, -500);
+        await page.waitForFunction(() => document.querySelector('#ux-action-pocket .operation-action-terms').scrollTop === 0);
+      }
+      const prepare = page.locator('#ux-action-pocket [data-task-crime]');
+      await prepare.focus();
+      assert.equal(await prepare.evaluate(element => element === document.activeElement), true, `${label}: keyboard focus reaches preparation`);
+      await page.keyboard.press('Enter');
+      const puzzle = page.getByRole('dialog', { name: /Task puzzle/ });
+      await puzzle.getByRole('button', { name: 'Solve and attempt crime' }).waitFor();
+      await page.keyboard.press('Escape');
+      await puzzle.waitFor({ state: 'detached' });
+      assert.equal(await prepare.evaluate(element => element === document.activeElement), true, `${label}: closing restores preparation focus`);
+      await reachableCrimePocket(page, `${label} after puzzle dismissal`);
+      assert.equal(crimeRequests.length, 0, 'Opening and closing optional preparation never attempts the crime');
+      await page.screenshot({ path: path.join(artifacts, `shell-pocket-${viewport.width}-${viewport.height}-${rotation}-${visit + 1}.png`) });
+    }
+  }
 
   const firstSession = await browser.newContext({ viewport: { width: 390, height: 844 }, reducedMotion: 'reduce' });
   await firstSession.addInitScript(value => localStorage.setItem('omerta_token', value), token);
@@ -203,6 +296,13 @@ try {
   await aboveFold(freshPage, '#tab-start .start-next-card .act', 'fresh mobile first-week action');
   await noOverflow(freshPage, 'fresh mobile onboarding');
   await freshPage.screenshot({ path: path.join(artifacts, 'shell-first-session.png') });
+  const primary = page.locator('#ux-action-pocket [data-do^="POST /v1/crimes/"][data-body*=standard]:enabled');
+  await primary.focus();
+  assert.equal(await primary.evaluate(element => element === document.activeElement), true, 'The ordinary crime remains keyboard reachable after repeated preparation and navigation');
+  const ordinaryAttempt = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.startsWith('/v1/crimes/'));
+  await page.keyboard.press('Enter');
+  assert.equal((await ordinaryAttempt).status(), 200, 'Keyboard activation reaches the real ordinary crime endpoint');
+  assert.equal(crimeRequests.length, 1, 'One keyboard activation attempts exactly one ordinary crime');
   assert.deepEqual(faults, [], 'the redesigned shell introduces no runtime failures');
   console.log('ux-shell-browser: PASS (focused onboarding, desktop/mobile navigation, utilities, feed, refresh, full city access)');
   console.log(`Screenshots: ${artifacts}`);
