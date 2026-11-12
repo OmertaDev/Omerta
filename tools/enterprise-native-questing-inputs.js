@@ -4,7 +4,7 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "ACTUAL_CURRENT_QUESTING_ENTERPRISE_NATIVE_INPUTS",
-  "authoredRevision": "c20d2cf3dbd8747d114a23b90190bdef72a95841",
+  "authoredRevision": "11d7c72dbcd68387d680225eea9a57b5cc7b7d6c",
   "predecessorDefinitionSha256": "6b9128d3311945fc511748f852803354ac415a23082b6b5ce017980a2b7596bf",
   "proofInventorySha256": "3fd878600cd363ebdd9d89bb59b7cc3de7650f895062d83711b2bd1774c298e9",
   "files": [
@@ -11339,8 +11339,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/ui-trim-source-transfer.js",
       "mode": "100644",
-      "blob": "f93b5372d61659b0d6ac5464dde0f2ba82f862f3",
-      "sha256": "4116ba53d9e8669159177dcc3051d866af5440c8d5766fd4b07c8464f5fcb673"
+      "blob": "550e5118db78a7884d7560e9289c45076cf73c79",
+      "sha256": "95f63b4dc5263e92bf29d4751f25b10420dfb8ae92a68d18bc7899ccd09b1460"
     },
     {
       "file": "tools/age-removal-source-data.js",
@@ -11435,8 +11435,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/ui-trim-source-data.js",
       "mode": "100644",
-      "blob": "c7a7582f69b21b17470247ad27d13c65f26d096b",
-      "sha256": "203ebba4bf2bec076b81d794e2309871a56480672fac0552cba16be5c3471911"
+      "blob": "f1b6e4a13eaf859cba331759ccf30e7a7a72f38d",
+      "sha256": "b84f8e63429fb737b17feeb21d066ec8f8168c986f2a30ad657ec1a51c21c7a6"
     },
     {
       "file": "tools/ui-trim-source-transfer.js",
@@ -13146,8 +13146,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/ui-trim-source-transfer.js",
       "mode": "100644",
-      "blob": "f93b5372d61659b0d6ac5464dde0f2ba82f862f3",
-      "sha256": "4116ba53d9e8669159177dcc3051d866af5440c8d5766fd4b07c8464f5fcb673"
+      "blob": "550e5118db78a7884d7560e9289c45076cf73c79",
+      "sha256": "95f63b4dc5263e92bf29d4751f25b10420dfb8ae92a68d18bc7899ccd09b1460"
     },
     {
       "file": "tools/age-removal-source-data.js",
@@ -13242,8 +13242,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/ui-trim-source-data.js",
       "mode": "100644",
-      "blob": "c7a7582f69b21b17470247ad27d13c65f26d096b",
-      "sha256": "203ebba4bf2bec076b81d794e2309871a56480672fac0552cba16be5c3471911"
+      "blob": "f1b6e4a13eaf859cba331759ccf30e7a7a72f38d",
+      "sha256": "b84f8e63429fb737b17feeb21d066ec8f8168c986f2a30ad657ec1a51c21c7a6"
     },
     {
       "file": "tools/ui-trim-source-transfer.js",
@@ -13253,4 +13253,4 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     }
   ]
 });
-export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "ac7c432370502134f70c77de641acfc7d8d04e9b1ddb35c678ebbf915219fa70";
+export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "74e83662db254950b2458bd4756d54ebbb848366782a0a7083b415520a2fd649";
