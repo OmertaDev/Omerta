@@ -1,3 +1,4 @@
+import './ui-trim-source-transfer.js';
 import { ciDeedRecoveryHistoricalInput, ciDeedRecoveryHistoricalEntry } from '../tools/ci-deed-recovery-source-transfer.js';
 // Qualify actual redesigned bytes independently of the historical readers they preserve.
 import { BUSINESS_DESK_COMBINED_PROFILES, businessDeskCombinedHistoricalInput } from '../tools/businessdesk-combined-source-transfer.js';

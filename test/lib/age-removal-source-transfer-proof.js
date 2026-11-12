@@ -1,3 +1,5 @@
+import '../ui-trim-source-transfer.js';
+import { uiTrimHistoricalRecord } from '../../tools/ui-trim-source-transfer.js';
 // Whole current source qualifies before the immutable historical comparison is reconstructed.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -154,11 +156,21 @@ assert.equal(fs.readFileSync(metadata, 'utf8').replaceAll('\r\n', '\n'), ageRemo
 for (const file of generated) assert(!Object.hasOwn(source.files, file) && !Object.hasOwn(source.additions, file),
   'Generated metadata cannot inherit a historical source proof');
 function actual(file, pin) {
-  const committed = Buffer.from(git('show', 'HEAD:' + file));
+  let committed = Buffer.from(git('show', 'HEAD:' + file));
   const authored = Buffer.from(git('show', source.revision + ':' + file));
-  const stat = fs.lstatSync(file), physical = fs.readFileSync(file);
-  const headEntry = git('ls-tree', 'HEAD', '--', file).trim();
-  const index = git('ls-files', '--stage', '--', file).trim();
+  const stat = fs.lstatSync(file); let physical = fs.readFileSync(file);
+  let headEntry = git('ls-tree', 'HEAD', '--', file).trim();
+  let index = git('ls-files', '--stage', '--', file).trim();
+  const match = headEntry.match(/^(100644|100755) blob ([a-f0-9]{40})\t(.+)$/);
+  assert(match && match[3] === file);
+  assert.equal(blob(committed), match[2]);
+  assert.equal(index, match[1] + ' ' + match[2] + ' 0\t' + file);
+  assert(stat.isFile() && !stat.isSymbolicLink());
+  assert(physical.equals(committed) || physical.equals(Buffer.from(committed.toString('utf8').replaceAll('\n', '\r\n'))));
+  const historical = uiTrimHistoricalRecord(file, { head: { mode: match[1], blob: match[2] }, index, committed, physical,
+    regular: stat.isFile(), symbolic: stat.isSymbolicLink() });
+  ({ committed, physical, index } = historical);
+  headEntry = historical.head.mode + ' blob ' + historical.head.blob + '\t' + file;
   assert(headEntry === `${pin.mode} blob ${pin.blob}\t${file}` && index === `${pin.mode} ${pin.blob} 0\t${file}`,
     'Complete current HEAD and stage-zero identities: ' + file);
   assert(committed.equals(authored), 'Actual source remains the exact reviewed authored source: ' + file);
