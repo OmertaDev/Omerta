@@ -64,7 +64,9 @@ try {
   };
   const page = await open(alice), writes = [], reads = new Set();
   page.on('request', request => { if (!request.url().startsWith(base + '/v1/')) return; const url = new URL(request.url()); if (request.method() === 'GET') reads.add(url.pathname); else if (url.pathname !== '/v1/ux/workspace') writes.push(url.pathname); });
-  assert.equal(await page.evaluate(() => ['Workspace', 'Feedback', 'Progression', 'Social', 'Navigation', 'Tactics', 'Investigation', 'Coordination', 'Feel', 'Tools', 'Identity', 'Story', 'Community', 'World'].every(name => typeof window['createOmerta' + name] === 'function')), true, 'all fourteen factories load on the actual page');
+  assert.equal(await page.evaluate(() => ['Workspace', 'Feedback', 'Progression', 'Social', 'Navigation', 'Investigation', 'Coordination', 'Feel', 'Tools', 'Identity', 'Story', 'Community', 'World'].every(name => typeof window['createOmerta' + name] === 'function')), true, 'all thirteen current factories load on the actual page');
+  assert.equal(await page.evaluate(() => typeof window.createOmertaTactics), 'undefined', 'The retired planning factory stays unloaded.');
+  assert.equal(await page.locator('[data-ux-tactics],script[src*="ux-tactics.js"],link[href*="ux-tactics.css"]').count(), 0);
 
   await jump(page, 'profile'); const identity = page.locator('#tab-profile .ux-identity'); await revealOptional(identity);
   const office = identity.locator('[data-identity-section="office"]'); await disclosure(office); await office.locator('[data-office-add]').selectOption('plant');
@@ -185,5 +187,5 @@ try {
   const strangerCrewRead = stranger.waitForResponse(reply => new URL(reply.url()).pathname === '/v1/crew' && reply.request().method() === 'GET');
   await jump(stranger, 'crew'); await strangerCrewRead;
   assert.equal(await stranger.locator('#ux-community .ux-community-thread').count(), 0, 'an unrelated account has no Crew thread projection');
-  assert.deepEqual(errors, []); console.log(`Personality integration proof passed: all fourteen factories, real fleet/mastery, private office/outfits, Room keyboard preview/cancel, current inventory/material/build/history tools, active revealed story documents, actual Crew thread/spoiler/pin, fresh-device private sync, unrelated-account privacy and 390px/reduced-motion UI. Screenshots: ${artifacts}`);
+  assert.deepEqual(errors, []); console.log(`Personality integration proof passed: all thirteen current factories and retired planning absent, real fleet/mastery, private office/outfits, Room keyboard preview/cancel, current inventory/material/build/history tools, active revealed story documents, actual Crew thread/spoiler/pin, fresh-device private sync, unrelated-account privacy and 390px/reduced-motion UI. Screenshots: ${artifacts}`);
 } finally { await browser?.close(); await app.close(); }

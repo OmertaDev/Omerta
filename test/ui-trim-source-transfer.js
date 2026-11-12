@@ -8,7 +8,39 @@ import { UI_TRIM_SOURCE as source, uiTrimSourceDataBytes, qualifyUiTrimSource,
 
 const predecessor = '42e7c7648d74bbdd1cd38da0f3f61a72a7abc831';
 const metadata = 'tools/ui-trim-source-data.js';
-const generated = new Set([metadata]);
+// Independently generated knowledge, current-native admission and actual execution records
+// retain their own mandatory gates. None receives historical qualification or inherited results.
+const generated = new Set([metadata,
+  "docs/quest-quality-workgraph.json",
+  "docs/questing-workgraph.json",
+  "knowledge/generated/github-history.md",
+  "knowledge/generated/graph-summary.md",
+  "knowledge/generated/graph.json",
+  "knowledge/generated/inventory.md",
+  "output/quest-quality-verification/quality-mwd6qlku-quest-quality-content.log",
+  "output/quest-quality-verification/quality-mwd6qsg2-quest-quality-rules.log",
+  "output/quest-quality-verification/quality-mwd6qsnm-quest-quality-studio.log",
+  "output/quest-quality-verification/quality-mwd6qtg2-quest-quality-runtime.log",
+  "output/quest-quality-verification/quality-mwd6qxcc-quest-quality-api.log",
+  "output/quest-quality-verification/quality-mwd6r0of-quest-quality-browser.log",
+  "output/quest-quality-verification/quality-mwd6rfpm-quest-quality-postgres.log",
+  "output/quest-quality-verification/quality-mwd6rllw-quest-quality-stateful.log",
+  "output/quest-quality-verification/quality-mwd6rma8-quest-quality-social.log",
+  "output/quest-quality-verification/quality-mwd6rq9b-quest-quality-spoilers.log",
+  "output/quest-quality-verification/quality-mwd6rtdn-quest-quality-study.log",
+  "output/questing-verification/quest-mwd6m6de-quest-saga.log",
+  "output/questing-verification/quest-mwd6mcbo-content-narrative-security.log",
+  "output/questing-verification/quest-mwd6md2k-quest-specialist.log",
+  "output/questing-verification/quest-mwd6mihq-clue-puzzles.log",
+  "output/questing-verification/quest-mwd6mn66-clue-puzzles-browser.log",
+  "output/questing-verification/quest-mwd6mtrj-content-narrative.log",
+  "output/questing-verification/quest-mwd6mxgc-quest-experience-browser.log",
+  "output/questing-verification/quest-mwd6ncu3-content-api.log",
+  "output/questing-verification/quest-mwd6nduq-quest-saga-social.log",
+  "output/questing-verification/quest-mwd6ni6n-content-casework.log",
+  "output/questing-verification/quest-mwd6nlp2-quest-workshop.log",
+  "tools/enterprise-native-questing-inputs.js",
+]);
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], {
   encoding: 'utf8', windowsHide: true, maxBuffer: 64 * 1024 * 1024,
 });
@@ -26,7 +58,7 @@ assert.deepEqual(Object.keys(source.files), changed('M'), 'Every reviewed modifi
 assert.deepEqual(Object.keys(source.additions), changed('A'), 'Every new helper is independently pinned');
 assert.deepEqual(changed('DRTCUXB'), [], 'No historical file deletion or type replacement');
 assert.equal(fs.readFileSync(metadata, 'utf8').replaceAll('\r\n', '\n'), uiTrimSourceDataBytes(source),
-  'The only self-reference is exact generated data');
+  'The UI comparison self-reference is exact generated data');
 for (const file of generated) assert(!Object.hasOwn(source.files, file) && !Object.hasOwn(source.additions, file),
   'Generated metadata cannot inherit a historical source proof');
 function actual(file, pin) {
@@ -44,6 +76,18 @@ function actual(file, pin) {
     'Whole actual physical source remains uniform LF or CRLF: ' + file);
   return { head: { mode: pin.mode, blob: pin.blob }, index, committed, physical,
     regular: stat.isFile(), symbolic: stat.isSymbolicLink() };
+}
+// Retained execution evidence is independently immutable, not a historical source domain.
+// Its original executions remain separately source/evaluator checked by both workgraphs.
+const retainedExecutionRevision = '1b14e1fd85e9cb64968d2c0d858b7a065d78a99d';
+git('merge-base', '--is-ancestor', retainedExecutionRevision, source.revision);
+const retainedLogs = [...generated].filter(file => file.endsWith('.log'));
+assert.equal(retainedLogs.length, 22, 'All original current-source execution logs remain mandatory');
+for (const file of retainedLogs) {
+  const before = git('show', retainedExecutionRevision + ':' + file);
+  const match = git('ls-tree', retainedExecutionRevision, '--', file).trim().match(/^(100644|100755) blob ([a-f0-9]{40})\t(.+)$/);
+  assert(match && match[3] === file, 'Original evidence must be a regular committed log: ' + file);
+  actual(file, { mode: match[1], blob: match[2], sha256: sha(before), bytes: Buffer.byteLength(before) });
 }
 assert.equal(git('diff', '--name-only', predecessor, source.revision, '--', 'src', 'schema.sql', 'render.yaml', 'package-lock.json'), '',
   'No gameplay, server, schema, deployment settings or dependency changes');
@@ -103,5 +147,5 @@ for (const file of ['__proto__', 'constructor', 'src/unknown.js']) {
 }
 assert.throws(() => git('grep', '-n', 'ui-trim-source-', '--', 'src', 'public'), error => error.status === 1,
   'Actual runtime does not load historical ui-trim views');
-console.log(JSON.stringify({ phase: source.phase, authoredRevision: source.revision, positives, refusals,
+console.log(JSON.stringify({ phase: source.phase, authoredRevision: source.revision, positives, refusals, retainedExecutionLogs: retainedLogs.length,
   sourceOnly: true, runtime: false, native: false, deployment: false, priorResultsTransferred: false }));

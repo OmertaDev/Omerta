@@ -7,12 +7,45 @@ import { uiTrimSourceDataBytes } from './ui-trim-source-transfer.js';
 
 const predecessor = '42e7c7648d74bbdd1cd38da0f3f61a72a7abc831';
 const metadata = 'tools/ui-trim-source-data.js';
-// Only this newly generated comparison is self-referential. Historical data is never resealed.
-const generated = new Set([metadata]);
+// Independently generated knowledge, current-native admission and actual execution records
+// retain their own mandatory gates. None receives historical qualification or inherited results.
+const generated = new Set([metadata,
+  "docs/quest-quality-workgraph.json",
+  "docs/questing-workgraph.json",
+  "knowledge/generated/github-history.md",
+  "knowledge/generated/graph-summary.md",
+  "knowledge/generated/graph.json",
+  "knowledge/generated/inventory.md",
+  "output/quest-quality-verification/quality-mwd6qlku-quest-quality-content.log",
+  "output/quest-quality-verification/quality-mwd6qsg2-quest-quality-rules.log",
+  "output/quest-quality-verification/quality-mwd6qsnm-quest-quality-studio.log",
+  "output/quest-quality-verification/quality-mwd6qtg2-quest-quality-runtime.log",
+  "output/quest-quality-verification/quality-mwd6qxcc-quest-quality-api.log",
+  "output/quest-quality-verification/quality-mwd6r0of-quest-quality-browser.log",
+  "output/quest-quality-verification/quality-mwd6rfpm-quest-quality-postgres.log",
+  "output/quest-quality-verification/quality-mwd6rllw-quest-quality-stateful.log",
+  "output/quest-quality-verification/quality-mwd6rma8-quest-quality-social.log",
+  "output/quest-quality-verification/quality-mwd6rq9b-quest-quality-spoilers.log",
+  "output/quest-quality-verification/quality-mwd6rtdn-quest-quality-study.log",
+  "output/questing-verification/quest-mwd6m6de-quest-saga.log",
+  "output/questing-verification/quest-mwd6mcbo-content-narrative-security.log",
+  "output/questing-verification/quest-mwd6md2k-quest-specialist.log",
+  "output/questing-verification/quest-mwd6mihq-clue-puzzles.log",
+  "output/questing-verification/quest-mwd6mn66-clue-puzzles-browser.log",
+  "output/questing-verification/quest-mwd6mtrj-content-narrative.log",
+  "output/questing-verification/quest-mwd6mxgc-quest-experience-browser.log",
+  "output/questing-verification/quest-mwd6ncu3-content-api.log",
+  "output/questing-verification/quest-mwd6nduq-quest-saga-social.log",
+  "output/questing-verification/quest-mwd6ni6n-content-casework.log",
+  "output/questing-verification/quest-mwd6nlp2-quest-workshop.log",
+  "tools/enterprise-native-questing-inputs.js",
+]);
 const allowed = new Set([
+  'SPEC.md', '.github/workflows/ui-trim-source.yml',
   'package.json', 'public/index.html', 'public/noir-shell.js', 'public/noir-ui.css',
   'public/ux-social.js', 'public/ux-tools.js', 'public/ux-world.js',
   'test/ui-trim-browser.js', 'test/ux-expanded-browser.js', 'test/ux-social-browser.js', 'test/ux-tools-browser.js',
+  'test/ux-tactics-browser.js', 'test/ux-personality-browser.js',
   'tools/age-removal-source-transfer.js', 'test/lib/age-removal-source-transfer-proof.js',
   'test/noir-ui-source-compatibility.js', 'test/ui-trim-source-transfer.js',
   'tools/ui-trim-source-transfer.js', 'tools/ui-trim-source-seal.js',

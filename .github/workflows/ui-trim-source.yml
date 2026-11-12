@@ -1,0 +1,31 @@
+name: UI trim source proof
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ui-trim-source-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ui_trim_source:
+    name: Exact UI trim source qualification
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+      # The proof uses Node built-ins only and independently admits actual Git,
+      # index and physical source before any immutable historical comparison.
+      - name: Qualify the exact UI successor and rejection controls
+        run: node test/ui-trim-source-transfer.js
