@@ -1,0 +1,14 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+{"component":"player-command","phase":"request","correlationId":"21a3f43b-fe9d-4d5f-828a-6bf1fc97b046"}
+{"component":"player-command","phase":"authorization","correlationId":"21a3f43b-fe9d-4d5f-828a-6bf1fc97b046","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"21a3f43b-fe9d-4d5f-828a-6bf1fc97b046","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"21a3f43b-fe9d-4d5f-828a-6bf1fc97b046","statusCode":409,"elapsedMs":4}
+{"component":"player-command","phase":"request","correlationId":"017b012a-258d-49ac-be35-395ec3814696"}
+{"component":"player-command","phase":"authorization","correlationId":"017b012a-258d-49ac-be35-395ec3814696","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"017b012a-258d-49ac-be35-395ec3814696","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"017b012a-258d-49ac-be35-395ec3814696","statusCode":409,"elapsedMs":1}
+{"component":"player-command","phase":"request","correlationId":"0dc1a9be-21f4-4e95-90e1-85ee295751f4"}
+{"component":"player-command","phase":"authorization","correlationId":"0dc1a9be-21f4-4e95-90e1-85ee295751f4","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"0dc1a9be-21f4-4e95-90e1-85ee295751f4","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"0dc1a9be-21f4-4e95-90e1-85ee295751f4","statusCode":409,"elapsedMs":2}
+Quest quality production browser PASS: real pilot proof/conclusion/evidence, exact clauses, hidden-question boundary, private revision/reload/peer isolation, drafts/undo, motive, commitments, truthful AI study/24h refusal and eligible recall, opt-in debrief, actual fieldwork/disclosure, independent unsure/share, real cross-role volunteering, opaque mandate/pre-ack blocker/ack/withdraw/commit and390px. Artifacts: C:\Users\Jorge\AppData\Local\Temp\omerta-quality-cBXKQQ

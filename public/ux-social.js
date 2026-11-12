@@ -9,8 +9,8 @@
   const GROWTH = { mastery_up: 'mastery advances', protege_milestone: 'protégé milestones', protege_graduated: 'protégé graduations', mentor_accepted: 'new mentorships', crew_objective_done: 'crew objectives completed', crew_joined: 'crew arrivals', vouch: 'new votes of confidence' };
 
   window.createOmertaSocial = ({ getState, read, navigate, notify, action, workspace }) => {
-    let account = null, boards = {}, baseline = null, operations = 0, summaryOpen = false;
-    let milestones = [], sent = new Set(), pending = false, objectiveStart = null;
+    let account = null, boards = {};
+    let milestones = [], sent = new Set(), pending = false;
     const settings = () => {
       try { return JSON.parse(localStorage.getItem(`omerta_ux_social_${account}`) || '{}'); } catch { return {}; }
     };
@@ -24,12 +24,11 @@
       const next = me?.accountId || me?.id;
       if (!next) return null;
       if (account && account !== next) {
-        boards = {}; baseline = null; operations = 0; milestones = []; sent = new Set(); objectiveStart = null; summaryOpen = false;
-        ['ux-crew-welcome', 'ux-crew-payoff', 'ux-circle-highlights', 'ux-mentor-journeys', 'ux-session-endpoint'].forEach((id) => document.getElementById(id)?.remove());
+        boards = {}; milestones = []; sent = new Set();
+        ['ux-crew-welcome', 'ux-crew-payoff', 'ux-circle-highlights', 'ux-mentor-journeys'].forEach((id) => document.getElementById(id)?.remove());
         document.querySelectorAll('.ux-paper-growth').forEach((node) => node.remove());
       }
       account = next;
-      if (!baseline || baseline.id !== me.id) baseline = { id: me.id, level: number(me.level), respect: number(me.respect) };
       return me;
     };
     const put = (id, parent, html, where = 'append') => {
@@ -114,17 +113,6 @@
       node.innerHTML = `<strong>More than the books</strong><ul>${growth.map((h) => `<li>${fmt(h.n)} ${esc(GROWTH[h.type])}</li>`).join('')}</ul>`;
     }
 
-    function renderSession(me, tabName) {
-      const tab = document.getElementById(`tab-${tabName}`);
-      if (!tab || !operations) return;
-      const respect = number(me.respect) - number(baseline?.respect), levels = number(me.level) - number(baseline?.level);
-      const contribution = crew()?.objective && objectiveStart != null ? Math.max(0, number(crew().objective.mine) - objectiveStart) : 0;
-      const node = put('ux-session-endpoint', tab, `<div class="ux-social-eyebrow">A good place to pause</div><h3>Your session</h3><p>${fmt(operations)} confirmed ${operations === 1 ? 'action' : 'actions'}${levels > 0 ? ` · ${fmt(levels)} ${levels === 1 ? 'level' : 'levels'} gained` : ''}${respect > 0 ? ` · +${fmt(respect)} respect` : ''}${contribution > 0 ? ' · you moved your crew objective forward' : ''}.</p>${summaryOpen ? `<ul class="ux-session-milestones">${milestones.map((m) => `<li>${esc(m)}</li>`).join('')}</ul><p>Your confirmed actions are already recorded. You can leave the city whenever you choose.</p><button type="button" class="act" data-session-close>Done for now</button>` : '<button type="button" class="act" data-session-open>Wrap up this session</button>'}`);
-      const open = node.querySelector('[data-session-open]'), close = node.querySelector('[data-session-close]');
-      if (open) open.onclick = () => { summaryOpen = true; render(); };
-      if (close) close.onclick = () => { summaryOpen = false; render(); notify('Your session is wrapped up. Come back when it suits you.'); };
-    }
-
     function applyFeedPreferences() {
       const prefs = settings(), people = new Set((boards.circle?.people || crew()?.members || []).map((p) => p.name?.toLowerCase()).filter(Boolean));
       document.querySelectorAll('#feed > .ev').forEach((line) => {
@@ -159,7 +147,6 @@
       if (tab === 'crew') renderCrew(me);
       if (tab === 'discover') renderMentor();
       if (tab === 'start') renderPaper();
-      if (tab === 'start' || tab === 'profile') renderSession(me, tab);
     }
 
     function observe(path, body) {
@@ -170,12 +157,10 @@
       else if (route === '/v1/circle') boards.circle = body;
       else if (route === '/v1/mentor') boards.mentor = body;
       else if (route === '/v1/paper') boards.paper = body;
-      if (objectiveStart == null && crew()?.objective) objectiveStart = number(crew().objective.mine);
     }
 
     function recordOperation(receipt, before, after, result) {
       if (!sync() || !result || number(result.code) < 200 || number(result.code) >= 300 || result.body?.error) return;
-      operations += 1;
       if (number(after?.level) > number(before?.level)) queueMilestone(`Reached level ${fmt(after.level)}`);
       const oldTrades = tradesOf(before);
       for (const [id, trade] of tradesOf(after)) if (number(trade.lvl) > number(oldTrades.get(id)?.lvl)) queueMilestone(`${trade.name || id} reached ${trade.rank || `level ${fmt(trade.lvl)}`}`);

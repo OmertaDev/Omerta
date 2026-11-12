@@ -168,7 +168,7 @@
       if (!scope()) { document.body.classList.remove('ux-operation-focus'); return; }
       mountToolbar(); orderPanels();
       const tab = state().currentTab, active = document.getElementById(`tab-${tab}`);
-      if (!active || !['map', 'city', 'life', 'profile', 'start'].includes(tab)) return;
+      if (!active || !['map', 'city'].includes(tab)) return;
       let host = active.querySelector(':scope > .ux-world-panel');
       const signature = JSON.stringify([tab, layer, metric, boards, data()]);
       if (host && signature === panelSignature) return;
@@ -176,7 +176,7 @@
       const remembered = disclosures[tab] ||= {};
       host?.querySelectorAll('details[data-section]').forEach(node => { remembered[node.dataset.section] = node.open; });
       if (!host) { host = document.createElement('section'); host.className = 'ux-world-panel'; host.dataset.uxPanel = 'world'; active.append(host); }
-      host.innerHTML = `<h3>${['map', 'city'].includes(tab) ? 'The city answers back' : 'Your place in the city'}</h3>${['map', 'city'].includes(tab) ? `<details data-section="layers" open><summary>Public map layers and district signs</summary>${cityMarkup()}</details><details data-section="works"><summary>Public works taking shape</summary>${projectMarkup()}</details>` : ''}${['life', 'profile'].includes(tab) ? `<details data-section="memory"><summary>They remember your dealings</summary>${memoriesMarkup()}</details>` : ''}<details data-section="learning"><summary>Your learning curve</summary>${learningMarkup()}</details>${tab === 'start' || tab === 'city' ? `<details data-section="news"><summary>Read the public headlines</summary>${list(boards.results?.results || boards.results).map(item => `<article class="ux-world-news"><h4>${esc(item.headline)}</h4><p>${esc(item.winnerName || item.winner || '')}</p><button type="button" class="act" data-world-go="${esc(({ boxing: 'boxing', megaproject: 'city', grandprix: 'races', stakes: 'stable', poker: 'den' })[item.kind] || 'city')}">Read the relevant city record</button></article>`).join('') || '<p>No public result headlines are in the current record.</p>'}</details>` : ''}`;
+      host.innerHTML = `<h3>The city</h3>${['map', 'city'].includes(tab) ? `<details data-section="layers" open><summary>Public map layers and district signs</summary>${cityMarkup()}</details><details data-section="works"><summary>Public works taking shape</summary>${projectMarkup()}</details>` : ''}${tab === 'city' ? `<details data-section="news"><summary>Read the public headlines</summary>${list(boards.results?.results || boards.results).map(item => `<article class="ux-world-news"><h4>${esc(item.headline)}</h4><p>${esc(item.winnerName || item.winner || '')}</p><button type="button" class="act" data-world-go="${esc(({ boxing: 'boxing', megaproject: 'city', grandprix: 'races', stakes: 'stable', poker: 'den' })[item.kind] || 'city')}">Read the relevant city record</button></article>`).join('') || '<p>No public result headlines are in the current record.</p>'}</details>` : ''}`;
       host.querySelectorAll('details[data-section]').forEach(node => {
         const key = node.dataset.section;
         if (Object.hasOwn(remembered, key)) node.open = remembered[key];

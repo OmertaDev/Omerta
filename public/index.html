@@ -559,17 +559,6 @@
   #tour-dots i { width: 8px; height: 8px; border-radius: 50%; background: var(--line); transition: background .2s; }
   #tour-dots i.on { background: var(--neon); }
   .ghostbtn { opacity: .55; }
-  /* FIRST-VISIT SYSTEM INTROS — a one-time "what this place is" banner per tab. #introwrap is the
-     first child of #tabbodies but OUTSIDE the per-tab divs, so a WS-driven re-render can't
-     resurrect a dismissed card mid-visit (placement rationale at the markup). */
-  #introwrap:empty { display: none; }
-  .intro-card { display: flex; gap: 12px; align-items: center; margin: -6px 0 14px; padding: 10px 12px;
-    border: 1px solid color-mix(in srgb, var(--neon) 35%, transparent); border-radius: var(--r-lg);
-    background: linear-gradient(180deg, var(--panel2), var(--panel)); }
-  .intro-card img { width: 130px; height: 74px; object-fit: cover; border-radius: 6px; flex: none; }
-  .intro-card .t2 { color: var(--neon); letter-spacing: 2px; font-size: 12.5px; }
-  .intro-card p { margin: 3px 0 0; font-size: 13px; color: var(--ink); line-height: 1.45; }
-  @media (max-width: 760px) { .intro-card { flex-wrap: wrap; } .intro-card img { width: 84px; height: 56px; } }
   /* THE SPOTLIGHT — the coach's "take me there" lands on the exact control, scrolled + lit. The
      outline persists (reduced-motion still sees WHERE), only the breathing is motion. */
   .spotlit { outline: 2px solid var(--neon); box-shadow: 0 0 18px 2px var(--neon-soft);
@@ -1309,10 +1298,9 @@
 <link rel="stylesheet" href="/ux-clues.css?v=20261106-1">
 <link rel="stylesheet" href="/ux-task-puzzles.css?v=20261110-1">
 <link rel="stylesheet" href="/ux-community.css?v=20261025-1">
-<link rel="stylesheet" href="/ux-tactics.css?v=20261024-2">
 <link rel="stylesheet" href="/ux-investigation.css?v=20261024-2">
 <link rel="stylesheet" href="/ux-coordination.css?v=20261024-2">
-<link rel="stylesheet" href="/noir-ui.css?v=20261108-1">
+<link rel="stylesheet" href="/noir-ui.css?v=20261112-copy-trim">
 <link rel="stylesheet" href="/noir-landing.css?v=20261108-1">
 <link rel="stylesheet" href="/strategy-command.css?v=20261108-1">
 </head>
@@ -1664,10 +1652,7 @@
       <div id="tabart" class="hidden"><span></span></div>
       <div id="coachwrap"></div>
       <details id="ux-screen-tools" class="ux-screen-tools"><summary>Screen tools <span>Shortcuts, reading &amp; workspace</span></summary><div id="screen-tool-content" class="ux-screen-tools-body"><nav id="action-readiness" class="hidden" aria-label="Activity timers and options"></nav></div></details>
-      <!-- #introwrap stays INSIDE #tabbodies but OUTSIDE the per-tab divs. The shell places
-           first-visit reference below the playable content; screen renderers cannot resurrect
-           a dismissed introduction when they refresh their own #tab-<id>. -->
-      <div id="tabbodies"><div id="introwrap"></div></div>
+      <div id="tabbodies"></div>
     </div>
 
     <div class="panel" id="wirepanel" hidden>
@@ -1782,12 +1767,12 @@
 <script src="/player-experience.js"></script>
 <script src="/ux-feedback.js?v=20261105-noir-release"></script>
 <script src="/ux-progression.js?v=20261024"></script>
-<script src="/ux-social.js?v=20261024"></script>
+<script src="/ux-social.js?v=20261112-ui-trim"></script>
 <script src="/ux-navigation.js?v=20261105-noir-release"></script>
 <script src="/ux-workspace.js?v=20261024-2"></script>
-<script src="/ux-world.js?v=20261105-noir-release"></script>
+<script src="/ux-world.js?v=20261112-ui-trim"></script>
 <script src="/ux-feel.js?v=20261025-1"></script>
-<script src="/ux-tools.js?v=20261025-1"></script>
+<script src="/ux-tools.js?v=20261112-ui-trim"></script>
 <script src="/ux-identity.js?v=20261025-1"></script>
 <script src="/ux-story.js?v=20261025-1"></script>
 <script src="/ux-quest-quality.js?v=20261107-1"></script>
@@ -1795,10 +1780,9 @@
 <script src="/ux-clues.js?v=20261106-1"></script>
 <script src="/ux-task-puzzles.js?v=20261110-1"></script>
 <script src="/ux-community.js?v=20261025-1"></script>
-<script src="/ux-tactics.js?v=20261105-noir-release"></script>
 <script src="/ux-investigation.js?v=20261024-2"></script>
 <script src="/ux-coordination.js?v=20261024-2"></script>
-<script src="/noir-shell.js?v=20261108-1"></script>
+<script src="/noir-shell.js?v=20261112-copy-trim"></script>
 <script src="/strategy-command.js?v=20261108-1"></script>
 <script>
 (() => {
@@ -7713,46 +7697,6 @@
     scores: renderScores, loans: renderLoans, portfolio: renderPortfolio, estate: renderEstate,
     life: renderLife, pen: renderPen, wire: renderWire, store: renderStore, races: renderRaces, port: renderPort, stable: renderStable,
     crew: renderCrew, discover: renderDiscover, map: renderMap, deeds: renderDeeds, desk: renderContentDesk, world: renderWorld, fieldwork: renderFieldwork };
-  // ── FIRST-VISIT SYSTEM INTROS — the tutorial, scaled across the whole city: the first time a
-  // player opens a system they get ONE illustrated sentence on what it is and what to do first.
-  // Dismiss is remembered per tab. Prose is English like all game prose (the i18n chrome rule).
-  const TAB_INTRO = {
-    discover: 'Find people to run with: players near your level, who’s looking for a crew, and the newest faces in the city. Flag yourself “looking for a crew” and let someone find YOU. This is the front door — the Wet Work roster only shows the top of the heap.',
-    crew: 'Your crew: a 2–' + 4 + ' player pact between solo and a full family. No treasury, no turf — just a private room, each other’s backs, and a rule you don’t raise a hand to your own. Form one, or accept an invite.',
-    map: 'See who holds the city: family territory, contested ground, and occupied districts. Fight for turf from The Family tab, or visit City events to travel to another district.',
-    city: 'The living city: today\'s events, the weather that moves goods prices (the arbitrage map), rival NPC cartels to raid, and the monument the whole server is building. Check the forecast — plan around it.',
-    kitchen: 'The drug game: buy makings, cook a batch, deal it on the corner. Deals draw heat, heat draws the Law — lay low when it climbs. Hire crew and they sell for you while you sleep.',
-    empire: 'Legit fronts that farm cash while you\'re away. They cost upkeep, rivals can shake them down — and if you\'re killed, your killer can take one. Passive is not the same as safe.',
-    business: 'Run your company with real inventory, production, deliveries and customer sales. Cash flow records game-cash movements, including refundable escrow and transfers; it is not a profit forecast.',
-    scores: 'The big jobs: your solo Score, crew heists (crew up with real players — or rat), and smuggling convoys anyone on the road can ambush. Start with the solo Score, crew up at level 8.',
-    market: 'Player-to-player trade: auction cars, buy and sell goods (pickup is district-pinned — you go to the dock), post buy orders. Prices are set by people, so the deals are real.',
-    port: 'Contraband by sea: buy a boat, run a route, slip the Coast Guard. Faster boats and escorts beat interdiction; repeat the same lane and they learn it. Sell the boat back anytime.',
-    den: 'The house games — dice, numbers, cards, the track. CASH only, entertainment-priced: the house keeps an edge, so play for the thrill, not the rent. Back-room games are against real players.',
-    speakeasy: 'Own the district\'s nightclub: it farms cash and it\'s where the city is SEEN. Buy rounds at rivals\' clubs to build renown; a hot club draws Prohibition raids.',
-    boxing: 'Sign a fighter, train them, stake them against other managers — or the house card. The crowd bets your main events. Your fighters die with your street; your manager legend doesn\'t.',
-    races: 'Your garage is a stable: tune a car, race the circuit, wager against rivals — or race for pink slips (winner takes the car). NOS is for underdogs.',
-    stable: 'Own the dogs and the ponies: buy, train, race the circuit, breed champions, and run them in the town\'s daily card where everyone bets.',
-    pvp: 'Wet work: contracts on marks, hunting, duels, and your own defenses. Killing is contract-driven — the pot pays, loot is the tip. Check YOUR DEFENSES before you make enemies.',
-    loans: 'The Shylock: lend at your own rates (secured by a car if you\'re smart), or borrow — and understand that defaulting brands you a welsher and puts hunters on you.',
-    law: 'Your RICO case: heat feeds the meter, the meter becomes an indictment, an indictment becomes a courtroom. Bribe, retain a lawyer, or flip on a rival — each has a price.',
-    pen: 'Lockup is a place, not a timeout: work the yard, buy protection, bribe the guard, join a crew — or go over the wall and live wanted.',
-    wire: 'Information is a weapon: tap rivals to see what they hold, sweep your own lines, buy the dirt. Everything here is paid in $OMR — knowing is never free.',
-    family: 'Nobody survives alone: a family means turf, a shared treasury, wars, territory rackets, and a seat at the Commission. Join one, or found your own.',
-    portfolio: 'Going legit: the stake ladder, the one-way redemption Window, treasury allocations, and the future on-chain rail. Production extraction remains dormant until the audit and launch gates clear.',
-    estate: 'The compound: a $OMR monument to your bloodline — tiers, wings, staff, galas, the auction block. Pure status, survives death, and status is the point.',
-    store: 'Real-money support: revives, passes, cosmetics — never power. Free players can compete on the boards. Each item lists its price and benefits.',
-    life: 'Who you are and who you know: skills, the Trades, your Path, and the six fixtures of the Underworld — earn their trust and the whole city gets cheaper.',
-    desk: 'The city’s authored files live here: work a case, follow the evidence, restore rare objects, barter exact materials, and keep the permanent record of the choices you made.',
-  };
-  function renderIntro(id) {
-    const w = $('#introwrap'); if (!w) return;
-    const it = TAB_INTRO[id];
-    if (!it || localStorage.getItem('omerta_seen_' + id)) { w.innerHTML = ''; return; }
-    w.innerHTML = `<div class="intro-card"><img alt="" src="/art/${TAB_ART[id] || 'interior-streets'}.jpg">
-      <div style="flex:1;min-width:180px"><span class="t2">FIRST TIME HERE</span><p>${it}</p></div>
-      <button class="act" id="intro-got">got it</button></div>`;
-    w.querySelector('#intro-got').onclick = () => { localStorage.setItem('omerta_seen_' + id, '1'); w.innerHTML = ''; };
-  }
   // ── THE SPOTLIGHT — "take me there" should land on the CONTROL, not just the right screen.
   // Per-tab: the one control a coached newcomer is most likely being sent to. A missing selector
   // is a clean no-op (the tab itself was the destination).
@@ -7848,7 +7792,6 @@
       b.classList.toggle('on', !!on);
       if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
     }
-    renderIntro(id);   // the one-time "first time here" banner (outside the tab body — re-render-proof)
     const renderRoot = $('#tab-' + id);
     uxCall('beforeRender', renderRoot);
     const screenRendered = Promise.resolve(RENDERERS[id]?.()).then(() => {
@@ -14633,7 +14576,7 @@ ${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [
   uxContext.workspace = workspaceUX;
   if (workspaceUX) uxModules.push(workspaceUX);
   for (const factory of [window.createOmertaFeedback, window.createOmertaProgression, window.createOmertaSocial, window.createOmertaNavigation,
-    window.createOmertaTactics, window.createOmertaInvestigation, window.createOmertaCoordination,
+    window.createOmertaInvestigation, window.createOmertaCoordination,
     window.createOmertaFeel, window.createOmertaTools, window.createOmertaIdentity, window.createOmertaStory, window.createOmertaQuests, window.createOmertaCommunity, window.createOmertaWorld, window.createOmertaNoirShell, window.createOmertaStrategyCommand]) {
     if (!factory) continue;
     try { const module = factory(uxContext); uxModules.push(module); if (factory === window.createOmertaFeedback) feedbackUX = module; }

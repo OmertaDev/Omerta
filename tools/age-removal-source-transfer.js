@@ -1,5 +1,6 @@
 // Exact historical comparison only. Runtime and native execution use actual current source.
 import assert from 'node:assert/strict';
+import { uiTrimHistoricalInput, uiTrimHistoricalEntry, uiTrimHistoricalRecord } from './ui-trim-source-transfer.js';
 import { createHash } from 'node:crypto';
 import { AGE_REMOVAL_SOURCE, AGE_REMOVAL_SOURCE_SHA256 } from './age-removal-source-data.js';
 
@@ -54,6 +55,7 @@ export function qualifyAgeRemovalSource(file, input) {
 }
 // Unknown bytes pass unchanged to the original rejecting qualifier.
 export function ageRemovalHistoricalInput(file, input) {
+  input = uiTrimHistoricalInput(file, input);
   if (!known(file)) return input;
   const current = canonical(input);
   if (!current || sha(current.lf) !== AGE_REMOVAL_SOURCE.files[file].current.sha256) return input;
@@ -61,6 +63,7 @@ export function ageRemovalHistoricalInput(file, input) {
   return current.buffer ? Buffer.from(baseline) : baseline;
 }
 export function ageRemovalHistoricalEntry(file, input, kind) {
+  input = uiTrimHistoricalEntry(file, input, kind);
   assert(kind === 'tree' || kind === 'index');
   if (!known(file)) return input;
   const row = AGE_REMOVAL_SOURCE.files[file], expected = entry(file, row.current, kind);
@@ -71,6 +74,9 @@ export function ageRemovalHistoricalEntry(file, input, kind) {
 // No runtime loader or actual-current native capture imports this record view.
 export function ageRemovalHistoricalRecord(file, actual) {
   assert.equal(arguments.length, 2);
+  // The outer successor admits the complete actual tuple before this frozen comparison.
+  if (uiTrimHistoricalEntry(file, actual?.index, 'index') !== actual?.index)
+    actual = uiTrimHistoricalRecord(file, actual);
   if (!known(file)) return actual;
   definition();
   assert.deepEqual(Object.keys(actual).sort(), ['head', 'index', 'committed', 'physical', 'regular', 'symbolic'].sort());

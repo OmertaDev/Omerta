@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `ffd2e265b47f`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `2a4d83a5058f`.
 
 ## Repository
 
@@ -9,20 +9,20 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 5841 |
+| Commits in clone | 5852 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-11-11 — Merge pull request #336 from OmertaDev/codex/task-puzzles-20261110 |
+| Latest commit | 2026-11-12 — chore(ui): seal repaired current-native inputs |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 4706 |
+| OmertaDev | 4716 |
 | crvydev | 647 |
 | Claude | 156 |
-| github-actions[bot] | 152 |
+| github-actions[bot] | 153 |
 | Codex | 138 |
 | CRVYDEV | 41 |
 | claude[bot] | 1 |
@@ -31,17 +31,17 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 972 | historical |
-| knowledge/generated/graph-summary.md | 972 | historical |
-| knowledge/generated/graph.json | 972 | historical |
-| knowledge/generated/inventory.md | 972 | historical |
-| [SPEC.md](../../SPEC.md) | 663 | yes |
+| knowledge/generated/github-history.md | 975 | historical |
+| knowledge/generated/graph-summary.md | 975 | historical |
+| knowledge/generated/graph.json | 975 | historical |
+| knowledge/generated/inventory.md | 975 | historical |
+| [SPEC.md](../../SPEC.md) | 664 | yes |
+| [public/index.html](../../public/index.html) | 516 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
-| [public/index.html](../../public/index.html) | 515 | yes |
 | [src/server.js](../../src/server.js) | 468 | yes |
 | knowledge/generated/documents.md | 422 | historical |
 | [schema.sql](../../schema.sql) | 388 | yes |
-| [package.json](../../package.json) | 380 | yes |
+| [package.json](../../package.json) | 381 | yes |
 | knowledge/generated/modules.md | 329 | historical |
 | knowledge/generated/graph.mmd | 259 | historical |
 | [BALANCE.md](../../BALANCE.md) | 258 | yes |
@@ -63,8 +63,8 @@
 | [src/agentgateway.js](../../src/agentgateway.js) | 104 | yes |
 | [test/levers.js](../../test/levers.js) | 98 | yes |
 | [test/growth.js](../../test/growth.js) | 97 | yes |
+| [tools/enterprise-native-questing-inputs.js](../../tools/enterprise-native-questing-inputs.js) | 96 | yes |
 | [test/migrate.js](../../test/migrate.js) | 95 | yes |
-| [tools/enterprise-native-questing-inputs.js](../../tools/enterprise-native-questing-inputs.js) | 94 | yes |
 | [docs/WIKI.md](../../docs/WIKI.md) | 93 | yes |
 | [test/social.js](../../test/social.js) | 88 | yes |
 | [test/hardening.js](../../test/hardening.js) | 73 | yes |

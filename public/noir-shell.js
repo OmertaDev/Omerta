@@ -3,40 +3,40 @@
   'use strict';
 
   const screens = {
-    start: ['Overview', 'Your next move, the work in progress, and the city around you.'],
-    business: ['Business desk', 'Review your businesses, production, and the work in progress.'],
-    world: ['World affairs', 'Follow the wider city and the opportunities taking shape.'],
-    profile: ['Your profile', 'Your identity, bloodline, and the reputation you are building.'],
-    streets: ['Streets', 'Choose a job. Watch your nerve, your take, and your heat.'],
-    pvp: ['Rivals', 'Read the target, the protections, and the stakes before you move.'],
-    kitchen: ['The kitchen', 'Manage your batches, your product, and your next deal.'],
-    family: ['Family', 'Your organization, its people, and the business you share.'],
-    map: ['The city', 'Explore the neighborhoods and find your next opportunity.'],
-    deeds: ['Property', 'Find a place in the city and review its ownership records.'],
-    crew: ['Your crew', 'Find your people and coordinate the work ahead.'],
-    discover: ['People', 'Find players, make connections, and bring people into the city.'],
-    market: ['Black market', 'Browse the trade and review the terms before making an offer.'],
-    garage: ['The garage', 'Your vehicles, equipment, and the work on the bench.'],
-    empire: ['Your empire', 'Build your operations and keep the business running.'],
-    speakeasy: ['The speakeasy', 'A seat at the bar and a different side of the city.'],
-    boxing: ['The boxing ring', 'Train your fighter and read the card before the bell.'],
-    races: ['Street races', 'Prepare your car and choose your race.'],
-    stable: ['The stable', 'Your stable, its training, and the next stakes.'],
-    scores: ['Big scores', 'Review the crew, requirements, and stakes of a bigger job.'],
-    loans: ['Credit', 'Read the terms of every loan and keep track of your obligations.'],
-    portfolio: ['The capital desk', 'Your financial accounts and the terms of each opportunity.'],
-    estate: ['Your estate', 'Review the assets and legacy you are putting aside.'],
-    life: ['Your character', 'Train your skills and choose how to make your name.'],
-    pen: ['The penitentiary', 'Your sentence, your options, and the way forward.'],
-    law: ['The law', 'Keep track of your heat and the case against you.'],
-    wire: ['Intelligence', 'Read what you know and review the cost of learning more.'],
-    store: ['The store', 'Review the available offers and their terms.'],
-    city: ['Districts', 'Compare neighborhoods and plan your next stop.'],
-    den: ['The gambling den', 'Choose a table and read the stakes before you sit down.'],
-    port: ['The port', 'Your fleet, freight, and the business along the waterfront.'],
-    desk: ['The case desk', 'Follow the evidence and pick up the work you left unfinished.'],
-    fieldwork: ['Quest journal', 'Your cases, discoveries, and the leads you are following.'],
-    deck: ['Developer tools', 'Inspect the records and responses behind your current session.'],
+    start: 'Overview',
+    business: 'Business desk',
+    world: 'World affairs',
+    profile: 'Your profile',
+    streets: 'Streets',
+    pvp: 'Rivals',
+    kitchen: 'The kitchen',
+    family: 'Family',
+    map: 'The city',
+    deeds: 'Property',
+    crew: 'Your crew',
+    discover: 'People',
+    market: 'Black market',
+    garage: 'The garage',
+    empire: 'Your empire',
+    speakeasy: 'The speakeasy',
+    boxing: 'The boxing ring',
+    races: 'Street races',
+    stable: 'The stable',
+    scores: 'Big scores',
+    loans: 'Credit',
+    portfolio: 'The capital desk',
+    estate: 'Your estate',
+    life: 'Your character',
+    pen: 'The penitentiary',
+    law: 'The law',
+    wire: 'Intelligence',
+    store: 'The store',
+    city: 'Districts',
+    den: 'The gambling den',
+    port: 'The port',
+    desk: 'The case desk',
+    fieldwork: 'Quest journal',
+    deck: 'Developer tools',
   };
   const primary = [
     ['start', 'Overview', '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>'],
@@ -146,14 +146,13 @@
       let heading = document.getElementById('noir-screen-heading');
       if (!heading) {
         heading = document.createElement('header'); heading.id = 'noir-screen-heading'; heading.className = 'noir-screen-heading';
-        heading.innerHTML = '<div class="noir-screen-kicker"></div><div class="noir-heading-row"><h2></h2><a class="noir-codex-link" href="/wiki" target="_blank" rel="noopener">The Codex <span aria-hidden="true">↗</span></a></div><p class="noir-screen-description"></p>';
+        heading.innerHTML = '<div class="noir-screen-kicker"></div><div class="noir-heading-row"><h2></h2><a class="noir-codex-link" href="/wiki" target="_blank" rel="noopener">The Codex <span aria-hidden="true">↗</span></a></div>';
         panel.prepend(heading);
       }
       const { currentTab, me, tabs } = state(), screen = screens[currentTab];
       const section = primary.find(([id]) => sectionTabs[id].includes(currentTab));
       text(heading.querySelector('.noir-screen-kicker'), [section?.[1], words(me?.loc)].filter(Boolean).join(' / '));
-      text(heading.querySelector('h2'), screen?.[0] || tabs?.[currentTab] || words(currentTab));
-      text(heading.querySelector('.noir-screen-description'), screen?.[1] || '');
+      text(heading.querySelector('h2'), screen || tabs?.[currentTab] || words(currentTab));
     }
 
     function renderReceipt() {
@@ -190,11 +189,6 @@
         receiptTimer = setTimeout(() => { receiptTimer = null; renderReceipt(); }, 16);
       });
       coachObserver.observe(coach, { childList: true, subtree: true });
-    }
-
-    function placeIntroduction() {
-      const bodies = document.getElementById('tabbodies'), intro = document.getElementById('introwrap');
-      if (intro?.parentElement === bodies && bodies.lastElementChild !== intro && !intro.contains(document.activeElement)) bodies.append(intro);
     }
 
     function foldKey(root) {
@@ -318,7 +312,7 @@
     function render() {
       syncOwner();
       if (!state().me) return;
-      mountNavigation(); renderPlayer(); renderHeading(); renderReceipt(); foldPanels(); placeIntroduction(); watchPanels(); watchCoach();
+      mountNavigation(); renderPlayer(); renderHeading(); renderReceipt(); foldPanels(); watchPanels(); watchCoach();
     }
 
     return {
