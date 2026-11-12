@@ -129,7 +129,6 @@ button, summary, a { -webkit-tap-highlight-color: transparent; }
 #screen-main .noir-heading-row h2 { font: 42px/1.16 var(--serif); color: var(--ink); text-transform: none; letter-spacing: -.04em; margin: 0; padding: 0; border: 0; }
 .noir-codex-link { flex: 0 0 auto; color: var(--dim); font-size: 11px; text-decoration: none; padding: 6px 0; }
 .noir-codex-link:hover { color: var(--gold); }
-.noir-screen-description { margin: 12px 0 0; color: var(--dim); font: 13px/1.7 var(--om-font-body); max-width: 65ch; }
 #screen-main #tabart { height: 160px; margin: 0 0 24px; border: 1px solid #c8aa7828; border-radius: 8px; background: #141a1c; }
 #screen-main #tabpanel:has(#tab-streets.on) #tabart { display: none; }
 #screen-main #tabart::before { background-image: var(--art); background-size: cover; background-position: 50% 57%; opacity: .8; filter: saturate(.65); transform: none; }
@@ -224,9 +223,6 @@ button, summary, a { -webkit-tap-highlight-color: transparent; }
 #screen-main .sect > summary h2 { font: 15px/1.5 var(--serif); letter-spacing: 0; color: var(--ink); }
 #screen-main .sect > summary .d { font-size: 11px; }
 #screen-main .sect > :not(summary) { margin: 16px; }
-#screen-main .intro-card { background: #1a2021; border: 1px solid var(--line); border-radius: 8px; box-shadow: none; }
-#screen-main .intro-card img { width: 72px; height: 72px; object-fit: cover; border-radius: 4px; opacity: .75; }
-#screen-main .intro-card p { font: 12px/1.7 var(--om-font-body); }
 #screen-main .ux-context-rules { margin-top: 0; }
 
 /* The first night has a clear next move and a smaller daily ledger. */
@@ -307,7 +303,6 @@ button, summary, a { -webkit-tap-highlight-color: transparent; }
   .noir-screen-kicker { font-size: 9px; margin-bottom: 8px; }
   #screen-main .noir-heading-row h2 { font-size: 34px; }
   .noir-codex-link { font-size: 10px; }
-  .noir-screen-description { font-size: 12px; margin-top: 10px; line-height: 1.7; }
   #screen-main #tabart { height: 104px; margin-bottom: 20px; border-radius: 6px; }
   #screen-main #operation-desk #coach { display: flex; flex-wrap: wrap; padding: 16px; gap: 8px; }
   #screen-main #operation-desk #coach .cl { font-size: 19px; }
@@ -353,7 +348,7 @@ button, summary, a { -webkit-tap-highlight-color: transparent; }
   #screen-main .game-header-actions { gap: 4px; }
   #screen-main #top .act, #screen-main #game-menu > summary { padding-inline: 8px; }
   #screen-main .noir-heading-row h2 { font-size: 30px; }
-  .noir-screen-description, .noir-codex-link { display: none; }
+  .noir-codex-link { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   #screen-main *, #screen-main *::before, #screen-main *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }

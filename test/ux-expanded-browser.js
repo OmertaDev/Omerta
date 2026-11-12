@@ -1,4 +1,4 @@
-// Actual app integration for the expanded planning, investigation, coordination and world UX.
+// Actual app integration for the investigation, coordination and city UX.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -70,23 +70,13 @@ try {
   };
   const page = await authenticate(player), gameWrites = [];
   page.on('request', request => { if (request.url().startsWith(base + '/v1/') && !['GET', 'HEAD'].includes(request.method()) && !request.url().endsWith('/v1/ux/workspace')) gameWrites.push({ path: new URL(request.url()).pathname, method: request.method() }); });
-  assert.equal(await page.evaluate(() => ['createOmertaWorkspace', 'createOmertaTactics', 'createOmertaInvestigation', 'createOmertaCoordination', 'createOmertaWorld'].every(name => typeof window[name] === 'function')), true);
+  assert.equal(await page.evaluate(() => ['createOmertaWorkspace', 'createOmertaInvestigation', 'createOmertaCoordination', 'createOmertaWorld'].every(name => typeof window[name] === 'function')), true);
   await jump(page, 'streets'); const beforePreview = await snapshot(player);
-  await disclosure(page.locator('#tab-streets [data-ux-tactics]'));
-  await page.locator('#tab-streets .ux-tactics-comparison').waitFor();
-  assert.match(await page.locator('#tab-streets .ux-tactics-comparison').innerText(), /Success chance/);
-  await page.locator('#tab-streets [data-tactics-add]').first().click();
-  await page.locator('#tab-streets [data-tactics-view="plan"]').click();
-  await page.locator('#tab-streets .ux-tactics-plan li').waitFor();
-  await page.locator('#tab-streets [data-tactics-view="loadout"]').click();
-  await page.locator('#tab-streets [data-tactics-field="unowned"]').check();
-  await page.locator('#tab-streets [data-tactics-gear]').first().check();
-  const previewResponse = page.waitForResponse(reply => reply.url().includes('/v1/ux/tactics?') && reply.request().method() === 'GET');
-  await page.locator('#tab-streets [data-tactics-preview]').click(); assert.equal((await previewResponse).status(), 200);
-  assert.deepEqual(await snapshot(player), beforePreview, 'comparison, planning and hypothetical preview leave gameplay state unchanged');
-  assert.deepEqual(gameWrites, [], 'planning sends only reads and account workspace preferences');
-  await noOverflow(page, 'desktop planning');
-  await page.screenshot({ path: path.join(artifacts, 'expanded-planning-desktop.png'), fullPage: false });
+  assert.equal(await page.locator('[data-ux-tactics]').count(), 0, 'Planning Table is no longer part of gameplay');
+  await jump(page, 'garage'); await jump(page, 'streets');
+  assert.deepEqual(await snapshot(player), beforePreview, 'screen navigation leaves gameplay state unchanged');
+  assert.deepEqual(gameWrites, [], 'screen navigation sends no game actions');
+  await noOverflow(page, 'desktop streets');
 
   await jump(page, 'fieldwork'); await page.locator('.world-fieldwork').waitFor();
   await page.locator('[data-fieldwork-view="mysteries"]').click();
@@ -110,7 +100,7 @@ try {
   await page.locator('.ux-coord-note h4').filter({ hasText: 'Expanded integration plan' }).waitFor();
   assert.equal((await api('GET', '/v1/ux/crew-workspace', mate.token)).notes.some(note => note.data.title === 'Expanded integration plan'), true, 'the actual teammate sees the saved planning note');
 
-  await jump(page, 'start'); await page.locator('#tab-start .ux-world-panel').waitFor();
+  await jump(page, 'start'); assert.equal(await page.locator('#tab-start .ux-world-panel').count(), 0);
   await jump(page, 'city'); await revealOptional(page.locator('#tab-city .ux-world-panel')); await page.locator('#tab-city .ux-turf-sign').filter({ hasText: 'EXPD' }).waitFor();
   const liveMap = await api('GET', '/v1/map', player.token), docks = liveMap.districts.find(district => district.id === 'docks');
   assert.equal(docks.holder.tag, 'EXPD');
@@ -126,76 +116,22 @@ try {
   await headline.locator('[data-world-go="boxing"]').click(); await page.locator('#tab-boxing.on').waitFor();
 
   await jump(page, 'life'); await page.locator('#tab-life [data-uwgift="doc"]').waitFor();
-  await revealOptional(page.locator('#tab-life .ux-world-panel'));
+  assert.equal(await page.locator('#tab-life .ux-world-panel').count(), 0, 'Personal city panel is removed');
   const oldStanding = (await api('GET', '/v1/underworld', player.token)).npcs.find(npc => npc.id === 'doc').standing;
   const giftResponse = page.waitForResponse(reply => reply.url().endsWith('/v1/underworld/doc/gift') && reply.request().method() === 'POST');
   const giftBoardSettled = page.waitForResponse(reply => reply.url().endsWith('/v1/season/recap') && reply.status() === 200);
-  await page.locator('#tab-life [data-uwgift="doc"]').click(); const gift = await giftResponse; assert.equal(gift.status(), 200);
-  await giftBoardSettled;
-  await page.locator('#tab-life .ux-npc-memory').waitFor({ state: 'attached' });
-  const memories = page.locator('#tab-life .ux-world-panel details[data-section="memory"]'); await disclosure(memories);
-  assert.match(await memories.innerText(), /brought an envelope/);
-  assert.ok((await api('GET', '/v1/underworld', player.token)).npcs.find(npc => npc.id === 'doc').standing > oldStanding);
-  const priorRespect = Number((await pool.query('SELECT respect FROM characters WHERE id=$1', [player.ch.id])).rows[0].respect);
-  await pool.query('UPDATE characters SET respect=respect+123 WHERE id=$1', [player.ch.id]);
-  const learningBoardSettled = page.waitForResponse(reply => reply.url().endsWith('/v1/season/recap') && reply.status() === 200);
-  await jump(page, 'life'); await learningBoardSettled; await page.locator('#tab-life .ux-learning-curve').waitFor({ state: 'attached' });
-  const learning = page.locator('#tab-life .ux-world-panel details[data-section="learning"]'); await disclosure(learning); await disclosure(learning.locator('details'));
-  assert.match(await learning.locator('tbody tr').last().innerText(), new RegExp((priorRespect + 123).toLocaleString('en-US')), 'curve table reflects actual newly recorded server respect');
-
-  // Live panel renders can detach a locator's resolved node; sample the current paragraph in one browser turn.
-  await page.locator('select[data-ux-density]').selectOption('comfortable');
-  const comfortableFont = await page.waitForFunction(() => {
-    const node = document.querySelector('#tab-life .ux-world-panel details[data-section="learning"] > p');
-    const size = node?.isConnected && node.getClientRects().length ? parseFloat(getComputedStyle(node).fontSize) : NaN;
-    return document.body.dataset.uxDensity === 'comfortable' && Number.isFinite(size) && size > 0 ? size : false;
-  });
-  const comfortableSize = await comfortableFont.jsonValue(); await comfortableFont.dispose();
+  await page.locator('#tab-life [data-uwgift="doc"]').click(); assert.equal((await giftResponse).status(), 200); await giftBoardSettled;
+  assert.ok((await api('GET', '/v1/underworld', player.token)).npcs.find(npc => npc.id === 'doc').standing > oldStanding, 'The actual NPC interaction still works');
+  assert.equal(await page.locator('#ux-session-endpoint').count(), 0, 'Actions do not restore session coaching');
+  await jump(page, 'city'); await revealOptional(page.locator('#tab-city .ux-world-panel'));
+  const comfortableSize = await page.locator('#tab-city .ux-world-panel p').first().evaluate(node => parseFloat(getComputedStyle(node).fontSize));
   await page.locator('select[data-ux-density]').selectOption('large');
-  const largeFont = await page.waitForFunction(baseline => {
-    const node = document.querySelector('#tab-life .ux-world-panel details[data-section="learning"] > p');
-    const size = node?.isConnected && node.getClientRects().length ? parseFloat(getComputedStyle(node).fontSize) : NaN;
-    return document.body.dataset.uxDensity === 'large' && Number.isFinite(size) && size > baseline ? size : false;
-  }, comfortableSize);
-  const largeSize = await largeFont.jsonValue(); await largeFont.dispose();
-  assert.ok(largeSize > comfortableSize, 'large reading mode changes visible typography');
+  const largeSize = await page.locator('#tab-city .ux-world-panel p').first().evaluate(node => parseFloat(getComputedStyle(node).fontSize)); assert.ok(largeSize > comfortableSize, 'large reading mode changes visible typography');
   await disclosure(page.locator('#city-directory'));
-  await page.locator('[data-ux-focus]').click(); assert.equal(await page.locator('#leftcol').isVisible(), false, 'focus mode visibly removes the side column');
+  await page.locator('[data-ux-focus]').click(); assert.equal(await page.locator('#leftcol').isVisible(), false, 'focus mode removes the side column');
   assert.match(await page.locator('#ux-focus-vitals').innerText(), /Health.*nerve/);
   await page.locator('[data-ux-focus]').click(); assert.equal(await page.locator('#leftcol').isVisible(), true);
-  await disclosure(page.locator('#ux-workspace-toolbar .ux-workspace-controls > details'));
-  await page.evaluate(() => { window.originalWorldPanel = document.querySelector('#tab-life > .ux-world-panel'); window.originalWorldParent = originalWorldPanel.parentElement; window.worldIndex = [...originalWorldParent.children].indexOf(originalWorldPanel); });
-  const worldOrder = page.locator('.ux-panel-order-row').filter({ has: page.locator('span', { hasText: 'Your place in the city' }) });
-  await worldOrder.getByRole('button', { name: /^Up:/ }).focus(); await page.keyboard.press('Enter');
-  assert.equal(await page.evaluate(() => originalWorldPanel === document.querySelector('#tab-life > .ux-world-panel')), true, 'keyboard arrangement moves the original node with its handlers');
-  assert.notEqual(await page.evaluate(() => [...originalWorldParent.children].indexOf(originalWorldPanel)), await page.evaluate(() => worldIndex), 'keyboard Up visibly changes panel order');
-  await page.evaluate(() => { window.originalTacticsPanel = document.querySelector('#tab-life > [data-ux-tactics]'); window.originalGiftControl = document.querySelector('#tab-life [data-uwgift="doc"]'); });
-  const orderOfPanels = () => page.evaluate(() => [...document.querySelector('#tab-life').children].filter(node => node.dataset.uxPanel).map(node => node.dataset.uxPanel));
-  await disclosure(page.locator('#tab-life > [data-ux-tactics]'));
-  const beforeDrag = await orderOfPanels();
-  const dragHandle = page.locator('#tab-life > .ux-world-panel > .ux-panel-handle'), targetHandle = page.locator('#tab-life > [data-ux-tactics] > .ux-panel-handle');
-  await dragHandle.dragTo(targetHandle);
-  if (JSON.stringify(await orderOfPanels()) === JSON.stringify(beforeDrag)) {
-    // Chromium headless sometimes misses native HTML drag delivery across a long scrolling panel.
-    // Dispatch the same drag events with a real DataTransfer through the production handlers.
-    const transfer = await page.evaluateHandle(() => new DataTransfer());
-    await dragHandle.dispatchEvent('dragstart', { dataTransfer: transfer });
-    await targetHandle.dispatchEvent('dragover', { dataTransfer: transfer });
-    await targetHandle.dispatchEvent('drop', { dataTransfer: transfer });
-  }
-  const draggedOrder = await orderOfPanels(); assert.notDeepEqual(draggedOrder, beforeDrag, 'drag/drop changes panel order in the same parent');
-  assert.equal(await page.evaluate(() => originalWorldPanel === document.querySelector('#tab-life > .ux-world-panel')
-    && originalTacticsPanel === document.querySelector('#tab-life > [data-ux-tactics]')
-    && originalGiftControl === document.querySelector('#tab-life [data-uwgift="doc"]') && typeof originalGiftControl.onclick === 'function'), true,
-  'dragging preserves the original panels, gameplay control and handlers');
-  await jump(page, 'streets');
-  const reorderedLifeSettled = page.waitForResponse(reply => reply.url().endsWith('/v1/season/recap') && reply.status() === 200);
-  await jump(page, 'life'); await reorderedLifeSettled;
-  await page.waitForFunction(expected => JSON.stringify([...document.querySelector('#tab-life').children].filter(node => node.dataset.uxPanel).map(node => node.dataset.uxPanel)) === JSON.stringify(expected), draggedOrder);
-  assert.deepEqual(await orderOfPanels(), draggedOrder, 'saved order survives leaving the screen and its complete core rerender');
-  await noOverflow(page, 'desktop world workspace');
-  await page.screenshot({ path: path.join(artifacts, 'expanded-workspace-preferences-desktop.png'), fullPage: false });
-  await page.locator('#tab-life > .ux-world-panel').evaluate(node => node.scrollIntoView({ block: 'start' }));
+  await noOverflow(page, 'desktop city workspace');
   await page.screenshot({ path: path.join(artifacts, 'expanded-world-desktop.png'), fullPage: false });
 
   await page.waitForFunction(() => document.querySelector('#ux-workspace-status')?.textContent.includes('saved to your account'), { timeout: 15000 });

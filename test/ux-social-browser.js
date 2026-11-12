@@ -48,9 +48,12 @@ try {
     window.ux.recordOperation({ method: 'POST', path: '/v1/crime' }, before, window.state.me, { code: 200, body: { ok: true } });
   });
   assert.match(await page.locator('.ux-paper-growth').innerText(), /2 mastery advances/);
-  assert.match(await page.locator('#ux-session-endpoint').innerText(), /1 confirmed action · 1 level gained · \+200 respect/);
-  await page.locator('[data-session-open]').click();
-  assert.match(await page.locator('#ux-session-endpoint').innerText(), /Reached level 6/);
+  assert.equal(await page.locator('#ux-session-endpoint').count(), 0, 'Confirmed actions do not add session coaching');
+  await page.evaluate(() => { window.state.currentTab = 'profile'; window.ux.render(); });
+  assert.equal(await page.locator('#ux-session-endpoint').count(), 0, 'Profile also stays free of session coaching');
+  await page.evaluate(() => { window.state.currentTab = 'crew'; window.ux.render(); });
+  await page.getByText('Share a milestone with your crew', { exact: true }).click();
+  assert.match(await page.locator('#ux-circle-highlights').innerText(), /Reached level 6/, 'Earned milestones remain shareable in the crew');
   await page.evaluate(() => {
     const feed = document.getElementById('feed');
     for (const [name, urgent] of [['Mate', false], ['Stranger', false], ['Stranger', true]]) {
