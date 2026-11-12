@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "1b14e1fd85e9cb64968d2c0d858b7a065d78a99d",
+  "sourceRevision": "2a4d83a5058fe790b8ca3d400337a0f7ba8592c7",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 19215,
-    "edges": 76452,
+    "nodes": 19221,
+    "edges": 76471,
     "byNodeType": {
-      "Artifact": 7805,
+      "Artifact": 7806,
       "Command": 324,
-      "Commit": 5848,
+      "Commit": 5852,
       "Contract": 156,
       "Document": 978,
       "Domain": 13,
@@ -61,23 +61,23 @@
       "Subsystem": 8,
       "Table": 586,
       "TestSuite": 1183,
-      "Workflow": 8
+      "Workflow": 9
     },
     "byEdgeType": {
-      "BELONGS_TO": 6021,
-      "CHANGED": 29900,
-      "CONTAINS": 7826,
+      "BELONGS_TO": 6022,
+      "CHANGED": 29912,
+      "CONTAINS": 7827,
       "DECLARES": 324,
       "DEFINED_IN": 1820,
       "DEPENDS_ON": 69,
       "EXECUTES": 1281,
       "HANDLED_BY": 953,
-      "HAS_COMMIT": 5848,
+      "HAS_COMMIT": 5852,
       "IMPLEMENTS": 124,
       "IMPORTS": 9423,
       "INHERITS": 47,
       "REFERENCES": 3981,
-      "REPRESENTS": 2791,
+      "REPRESENTS": 2792,
       "TESTS": 2654,
       "TRACKS": 126,
       "USES_TABLE": 3264
@@ -7926,6 +7926,29 @@
       "lastChangedAt": "2026-10-13T10:24:52.000Z",
       "lastChangedBy": "OmertaDev",
       "lastChangedCommit": "d9063420bd29c846e5f51f7cd8ec80f12e9232f2"
+    },
+    {
+      "key": "Artifact:.github/workflows/ui-trim-source.yml",
+      "type": "Artifact",
+      "id": ".github/workflows/ui-trim-source.yml",
+      "label": "ui-trim-source.yml",
+      "path": ".github/workflows/ui-trim-source.yml",
+      "kind": "workflow",
+      "extension": ".yml",
+      "bytes": 772,
+      "lines": 32,
+      "version": "bb1cbb139e4c4754",
+      "text": true,
+      "provenance": [
+        {
+          "file": ".github/workflows/ui-trim-source.yml",
+          "line": 1,
+          "version": "bb1cbb139e4c4754"
+        }
+      ],
+      "lastChangedAt": "2026-11-12T09:20:02.000Z",
+      "lastChangedBy": "OmertaDev",
+      "lastChangedCommit": "597f2a7f786e7328caacb29454c4afef15492b19"
     },
     {
       "key": "Artifact:.gitignore",
@@ -130380,18 +130403,18 @@
       "extension": ".md",
       "bytes": 57384,
       "lines": 762,
-      "version": "a29fd8858e6852a3",
+      "version": "ca5bf7c7349eaf5c",
       "text": true,
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "a29fd8858e6852a3"
+          "version": "ca5bf7c7349eaf5c"
         }
       ],
-      "lastChangedAt": "2026-11-10T17:20:53.000Z",
+      "lastChangedAt": "2026-11-12T09:20:02.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "0735eeea89272ce706451829798be7165d0d799a"
+      "lastChangedCommit": "597f2a7f786e7328caacb29454c4afef15492b19"
     },
     {
       "key": "Artifact:src/access.js",
@@ -167546,20 +167569,20 @@
       "path": "test/ui-trim-source-transfer.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 7719,
-      "lines": 108,
-      "version": "4116ba53d9e86691",
+      "bytes": 10877,
+      "lines": 152,
+      "version": "95f63b4dc5263e92",
       "text": true,
       "provenance": [
         {
           "file": "test/ui-trim-source-transfer.js",
           "line": 1,
-          "version": "4116ba53d9e86691"
+          "version": "95f63b4dc5263e92"
         }
       ],
-      "lastChangedAt": "2026-11-12T06:18:45.000Z",
+      "lastChangedAt": "2026-11-12T09:20:02.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "db670aaa3a9e849910d05dbcfb8d8796011c063f"
+      "lastChangedCommit": "597f2a7f786e7328caacb29454c4afef15492b19"
     },
     {
       "key": "Artifact:test/underworld.js",
@@ -167891,20 +167914,20 @@
       "path": "test/ux-personality-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 24568,
-      "lines": 190,
-      "version": "4cce1a78c1880457",
+      "bytes": 24866,
+      "lines": 192,
+      "version": "94a5108658e79221",
       "text": true,
       "provenance": [
         {
           "file": "test/ux-personality-browser.js",
           "line": 1,
-          "version": "4cce1a78c1880457"
+          "version": "94a5108658e79221"
         }
       ],
-      "lastChangedAt": "2026-11-09T05:01:50.000Z",
+      "lastChangedAt": "2026-11-12T09:20:02.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "7150015ee4995d9991daee4a8f9841644064767b"
+      "lastChangedCommit": "597f2a7f786e7328caacb29454c4afef15492b19"
     },
     {
       "key": "Artifact:test/ux-postgres-rls.js",
@@ -168098,20 +168121,20 @@
       "path": "test/ux-tactics-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 18331,
-      "lines": 235,
-      "version": "85663c4f0dc02e43",
+      "bytes": 12696,
+      "lines": 170,
+      "version": "94a11845a2080cf8",
       "text": true,
       "provenance": [
         {
           "file": "test/ux-tactics-browser.js",
           "line": 1,
-          "version": "85663c4f0dc02e43"
+          "version": "94a11845a2080cf8"
         }
       ],
-      "lastChangedAt": "2026-11-09T05:01:50.000Z",
+      "lastChangedAt": "2026-11-12T09:20:02.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "7150015ee4995d9991daee4a8f9841644064767b"
+      "lastChangedCommit": "597f2a7f786e7328caacb29454c4afef15492b19"
     },
     {
       "key": "Artifact:test/ux-tactics.js",
@@ -172311,18 +172334,18 @@
       "extension": ".js",
       "bytes": 497600,
       "lines": 13257,
-      "version": "c9e2ec9349950131",
+      "version": "484246e338a99230",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-questing-inputs.js",
           "line": 1,
-          "version": "c9e2ec9349950131"
+          "version": "484246e338a99230"
         }
       ],
-      "lastChangedAt": "2026-11-12T06:28:30.000Z",
+      "lastChangedAt": "2026-11-12T09:21:17.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4139563855a08905402fb3dcedc84481af6454e5"
+      "lastChangedCommit": "2a4d83a5058fe790b8ca3d400337a0f7ba8592c7"
     },
     {
       "key": "Artifact:tools/enterprise-native-questing-seal.js",
@@ -178800,20 +178823,20 @@
       "path": "tools/ui-trim-source-data.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 111001,
-      "lines": 458,
-      "version": "203ebba4bf2bec07",
+      "bytes": 144967,
+      "lines": 542,
+      "version": "b84f8e63429fb737",
       "text": true,
       "provenance": [
         {
           "file": "tools/ui-trim-source-data.js",
           "line": 1,
-          "version": "203ebba4bf2bec07"
+          "version": "b84f8e63429fb737"
         }
       ],
-      "lastChangedAt": "2026-11-12T06:18:50.000Z",
+      "lastChangedAt": "2026-11-12T09:21:01.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "c20d2cf3dbd8747d114a23b90190bdef72a95841"
+      "lastChangedCommit": "11d7c72dbcd68387d680225eea9a57b5cc7b7d6c"
     },
     {
       "key": "Artifact:tools/ui-trim-source-seal.js",
@@ -178823,20 +178846,20 @@
       "path": "tools/ui-trim-source-seal.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 4622,
-      "lines": 72,
-      "version": "fe12fb662aa20a9a",
+      "bytes": 6789,
+      "lines": 105,
+      "version": "b059215e82533e25",
       "text": true,
       "provenance": [
         {
           "file": "tools/ui-trim-source-seal.js",
           "line": 1,
-          "version": "fe12fb662aa20a9a"
+          "version": "b059215e82533e25"
         }
       ],
-      "lastChangedAt": "2026-11-12T06:18:45.000Z",
+      "lastChangedAt": "2026-11-12T09:20:02.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "db670aaa3a9e849910d05dbcfb8d8796011c063f"
+      "lastChangedCommit": "597f2a7f786e7328caacb29454c4afef15492b19"
     },
     {
       "key": "Artifact:tools/ui-trim-source-transfer.js",
@@ -190132,6 +190155,22 @@
       ]
     },
     {
+      "key": "Commit:11d7c72dbcd68387d680225eea9a57b5cc7b7d6c",
+      "type": "Commit",
+      "id": "11d7c72dbcd68387d680225eea9a57b5cc7b7d6c",
+      "label": "chore(ui): seal repaired release source comparison",
+      "title": "chore(ui): seal repaired release source comparison",
+      "date": "2026-11-12T09:21:01.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/11d7c72dbcd68387d680225eea9a57b5cc7b7d6c",
+      "provenance": [
+        {
+          "commit": "11d7c72dbcd68387d680225eea9a57b5cc7b7d6c",
+          "url": "https://github.com/OmertaDev/Omerta/commit/11d7c72dbcd68387d680225eea9a57b5cc7b7d6c"
+        }
+      ]
+    },
+    {
       "key": "Commit:11e2c1a71450f790ad5e6d88ea8c3c9805136163",
       "type": "Commit",
       "id": "11e2c1a71450f790ad5e6d88ea8c3c9805136163",
@@ -199072,6 +199111,22 @@
         {
           "commit": "2a4d811758aba930d6366748fc115641d91d6afa",
           "url": "https://github.com/OmertaDev/Omerta/commit/2a4d811758aba930d6366748fc115641d91d6afa"
+        }
+      ]
+    },
+    {
+      "key": "Commit:2a4d83a5058fe790b8ca3d400337a0f7ba8592c7",
+      "type": "Commit",
+      "id": "2a4d83a5058fe790b8ca3d400337a0f7ba8592c7",
+      "label": "chore(ui): seal repaired current-native inputs",
+      "title": "chore(ui): seal repaired current-native inputs",
+      "date": "2026-11-12T09:21:17.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/2a4d83a5058fe790b8ca3d400337a0f7ba8592c7",
+      "provenance": [
+        {
+          "commit": "2a4d83a5058fe790b8ca3d400337a0f7ba8592c7",
+          "url": "https://github.com/OmertaDev/Omerta/commit/2a4d83a5058fe790b8ca3d400337a0f7ba8592c7"
         }
       ]
     },
@@ -216304,6 +216359,22 @@
         {
           "commit": "59761023efdbb1f585da88c696a5bdb2772e5204",
           "url": "https://github.com/OmertaDev/Omerta/commit/59761023efdbb1f585da88c696a5bdb2772e5204"
+        }
+      ]
+    },
+    {
+      "key": "Commit:597f2a7f786e7328caacb29454c4afef15492b19",
+      "type": "Commit",
+      "id": "597f2a7f786e7328caacb29454c4afef15492b19",
+      "label": "test(ui): repair release census and retired integration checks",
+      "title": "test(ui): repair release census and retired integration checks",
+      "date": "2026-11-12T09:20:02.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/597f2a7f786e7328caacb29454c4afef15492b19",
+      "provenance": [
+        {
+          "commit": "597f2a7f786e7328caacb29454c4afef15492b19",
+          "url": "https://github.com/OmertaDev/Omerta/commit/597f2a7f786e7328caacb29454c4afef15492b19"
         }
       ]
     },
@@ -241056,6 +241127,22 @@
         {
           "commit": "9ac29cef6df2360e4c0a581554453a0bec1e7c28",
           "url": "https://github.com/OmertaDev/Omerta/commit/9ac29cef6df2360e4c0a581554453a0bec1e7c28"
+        }
+      ]
+    },
+    {
+      "key": "Commit:9ac59a98e7dedaa6fd447a69972faeefb88f0bda",
+      "type": "Commit",
+      "id": "9ac59a98e7dedaa6fd447a69972faeefb88f0bda",
+      "label": "chore(knowledge): refresh evaluated UI release",
+      "title": "chore(knowledge): refresh evaluated UI release",
+      "date": "2026-11-12T06:58:00.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/9ac59a98e7dedaa6fd447a69972faeefb88f0bda",
+      "provenance": [
+        {
+          "commit": "9ac59a98e7dedaa6fd447a69972faeefb88f0bda",
+          "url": "https://github.com/OmertaDev/Omerta/commit/9ac59a98e7dedaa6fd447a69972faeefb88f0bda"
         }
       ]
     },
@@ -295522,12 +295609,12 @@
       "label": "SPEC.md",
       "documentType": "documentation",
       "lines": 762,
-      "version": "a29fd8858e6852a3",
+      "version": "ca5bf7c7349eaf5c",
       "provenance": [
         {
           "file": "SPEC.md",
           "line": 1,
-          "version": "a29fd8858e6852a3"
+          "version": "ca5bf7c7349eaf5c"
         }
       ]
     },
@@ -307423,6 +307510,9 @@
           "commit": "9aa529a5551cad10e65a8c184ad906e289cdfbfe"
         },
         {
+          "commit": "9ac59a98e7dedaa6fd447a69972faeefb88f0bda"
+        },
+        {
           "commit": "9adc01bea4963b89f12419126bd91bb5e7d57a55"
         },
         {
@@ -310354,6 +310444,9 @@
           "commit": "9aa529a5551cad10e65a8c184ad906e289cdfbfe"
         },
         {
+          "commit": "9ac59a98e7dedaa6fd447a69972faeefb88f0bda"
+        },
+        {
           "commit": "9adc01bea4963b89f12419126bd91bb5e7d57a55"
         },
         {
@@ -313283,6 +313376,9 @@
         },
         {
           "commit": "9aa529a5551cad10e65a8c184ad906e289cdfbfe"
+        },
+        {
+          "commit": "9ac59a98e7dedaa6fd447a69972faeefb88f0bda"
         },
         {
           "commit": "9adc01bea4963b89f12419126bd91bb5e7d57a55"
@@ -317000,6 +317096,9 @@
         },
         {
           "commit": "9aa529a5551cad10e65a8c184ad906e289cdfbfe"
+        },
+        {
+          "commit": "9ac59a98e7dedaa6fd447a69972faeefb88f0bda"
         },
         {
           "commit": "9adc01bea4963b89f12419126bd91bb5e7d57a55"
@@ -333427,12 +333526,12 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "1b14e1fd85e9cb64968d2c0d858b7a065d78a99d",
+      "revision": "2a4d83a5058fe790b8ca3d400337a0f7ba8592c7",
       "currentBranch": "codex/ui-trim-release-20261112",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
-      "currentArtifactCount": 7805,
+      "currentArtifactCount": 7806,
       "provenance": [
         {
           "file": "README.md",
@@ -386634,13 +386733,13 @@
       "type": "TestSuite",
       "id": "test/ui-trim-source-transfer.js",
       "label": "test/ui-trim-source-transfer.js",
-      "lines": 108,
-      "version": "4116ba53d9e86691",
+      "lines": 152,
+      "version": "95f63b4dc5263e92",
       "provenance": [
         {
           "file": "test/ui-trim-source-transfer.js",
           "line": 1,
-          "version": "4116ba53d9e86691"
+          "version": "95f63b4dc5263e92"
         }
       ]
     },
@@ -386859,13 +386958,13 @@
       "type": "TestSuite",
       "id": "test/ux-personality-browser.js",
       "label": "test/ux-personality-browser.js",
-      "lines": 190,
-      "version": "4cce1a78c1880457",
+      "lines": 192,
+      "version": "94a5108658e79221",
       "provenance": [
         {
           "file": "test/ux-personality-browser.js",
           "line": 1,
-          "version": "4cce1a78c1880457"
+          "version": "94a5108658e79221"
         }
       ]
     },
@@ -386994,13 +387093,13 @@
       "type": "TestSuite",
       "id": "test/ux-tactics-browser.js",
       "label": "test/ux-tactics-browser.js",
-      "lines": 235,
-      "version": "85663c4f0dc02e43",
+      "lines": 170,
+      "version": "94a11845a2080cf8",
       "provenance": [
         {
           "file": "test/ux-tactics-browser.js",
           "line": 1,
-          "version": "85663c4f0dc02e43"
+          "version": "94a11845a2080cf8"
         }
       ]
     },
@@ -387828,6 +387927,21 @@
           "version": "4ede05206ff26a36"
         }
       ]
+    },
+    {
+      "key": "Workflow:.github/workflows/ui-trim-source.yml",
+      "type": "Workflow",
+      "id": ".github/workflows/ui-trim-source.yml",
+      "label": ".github/workflows/ui-trim-source.yml",
+      "lines": 32,
+      "version": "bb1cbb139e4c4754",
+      "provenance": [
+        {
+          "file": ".github/workflows/ui-trim-source.yml",
+          "line": 1,
+          "version": "bb1cbb139e4c4754"
+        }
+      ]
     }
   ],
   "edges": [
@@ -387990,6 +388104,15 @@
       "to": "Domain:delivery-assurance",
       "provenance": {
         "file": ".github/workflows/rc1-recovery.yml",
+        "line": 1
+      }
+    },
+    {
+      "type": "BELONGS_TO",
+      "from": "Artifact:.github/workflows/ui-trim-source.yml",
+      "to": "Domain:delivery-assurance",
+      "provenance": {
+        "file": ".github/workflows/ui-trim-source.yml",
         "line": 1
       }
     },
@@ -453486,6 +453609,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:11d7c72dbcd68387d680225eea9a57b5cc7b7d6c",
+      "to": "Artifact:tools/ui-trim-source-data.js",
+      "provenance": {
+        "commit": "11d7c72dbcd68387d680225eea9a57b5cc7b7d6c"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:11e2c1a71450f790ad5e6d88ea8c3c9805136163",
       "to": "Artifact:CLAUDE.md",
       "provenance": {
@@ -475450,6 +475581,14 @@
       "to": "Artifact:test/company-autonomy-contracts.js",
       "provenance": {
         "commit": "2a4d811758aba930d6366748fc115641d91d6afa"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2a4d83a5058fe790b8ca3d400337a0f7ba8592c7",
+      "to": "Artifact:tools/enterprise-native-questing-inputs.js",
+      "provenance": {
+        "commit": "2a4d83a5058fe790b8ca3d400337a0f7ba8592c7"
       }
     },
     {
@@ -516546,6 +516685,54 @@
       "to": "HistoricalArtifact:knowledge/generated/inventory.md",
       "provenance": {
         "commit": "59761023efdbb1f585da88c696a5bdb2772e5204"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:597f2a7f786e7328caacb29454c4afef15492b19",
+      "to": "Artifact:.github/workflows/ui-trim-source.yml",
+      "provenance": {
+        "commit": "597f2a7f786e7328caacb29454c4afef15492b19"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:597f2a7f786e7328caacb29454c4afef15492b19",
+      "to": "Artifact:SPEC.md",
+      "provenance": {
+        "commit": "597f2a7f786e7328caacb29454c4afef15492b19"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:597f2a7f786e7328caacb29454c4afef15492b19",
+      "to": "Artifact:test/ui-trim-source-transfer.js",
+      "provenance": {
+        "commit": "597f2a7f786e7328caacb29454c4afef15492b19"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:597f2a7f786e7328caacb29454c4afef15492b19",
+      "to": "Artifact:test/ux-personality-browser.js",
+      "provenance": {
+        "commit": "597f2a7f786e7328caacb29454c4afef15492b19"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:597f2a7f786e7328caacb29454c4afef15492b19",
+      "to": "Artifact:test/ux-tactics-browser.js",
+      "provenance": {
+        "commit": "597f2a7f786e7328caacb29454c4afef15492b19"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:597f2a7f786e7328caacb29454c4afef15492b19",
+      "to": "Artifact:tools/ui-trim-source-seal.js",
+      "provenance": {
+        "commit": "597f2a7f786e7328caacb29454c4afef15492b19"
       }
     },
     {
@@ -573730,6 +573917,38 @@
       "to": "Artifact:tools/render-omr-excalidraw.mjs",
       "provenance": {
         "commit": "9ac29cef6df2360e4c0a581554453a0bec1e7c28"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9ac59a98e7dedaa6fd447a69972faeefb88f0bda",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "9ac59a98e7dedaa6fd447a69972faeefb88f0bda"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9ac59a98e7dedaa6fd447a69972faeefb88f0bda",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "9ac59a98e7dedaa6fd447a69972faeefb88f0bda"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9ac59a98e7dedaa6fd447a69972faeefb88f0bda",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "9ac59a98e7dedaa6fd447a69972faeefb88f0bda"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:9ac59a98e7dedaa6fd447a69972faeefb88f0bda",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "9ac59a98e7dedaa6fd447a69972faeefb88f0bda"
       }
     },
     {
@@ -716454,6 +716673,15 @@
     {
       "type": "CONTAINS",
       "from": "Subsystem:operations",
+      "to": "Artifact:.github/workflows/ui-trim-source.yml",
+      "provenance": {
+        "file": ".github/workflows/ui-trim-source.yml",
+        "line": 1
+      }
+    },
+    {
+      "type": "CONTAINS",
+      "from": "Subsystem:operations",
       "to": "Artifact:CHAIN-DEPLOY.md",
       "provenance": {
         "file": "CHAIN-DEPLOY.md",
@@ -795526,6 +795754,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:11d7c72dbcd68387d680225eea9a57b5cc7b7d6c",
+      "provenance": {
+        "commit": "11d7c72dbcd68387d680225eea9a57b5cc7b7d6c"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:11e2c1a71450f790ad5e6d88ea8c3c9805136163",
       "provenance": {
         "commit": "11e2c1a71450f790ad5e6d88ea8c3c9805136163"
@@ -799993,6 +800229,14 @@
       "to": "Commit:2a4d811758aba930d6366748fc115641d91d6afa",
       "provenance": {
         "commit": "2a4d811758aba930d6366748fc115641d91d6afa"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:2a4d83a5058fe790b8ca3d400337a0f7ba8592c7",
+      "provenance": {
+        "commit": "2a4d83a5058fe790b8ca3d400337a0f7ba8592c7"
       }
     },
     {
@@ -808609,6 +808853,14 @@
       "to": "Commit:59761023efdbb1f585da88c696a5bdb2772e5204",
       "provenance": {
         "commit": "59761023efdbb1f585da88c696a5bdb2772e5204"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:597f2a7f786e7328caacb29454c4afef15492b19",
+      "provenance": {
+        "commit": "597f2a7f786e7328caacb29454c4afef15492b19"
       }
     },
     {
@@ -820985,6 +821237,14 @@
       "to": "Commit:9ac29cef6df2360e4c0a581554453a0bec1e7c28",
       "provenance": {
         "commit": "9ac29cef6df2360e4c0a581554453a0bec1e7c28"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:9ac59a98e7dedaa6fd447a69972faeefb88f0bda",
+      "provenance": {
+        "commit": "9ac59a98e7dedaa6fd447a69972faeefb88f0bda"
       }
     },
     {
@@ -923533,7 +923793,7 @@
       "to": "Artifact:tools/ci-deed-recovery-source-transfer.js",
       "provenance": {
         "file": "tools/ui-trim-source-data.js",
-        "line": 306
+        "line": 327
       }
     },
     {
@@ -923542,7 +923802,7 @@
       "to": "Artifact:tools/ui-trim-source-transfer.js",
       "provenance": {
         "file": "tools/ui-trim-source-data.js",
-        "line": 305
+        "line": 326
       }
     },
     {
@@ -986290,6 +986550,15 @@
       "to": "Artifact:.github/workflows/rc1-recovery.yml",
       "provenance": {
         "file": ".github/workflows/rc1-recovery.yml",
+        "line": 1
+      }
+    },
+    {
+      "type": "REPRESENTS",
+      "from": "Workflow:.github/workflows/ui-trim-source.yml",
+      "to": "Artifact:.github/workflows/ui-trim-source.yml",
+      "provenance": {
+        "file": ".github/workflows/ui-trim-source.yml",
         "line": 1
       }
     },

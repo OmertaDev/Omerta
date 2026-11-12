@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `1b14e1fd85e9`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `2a4d83a5058f`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 5848 |
+| Commits in clone | 5852 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-11-12 — test(quests): refresh UI trim evaluation evidence |
+| Latest commit | 2026-11-12 — chore(ui): seal repaired current-native inputs |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 4712 |
+| OmertaDev | 4716 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 153 |
@@ -31,11 +31,11 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 974 | historical |
-| knowledge/generated/graph-summary.md | 974 | historical |
-| knowledge/generated/graph.json | 974 | historical |
-| knowledge/generated/inventory.md | 974 | historical |
-| [SPEC.md](../../SPEC.md) | 663 | yes |
+| knowledge/generated/github-history.md | 975 | historical |
+| knowledge/generated/graph-summary.md | 975 | historical |
+| knowledge/generated/graph.json | 975 | historical |
+| knowledge/generated/inventory.md | 975 | historical |
+| [SPEC.md](../../SPEC.md) | 664 | yes |
 | [public/index.html](../../public/index.html) | 516 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [src/server.js](../../src/server.js) | 468 | yes |
@@ -63,7 +63,7 @@
 | [src/agentgateway.js](../../src/agentgateway.js) | 104 | yes |
 | [test/levers.js](../../test/levers.js) | 98 | yes |
 | [test/growth.js](../../test/growth.js) | 97 | yes |
-| [tools/enterprise-native-questing-inputs.js](../../tools/enterprise-native-questing-inputs.js) | 95 | yes |
+| [tools/enterprise-native-questing-inputs.js](../../tools/enterprise-native-questing-inputs.js) | 96 | yes |
 | [test/migrate.js](../../test/migrate.js) | 95 | yes |
 | [docs/WIKI.md](../../docs/WIKI.md) | 93 | yes |
 | [test/social.js](../../test/social.js) | 88 | yes |
