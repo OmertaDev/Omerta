@@ -4,7 +4,7 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "ACTUAL_CURRENT_QUESTING_ENTERPRISE_NATIVE_INPUTS",
-  "authoredRevision": "cdc1417958c4ecb8ab1b28df11cadd26f29ac7d6",
+  "authoredRevision": "d3ee5c6d5493137a1395726de188b07e32839d46",
   "predecessorDefinitionSha256": "6b9128d3311945fc511748f852803354ac415a23082b6b5ce017980a2b7596bf",
   "proofInventorySha256": "3fd878600cd363ebdd9d89bb59b7cc3de7650f895062d83711b2bd1774c298e9",
   "files": [
@@ -11273,8 +11273,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/grand-strategy-source-transfer.js",
       "mode": "100644",
-      "blob": "e9dde3aeef0b44d2385d6d93d64121753fab8801",
-      "sha256": "c026467571bb8218dc2db089786ef6962d2b9c56ffff23f7b93f1e6728febad8"
+      "blob": "041f7230763c34d61920f7f3906573c5166de303",
+      "sha256": "f165807e0061115875f89e33f4a99c2bb638e9106898f056537feebccd4f2340"
     },
     {
       "file": "test/lib/age-removal-source-transfer-proof.js",
@@ -11393,14 +11393,14 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/grand-strategy-source-data.js",
       "mode": "100644",
-      "blob": "f60277eba01dababdeaaa1f1d461f264cce3b596",
-      "sha256": "c279ce361711634ed98282c2b43dfb8f2f1d94c243d44a8f75436c49437839cc"
+      "blob": "38fe90836c8fd936b41742335081fe44a44392dd",
+      "sha256": "c63769d001e0db97283cd7f0b05b5391143d5e969fd8e0ce01d033d96208150c"
     },
     {
       "file": "tools/grand-strategy-source-transfer.js",
       "mode": "100644",
-      "blob": "be2f992e6c2bbe38f688201605c06882315dad02",
-      "sha256": "a0d2a9cc069d8a93e3bfb0eb9635c67c26d6a9d73bdc72873b75832603dcf42c"
+      "blob": "0ccfb587cfca2da7423a48563aebba9a3f1a1091",
+      "sha256": "3716e4c13f514eedaaa221899040fb68190b96f26a9b3f75511f88b3ad17b007"
     },
     {
       "file": "tools/install-foundry-verified.sh",
@@ -13098,8 +13098,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/grand-strategy-source-transfer.js",
       "mode": "100644",
-      "blob": "e9dde3aeef0b44d2385d6d93d64121753fab8801",
-      "sha256": "c026467571bb8218dc2db089786ef6962d2b9c56ffff23f7b93f1e6728febad8"
+      "blob": "041f7230763c34d61920f7f3906573c5166de303",
+      "sha256": "f165807e0061115875f89e33f4a99c2bb638e9106898f056537feebccd4f2340"
     },
     {
       "file": "test/lib/age-removal-source-transfer-proof.js",
@@ -13218,14 +13218,14 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/grand-strategy-source-data.js",
       "mode": "100644",
-      "blob": "f60277eba01dababdeaaa1f1d461f264cce3b596",
-      "sha256": "c279ce361711634ed98282c2b43dfb8f2f1d94c243d44a8f75436c49437839cc"
+      "blob": "38fe90836c8fd936b41742335081fe44a44392dd",
+      "sha256": "c63769d001e0db97283cd7f0b05b5391143d5e969fd8e0ce01d033d96208150c"
     },
     {
       "file": "tools/grand-strategy-source-transfer.js",
       "mode": "100644",
-      "blob": "be2f992e6c2bbe38f688201605c06882315dad02",
-      "sha256": "a0d2a9cc069d8a93e3bfb0eb9635c67c26d6a9d73bdc72873b75832603dcf42c"
+      "blob": "0ccfb587cfca2da7423a48563aebba9a3f1a1091",
+      "sha256": "3716e4c13f514eedaaa221899040fb68190b96f26a9b3f75511f88b3ad17b007"
     },
     {
       "file": "tools/install-foundry-verified.sh",
@@ -13289,4 +13289,4 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     }
   ]
 });
-export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "01303fc41a4b8ddf2ab8a3c211cc6a224a0a61811bf4eb493026054a33e81854";
+export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "90005587b41e53fada0b783074a2d47a5408927b99903067257de02710299ae7";
