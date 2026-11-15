@@ -26,7 +26,7 @@ const owned = (file) => known(file) || typeof file === 'string' && Object.hasOwn
 const entry = (file, pin, kind) => kind === 'tree' ? `${pin.mode} blob ${pin.blob}\t${file}` : `${pin.mode} ${pin.blob} 0\t${file}`;
 function canonical(input) {
   const buffer = Buffer.isBuffer(input), text = buffer ? input.toString('utf8') : input;
-  if (buffer) assert(Buffer.from(text).equals(input), 'Lossless UTF-8 source required');
+  if (buffer) assert(Buffer.from(text).equals(input), 'Lossless UTF-8 source required; lossless UTF-8 required');
   if (typeof text !== 'string' || /[\0\ufeff]/.test(text)) return null;
   const lf = text.replaceAll('\r\n', '\n');
   if (lf.includes('\r') || text !== lf && text !== lf.replaceAll('\n', '\r\n')) return null;
