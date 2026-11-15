@@ -4,7 +4,7 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "ACTUAL_CURRENT_QUESTING_ENTERPRISE_NATIVE_INPUTS",
-  "authoredRevision": "b31c9cec69edf8f1fbad95c9b38b0b43ae820169",
+  "authoredRevision": "1e94c00c70e12f9772db40c95a5c3f2b95a1dc0b",
   "predecessorDefinitionSha256": "6b9128d3311945fc511748f852803354ac415a23082b6b5ce017980a2b7596bf",
   "proofInventorySha256": "3fd878600cd363ebdd9d89bb59b7cc3de7650f895062d83711b2bd1774c298e9",
   "files": [
@@ -11393,14 +11393,14 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/grand-strategy-source-data.js",
       "mode": "100644",
-      "blob": "da270a396e73de3d0c2c0934d79910c62c902cc0",
-      "sha256": "3093f11973a6906d41d0c1a25c54e755cc28cb22ed07f419899117e950773163"
+      "blob": "a0e424b737c20c2c2403dd7339186b46f4345113",
+      "sha256": "83eef15593fc1fdad641fa550cc0f771e5418474596541fe554a3656381f2253"
     },
     {
       "file": "tools/grand-strategy-source-transfer.js",
       "mode": "100644",
-      "blob": "308556c0abcfeea938a48059aa65eac7838889b0",
-      "sha256": "da5210898f3d9f9659f34045f5379bea97db67bc20d91515782a15832e4e5dad"
+      "blob": "fa3e2181dd25e67015363a007110018747a34568",
+      "sha256": "0a76d88ec53c23e48045a3702f647da8164d841e42a12f1236f66c1482ccf1dd"
     },
     {
       "file": "tools/install-foundry-verified.sh",
@@ -13218,14 +13218,14 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/grand-strategy-source-data.js",
       "mode": "100644",
-      "blob": "da270a396e73de3d0c2c0934d79910c62c902cc0",
-      "sha256": "3093f11973a6906d41d0c1a25c54e755cc28cb22ed07f419899117e950773163"
+      "blob": "a0e424b737c20c2c2403dd7339186b46f4345113",
+      "sha256": "83eef15593fc1fdad641fa550cc0f771e5418474596541fe554a3656381f2253"
     },
     {
       "file": "tools/grand-strategy-source-transfer.js",
       "mode": "100644",
-      "blob": "308556c0abcfeea938a48059aa65eac7838889b0",
-      "sha256": "da5210898f3d9f9659f34045f5379bea97db67bc20d91515782a15832e4e5dad"
+      "blob": "fa3e2181dd25e67015363a007110018747a34568",
+      "sha256": "0a76d88ec53c23e48045a3702f647da8164d841e42a12f1236f66c1482ccf1dd"
     },
     {
       "file": "tools/install-foundry-verified.sh",
@@ -13289,4 +13289,4 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     }
   ]
 });
-export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "5a9959e64710d02e4c55953b89c43ae45315f6f92c1d41f8395734e4d0409503";
+export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "6d5743a7442f78ff0ac471e1b1d0cf898887171dd637fa03c39353c1977dd3ae";
