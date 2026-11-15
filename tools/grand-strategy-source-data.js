@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const GRAND_STRATEGY_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_GRAND_STRATEGY_SOURCE_COMPARISON_ONLY",
-  "revision": "87b69eee54e8619f941df80c90696b0a50182345",
-  "tree": "30007f9d0162e6a946c559de318d95eec1810d54",
+  "revision": "9dc5f8095e407e69f142066e3222c3a23d2e21c8",
+  "tree": "118056c632a60367a253153fd8f2d0cfe8d49ff0",
   "predecessor": "7d52e1f08dc9540b182553b70dedfce4fecfac22",
   "predecessorTree": "674744d5f1d1ee448a5473738b2a8ee8657094f8",
   "files": {
@@ -987,11 +987,11 @@ export const GRAND_STRATEGY_SOURCE = freeze({
     },
     "tools/grand-strategy-source-transfer.js": {
       "mode": "100644",
-      "blob": "308556c0abcfeea938a48059aa65eac7838889b0",
-      "sha256": "da5210898f3d9f9659f34045f5379bea97db67bc20d91515782a15832e4e5dad",
-      "bytes": 15518,
+      "blob": "fa3e2181dd25e67015363a007110018747a34568",
+      "sha256": "0a76d88ec53c23e48045a3702f647da8164d841e42a12f1236f66c1482ccf1dd",
+      "bytes": 15556,
       "text": true
     }
   }
 });
-export const GRAND_STRATEGY_SOURCE_SHA256 = '45890cc916d77d2dee25e947d132dc2acd69000be61dc9839255beaad3f972e8';
+export const GRAND_STRATEGY_SOURCE_SHA256 = 'da9778dffd000cba14610a1f77470e3b7096b5fae02c2bd07e42cc7d2b3d3f91';
