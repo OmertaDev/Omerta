@@ -3,11 +3,32 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const GRAND_STRATEGY_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_GRAND_STRATEGY_SOURCE_COMPARISON_ONLY",
-  "revision": "d9793274ce0110d20d87ebd40b2cb8c2d301e377",
-  "tree": "f285432cede40df91e67af79adbbc66d17323c4d",
+  "revision": "9e35ad6c0740437472590c3a04d2e6d2a28fea29",
+  "tree": "6ec76cc537e4f4185318db36873380e83a5acf5b",
   "predecessor": "7d52e1f08dc9540b182553b70dedfce4fecfac22",
   "predecessorTree": "674744d5f1d1ee448a5473738b2a8ee8657094f8",
   "files": {
+    ".github/workflows/ui-trim-source.yml": {
+      "current": {
+        "mode": "100644",
+        "blob": "d0c6611dee75982f8e91ac04d491438cd0850c12",
+        "sha256": "1e85075d7a44a014f885cfc4b38bea456e857ddaa7ed7a3e1ed2c79f2313c8fb",
+        "bytes": 838
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "afde5949b8fd48e1d56c23588c5a868ec4bd6423",
+        "sha256": "bb1cbb139e4c47543caed6b0cd6b93b8472b8ea2ffc24120e8d39667db39b834",
+        "bytes": 772
+      },
+      "inverses": [
+        {
+          "at": 496,
+          "current": "      # The proof uses Node built-ins only and independently admits actual Git,\n      # index and physical source before any immutable historical comparison.\n      - name: Qualify the exact UI successor and rejection controls\n        run: |\n          node test/grand-strategy-source-transfer.js\n          node test/ui-trim-source-transfer.js\n",
+          "baseline": "      # The proof uses Node built-ins only and independently admits actual Git,\n      # index and physical source before any immutable historical comparison.\n      - name: Qualify the exact UI successor and rejection controls\n        run: node test/ui-trim-source-transfer.js\n"
+        }
+      ]
+    },
     "public/index.html": {
       "current": {
         "mode": "100644",
@@ -945,11 +966,11 @@ export const GRAND_STRATEGY_SOURCE = freeze({
     },
     "tools/grand-strategy-source-transfer.js": {
       "mode": "100644",
-      "blob": "0ccfb587cfca2da7423a48563aebba9a3f1a1091",
-      "sha256": "3716e4c13f514eedaaa221899040fb68190b96f26a9b3f75511f88b3ad17b007",
-      "bytes": 15463,
+      "blob": "36948bd3a31685a57f3d6022c295c713dacce0fc",
+      "sha256": "d065b5d93bcfd1146e11f535f16f8d07809c95525a2a8d57213e3351888e1c4d",
+      "bytes": 15505,
       "text": true
     }
   }
 });
-export const GRAND_STRATEGY_SOURCE_SHA256 = 'b55925b075df155b6fe88f149f6406ca50a6bb9a30c996e4fa834c791c79debf';
+export const GRAND_STRATEGY_SOURCE_SHA256 = '15c7da76afdaf5feee444a43b8622d2ff5e0cc7939b7933068fbbbac9acba7aa';
