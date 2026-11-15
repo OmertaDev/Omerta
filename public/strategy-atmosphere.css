@@ -1,0 +1,55 @@
+/* The full-size city dossier keeps atmosphere separate from live map records. */
+.strategy-art-frame { position: relative; z-index: 1; flex: 0 0 124px; width: 124px; height: 124px; min-width: 0; align-self: stretch; }
+.strategy-art-frame .strategy-district-art { display: block; width: 100%; height: 100%; }
+#screen-main .strategy-art-open { position: absolute; inset: auto 5px 5px; min-height: 28px; padding: 4px 5px; border: 1px solid #c5a66b99; border-radius: 1px; background: #101c18ed; color: #ebd5a8; font: 10px/1.4 var(--om-font-body, sans-serif); cursor: pointer; }
+#screen-main .strategy-art-open:hover { background: #2b3d2d; border-color: #e6c383; }
+.strategy-art-dialog { --art-ink: #ecdfc3; --art-muted: #b7b9a7; box-sizing: border-box; width: min(1120px, calc(100vw - 40px)); max-width: none; max-height: calc(100dvh - 40px); margin: auto; padding: 0; overflow: auto; border: 1px solid #b79b69; border-radius: 3px; background: #15231e; color: var(--art-ink); box-shadow: 0 0 0 5px #17241cd9, 0 25px 100px #000b; font-family: var(--om-font-body, sans-serif); }
+.strategy-art-dialog::backdrop { background: #060e0cda; backdrop-filter: blur(5px); }
+.strategy-art-heading { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 20px 26px 18px; border-bottom: 1px solid #ac905449; }
+.strategy-art-eyebrow { margin: 0 0 5px; color: #c2a66f; font-size: 9px; line-height: 1.5; letter-spacing: .2em; }
+.strategy-art-dialog h2 { margin: 0; color: var(--art-ink); font: 28px/1.2 var(--serif, Georgia, serif); letter-spacing: -.02em; }
+.strategy-art-dialog button { min-height: 38px; border: 1px solid #aa915963; border-radius: 2px; padding: 8px 13px; background: #a98f4e0d; color: #d8c9a6; font: 11px/1.4 var(--om-font-body, sans-serif); cursor: pointer; }
+.strategy-art-dialog button:hover { border-color: #ceb176; background: #b99a6920; color: #f1dfb9; }
+.strategy-art-dialog button:focus-visible, #screen-main .strategy-art-open:focus-visible { outline: 2px solid #f1d196; outline-offset: 3px; }
+.strategy-art-dialog .strategy-art-close { flex: 0 0 44px; width: 44px; min-height: 44px; padding: 0; font: 30px/1 sans-serif; }
+.strategy-art-stage { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: #0a1511; }
+.strategy-art-image, .strategy-art-stage video { display: block; width: 100%; height: 100%; object-fit: cover; }
+.strategy-art-stage video { position: absolute; inset: 0; }
+.strategy-art-stage video[hidden] { display: none; }
+.strategy-art-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 18px; padding: 14px 26px; border-top: 1px solid #ac905449; }
+.strategy-art-caption { flex: 1 1 300px; margin: 0; color: var(--art-muted); font-size: 11px; line-height: 1.6; }
+.strategy-art-dialog [data-strategy-ambient] { flex: 0 0 auto; min-width: 130px; color: #e0c389; }
+.strategy-art-atmosphere { display: flex; align-items: center; gap: 8px; color: var(--art-muted); font-size: 10px; line-height: 1.5; }
+.strategy-art-dialog select { box-sizing: border-box; min-height: 38px; max-width: 180px; padding: 7px 25px 7px 10px; border: 1px solid #aa915963; border-radius: 2px; background: #102019; color: #e0c389; font: 11px/1.4 var(--om-font-body, sans-serif); }
+.strategy-art-dialog select:focus-visible { outline: 2px solid #f1d196; outline-offset: 3px; }
+.strategy-art-dialog select:disabled { opacity: .7; }
+.strategy-art-dialog button:disabled { cursor: default; opacity: .5; }
+.strategy-art-dialog [data-strategy-art-status] { flex: 1 0 100%; min-height: 0; margin: 0; color: #c9b888; font-size: 11px; line-height: 1.5; }
+.strategy-art-dialog [data-strategy-art-status]:empty { display: none; }
+.strategy-art-scenes { display: flex; flex-wrap: wrap; gap: 5px; padding: 14px 26px 22px; border-top: 1px solid #ac90542e; background: #102019; }
+.strategy-art-scenes button[aria-pressed="true"] { border-color: #ceb176; background: #b79a5e26; color: #f0d4a0; }
+@media (min-width: 1001px) and (max-width: 1300px) {
+  .strategy-art-frame { flex-basis: 78px; width: 78px; height: 126px; }
+}
+@media (max-width: 1000px) {
+  .strategy-art-frame { flex-basis: 82px; width: 82px; height: 116px; }
+  #screen-main .strategy-art-open { min-height: 44px; padding: 4px; font-size: 10px; }
+}
+@media (max-width: 700px) {
+  .strategy-art-dialog { width: calc(100vw - 20px); max-height: calc(100dvh - 20px); }
+  .strategy-art-heading { padding: 15px 16px; gap: 12px; }
+  .strategy-art-dialog h2 { font-size: 23px; }
+  .strategy-art-footer { padding: 14px 16px; }
+  .strategy-art-caption { flex-basis: 100%; }
+  .strategy-art-scenes { padding: 14px 16px 18px; gap: 6px; }
+  .strategy-art-scenes button { flex: 1 1 110px; min-height: 44px; padding: 8px; }
+  .strategy-art-dialog [data-strategy-ambient] { min-height: 44px; }
+  .strategy-art-dialog select { min-height: 44px; }
+}
+@media (max-width: 400px) {
+  .strategy-art-frame { float: left; width: 68px; height: 80px; margin: 0 12px 10px 0; }
+  .strategy-art-frame .strategy-district-art { float: none; margin: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .strategy-art-dialog, .strategy-art-dialog * { scroll-behavior: auto; transition: none; animation: none; }
+}

@@ -3,6 +3,11 @@
   'use strict';
   const points = { foundry: [19, 52], cathedral: [32, 41], neon: [61, 22], brick: [37, 71], canal: [51, 61], docks: [79, 41] };
   const modes = [['districts', 'Districts'], ['influence', 'Influence'], ['trade', 'Trade']];
+  const descriptions = {
+    districts: 'Read the city. Select a district to inspect its control and local advantage.',
+    influence: 'Follow the balance of power: family control, garrisons, and active contests.',
+    trade: 'Trace the local economy: territory rackets and recorded street deeds.',
+  };
   const titles = { open: 'Open territory', occupied: 'Occupied', mine: 'Your family', held: 'Family controlled', contested: 'Contested', unknown: 'Current records unavailable' };
   const text = (node, value) => { const next = String(value ?? ''); if (node && node.textContent !== next) node.textContent = next; };
   const list = value => Array.isArray(value) ? value : [];
@@ -73,9 +78,45 @@
           if (root.open) { readMap(); paint(); }
         });
       }
+      const resources = document.createElement('dl'); resources.className = 'strategy-resource-ribbon'; resources.setAttribute('aria-label', 'Your resources');
+      for (const [id, label, icon, hint] of [
+        ['cash', 'Cash', '$', 'Cash available to your character'], ['omr', '$OMR', '◈', 'Your liquid $OMR balance'],
+        ['respect', 'Respect', '✦', 'Respect earned by your character'], ['energy', 'Energy', 'ϟ', 'Physical work uses energy'],
+        ['nerve', 'Nerve', '◇', 'Street crimes use nerve'], ['heat', 'Heat', '♨', 'The attention you have drawn from the law'],
+      ]) {
+        const item = document.createElement('div'); item.className = 'strategy-resource'; item.dataset.strategyResource = id; item.title = hint;
+        item.innerHTML = '<span class="strategy-resource-icon" aria-hidden="true"></span><dt></dt><dd><strong></strong></dd>';
+        text(item.querySelector('.strategy-resource-icon'), icon); text(item.querySelector('dt'), label); resources.append(item);
+      }
+      const overview = document.createElement('header'); overview.className = 'strategy-overview';
+      overview.innerHTML = '<div class="strategy-overview-identity"><p class="strategy-overview-kicker"></p><h2>The balance of power</h2></div><dl class="strategy-overview-stats"></dl>';
+      for (const [id, label] of [['family', 'Your family'], ['open', 'Open districts'], ['contests', 'Contests']]) {
+        const item = document.createElement('div'); item.className = 'strategy-overview-item'; item.dataset.strategyOverview = id;
+        item.innerHTML = '<dt></dt><dd><strong></strong></dd>'; text(item.querySelector('dt'), label); overview.querySelector('dl').append(item);
+      }
       const map = document.createElement('section'); map.className = 'strategy-map'; map.setAttribute('aria-label', 'Strategic city view');
       map.innerHTML = '<header class="strategy-map-toolbar"><div class="strategy-map-title"><span class="strategy-map-kicker">CITY COMMAND</span><h2>The city</h2></div><div class="strategy-map-modes" role="group" aria-label="Map view"></div></header><div class="strategy-canvas" aria-hidden="true"></div><div class="strategy-map-controls" role="group" aria-label="Map camera"></div><div class="strategy-compass" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1"><path d="m16 3 8 13-8 13-8-13Z"/><path d="M16 3v26M3 16h26"/><circle cx="16" cy="16" r="3"/></svg></div><div class="strategy-district-labels" role="group" aria-label="Inspect a district"></div><footer class="strategy-map-footer"><span class="strategy-map-status" role="status" aria-live="polite"></span><span class="strategy-map-context"></span></footer>';
-      map.querySelector('.strategy-canvas').style.backgroundImage = 'url("/art/citymap.jpg")';
+      map.querySelector('.strategy-canvas').style.backgroundImage = 'url("/art/grand-strategy/city-atlas.webp")';
+      const guide = document.createElement('div'); guide.className = 'strategy-map-guide';
+      guide.innerHTML = '<p class="strategy-mode-description"></p><div class="strategy-map-legend" aria-label="Territory control legend"></div>';
+      for (const [id, label] of [['mine', 'Your family'], ['held', 'Other family'], ['occupied', 'Occupied'], ['open', 'Open'], ['contested', 'Contested']]) {
+        const item = document.createElement('span'); item.dataset.state = id; item.textContent = label; guide.querySelector('.strategy-map-legend').append(item);
+      }
+      map.querySelector('.strategy-map-toolbar').after(guide);
+      map.querySelector('.strategy-map-modes').addEventListener('keydown', event => {
+        if (!event.target.matches('[data-strategy-mode]')) return;
+        const buttons = [...map.querySelectorAll('[data-strategy-mode]')], index = buttons.indexOf(event.target);
+        const next = keyboardIndex(event.key, index, buttons.length);
+        if (next == null) return;
+        event.preventDefault(); buttons[next].focus(); buttons[next].click();
+      });
+      map.querySelector('.strategy-district-labels').addEventListener('keydown', event => {
+        if (!event.target.matches('[data-strategy-district]')) return;
+        const buttons = [...map.querySelectorAll('[data-strategy-district]')], index = buttons.indexOf(event.target);
+        const next = keyboardIndex(event.key, index, buttons.length);
+        if (next == null) return;
+        event.preventDefault(); buttons[next].focus(); buttons[next].click();
+      });
       for (const [id, label, mark] of [['zoomin', 'Zoom in', '+'], ['zoomout', 'Zoom out', '−'], ['reset', 'Reset map view', '⟲']]) {
         const button = document.createElement('button'); button.type = 'button'; button.dataset.strategyCamera = id;
         button.setAttribute('aria-label', label); button.title = label; button.textContent = mark; button.disabled = true;
@@ -89,12 +130,63 @@
       const inspector = document.createElement('aside'); inspector.className = 'strategy-inspector'; inspector.setAttribute('aria-label', 'Selected district');
       inspector.innerHTML = '<img class="strategy-district-art" alt=""><div class="strategy-inspector-body"><p class="strategy-inspector-kicker"></p><h3></h3><dl class="strategy-district-facts"></dl><div class="strategy-district-actions"></div></div>';
       const image = inspector.querySelector('img'); image.loading = 'lazy'; image.onerror = () => { image.onerror = null; image.src = '/art/citymap.jpg'; };
-      for (const [tab, label] of [['map', 'Explore neighborhood'], ['city', 'Market ledger'], ['streets', 'Street operations']]) {
+      for (const [tab, label] of [['map', 'Explore neighborhood'], ['city', 'Market ledger'], ['streets', 'Street operations'], ['family', 'Family council']]) {
         const button = document.createElement('button'); button.type = 'button'; button.textContent = label; button.dataset.strategyNavigate = tab; button.onclick = () => navigate(tab); inspector.querySelector('.strategy-district-actions').append(button);
       }
       const orders = document.createElement('aside'); orders.className = 'strategy-orders'; orders.setAttribute('aria-label', 'Your next order');
-      root.append(map, inspector, orders);
+      root.append(resources, overview, map, inspector, orders);
       return root;
+    }
+
+    function keyboardIndex(key, index, length) {
+      if (!length) return null;
+      if (key === 'Home') return 0;
+      if (key === 'End') return length - 1;
+      if (key === 'ArrowRight' || key === 'ArrowDown') return (index + 1) % length;
+      if (key === 'ArrowLeft' || key === 'ArrowUp') return (index + length - 1) % length;
+      return null;
+    }
+
+    function paintDashboard(values) {
+      const me = state().me || {};
+      for (const item of stage.querySelectorAll('[data-strategy-resource]')) {
+        const key = item.dataset.strategyResource;
+        const maximum = key === 'energy' ? me.maxEnergy : key === 'nerve' ? me.maxNerve : null;
+        const value = count(me[key]);
+        text(item.querySelector('strong'), maximum != null ? `${value} / ${count(maximum)}` : value);
+        item.dataset.tone = key === 'heat' && Number(me.heat) >= 60 ? 'caution' : 'normal';
+      }
+      const district = values.find(value => value.id === me.loc);
+      text(stage.querySelector('.strategy-overview-kicker'), [board?.season?.name || 'City command', district?.name].filter(Boolean).join(' · '));
+      const overview = { family: board ? `${count(board.mine?.districts)} / ${count(board.total ?? values.length)}` : '—', open: board ? count(values.filter(value => value.state === 'open').length) : '—', contests: board ? count(values.filter(value => value.state === 'contested').length) : '—' };
+      for (const item of stage.querySelectorAll('[data-strategy-overview]')) text(item.querySelector('strong'), overview[item.dataset.strategyOverview]);
+      text(stage.querySelector('.strategy-mode-description'), descriptions[mode]);
+    }
+
+    function paintPowers() {
+      const orders = stage.querySelector('.strategy-orders');
+      let powers = orders.querySelector('.strategy-powers');
+      if (!powers) {
+        powers = document.createElement('section'); powers.className = 'strategy-powers'; powers.setAttribute('aria-label', 'Family balance of power');
+        powers.innerHTML = '<h3>Families of the city</h3><ol class="strategy-power-list"></ol><p class="strategy-power-empty"></p><button type="button" data-strategy-navigate="family">Open family council</button>';
+        powers.querySelector('button').onclick = () => navigate('family'); orders.append(powers);
+      }
+      const values = list(board?.powers), host = powers.querySelector('ol'), signature = JSON.stringify(values);
+      if (host.dataset.signature !== signature) {
+        host.replaceChildren();
+        values.forEach((family, index) => {
+          const row = document.createElement('li'); row.className = 'strategy-power-row'; row.dataset.mine = String(!!family.mine);
+          row.innerHTML = '<span class="strategy-power-rank" aria-hidden="true"></span><strong></strong><span class="strategy-power-territory"></span>';
+          text(row.querySelector('.strategy-power-rank'), String(index + 1).padStart(2, '0'));
+          text(row.querySelector('strong'), [family.tag, family.name].filter(Boolean).join(' · '));
+          text(row.querySelector('.strategy-power-territory'), `${count(family.districts)} ${Number(family.districts) === 1 ? 'district' : 'districts'}`);
+          if (family.mine) row.querySelector('strong').append(document.createTextNode(' · You'));
+          host.append(row);
+        });
+        host.dataset.signature = signature;
+      }
+      const empty = powers.querySelector('.strategy-power-empty'); empty.hidden = values.length > 0;
+      text(empty, board ? 'No family currently holds a district.' : 'Family standings appear with city records.');
     }
 
     function mount() {
@@ -164,7 +256,7 @@
     function paintInspector(district) {
       const inspector = stage.querySelector('.strategy-inspector'); inspector.hidden = !district;
       if (!district) return;
-      const image = inspector.querySelector('img'), source = points[district.id] ? `/art/district-${district.id}.jpg` : '/art/citymap.jpg';
+      const image = inspector.querySelector('img'), source = points[district.id] ? `/art/grand-strategy/district-${district.id}.webp` : '/art/grand-strategy/city-atlas.webp';
       if (image.getAttribute('src') !== source) image.src = source;
       text(inspector.querySelector('.strategy-inspector-kicker'), district.id === state().me?.loc ? 'YOUR CURRENT DISTRICT' : 'DISTRICT INTELLIGENCE');
       text(inspector.querySelector('h3'), district.name || district.id);
@@ -192,7 +284,7 @@
       if (!values.some(district => district.id === selected)) selected = values.find(district => district.id === state().me?.loc)?.id || values[0]?.id || '';
       stage.dataset.mode = mode;
       for (const button of stage.querySelectorAll('[data-strategy-mode]')) button.setAttribute('aria-pressed', String(button.dataset.strategyMode === mode));
-      paintLabels(values); paintInspector(values.find(district => district.id === selected));
+      paintLabels(values); paintInspector(values.find(district => district.id === selected)); paintDashboard(values); paintPowers();
       paintCameraControls();
       const records = error || (pending ? 'Reading city records…' : lastRead ? 'Current city records' : 'District descriptions · live control not loaded');
       text(stage.querySelector('.strategy-map-status'), rendererFailed ? `City map illustration · ${records}` : records);
