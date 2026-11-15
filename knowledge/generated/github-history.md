@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `04c555f0f7f2`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `47c6ac8717c1`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 5871 |
+| Commits in clone | 5878 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-11-15 — chore: refresh native inputs for explicit CI qualification |
+| Latest commit | 2026-11-15 — chore: refresh native inputs for final UI release |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 4734 |
+| OmertaDev | 4741 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 154 |
@@ -31,15 +31,15 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 980 | historical |
-| knowledge/generated/graph-summary.md | 980 | historical |
-| knowledge/generated/graph.json | 980 | historical |
-| knowledge/generated/inventory.md | 980 | historical |
-| [SPEC.md](../../SPEC.md) | 664 | yes |
+| knowledge/generated/github-history.md | 981 | historical |
+| knowledge/generated/graph-summary.md | 981 | historical |
+| knowledge/generated/graph.json | 981 | historical |
+| knowledge/generated/inventory.md | 981 | historical |
+| [SPEC.md](../../SPEC.md) | 665 | yes |
 | [public/index.html](../../public/index.html) | 517 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
 | [src/server.js](../../src/server.js) | 469 | yes |
-| knowledge/generated/documents.md | 423 | historical |
+| knowledge/generated/documents.md | 424 | historical |
 | [schema.sql](../../schema.sql) | 388 | yes |
 | [package.json](../../package.json) | 381 | yes |
 | knowledge/generated/modules.md | 330 | historical |
@@ -61,7 +61,7 @@
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [public/wiki.html](../../public/wiki.html) | 105 | yes |
 | [src/agentgateway.js](../../src/agentgateway.js) | 104 | yes |
-| [tools/enterprise-native-questing-inputs.js](../../tools/enterprise-native-questing-inputs.js) | 100 | yes |
+| [tools/enterprise-native-questing-inputs.js](../../tools/enterprise-native-questing-inputs.js) | 102 | yes |
 | [test/levers.js](../../test/levers.js) | 98 | yes |
 | [test/growth.js](../../test/growth.js) | 97 | yes |
 | [test/migrate.js](../../test/migrate.js) | 95 | yes |
