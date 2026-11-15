@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const GRAND_STRATEGY_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_GRAND_STRATEGY_SOURCE_COMPARISON_ONLY",
-  "revision": "9e35ad6c0740437472590c3a04d2e6d2a28fea29",
-  "tree": "6ec76cc537e4f4185318db36873380e83a5acf5b",
+  "revision": "87b69eee54e8619f941df80c90696b0a50182345",
+  "tree": "30007f9d0162e6a946c559de318d95eec1810d54",
   "predecessor": "7d52e1f08dc9540b182553b70dedfce4fecfac22",
   "predecessorTree": "674744d5f1d1ee448a5473738b2a8ee8657094f8",
   "files": {
@@ -26,6 +26,27 @@ export const GRAND_STRATEGY_SOURCE = freeze({
           "at": 496,
           "current": "      # The proof uses Node built-ins only and independently admits actual Git,\n      # index and physical source before any immutable historical comparison.\n      - name: Qualify the exact UI successor and rejection controls\n        run: |\n          node test/grand-strategy-source-transfer.js\n          node test/ui-trim-source-transfer.js\n",
           "baseline": "      # The proof uses Node built-ins only and independently admits actual Git,\n      # index and physical source before any immutable historical comparison.\n      - name: Qualify the exact UI successor and rejection controls\n        run: node test/ui-trim-source-transfer.js\n"
+        }
+      ]
+    },
+    "SPEC.md": {
+      "current": {
+        "mode": "100644",
+        "blob": "8fcbab71090af1e1f63f16ad4e281483feb1d9a4",
+        "sha256": "64ba76682f7338d063fb31e860e0ac3da17ce60408098e21465ed89654cac979",
+        "bytes": 57415
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "fcfa3f62bc25fa7e2c153701b56ebe4b072793c2",
+        "sha256": "ca5bf7c7349eaf5c8283d7e650c54adb0d10b6e254c50b14b060fc804453cdf0",
+        "bytes": 57384
+      },
+      "inverses": [
+        {
+          "at": 693,
+          "current": "| | |\n|---|---|\n| Backend modules | **622** files, **142384** lines (recursive source inventory) |\n| Test suites | **1048** files, **220052** lines (recursive source inventory; this row refreshed 2026-11-15) |\n| HTTP routes | **1401** registrations (**1401** unique; 1277 under `/v1`) |\n| Database tables | **586** (`schema.sql`, 9848 lines) |\n| Client | **14683** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n",
+          "baseline": "| | |\n|---|---|\n| Backend modules | **622** files, **142384** lines (recursive source inventory) |\n| Test suites | **1047** files, **219464** lines (recursive source inventory) |\n| HTTP routes | **1401** registrations (**1401** unique; 1277 under `/v1`) |\n| Database tables | **586** (`schema.sql`, 9848 lines) |\n| Client | **14683** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n"
         }
       ]
     },
@@ -966,11 +987,11 @@ export const GRAND_STRATEGY_SOURCE = freeze({
     },
     "tools/grand-strategy-source-transfer.js": {
       "mode": "100644",
-      "blob": "36948bd3a31685a57f3d6022c295c713dacce0fc",
-      "sha256": "d065b5d93bcfd1146e11f535f16f8d07809c95525a2a8d57213e3351888e1c4d",
-      "bytes": 15505,
+      "blob": "308556c0abcfeea938a48059aa65eac7838889b0",
+      "sha256": "da5210898f3d9f9659f34045f5379bea97db67bc20d91515782a15832e4e5dad",
+      "bytes": 15518,
       "text": true
     }
   }
 });
-export const GRAND_STRATEGY_SOURCE_SHA256 = '15c7da76afdaf5feee444a43b8622d2ff5e0cc7939b7933068fbbbac9acba7aa';
+export const GRAND_STRATEGY_SOURCE_SHA256 = '45890cc916d77d2dee25e947d132dc2acd69000be61dc9839255beaad3f972e8';
