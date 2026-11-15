@@ -692,6 +692,7 @@ export async function buildServer() {
   for (const [file, type] of [
     ['noir-ui.css', 'text/css'], ['noir-landing.css', 'text/css'], ['noir-shell.js', 'application/javascript'],
     ['strategy-command.css', 'text/css'], ['strategy-command.js', 'application/javascript'],
+    ['strategy-atmosphere.css', 'text/css'], ['strategy-atmosphere.js', 'application/javascript'],
     ['vendor/strategy-city-renderer.js', 'application/javascript'], ['vendor/strategy-city-renderer.js.LEGAL.txt', 'text/plain'],
     ['vendor/strategy-city-renderer.LICENSE.txt', 'text/plain'],
     ['site-analytics.js', 'application/javascript'],
@@ -828,6 +829,27 @@ export async function buildServer() {
     }
     return reply.type(hit.type || 'video/mp4').header('content-length', String(hit.size)).send(createReadStream(hit.path));
   };
+  const strategyArtDir = join(artDir, 'grand-strategy');
+  const strategyScenes = ['city-atlas', 'council-chamber', ...['foundry', 'cathedral', 'neon', 'brick', 'canal', 'docks'].map(id => `district-${id}`)];
+  const strategyVariants = ['ambient', 'h3', 'rain', 'mist', 'night', 'dawn', 'streetlife', 'cinematic', 'snow', 'cinematic-take2'];
+  const strategyFiles = new Map();
+  for (const name of ['scene-library.json', 'city-seal.webp', ...strategyScenes.map(id => `${id}.webp`),
+    ...strategyScenes.map(id => `${id}.mp4`), ...strategyScenes.flatMap(id => strategyVariants.map(variant => `motion/${id}-${variant}.mp4`))]) {
+    try {
+      const path = join(strategyArtDir, name), stat = statSync(path);
+      if (!stat.isFile()) continue;
+      if (name.endsWith('.mp4')) ART_VIDEOS.set('grand-strategy/' + name, { path, size: stat.size, type: 'video/mp4', cacheControl: 'no-cache' });
+      else strategyFiles.set(name, { path, size: stat.size, type: name.endsWith('.webp') ? 'image/webp' : 'application/json; charset=utf-8' });
+    } catch { /* The still view remains available while optional atmosphere exports are absent. */ }
+  }
+  app.get('/art/grand-strategy/:file', async (req, reply) => {
+    const key = 'grand-strategy/' + req.params.file;
+    if (ART_VIDEOS.has(key)) return sendVideo(key, req, reply);
+    const hit = strategyFiles.get(req.params.file);
+    if (!hit) return reply.code(404).send({ error: 'not_found' });
+    return reply.type(hit.type).header('cache-control', 'no-cache').header('content-length', String(hit.size)).send(createReadStream(hit.path));
+  });
+  app.get('/art/grand-strategy/motion/:file', async (req, reply) => sendVideo('grand-strategy/motion/' + req.params.file, req, reply));
   app.get('/art/:file', async (req, reply) => {
     const hit = ART_FILES.get(req.params.file);
     if (hit) return reply.type(hit.type).header('cache-control', 'public, max-age=604800, immutable').send(hit.body);

@@ -1302,7 +1302,8 @@
 <link rel="stylesheet" href="/ux-coordination.css?v=20261024-2">
 <link rel="stylesheet" href="/noir-ui.css?v=20261112-copy-trim">
 <link rel="stylesheet" href="/noir-landing.css?v=20261108-1">
-<link rel="stylesheet" href="/strategy-command.css?v=20261108-1">
+<link rel="stylesheet" href="/strategy-command.css?v=20261115-1">
+<link rel="stylesheet" href="/strategy-atmosphere.css?v=20261115-1">
 </head>
 <body>
 <svg style="display:none" aria-hidden="true"><defs>
@@ -1783,7 +1784,8 @@
 <script src="/ux-investigation.js?v=20261024-2"></script>
 <script src="/ux-coordination.js?v=20261024-2"></script>
 <script src="/noir-shell.js?v=20261112-copy-trim"></script>
-<script src="/strategy-command.js?v=20261108-1"></script>
+<script src="/strategy-command.js?v=20261115-1"></script>
+<script src="/strategy-atmosphere.js?v=20261115-1"></script>
 <script>
 (() => {
   // Optional guidance must not stop core play if its separate script cannot load.
@@ -14577,7 +14579,7 @@ ${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [
   if (workspaceUX) uxModules.push(workspaceUX);
   for (const factory of [window.createOmertaFeedback, window.createOmertaProgression, window.createOmertaSocial, window.createOmertaNavigation,
     window.createOmertaInvestigation, window.createOmertaCoordination,
-    window.createOmertaFeel, window.createOmertaTools, window.createOmertaIdentity, window.createOmertaStory, window.createOmertaQuests, window.createOmertaCommunity, window.createOmertaWorld, window.createOmertaNoirShell, window.createOmertaStrategyCommand]) {
+    window.createOmertaFeel, window.createOmertaTools, window.createOmertaIdentity, window.createOmertaStory, window.createOmertaQuests, window.createOmertaCommunity, window.createOmertaWorld, window.createOmertaNoirShell, window.createOmertaStrategyCommand, window.createOmertaStrategyAtmosphere]) {
     if (!factory) continue;
     try { const module = factory(uxContext); uxModules.push(module); if (factory === window.createOmertaFeedback) feedbackUX = module; }
     catch (error) { console.warn('UI enhancement unavailable', error); }

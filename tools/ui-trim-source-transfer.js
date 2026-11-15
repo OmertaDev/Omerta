@@ -2,6 +2,7 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { UI_TRIM_SOURCE, UI_TRIM_SOURCE_SHA256 } from './ui-trim-source-data.js';
+import { grandStrategyHistoricalInput, grandStrategyHistoricalEntry, grandStrategyHistoricalRecord } from './grand-strategy-source-transfer.js';
 
 export { UI_TRIM_SOURCE };
 const sha = input => createHash('sha256').update(input).digest('hex');
@@ -54,6 +55,7 @@ export function qualifyUiTrimSource(file, input) {
 }
 // Unknown bytes pass unchanged to the original rejecting qualifier.
 export function uiTrimHistoricalInput(file, input) {
+  input = grandStrategyHistoricalInput(file, input);
   if (!known(file)) return input;
   const current = canonical(input);
   if (!current || sha(current.lf) !== UI_TRIM_SOURCE.files[file].current.sha256) return input;
@@ -61,6 +63,7 @@ export function uiTrimHistoricalInput(file, input) {
   return current.buffer ? Buffer.from(baseline) : baseline;
 }
 export function uiTrimHistoricalEntry(file, input, kind) {
+  input = grandStrategyHistoricalEntry(file, input, kind);
   assert(kind === 'tree' || kind === 'index');
   if (!known(file)) return input;
   const row = UI_TRIM_SOURCE.files[file], expected = entry(file, row.current, kind);
@@ -71,6 +74,7 @@ export function uiTrimHistoricalEntry(file, input, kind) {
 // No runtime loader or actual-current native capture imports this record view.
 export function uiTrimHistoricalRecord(file, actual) {
   assert.equal(arguments.length, 2);
+  actual = grandStrategyHistoricalRecord(file, actual);
   if (!known(file)) return actual;
   definition();
   assert.deepEqual(Object.keys(actual).sort(), ['head', 'index', 'committed', 'physical', 'regular', 'symbolic'].sort());

@@ -1,0 +1,418 @@
+{
+  "version": 1,
+  "scenes": [
+    {
+      "id": "city-atlas",
+      "image": "/art/grand-strategy/city-atlas.webp",
+      "motion": [
+        {
+          "id": "ambient",
+          "label": "Ambient",
+          "src": "/art/grand-strategy/motion/city-atlas-ambient.mp4"
+        },
+        {
+          "id": "h3",
+          "label": "Long ambience",
+          "src": "/art/grand-strategy/motion/city-atlas-h3.mp4"
+        },
+        {
+          "id": "rain",
+          "label": "Rain",
+          "src": "/art/grand-strategy/motion/city-atlas-rain.mp4"
+        },
+        {
+          "id": "mist",
+          "label": "River mist",
+          "src": "/art/grand-strategy/motion/city-atlas-mist.mp4"
+        },
+        {
+          "id": "night",
+          "label": "After dark",
+          "src": "/art/grand-strategy/motion/city-atlas-night.mp4"
+        },
+        {
+          "id": "dawn",
+          "label": "First light",
+          "src": "/art/grand-strategy/motion/city-atlas-dawn.mp4"
+        },
+        {
+          "id": "streetlife",
+          "label": "City life",
+          "src": "/art/grand-strategy/motion/city-atlas-streetlife.mp4"
+        },
+        {
+          "id": "cinematic",
+          "label": "Cinematic",
+          "src": "/art/grand-strategy/motion/city-atlas-cinematic.mp4"
+        },
+        {
+          "id": "snow",
+          "label": "Winter study",
+          "src": "/art/grand-strategy/motion/city-atlas-snow.mp4"
+        },
+        {
+          "id": "cinematic-take2",
+          "label": "Cinematic II",
+          "src": "/art/grand-strategy/motion/city-atlas-cinematic-take2.mp4"
+        }
+      ]
+    },
+    {
+      "id": "foundry",
+      "image": "/art/grand-strategy/district-foundry.webp",
+      "motion": [
+        {
+          "id": "ambient",
+          "label": "Ambient",
+          "src": "/art/grand-strategy/motion/district-foundry-ambient.mp4"
+        },
+        {
+          "id": "h3",
+          "label": "Long ambience",
+          "src": "/art/grand-strategy/motion/district-foundry-h3.mp4"
+        },
+        {
+          "id": "rain",
+          "label": "Rain",
+          "src": "/art/grand-strategy/motion/district-foundry-rain.mp4"
+        },
+        {
+          "id": "mist",
+          "label": "River mist",
+          "src": "/art/grand-strategy/motion/district-foundry-mist.mp4"
+        },
+        {
+          "id": "night",
+          "label": "After dark",
+          "src": "/art/grand-strategy/motion/district-foundry-night.mp4"
+        },
+        {
+          "id": "dawn",
+          "label": "First light",
+          "src": "/art/grand-strategy/motion/district-foundry-dawn.mp4"
+        },
+        {
+          "id": "streetlife",
+          "label": "City life",
+          "src": "/art/grand-strategy/motion/district-foundry-streetlife.mp4"
+        },
+        {
+          "id": "cinematic",
+          "label": "Cinematic",
+          "src": "/art/grand-strategy/motion/district-foundry-cinematic.mp4"
+        },
+        {
+          "id": "snow",
+          "label": "Winter study",
+          "src": "/art/grand-strategy/motion/district-foundry-snow.mp4"
+        }
+      ]
+    },
+    {
+      "id": "cathedral",
+      "image": "/art/grand-strategy/district-cathedral.webp",
+      "motion": [
+        {
+          "id": "ambient",
+          "label": "Ambient",
+          "src": "/art/grand-strategy/motion/district-cathedral-ambient.mp4"
+        },
+        {
+          "id": "h3",
+          "label": "Long ambience",
+          "src": "/art/grand-strategy/motion/district-cathedral-h3.mp4"
+        },
+        {
+          "id": "rain",
+          "label": "Rain",
+          "src": "/art/grand-strategy/motion/district-cathedral-rain.mp4"
+        },
+        {
+          "id": "mist",
+          "label": "River mist",
+          "src": "/art/grand-strategy/motion/district-cathedral-mist.mp4"
+        },
+        {
+          "id": "night",
+          "label": "After dark",
+          "src": "/art/grand-strategy/motion/district-cathedral-night.mp4"
+        },
+        {
+          "id": "dawn",
+          "label": "First light",
+          "src": "/art/grand-strategy/motion/district-cathedral-dawn.mp4"
+        },
+        {
+          "id": "streetlife",
+          "label": "City life",
+          "src": "/art/grand-strategy/motion/district-cathedral-streetlife.mp4"
+        },
+        {
+          "id": "cinematic",
+          "label": "Cinematic",
+          "src": "/art/grand-strategy/motion/district-cathedral-cinematic.mp4"
+        },
+        {
+          "id": "snow",
+          "label": "Winter study",
+          "src": "/art/grand-strategy/motion/district-cathedral-snow.mp4"
+        }
+      ]
+    },
+    {
+      "id": "neon",
+      "image": "/art/grand-strategy/district-neon.webp",
+      "motion": [
+        {
+          "id": "ambient",
+          "label": "Ambient",
+          "src": "/art/grand-strategy/motion/district-neon-ambient.mp4"
+        },
+        {
+          "id": "h3",
+          "label": "Long ambience",
+          "src": "/art/grand-strategy/motion/district-neon-h3.mp4"
+        },
+        {
+          "id": "rain",
+          "label": "Rain",
+          "src": "/art/grand-strategy/motion/district-neon-rain.mp4"
+        },
+        {
+          "id": "mist",
+          "label": "River mist",
+          "src": "/art/grand-strategy/motion/district-neon-mist.mp4"
+        },
+        {
+          "id": "night",
+          "label": "After dark",
+          "src": "/art/grand-strategy/motion/district-neon-night.mp4"
+        },
+        {
+          "id": "dawn",
+          "label": "First light",
+          "src": "/art/grand-strategy/motion/district-neon-dawn.mp4"
+        },
+        {
+          "id": "streetlife",
+          "label": "City life",
+          "src": "/art/grand-strategy/motion/district-neon-streetlife.mp4"
+        },
+        {
+          "id": "cinematic",
+          "label": "Cinematic",
+          "src": "/art/grand-strategy/motion/district-neon-cinematic.mp4"
+        },
+        {
+          "id": "snow",
+          "label": "Winter study",
+          "src": "/art/grand-strategy/motion/district-neon-snow.mp4"
+        }
+      ]
+    },
+    {
+      "id": "brick",
+      "image": "/art/grand-strategy/district-brick.webp",
+      "motion": [
+        {
+          "id": "ambient",
+          "label": "Ambient",
+          "src": "/art/grand-strategy/motion/district-brick-ambient.mp4"
+        },
+        {
+          "id": "h3",
+          "label": "Long ambience",
+          "src": "/art/grand-strategy/motion/district-brick-h3.mp4"
+        },
+        {
+          "id": "rain",
+          "label": "Rain",
+          "src": "/art/grand-strategy/motion/district-brick-rain.mp4"
+        },
+        {
+          "id": "mist",
+          "label": "River mist",
+          "src": "/art/grand-strategy/motion/district-brick-mist.mp4"
+        },
+        {
+          "id": "night",
+          "label": "After dark",
+          "src": "/art/grand-strategy/motion/district-brick-night.mp4"
+        },
+        {
+          "id": "dawn",
+          "label": "First light",
+          "src": "/art/grand-strategy/motion/district-brick-dawn.mp4"
+        },
+        {
+          "id": "streetlife",
+          "label": "City life",
+          "src": "/art/grand-strategy/motion/district-brick-streetlife.mp4"
+        },
+        {
+          "id": "cinematic",
+          "label": "Cinematic",
+          "src": "/art/grand-strategy/motion/district-brick-cinematic.mp4"
+        },
+        {
+          "id": "snow",
+          "label": "Winter study",
+          "src": "/art/grand-strategy/motion/district-brick-snow.mp4"
+        }
+      ]
+    },
+    {
+      "id": "canal",
+      "image": "/art/grand-strategy/district-canal.webp",
+      "motion": [
+        {
+          "id": "ambient",
+          "label": "Ambient",
+          "src": "/art/grand-strategy/motion/district-canal-ambient.mp4"
+        },
+        {
+          "id": "h3",
+          "label": "Long ambience",
+          "src": "/art/grand-strategy/motion/district-canal-h3.mp4"
+        },
+        {
+          "id": "rain",
+          "label": "Rain",
+          "src": "/art/grand-strategy/motion/district-canal-rain.mp4"
+        },
+        {
+          "id": "mist",
+          "label": "River mist",
+          "src": "/art/grand-strategy/motion/district-canal-mist.mp4"
+        },
+        {
+          "id": "night",
+          "label": "After dark",
+          "src": "/art/grand-strategy/motion/district-canal-night.mp4"
+        },
+        {
+          "id": "dawn",
+          "label": "First light",
+          "src": "/art/grand-strategy/motion/district-canal-dawn.mp4"
+        },
+        {
+          "id": "streetlife",
+          "label": "City life",
+          "src": "/art/grand-strategy/motion/district-canal-streetlife.mp4"
+        },
+        {
+          "id": "cinematic",
+          "label": "Cinematic",
+          "src": "/art/grand-strategy/motion/district-canal-cinematic.mp4"
+        },
+        {
+          "id": "snow",
+          "label": "Winter study",
+          "src": "/art/grand-strategy/motion/district-canal-snow.mp4"
+        }
+      ]
+    },
+    {
+      "id": "docks",
+      "image": "/art/grand-strategy/district-docks.webp",
+      "motion": [
+        {
+          "id": "ambient",
+          "label": "Ambient",
+          "src": "/art/grand-strategy/motion/district-docks-ambient.mp4"
+        },
+        {
+          "id": "h3",
+          "label": "Long ambience",
+          "src": "/art/grand-strategy/motion/district-docks-h3.mp4"
+        },
+        {
+          "id": "rain",
+          "label": "Rain",
+          "src": "/art/grand-strategy/motion/district-docks-rain.mp4"
+        },
+        {
+          "id": "mist",
+          "label": "River mist",
+          "src": "/art/grand-strategy/motion/district-docks-mist.mp4"
+        },
+        {
+          "id": "night",
+          "label": "After dark",
+          "src": "/art/grand-strategy/motion/district-docks-night.mp4"
+        },
+        {
+          "id": "dawn",
+          "label": "First light",
+          "src": "/art/grand-strategy/motion/district-docks-dawn.mp4"
+        },
+        {
+          "id": "streetlife",
+          "label": "City life",
+          "src": "/art/grand-strategy/motion/district-docks-streetlife.mp4"
+        },
+        {
+          "id": "cinematic",
+          "label": "Cinematic",
+          "src": "/art/grand-strategy/motion/district-docks-cinematic.mp4"
+        },
+        {
+          "id": "snow",
+          "label": "Winter study",
+          "src": "/art/grand-strategy/motion/district-docks-snow.mp4"
+        }
+      ]
+    },
+    {
+      "id": "council-chamber",
+      "image": "/art/grand-strategy/council-chamber.webp",
+      "motion": [
+        {
+          "id": "ambient",
+          "label": "Ambient",
+          "src": "/art/grand-strategy/motion/council-chamber-ambient.mp4"
+        },
+        {
+          "id": "h3",
+          "label": "Long ambience",
+          "src": "/art/grand-strategy/motion/council-chamber-h3.mp4"
+        },
+        {
+          "id": "rain",
+          "label": "Rain",
+          "src": "/art/grand-strategy/motion/council-chamber-rain.mp4"
+        },
+        {
+          "id": "mist",
+          "label": "River mist",
+          "src": "/art/grand-strategy/motion/council-chamber-mist.mp4"
+        },
+        {
+          "id": "night",
+          "label": "After dark",
+          "src": "/art/grand-strategy/motion/council-chamber-night.mp4"
+        },
+        {
+          "id": "dawn",
+          "label": "First light",
+          "src": "/art/grand-strategy/motion/council-chamber-dawn.mp4"
+        },
+        {
+          "id": "streetlife",
+          "label": "City life",
+          "src": "/art/grand-strategy/motion/council-chamber-streetlife.mp4"
+        },
+        {
+          "id": "cinematic",
+          "label": "Cinematic",
+          "src": "/art/grand-strategy/motion/council-chamber-cinematic.mp4"
+        },
+        {
+          "id": "snow",
+          "label": "Winter study",
+          "src": "/art/grand-strategy/motion/council-chamber-snow.mp4"
+        }
+      ]
+    }
+  ]
+}
