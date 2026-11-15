@@ -5,6 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { execFileSync, spawnSync } from 'node:child_process';
+import { AGE_REMOVAL_SOURCE, ageRemovalHistoricalRecord } from '../tools/age-removal-source-transfer.js';
 import { GRAND_STRATEGY_SOURCE as source, GRAND_STRATEGY_PREDECESSOR, GRAND_STRATEGY_SCOPE,
   GRAND_STRATEGY_GENERATED_FILES, GRAND_STRATEGY_RELEASE_FILES, grandStrategySourceDataBytes,
   grandStrategyActual, qualifyGrandStrategySource, grandStrategyHistoricalInput,
@@ -78,6 +79,10 @@ for (const [file, row] of Object.entries(source.files)) {
   assert.equal(historical.committed.toString('utf8'), before);
   assert.deepEqual(historical.head, { mode: row.baseline.mode, blob: row.baseline.blob });
   assert.strictEqual(grandStrategyHistoricalRecord(file, historical), historical, 'Prior tuples acquire no new qualification');
+  for (const physical of [actual.committed, Buffer.from(current.replaceAll('\n', '\r\n'))]) {
+    assert.deepEqual(grandStrategyHistoricalRecord(file, { ...actual, physical }), historical,
+      'Complete LF and CRLF supplied records retain the same historical identity'); positives++;
+  }
   assert.throws(() => qualifyGrandStrategySource(file, before)); refusals++; positives++;
   for (const kind of ['tree', 'index']) {
     for (const suffix of ['', '\n'])
@@ -98,12 +103,30 @@ for (const [file, row] of Object.entries(source.files)) {
 }
 const observedFile = 'public/index.html', observed = grandStrategyActual(observedFile);
 const priorObserved = grandStrategyHistoricalRecord(observedFile, observed);
+for (const file of ['public/index.html', 'public/sw.js', 'src/server.js']) {
+  const actual = grandStrategyActual(file), pin = AGE_REMOVAL_SOURCE.files[file].baseline;
+  for (const physical of [actual.committed, Buffer.from(actual.committed.toString('utf8').replaceAll('\n', '\r\n'))]) {
+    const historical = ageRemovalHistoricalRecord(file, { ...actual, physical });
+    assert.deepEqual(historical.head, { mode: pin.mode, blob: pin.blob });
+    assert.equal(historical.index, entry(file, pin, 'index'));
+    assert.equal(historical.committed.length, pin.bytes); assert.equal(sha(historical.committed), pin.sha256);
+    assert.equal(blob(historical.committed), pin.blob); assert(historical.physical.equals(historical.committed));
+    assert.equal(historical.regular, true); assert.equal(historical.symbolic, false); positives++;
+  }
+}
 assert.throws(() => grandStrategyHistoricalRecord(observedFile, { ...priorObserved, head: { ...priorObserved.head, extra: true } })); refusals++;
 for (const patch of [{ head: { ...observed.head, mode: '120000' } },
   { index: observed.index.replace(observed.head.blob, '0'.repeat(40)) }, { regular: false }, { symbolic: true },
   { physical: Buffer.concat([observed.physical, Buffer.from('x')]) },
+  { physical: observed.committed.subarray(1) }, { physical: priorObserved.committed },
+  { physical: Buffer.from(observed.committed.toString('utf8').replace('\n', '\r\n')) },
+  { physical: Buffer.from(observed.committed.toString('utf8').replace('\n', '\r')) },
+  { physical: Buffer.concat([Buffer.from('\ufeff'), observed.committed]) },
+  { physical: Buffer.concat([observed.committed, Buffer.from('\0')]) }, { physical: Buffer.from([0xff]) },
   { committed: Buffer.concat([observed.committed, Buffer.from('x')]) }, { extra: true }]) {
-  assert.throws(() => grandStrategyHistoricalRecord(observedFile, { ...observed, ...patch })); refusals++;
+  for (const qualify of [grandStrategyHistoricalRecord, ageRemovalHistoricalRecord]) {
+    assert.throws(() => qualify(observedFile, { ...observed, ...patch })); refusals++;
+  }
 }
 assert.equal(git('ls-tree', '-z', source.predecessor, '--', ...Object.keys(source.additions)), '',
   'An added source or binary asset has no predecessor record');
@@ -134,17 +157,37 @@ try {
     + '; const pin = source.files[file].baseline; const bytes = execFileSync("git", ["--no-replace-objects", "show", source.predecessor + ":" + file], { maxBuffer: 64 * 1024 * 1024, windowsHide: true });'
     + ' grandStrategyHistoricalRecord(file, { head: { mode: pin.mode, blob: pin.blob }, index: pin.mode + " " + pin.blob + " 0\\t" + file,'
     + ' committed: bytes, physical: bytes, regular: true, symbolic: false });';
+  const currentRecordScript = ending => 'import { execFileSync } from "node:child_process"; import { GRAND_STRATEGY_SOURCE as source, grandStrategyHistoricalRecord } from '
+    + JSON.stringify(new URL('../tools/grand-strategy-source-transfer.js', import.meta.url).href)
+    + '; import { ageRemovalHistoricalRecord } from ' + JSON.stringify(new URL('../tools/age-removal-source-transfer.js', import.meta.url).href)
+    + '; const file = ' + JSON.stringify(observedFile)
+    + '; const pin = source.files[file].current; const bytes = execFileSync("git", ["--no-replace-objects", "show", "HEAD:" + file], { maxBuffer: 64 * 1024 * 1024, windowsHide: true });'
+    + ' const physical = ' + (ending === 'LF' ? 'bytes' : 'Buffer.from(bytes.toString("utf8").replaceAll("\\n", "\\r\\n"))') + ';'
+    + ' for (const qualify of [grandStrategyHistoricalRecord, ageRemovalHistoricalRecord]) qualify(file, { head: { mode: pin.mode, blob: pin.blob }, index: pin.mode + " " + pin.blob + " 0\\t" + file,'
+    + ' committed: bytes, physical, regular: true, symbolic: false });';
   assert.equal(child(environment).status, 0, 'Genuine closed source succeeds in an isolated checkout');
   assert.equal(child(environment, historicalScript).status, 0, 'Historical tuples are idempotent only after genuine current admission');
+  for (const physical of [observed.committed, Buffer.from(observed.committed.toString('utf8').replaceAll('\n', '\r\n'))]) {
+    fs.writeFileSync(path.join(temporary, observedFile), physical);
+    for (const ending of ['LF', 'CRLF']) {
+      assert.equal(child(environment, currentRecordScript(ending)).status, 0,
+        'Genuine LF/CRLF disk bytes admit either whole supplied representation through the historical chain'); positives += 2;
+    }
+  }
+  fs.writeFileSync(path.join(temporary, observedFile), observed.physical);
   fs.appendFileSync(path.join(temporary, observedFile), 'x');
   const changed = child(environment); assert.notEqual(changed.status, 0); assert.match(changed.stderr, /Physical source/); refusals++;
   const forgedPrior = child(environment, historicalScript); assert.notEqual(forgedPrior.status, 0);
   assert.match(forgedPrior.stderr, /Physical source/); refusals++;
+  const forgedCurrent = child(environment, currentRecordScript('LF')); assert.notEqual(forgedCurrent.status, 0);
+  assert.match(forgedCurrent.stderr, /Physical source/); refusals++;
   fs.writeFileSync(path.join(temporary, observedFile), observed.physical);
   const changedIndex = child({ ...environment, GIT_INDEX_FILE: path.join(temporary, 'empty-index') });
   assert.notEqual(changedIndex.status, 0); assert.match(changedIndex.stderr, /stage-zero index/); refusals++;
   const forgedIndex = child({ ...environment, GIT_INDEX_FILE: path.join(temporary, 'empty-index') }, historicalScript);
   assert.notEqual(forgedIndex.status, 0); assert.match(forgedIndex.stderr, /stage-zero index/); refusals++;
+  const forgedCurrentIndex = child({ ...environment, GIT_INDEX_FILE: path.join(temporary, 'empty-index') }, currentRecordScript('LF'));
+  assert.notEqual(forgedCurrentIndex.status, 0); assert.match(forgedCurrentIndex.stderr, /stage-zero index/); refusals++;
 } finally {
   assert(path.resolve(temporary).startsWith(path.resolve(os.tmpdir()) + path.sep) && path.basename(temporary).startsWith('omerta-grand-source-'));
   fs.rmSync(temporary, { recursive: true, force: true });

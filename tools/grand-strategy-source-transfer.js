@@ -244,8 +244,11 @@ export function grandStrategyHistoricalRecord(file, actual) {
     return actual;
   }
   assert.deepEqual(actual.head, genuine.head); assert.equal(actual.index, genuine.index);
-  assert(actual.committed.equals(genuine.committed) && actual.physical.equals(genuine.physical),
-    'The complete supplied tuple must equal genuine current Git/index/physical source');
+  assert(actual.committed.equals(genuine.committed),
+    'The complete supplied committed source must equal genuine current Git source');
+  assert(actual.physical.equals(genuine.committed)
+    || actual.physical.equals(Buffer.from(genuine.committed.toString('utf8').replaceAll('\n', '\r\n'))),
+    'The complete supplied physical source must equal whole genuine HEAD in LF or uniform CRLF');
   const before = Buffer.from(baselineText(file, actual.committed).restored);
   return { head: { mode: row.baseline.mode, blob: row.baseline.blob }, index: entry(file, row.baseline, 'index'),
     committed: before, physical: before, regular: true, symbolic: false };
