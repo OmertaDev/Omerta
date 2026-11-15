@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `c1810ab52c82`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `e97d01101ba0`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 5863 |
+| Commits in clone | 5867 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-11-15 — test(release): refresh final native input bindings |
+| Latest commit | 2026-11-15 — chore: refresh native inputs for corrected source verifier |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 4726 |
+| OmertaDev | 4730 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 154 |
@@ -31,10 +31,10 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 978 | historical |
-| knowledge/generated/graph-summary.md | 978 | historical |
-| knowledge/generated/graph.json | 978 | historical |
-| knowledge/generated/inventory.md | 978 | historical |
+| knowledge/generated/github-history.md | 979 | historical |
+| knowledge/generated/graph-summary.md | 979 | historical |
+| knowledge/generated/graph.json | 979 | historical |
+| knowledge/generated/inventory.md | 979 | historical |
 | [SPEC.md](../../SPEC.md) | 664 | yes |
 | [public/index.html](../../public/index.html) | 517 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
@@ -61,7 +61,7 @@
 | [src/social.js](../../src/social.js) | 125 | yes |
 | [public/wiki.html](../../public/wiki.html) | 105 | yes |
 | [src/agentgateway.js](../../src/agentgateway.js) | 104 | yes |
-| [tools/enterprise-native-questing-inputs.js](../../tools/enterprise-native-questing-inputs.js) | 98 | yes |
+| [tools/enterprise-native-questing-inputs.js](../../tools/enterprise-native-questing-inputs.js) | 99 | yes |
 | [test/levers.js](../../test/levers.js) | 98 | yes |
 | [test/growth.js](../../test/growth.js) | 97 | yes |
 | [test/migrate.js](../../test/migrate.js) | 95 | yes |
