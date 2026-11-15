@@ -4,7 +4,7 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "ACTUAL_CURRENT_QUESTING_ENTERPRISE_NATIVE_INPUTS",
-  "authoredRevision": "11d7c72dbcd68387d680225eea9a57b5cc7b7d6c",
+  "authoredRevision": "685746cf529f4c761852f232a90ebabe6d7f43fc",
   "predecessorDefinitionSha256": "6b9128d3311945fc511748f852803354ac415a23082b6b5ce017980a2b7596bf",
   "proofInventorySha256": "3fd878600cd363ebdd9d89bb59b7cc3de7650f895062d83711b2bd1774c298e9",
   "files": [
@@ -3803,8 +3803,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "public/index.html",
       "mode": "100644",
-      "blob": "f98d4d5ea621922af28ba4de0c39e8383d460a3a",
-      "sha256": "376b65ecc98f7daaec1aa1117cba9c01990fe280e39f09c89d2283d8ba143c78"
+      "blob": "fe80e058bf517ca60ae0af3dee0d53630e994cd1",
+      "sha256": "08c3ccd59f719b11f9609c463a9bb979a1c0678ec1ab3b63fc121e6a8c00d662"
     },
     {
       "file": "public/invite.html",
@@ -3833,8 +3833,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "public/sw.js",
       "mode": "100644",
-      "blob": "ce01893c73ab21a7f2186e0325246aa99993d916",
-      "sha256": "d1cf7d3bc7ed9433aaa27652d9a29327e6d26ce4aa646ebffe989150def25427"
+      "blob": "c4c935ca3f3d3e84be8e17a10a40bcfd52078147",
+      "sha256": "8ef62d933242c6b03bbc84a230e9637ade26e3616ba3d1a26694037dcc10ec6f"
     },
     {
       "file": "public/vendor/phaser.js",
@@ -6803,8 +6803,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "src/server.js",
       "mode": "100644",
-      "blob": "0cc69dcc0d6e46ff54c699e3b6091eea4c088020",
-      "sha256": "0eec1fe0dc4797c823f07460c2da2e2de9c4f47d56dbc7fbcdc5067ac1736048"
+      "blob": "c0b381e05fd9e6029394a8cdd7449c7d30e2a8ef",
+      "sha256": "248f866dd1269e350f92a5aeb2e5c7978741b9b42994f9e2b1a1268a37b7ffdc"
     },
     {
       "file": "src/servicesubscriptions.js",
@@ -11271,6 +11271,12 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       "sha256": "5e5ed54d2b304821d9831977725a993f1638bb8f117efa9afe2e06c6f1757449"
     },
     {
+      "file": "test/grand-strategy-source-transfer.js",
+      "mode": "100644",
+      "blob": "e9dde3aeef0b44d2385d6d93d64121753fab8801",
+      "sha256": "c026467571bb8218dc2db089786ef6962d2b9c56ffff23f7b93f1e6728febad8"
+    },
+    {
       "file": "test/lib/age-removal-source-transfer-proof.js",
       "mode": "100644",
       "blob": "2ffe3665c2e4d69a528a4d211a9d4ba7e968aeca",
@@ -11339,8 +11345,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/ui-trim-source-transfer.js",
       "mode": "100644",
-      "blob": "550e5118db78a7884d7560e9289c45076cf73c79",
-      "sha256": "95f63b4dc5263e92bf29d4751f25b10420dfb8ae92a68d18bc7899ccd09b1460"
+      "blob": "facf8403080eec2811d64e3f39c69a50b81d2e08",
+      "sha256": "18294434af12ca337c139e3248e86b7ccec3ddfdb7f5eeebc55dcd2a5fe75498"
     },
     {
       "file": "tools/age-removal-source-data.js",
@@ -11383,6 +11389,18 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       "mode": "100644",
       "blob": "c26921c9545e76d1d89828b9803ffac92ad3877c",
       "sha256": "57dca16e3c3cfd6b4fd11773892fb1ab0db48efa095e5c4cff138e27d538fa34"
+    },
+    {
+      "file": "tools/grand-strategy-source-data.js",
+      "mode": "100644",
+      "blob": "2ae7f14b44b0e03aba9407c8fd97239a13b9287e",
+      "sha256": "151574b14b79b372b13b1a9d5b36b25cc0691c600cd61d92efc425e7d943b884"
+    },
+    {
+      "file": "tools/grand-strategy-source-transfer.js",
+      "mode": "100644",
+      "blob": "6d93babd8cac7e096c1954ad16149b80e7ec6f23",
+      "sha256": "c20c2bb7f92043240becd60d8d8b865c7d2acb5334c2a95e8c648fac87535643"
     },
     {
       "file": "tools/install-foundry-verified.sh",
@@ -11441,8 +11459,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/ui-trim-source-transfer.js",
       "mode": "100644",
-      "blob": "9c945ce955466a74c77d75129db74d050117400d",
-      "sha256": "546b1b133304d2e211ff46f27c23ea0724f073292ef5dd0ef43a545a31e26abe"
+      "blob": "a814a76a020f76e01fff3091db58a43041206199",
+      "sha256": "90d0ef945722b81c3faa5136d82f36c6f1cd45d8fd314c9eeb0bf0b25a9e07cc"
     }
   ],
   "replacements": [
@@ -11547,8 +11565,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       "after": {
         "file": "public/index.html",
         "mode": "100644",
-        "blob": "f98d4d5ea621922af28ba4de0c39e8383d460a3a",
-        "sha256": "376b65ecc98f7daaec1aa1117cba9c01990fe280e39f09c89d2283d8ba143c78"
+        "blob": "fe80e058bf517ca60ae0af3dee0d53630e994cd1",
+        "sha256": "08c3ccd59f719b11f9609c463a9bb979a1c0678ec1ab3b63fc121e6a8c00d662"
       }
     },
     {
@@ -11607,8 +11625,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       "after": {
         "file": "public/sw.js",
         "mode": "100644",
-        "blob": "ce01893c73ab21a7f2186e0325246aa99993d916",
-        "sha256": "d1cf7d3bc7ed9433aaa27652d9a29327e6d26ce4aa646ebffe989150def25427"
+        "blob": "c4c935ca3f3d3e84be8e17a10a40bcfd52078147",
+        "sha256": "8ef62d933242c6b03bbc84a230e9637ade26e3616ba3d1a26694037dcc10ec6f"
       }
     },
     {
@@ -11997,8 +12015,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       "after": {
         "file": "src/server.js",
         "mode": "100644",
-        "blob": "0cc69dcc0d6e46ff54c699e3b6091eea4c088020",
-        "sha256": "0eec1fe0dc4797c823f07460c2da2e2de9c4f47d56dbc7fbcdc5067ac1736048"
+        "blob": "c0b381e05fd9e6029394a8cdd7449c7d30e2a8ef",
+        "sha256": "248f866dd1269e350f92a5aeb2e5c7978741b9b42994f9e2b1a1268a37b7ffdc"
       }
     },
     {
@@ -13078,6 +13096,12 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       "sha256": "5e5ed54d2b304821d9831977725a993f1638bb8f117efa9afe2e06c6f1757449"
     },
     {
+      "file": "test/grand-strategy-source-transfer.js",
+      "mode": "100644",
+      "blob": "e9dde3aeef0b44d2385d6d93d64121753fab8801",
+      "sha256": "c026467571bb8218dc2db089786ef6962d2b9c56ffff23f7b93f1e6728febad8"
+    },
+    {
       "file": "test/lib/age-removal-source-transfer-proof.js",
       "mode": "100644",
       "blob": "2ffe3665c2e4d69a528a4d211a9d4ba7e968aeca",
@@ -13146,8 +13170,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "test/ui-trim-source-transfer.js",
       "mode": "100644",
-      "blob": "550e5118db78a7884d7560e9289c45076cf73c79",
-      "sha256": "95f63b4dc5263e92bf29d4751f25b10420dfb8ae92a68d18bc7899ccd09b1460"
+      "blob": "facf8403080eec2811d64e3f39c69a50b81d2e08",
+      "sha256": "18294434af12ca337c139e3248e86b7ccec3ddfdb7f5eeebc55dcd2a5fe75498"
     },
     {
       "file": "tools/age-removal-source-data.js",
@@ -13190,6 +13214,18 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
       "mode": "100644",
       "blob": "c26921c9545e76d1d89828b9803ffac92ad3877c",
       "sha256": "57dca16e3c3cfd6b4fd11773892fb1ab0db48efa095e5c4cff138e27d538fa34"
+    },
+    {
+      "file": "tools/grand-strategy-source-data.js",
+      "mode": "100644",
+      "blob": "2ae7f14b44b0e03aba9407c8fd97239a13b9287e",
+      "sha256": "151574b14b79b372b13b1a9d5b36b25cc0691c600cd61d92efc425e7d943b884"
+    },
+    {
+      "file": "tools/grand-strategy-source-transfer.js",
+      "mode": "100644",
+      "blob": "6d93babd8cac7e096c1954ad16149b80e7ec6f23",
+      "sha256": "c20c2bb7f92043240becd60d8d8b865c7d2acb5334c2a95e8c648fac87535643"
     },
     {
       "file": "tools/install-foundry-verified.sh",
@@ -13248,9 +13284,9 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/ui-trim-source-transfer.js",
       "mode": "100644",
-      "blob": "9c945ce955466a74c77d75129db74d050117400d",
-      "sha256": "546b1b133304d2e211ff46f27c23ea0724f073292ef5dd0ef43a545a31e26abe"
+      "blob": "a814a76a020f76e01fff3091db58a43041206199",
+      "sha256": "90d0ef945722b81c3faa5136d82f36c6f1cd45d8fd314c9eeb0bf0b25a9e07cc"
     }
   ]
 });
-export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "74e83662db254950b2458bd4756d54ebbb848366782a0a7083b415520a2fd649";
+export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "3773bc912aec5db9d616ad2c2a02b1b6b4abe75b2b09cbdc1245685ce0b127f9";
