@@ -118,6 +118,7 @@ export const GRAND_STRATEGY_GENERATED_FILES = Object.freeze([
   'tools/grand-strategy-source-data.js',
   'knowledge/generated/graph.json', 'knowledge/generated/graph-summary.md',
   'knowledge/generated/github-history.md', 'knowledge/generated/inventory.md',
+  'knowledge/generated/modules.md', 'knowledge/generated/routes.md',
   'tools/enterprise-native-questing-inputs.js',
   'docs/questing-workgraph.json', 'docs/quest-quality-workgraph.json',
 ]);
