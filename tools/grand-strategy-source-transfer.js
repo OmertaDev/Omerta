@@ -110,6 +110,7 @@ export const GRAND_STRATEGY_RELEASE_FILES = Object.freeze([
 ]);
 
 export const GRAND_STRATEGY_PROOF_FILES = Object.freeze([
+  '.github/workflows/ui-trim-source.yml',
   'tools/grand-strategy-source-data.js', 'tools/grand-strategy-source-transfer.js',
   'tools/grand-strategy-source-seal.js', 'test/grand-strategy-source-transfer.js',
   'tools/ui-trim-source-transfer.js', 'test/ui-trim-source-transfer.js',
