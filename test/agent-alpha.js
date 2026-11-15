@@ -2652,7 +2652,108 @@ async function progressionRoleAndLevelStopTest() {
   });
 }
 
-if (process.argv.includes('--decision-recovery')) {
+async function crimeMinigameApi({ dropFirst = false, staleFirst = false,
+  challengePath = '/v1/crimes/pick/challenge?approach=standard' } = {}) {
+  const app = Fastify({ logger: false }), receipts = new Map();
+  const state = { turnCalls: 0, challengeCalls: 0, actBodies: [], actKeys: [], mutations: 0 };
+  const rounds = [[0, 1, 2], [3, 0, 1, 2], [1, 2, 3, 0, 1]];
+  app.get('/v1/session', async () => ({ authed: true, hasCharacter: true, agent: true,
+    character: { id: 'crime-agent', name: 'Alpha Machine', generation: 1 } }));
+  app.get('/v1/agent/turn', async () => {
+    state.turnCalls++;
+    return { turnId: `crime-turn-${state.turnCalls}`, recommendedActionId: 'crime:pick:standard', policy: POLICY,
+      actions: [{ id: 'crime:pick:standard', kind: 'crime', method: 'POST', path: '/v1/crimes/pick',
+        body: { approach: 'standard', prompt: 'do not persist authored bodies' }, executable: true,
+        minigame: { required: true, kind: 'signal-lock', challengePath } }] };
+  });
+  app.get('/v1/crimes/pick/challenge', async () => {
+    state.challengeCalls++;
+    return { minigame: { kind: 'signal-lock', token: `signal-token-secret-${state.challengeCalls}`,
+      rounds, maxMistakes: 3, expiresAt: new Date(Date.now() + 300000).toISOString() } };
+  });
+  app.post('/v1/agent/act', async (req, reply) => {
+    state.actBodies.push(req.body); state.actKeys.push(req.headers['idempotency-key']);
+    if (!req.body.minigame) return reply.code(400).send({ error: 'crime_minigame_required' });
+    if (staleFirst && state.actBodies.length === 1) return reply.code(400).send({ error: 'stale_crime_minigame' });
+    assert.deepEqual(req.body.minigame.moves, rounds.flat(), 'the runner submits the complete public signal');
+    const key = req.headers['idempotency-key'];
+    if (!receipts.has(key)) {
+      state.mutations++;
+      receipts.set(key, { result: { ok: true }, turn: { turnId: 'idle', recommendedActionId: null, policy: POLICY, actions: [] } });
+    }
+    if (dropFirst && state.actBodies.length === 1) { reply.hijack(); reply.raw.destroy(); return; }
+    return receipts.get(key);
+  });
+  await app.listen({ port: 0, host: '127.0.0.1' });
+  return { baseUrl: `http://127.0.0.1:${app.server.address().port}`, state, rounds, close: () => app.close() };
+}
+
+async function crimeMinigameRecoveryTest() {
+  const api = await crimeMinigameApi({ dropFirst: true });
+  await withReadySession(api, 'omerta-agent-alpha-crime-', async ({ sessionFile, reportFile }) => {
+    const inspectFetch = async (url, options) => {
+      if (new URL(url).pathname === '/v1/agent/act') {
+        const pending = JSON.parse(await readFile(sessionFile, 'utf8')).pending;
+        const body = JSON.parse(options.body);
+        assert.deepEqual(pending.minigame, body.minigame, 'the exact minigame is durable before every POST');
+        assert.deepEqual(Object.keys(pending).sort(), ['actionId', 'minigame', 'operationId', 'startedAt', 'turnId']);
+      }
+      return fetch(url, options);
+    };
+    await assert.rejects(runAgentAlpha({ baseUrl: api.baseUrl, sessionFile, reportFile, maxActions: 1,
+      fetchImpl: inspectFetch }), /fetch|socket|other side|terminated/i);
+    const pending = JSON.parse(await readFile(sessionFile, 'utf8')).pending;
+    assert.deepEqual(pending.minigame, { token: 'signal-token-secret-1', moves: api.rounds.flat() });
+    const resumed = await runAgentAlpha({ baseUrl: api.baseUrl, sessionFile, reportFile, maxActions: 1,
+      fetchImpl: inspectFetch });
+    assert.equal(resumed.actions, 1);
+    assert.equal(api.state.challengeCalls, 1, 'an ambiguous replay never fetches or substitutes another challenge');
+    assert.equal(api.state.turnCalls, 1, 'pending recovery uses its original turn');
+    assert.deepEqual(api.state.actBodies[0], api.state.actBodies[1]);
+    assert.equal(api.state.actKeys[0], api.state.actKeys[1]);
+    assert.equal(api.state.mutations, 1, 'the replay confirms exactly one committed crime');
+    assert.equal(JSON.parse(await readFile(sessionFile, 'utf8')).pending, null);
+    const report = await readFile(reportFile, 'utf8');
+    assert(!report.includes('signal-token-secret') && !report.includes('do not persist authored bodies'),
+      'minigame credentials and authored action bodies stay out of reports');
+  });
+}
+
+async function crimeMinigameStaleTest() {
+  for (const legacy of [false, true]) {
+    const api = await crimeMinigameApi({ staleFirst: !legacy });
+    await withReadySession(api, 'omerta-agent-alpha-crime-stale-', async ({ sessionFile, reportFile }) => {
+      if (legacy) await writePrivateSession(sessionFile, JSON.stringify(sessionFor(api.baseUrl, {
+        pending: { operationId: 'old-crime-attempt', turnId: 'old-turn', actionId: 'crime:pick:standard', startedAt: new Date().toISOString() },
+      })));
+      const summary = await runAgentAlpha({ baseUrl: api.baseUrl, sessionFile, reportFile, maxActions: 2 });
+      assert.equal(summary.actions, 1, 'a definitive minigame refusal refreshes authority within the attempt budget');
+      assert.equal(api.state.mutations, 1);
+      assert.notEqual(api.state.actKeys[0], api.state.actKeys[1], 'a replacement challenge starts a new logical attempt');
+      assert.equal(api.state.challengeCalls, legacy ? 1 : 2);
+      assert.equal(JSON.parse(await readFile(sessionFile, 'utf8')).pending, null);
+      const report = await readFile(reportFile, 'utf8');
+      assert(report.includes(legacy ? 'crime_minigame_required' : 'stale_crime_minigame'));
+    });
+  }
+}
+
+async function crimeMinigameOriginTest() {
+  const api = await crimeMinigameApi({ challengePath: '//attacker.invalid/collect' });
+  await withReadySession(api, 'omerta-agent-alpha-crime-origin-', async ({ sessionFile, reportFile }) => {
+    await assert.rejects(runAgentAlpha({ baseUrl: api.baseUrl, sessionFile, reportFile, maxActions: 1 }),
+      /unsupported crime minigame/);
+    assert.equal(api.state.challengeCalls, 0);
+    assert.equal(api.state.actBodies.length, 0, 'an invalid challenge path cannot cause a mutation');
+    assert.equal(JSON.parse(await readFile(sessionFile, 'utf8')).pending, null);
+  });
+}
+
+if (process.argv.includes('--crime-minigame')) {
+  await crimeMinigameRecoveryTest();
+  await crimeMinigameStaleTest();
+  await crimeMinigameOriginTest();
+} else if (process.argv.includes('--decision-recovery')) {
   await decisionAnnotationTest();
   await hardCrashReplayTest({ decisionCall: true });
 } else if (process.argv.includes('--supplier-continuity')) {
@@ -2701,5 +2802,8 @@ await freshAuthorityAfterCadenceTest();
 await legacyBootstrapDomainTest();
 await initialCharacterRateBackoffTest();
 await progressionRoleAndLevelStopTest();
+await crimeMinigameRecoveryTest();
+await crimeMinigameStaleTest();
+await crimeMinigameOriginTest();
 }
 console.log('agent-alpha tests passed');

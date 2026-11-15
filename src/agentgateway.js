@@ -322,6 +322,11 @@ export const COORDINATION_SCHEMAS = {
 // The first strict contracts cover the autonomous hot path. The route registry still guarantees
 // COMPLETE path discovery; these overlays replace its generic object body where the server itself
 // emits an action that an agent is expected to send back verbatim.
+const CRIME_MINIGAME_SUBMISSION = { type: 'object', additionalProperties: false, required: ['token', 'moves'], properties: {
+  token: { type: 'string', maxLength: 2048 },
+  moves: { type: 'array', maxItems: 64, items: { type: 'integer', minimum: 0, maximum: 3 } },
+} };
+
 const OPERATION_CONTRACTS = {
   ...TASK_PUZZLE_CONTRACTS,
   ...QUESTING_CONTRACTS,
@@ -715,6 +720,7 @@ const OPERATION_CONTRACTS = {
     requestSchema: { type: 'object', additionalProperties: false, required: ['turnId', 'actionId'], properties: {
       turnId: { type: 'string', pattern: '^turn_[0-9a-f]{64}$' }, actionId: { type: 'string', minLength: 1 },
       decisionCallId: { type: 'string', pattern: '^[A-Za-z0-9_-]{1,128}$' },
+      minigame: CRIME_MINIGAME_SUBMISSION,
     } },
     responseSchema: { $ref: '#/components/schemas/AgentActReceipt' },
     extraResponses: { 409: { description: 'stale_turn — use the replacement AgentTurn in the response and choose again.' } },
@@ -740,10 +746,15 @@ const OPERATION_CONTRACTS = {
   'POST /v1/supply-tenders/:id/cancel': { operationId: 'cancelOwnSupplyTender' },
   'POST /v1/crimes/:id': {
     operationId: 'commitCrime',
-    requestSchema: { type: 'object', additionalProperties: false, properties: {
+    requestSchema: { type: 'object', additionalProperties: false, required: ['minigame'], properties: {
       approach: { type: 'string', enum: ['quiet', 'standard', 'loud'], default: 'standard' },
-      puzzle: { ...TASK_PUZZLE_SUBMISSION, description: 'Optional preparation, feedback only. Issue/resume with scope crime and this crime ID. Any committed crime attempt invalidates previous preparations. Omit for ordinary crime; never changes odds or rewards.' },
+      minigame: CRIME_MINIGAME_SUBMISSION,
+      puzzle: { ...TASK_PUZZLE_SUBMISSION, deprecated: true, description: 'Legacy deduction preparation. Does not replace the required minigame or change its score. Any committed crime attempt invalidates previous preparations.' },
     } },
+  },
+  'GET /v1/crimes/:id/challenge': { operationId: 'getCrimeMinigame',
+    requestParameters: [{ name: 'approach', in: 'query', required: false,
+      schema: { type: 'string', enum: ['quiet', 'standard', 'loud'], default: 'standard' } }],
   },
   'POST /v1/market/:id/fill': {
     operationId: 'fillMarketOrder',

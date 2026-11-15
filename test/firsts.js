@@ -1,3 +1,4 @@
+import { injectWithCrimeMinigame } from './crime-fixture.js';
 // THE FIRSTS (omerta-scarcity-design.md §1) — the trophy that can only ever be won once.
 //
 // What this file proves, in the order it matters:
@@ -25,7 +26,7 @@ const call = async (method, url, { token, body, key } = {}) => {
   const headers = {};
   if (token) headers.authorization = `Bearer ${token}`;
   if (key) headers['x-mod-key'] = key;
-  const res = await app.inject({ method, url, headers, payload: body });
+  const res = await injectWithCrimeMinigame(app, { method, url, headers, payload: body });
   return { code: res.statusCode, body: res.json() };
 };
 const meOf = async (t) => (await call('GET', '/v1/me', { token: t })).body.character;

@@ -10,13 +10,13 @@ The census below records the combined release source inventory measured on 2026-
 
 Counts were measured for the combined release source on 2026-11-07, before generated release records; they do not identify a deployed revision.
 
-File counts include the combined playtest fixes, quest-quality additions and task puzzles as of 2026-11-10. Backend, test and schema line totals were refreshed for task puzzles; other line totals retain the 2026-11-07 snapshot.
+File counts include the required crime minigame as of 2026-11-15. Backend and test line totals were refreshed for this change; other line totals retain their recorded snapshots.
 
 | | |
 |---|---|
-| Backend modules | **622** files, **142384** lines (recursive source inventory) |
-| Test suites | **1048** files, **220052** lines (recursive source inventory; this row refreshed 2026-11-15) |
-| HTTP routes | **1401** registrations (**1401** unique; 1277 under `/v1`) |
+| Backend modules | **623** files, **142551** lines (recursive source inventory) |
+| Test suites | **1052** files, **220452** lines (recursive source inventory; this row refreshed 2026-11-15) |
+| HTTP routes | **1408** registrations (**1408** unique; 1278 under `/v1`) |
 | Database tables | **586** (`schema.sql`, 9848 lines) |
 | Client | **14683** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |
 | Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |

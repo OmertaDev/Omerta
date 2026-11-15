@@ -51,16 +51,25 @@ async function localApi() {
       actions: [{
         id: 'crime:pick:standard', kind: 'crime', method: 'POST', path: '/v1/crimes/pick',
         body: { approach: 'standard' }, executable: true,
+        minigame: { required: true, kind: 'signal-lock', challengePath: '/v1/crimes/pick/challenge?approach=standard' },
       }, {
         id: 'crew:open', kind: 'crew_recruiting', method: 'POST', path: '/v1/crew/recruiting',
         body: { on: true }, executable: true,
       }],
     }));
-    if (req.url === '/v1/agent/act') return res.end(JSON.stringify({
-      actionId: raw ? JSON.parse(raw).actionId : null,
-      result: { ok: true },
-      turn: { turnId: 'turn_next', recommendedActionId: null, actions: [] },
+    if (req.url === '/v1/crimes/pick/challenge?approach=standard') return res.end(JSON.stringify({
+      minigame: { token: 'issued-signal-token', rounds: [[0, 1, 2], [3, 0, 1, 2], [1, 2, 3, 0, 1]] },
     }));
+    if (req.url === '/v1/agent/act') {
+      const action = raw ? JSON.parse(raw) : {};
+      if (action.actionId?.startsWith('crime:') && !action.minigame) {
+        res.statusCode = 400;
+        return res.end(JSON.stringify({ error: 'crime_minigame_required' }));
+      }
+      if (state.dropNextAgentAct) { state.dropNextAgentAct = false; res.destroy(); return; }
+      return res.end(JSON.stringify({ actionId: action.actionId, result: { ok: true },
+        turn: { turnId: 'turn_next', recommendedActionId: null, actions: [] } }));
+    }
     res.end(JSON.stringify({ ok: true }));
   });
   await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
@@ -111,6 +120,7 @@ async function mcpProcess(base, sessionFile) {
   child.stdin.write(`${JSON.stringify({ jsonrpc: '2.0', method: 'notifications/initialized' })}\n`);
   return {
     serverInfo: init.result.serverInfo,
+    async listTools() { return (await request('tools/list', {})).result.tools; },
     async call(name, args = {}) {
       const reply = await request('tools/call', { name, arguments: args });
       if (reply.error) throw new Error(JSON.stringify(reply.error));
@@ -158,15 +168,42 @@ try {
 
   const turn = await mcp.call('omerta_turn');
   assert.equal(turn.body?.actions?.[0]?.id, 'crime:pick:standard', 'the MCP exposes the compact agent turn');
-  const acted = await mcp.call('omerta_act', { operationId: 'turn-action-1' });
+  const descriptor = turn.body.actions[0];
+  assert.equal(descriptor.minigame.required, true, 'crime descriptors expose the required challenge');
+  const actTool = (await mcp.listTools()).find(tool => tool.name === 'omerta_act');
+  assert.deepEqual(actTool.inputSchema.properties.minigame, {
+    type: 'object', additionalProperties: false, required: ['token', 'moves'], properties: {
+      token: { type: 'string', maxLength: 2048 },
+      moves: { type: 'array', maxItems: 64, items: { type: 'integer', minimum: 0, maximum: 3 } },
+    }, description: 'Required for crime actions. Submit the issued token and your complete move sequence; preserve both unchanged for a retry.',
+  }, 'the named tool advertises the same bounded submission as the game API');
+  const missingGame = await mcp.call('omerta_act', { operationId: 'turn-missing-game' });
+  assert.equal(missingGame.body.error, 'crime_minigame_required', 'the bridge leaves enforcement to the server without solving a game');
+  assert.equal(api.requests.some(request => request.path.includes('/challenge')), false, 'omerta_act never fetches or solves a challenge itself');
+  assert.deepEqual(api.requests.find(request => request.path === '/v1/agent/act').body,
+    { turnId: 'turn_current', actionId: descriptor.id }, 'omitted minigame remains omitted on the wire');
+  const issuedGame = (await mcp.call('omerta_request', { method: 'GET', path: descriptor.minigame.challengePath })).body.minigame;
+  const minigame = { token: issuedGame.token, moves: [1, ...issuedGame.rounds.flat()] };
+  api.state.dropNextAgentAct = true;
+  const ambiguous = await mcp.call('omerta_act', { minigame, operationId: 'turn-action-1' });
+  assert.equal(ambiguous.status, 0, 'a lost acknowledgement retains the current turn for an explicit retry');
+  const acted = await mcp.call('omerta_act', { minigame, operationId: ambiguous.operationId });
   assert.equal(acted.status, 200, 'the MCP executes the latest turn\'s server-recommended action when no id is supplied');
-  const turnAction = api.requests.find((r) => r.path === '/v1/agent/act');
-  assert.deepEqual(turnAction.body, { turnId: 'turn_current', actionId: 'crime:pick:standard' },
-    'the MCP delegates execution to the server with the latest snapshot authority');
+  const turnAttempts = api.requests.filter(request => request.path === '/v1/agent/act').slice(-2);
+  const turnAction = turnAttempts[0];
+  assert.deepEqual(turnAction.body, { turnId: 'turn_current', actionId: descriptor.id, minigame },
+    'the MCP forwards the supplied token and every move, including mistakes, without fabricating a score');
+  assert.deepEqual(turnAttempts[1].body, turnAction.body, 'ambiguous retries preserve the exact minigame and turn body');
+  assert.equal(turnAttempts[1].headers['idempotency-key'], turnAction.headers['idempotency-key'],
+    'ambiguous turn retries retain the original idempotency key');
   assert.ok(turnAction.headers['idempotency-key'], 'turn actions retain mutation idempotency protection');
   const staleAction = await mcp.call('omerta_act', { actionId: 'crew:open' });
   assert.equal(staleAction.error, 'unknown_action',
     'a successful mutation invalidates every sibling action so the agent must refresh before acting again');
+  await mcp.call('omerta_turn');
+  await mcp.call('omerta_act', { actionId: 'crew:open', operationId: 'turn-noncrime-1' });
+  assert.deepEqual(api.requests.filter(request => request.path === '/v1/agent/act').at(-1).body,
+    { turnId: 'turn_current', actionId: 'crew:open' }, 'noncrime actions continue to omit the minigame field');
 
   const guestAuths = api.requests.filter((r) => r.path === '/v1/auth/agent').length;
   await mcp.stop();

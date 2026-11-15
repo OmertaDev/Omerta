@@ -1,3 +1,4 @@
+import { injectWithCrimeMinigame } from './crime-fixture.js';
 // SKILLS & SPECIALIZATIONS test — the board, point derivation from level, learn gates
 // (bad/owned/prereq/points), every measurable touchpoint (laylow, heal, listing fee, trunk,
 // crime stint, convoy speed, search clock), respec (ledgered $OMR burn, shared cooldown, points
@@ -20,7 +21,7 @@ import { recordPlayerIntel } from '../src/playerintel.js';
 const app = await buildServer();
 const pool = app.pool;
 const call = async (method, url, { token, body } = {}) => {
-  const res = await app.inject({ method, url,
+  const res = await injectWithCrimeMinigame(app, { method, url,
     headers: token ? { authorization: `Bearer ${token}` } : {}, payload: body });
   return { code: res.statusCode, body: res.json() };
 };

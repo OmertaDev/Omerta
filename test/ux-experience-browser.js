@@ -1,3 +1,4 @@
+import { solveCrimeMinigame } from './crime-fixture.js';
 // Real-page UX integration against a disposable in-process database.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -102,6 +103,7 @@ try {
   try {
     Math.random = () => .01;
     await page.locator('#tab-streets [data-do^="POST /v1/crimes/"][data-body*=standard]:enabled').first().click();
+    await solveCrimeMinigame(page);
     const response = await actionResponse; assert.equal(response.status(), 200); result = await response.json();
   } finally { Math.random = originalRandom; }
   assert.equal(result.success, true, 'the disposable fixture produces a real successful job');

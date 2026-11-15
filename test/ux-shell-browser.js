@@ -1,3 +1,4 @@
+import { solveCrimeMinigame } from './crime-fixture.js';
 // Real-page navigation and onboarding checks against a disposable database.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -301,6 +302,7 @@ try {
   assert.equal(await primary.evaluate(element => element === document.activeElement), true, 'The ordinary crime remains keyboard reachable after repeated preparation and navigation');
   const ordinaryAttempt = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.startsWith('/v1/crimes/'));
   await page.keyboard.press('Enter');
+  await solveCrimeMinigame(page);
   assert.equal((await ordinaryAttempt).status(), 200, 'Keyboard activation reaches the real ordinary crime endpoint');
   assert.equal(crimeRequests.length, 1, 'One keyboard activation attempts exactly one ordinary crime');
   assert.deepEqual(faults, [], 'the redesigned shell introduces no runtime failures');

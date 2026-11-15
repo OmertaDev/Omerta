@@ -1442,9 +1442,10 @@ assert.equal(cappedFavorRun.code, 200,
     const strictTurn = (await call('GET', '/v1/agent/turn', { token: strictAgent })).body;
     const strictCrime = strictTurn.actions.find((action) => action.kind === 'crime');
     assert.ok(strictCrime, 'the strict-client Agent Turn fixture has one executable mutation');
+    const lock = (await call('GET', strictCrime.minigame.challengePath, { token: strictAgent })).body.minigame;
     const strictAct = await call('POST', '/v1/agent/act', {
       token: strictAgent, idempotencyKey: 'explore-strict-client-agent-act',
-      body: { turnId: strictTurn.turnId, actionId: strictCrime.id },
+      body: { turnId: strictTurn.turnId, actionId: strictCrime.id, minigame: { token: lock.token, moves: lock.rounds.flat() } },
     });
     assert.equal(strictAct.code, 200,
       'Agent Turn authorization and its post-action response never overlap one transaction client');

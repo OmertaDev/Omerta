@@ -1,3 +1,4 @@
+import { injectWithCrimeMinigame } from './crime-fixture.js';
 // THE TRADES (mastery expansion, step one) — the use-XP board, the funnel firing at real hook
 // sites (a pulled job, a dice play), level-ups notified, the account-level legend mirroring every
 // point, DEATH (levels die; the heir inherits HEIR_KEEP_BPS of each track's XP; the legend
@@ -13,7 +14,7 @@ import { runLedgerInvariants } from '../src/invariants.js';
 const app = await buildServer();
 const pool = app.pool;
 const call = async (method, url, { token, body } = {}) => {
-  const res = await app.inject({ method, url,
+  const res = await injectWithCrimeMinigame(app, { method, url,
     headers: token ? { authorization: `Bearer ${token}` } : {}, payload: body });
   return { code: res.statusCode, body: res.json() };
 };

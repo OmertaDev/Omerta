@@ -48,14 +48,15 @@ export function previewSkillAllocation(ch, h, proposed) {
 // doCrime currently keeps this expression inside its mutation. This named mirror is
 // parity-tested at real doCrime roll boundaries, payouts and jail terms in ux-tactics.js.
 // Levers and all stat/perk helpers come from their authoritative implementations.
-export function quoteCrime(ch, h, crime, approach, second = null) {
+export function quoteCrime(ch, h, crime, approach, second = null, minigame = null) {
   const ap = M3.CRIME_APPROACHES[approach] || M3.CRIME_APPROACHES.standard;
   const lvl = levelOf(amount(ch.respect)), rank = rankIdxOf(lvl), ev = cityEventOf(dayOf());
   const held = new Set([...(h.owned.held || []), ...(h.owned.deedPerk || [])]);
   const stats = Object.fromEntries(['muscle', 'cunning', 'speed'].map(stat => [stat, effStat(amount(ch[stat]), stat, h.owned.assets || [], h.owned.gear || [])]));
   const gang = h.owned.gang ? gangLevelOf(h.owned.gang.treasury) * 0.02 : 0;
   const turf = held.has('brick') ? 0.02 : 0, rankBonus = rank >= 9 ? 0.02 : 0;
-  const threshold = Math.min(0.97, (crime.base + stats.cunning * M3.CRIME_STAT.CUN + stats.speed * M3.CRIME_STAT.SPD - M3.CRIME_STAT.OFFSET + gang + turf + rankBonus) * ap.successMult);
+  const minigameMult = minigame?.multiplier ?? 1;
+  const threshold = Math.max(0, Math.min(0.97, (crime.base + stats.cunning * M3.CRIME_STAT.CUN + stats.speed * M3.CRIME_STAT.SPD - M3.CRIME_STAT.OFFSET + gang + turf + rankBonus) * ap.successMult)) * minigameMult;
   const payMult = (held.has('canal') ? 1.1 : 1) * (rank >= 1 ? 1.05 : 1) * (rank >= 8 ? 1.10 : 1)
     * roleMultOf(h.owned.gangRole) * (ev.jobPay || 1) * ap.payMult * (ap.id === 'loud' ? (M3.CRIME_LOUD_CASH_PREMIUM ?? 1) : 1);
   const netTake = raw => { const gross = Math.floor(raw * payMult); return gross - (second ? Math.floor(gross * SOLDIERS.CUT_BPS / 10000) : 0); };
@@ -71,13 +72,16 @@ export function quoteCrime(ch, h, crime, approach, second = null) {
   return {
     id: `${crime.id}:${ap.id}`, crimeId: crime.id, name: crime.name, approach: ap.id, approachName: ap.name,
     path: `/v1/crimes/${crime.id}`, body: { approach: ap.id }, tab: 'streets', minLevel: crime.lvl,
-    cost: { nerve: crime.nerve, energy: 0, cash: 0 }, probability: Math.max(0, threshold), threshold,
+    cost: { nerve: crime.nerve, energy: 0, cash: 0 }, probability: threshold, threshold,
+    minigame: { required: true, kind: 'signal-lock', maxMistakes: 3,
+      chanceMultipliers: [1, 0.85, 0.7, 0], challengePath: `/v1/crimes/${crime.id}/challenge?approach=${ap.id}`,
+      note: 'Shown odds require a perfect minigame. Each mistake reduces those odds by 15%; three mistakes fail the job.' },
     cooldown: { group: 'street', seconds: PACING.STREET_ACTION_CD_MS / 1000,
       readyAt: Date.now() + streetSeconds * 1000 },
     cashRange: { min: netTake(crime.cash[0]), upperBound: netTake(crime.cash[1]), conditional: 'Only on success; upper bound, not a guaranteed reward.' },
     heat: Math.min(100, amount(ch.heat) + ap.heat) - amount(ch.heat), jailSeconds, blockers,
-    formula: { source: 'src/game.js · doCrime', inputs: { base: crime.base, cunning: stats.cunning, speed: stats.speed, gang, turf, rank: rankBonus, successMult: ap.successMult },
-      expression: { op: 'min', args: [0.97, { op: 'mul', args: [{ op: 'add', args: [{ input: 'base' }, { op: 'mul', args: [{ input: 'cunning' }, M3.CRIME_STAT.CUN] }, { op: 'mul', args: [{ input: 'speed' }, M3.CRIME_STAT.SPD] }, -M3.CRIME_STAT.OFFSET, { input: 'gang' }, { input: 'turf' }, { input: 'rank' }] }, { input: 'successMult' }] }] },
+    formula: { source: 'src/game.js · doCrime', inputs: { base: crime.base, cunning: stats.cunning, speed: stats.speed, gang, turf, rank: rankBonus, successMult: ap.successMult, minigameMult },
+      expression: { op: 'mul', args: [{ input: 'minigameMult' }, { op: 'max', args: [0, { op: 'min', args: [0.97, { op: 'mul', args: [{ op: 'add', args: [{ input: 'base' }, { op: 'mul', args: [{ input: 'cunning' }, M3.CRIME_STAT.CUN] }, { op: 'mul', args: [{ input: 'speed' }, M3.CRIME_STAT.SPD] }, -M3.CRIME_STAT.OFFSET, { input: 'gang' }, { input: 'turf' }, { input: 'rank' }] }, { input: 'successMult' }] }] }] }] },
       coefficients: { cunning: M3.CRIME_STAT.CUN, speed: M3.CRIME_STAT.SPD, offset: M3.CRIME_STAT.OFFSET },
     },
     modifiers: [
@@ -85,6 +89,9 @@ export function quoteCrime(ch, h, crime, approach, second = null) {
       { label: 'Effective speed', value: stats.speed, effect: `+${(stats.speed * M3.CRIME_STAT.SPD * 100).toFixed(1)} percentage points before approach` },
       { label: 'Family level', value: gang, effect: 'Added before approach' }, { label: 'Brick turf', value: turf, effect: 'Added once before approach' },
       { label: 'Street rank', value: rankBonus, effect: 'Added before approach' }, { label: 'Approach', value: ap.successMult, effect: 'Multiplier before 97% ceiling' },
+      { label: 'Required minigame', value: minigameMult, effect: minigame
+        ? `${minigame.mistakes} mistakes; success odds multiplied by ${minigameMult} after the ceiling`
+        : 'Shown odds assume a perfect game; mistakes multiply odds by 0.85 or 0.7, and three mistakes fail the job' },
       { label: 'Path', value: pathFx(ch, 'jailStint'), effect: 'Jail duration multiplier; no job success-roll modifier' },
       { label: 'Getaway skill', value: h.owned.skills?.has('getaway') ? SKILLS.FX.JAIL_MULT : 1, effect: 'Jail duration multiplier; no job success-roll modifier' },
       { label: 'Health / law heat', value: null, effect: 'Not inputs to the job success roll. Lockup separately blocks attempts.' },
@@ -201,15 +208,16 @@ export function registerTacticsRoutes(app, { pool, auth, readCharacter }) {
   app.get('/v1/ux/tactics', { preHandler: auth }, req => readCharacter(pool, req.user.sub, (ch, client, h) => tacticsBoard(ch, client, h, req.query)));
 }
 
-export async function crimeWithDecisionContext(ch, crimeId, client, h, approach, puzzle) {
+export async function crimeWithDecisionContext(ch, crimeId, client, h, approach, puzzle, minigame = null) {
   const crime = CRIMES.find(entry => entry.id === crimeId);
   // Preserve the original validation/error contract for unknown actions.
-  if (!crime) return doCrime(ch, crimeId, client, h, approach, puzzle);
-  const projection = quoteCrime(ch, h, crime, approach, await assignedSoldier(client, ch.id));
+  if (!crime) return doCrime(ch, crimeId, client, h, approach, puzzle, minigame);
+  const projection = quoteCrime(ch, h, crime, approach, await assignedSoldier(client, ch.id), minigame);
   const projectedAt = new Date().toISOString();
-  const result = await doCrime(ch, crimeId, client, h, approach, puzzle);
+  const result = await doCrime(ch, crimeId, client, h, approach, puzzle, minigame);
   return { ...result, decisionContext: { crimeId: crime.id, cost: { ...projection.cost },
     probability: projection.probability, modifiers: projection.modifiers,
     jailSecondsOnFailure: projection.jailSeconds, projectedAt, source: projection.formula.source,
-    note: 'Projection immediately before this attempt; a failed roll does not identify one modifier as its cause.' } };
+    note: minigame && !minigame.completed ? 'The minigame failed; this attempt had no chance of success.'
+      : 'Projection immediately before this attempt, including minigame performance; a failed roll does not identify one modifier as its cause.' } };
 }

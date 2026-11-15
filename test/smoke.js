@@ -1,10 +1,11 @@
+import { injectWithCrimeMinigame } from './crime-fixture.js';
 // M1 smoke test: full player journey + ledger invariant. Runs on pg-mem — zero infra.
 import assert from 'node:assert';
 import { buildServer } from './server-fixture.js';
 
 const app = await buildServer();
 const call = async (method, url, { token, body } = {}) => {
-  const res = await app.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload: body });
+  const res = await injectWithCrimeMinigame(app, { method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload: body });
   return { code: res.statusCode, body: res.json() };
 };
 

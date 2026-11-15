@@ -75,6 +75,14 @@ try {
   const heldSql = membership ? 'SELECT gm.gang_id FROM characters c JOIN gang_members gm ON gm.character_id=c.id\n      WHERE c.account_id=$1 AND c.alive=true'
     : 'SELECT name FROM characters WHERE account_id=$1 AND alive';
   if (membership) assert.equal(sha256(heldSql), 'c4ab05947b51c82d1c0f8135cf45716800b5d16601c373e4556ff73a8ffab428', 'Not the retained failing native SQL');
+  let minigame;
+  if (!membership) {
+    const challenge = await app.inject({ method: 'GET', url: '/v1/crimes/' + crime.id + '/challenge?approach=standard',
+      headers: { authorization: 'Bearer ' + actor.token } });
+    assert.equal(challenge.statusCode, 200, challenge.body);
+    const lock = challenge.json().minigame;
+    minigame = { token: lock.token, moves: lock.rounds.flat() };
+  }
   originalQuery = app.pool.query.bind(app.pool);
   let heldResolve, nativeFinished = false, lifecycleFinished = false, heldCount = 0, matchingCount = 0;
   const entered = new Promise(resolve => { heldResolve = resolve; });
@@ -93,7 +101,7 @@ try {
   const completion = String(++sequence);
   const completed = new Promise(resolve => responseCompletions.set(completion, () => { lifecycleFinished = true; events.push('terminal-hook-completed'); resolve(); }));
   const responsePromise = app.inject({ method: 'POST', url: membership ? '/v1/gangs' : '/v1/crimes/' + crime.id,
-    payload: membership ? { name: 'Response Barrier Family', tag: 'RB' } : { approach: 'standard' },
+    payload: membership ? { name: 'Response Barrier Family', tag: 'RB' } : { approach: 'standard', minigame },
     headers: { authorization: 'Bearer ' + actor.token, 'idempotency-key': 'held-original-hook-mutation', 'x-rc1-response-completion': completion } });
   await bounded(entered, 'Exact original response-hook SELECT');
   const response = await bounded(responsePromise, 'HTTP response before held SELECT release');

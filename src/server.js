@@ -228,6 +228,7 @@ import { register as registerUxCommunity } from './ux-community.js';
 import { register as registerUxCoordination } from './ux-coordination.js';
 import { register as registerUxInvestigation } from './ux-investigation.js';
 import { registerTacticsRoutes, crimeWithDecisionContext } from './ux-tactics.js';
+import { crimeChallenge, verifyCrimeMinigame } from './crime-minigame.js';
 import { jobTaskPuzzle, missionPuzzle, crimePuzzle } from './task-puzzle-jobs.js';
 import * as Duels from './duels.js';
 import * as Clues from './clues.js';
@@ -705,7 +706,7 @@ export async function buildServer() {
     ['ux-progression.js', 'application/javascript'], ['ux-progression.css', 'text/css'],
     ['ux-social.js', 'application/javascript'], ['ux-social.css', 'text/css'],
     ['ux-navigation.js', 'application/javascript'], ['ux-navigation.css', 'text/css'],
-    ...['feel', 'tools', 'identity', 'story', 'community', 'quests', 'clues', 'task-puzzles'].flatMap(name => [[`ux-${name}.js`, 'application/javascript'], [`ux-${name}.css`, 'text/css']]),
+    ...['feel', 'tools', 'identity', 'story', 'community', 'quests', 'clues', 'task-puzzles', 'crime-minigame'].flatMap(name => [[`ux-${name}.js`, 'application/javascript'], [`ux-${name}.css`, 'text/css']]),
     ['ux-quest-quality.js', 'application/javascript'], ['ux-quest-quality.css', 'text/css'],
     ['ux-workspace.js', 'application/javascript'], ['ux-world.js', 'application/javascript'], ['ux-world.css', 'text/css'],
     ['ux-tactics.js', 'application/javascript'], ['ux-tactics.css', 'text/css'],
@@ -1860,8 +1861,11 @@ export async function buildServer() {
   });
 
   // ── M1 actions (crimes/gym/doc/checkin/bank/travel) ──
+  app.get('/v1/crimes/:id/challenge', { preHandler: auth }, async (req) =>
+    G.readCharacter(pool, req.user.sub, (ch) => crimeChallenge(ch, req.params.id, req.query?.approach)));
   app.post('/v1/crimes/:id', { preHandler: auth }, async (req) =>
-    G.withCharacter(pool, req.user.sub, (ch, client, h) => crimeWithDecisionContext(ch, req.params.id, client, h, req.body?.approach, req.body?.puzzle)));
+    G.withCharacter(pool, req.user.sub, (ch, client, h) => crimeWithDecisionContext(ch, req.params.id, client, h, req.body?.approach, req.body?.puzzle,
+      verifyCrimeMinigame(ch, req.params.id, req.body?.approach, req.body?.minigame))));
   app.post('/v1/task-puzzles', { preHandler: auth }, async req =>
     G.withCharacter(pool, req.user.sub, (ch, client) => jobTaskPuzzle(ch, req.body, client, true)));
   app.get('/v1/task-puzzles', { preHandler: auth }, async req => {
@@ -2965,10 +2969,11 @@ export async function buildServer() {
   // Execute only the descriptor the server just issued. Validation is repeated while holding the
   // same character lock used by the mutation, so parallel requests cannot both consume one turn.
   // The client submits no method/path/body — those come solely from the freshly recomputed turn.
-  const performAgentAction = async (action, ch, client, h, lender = null, policy = null) => {
+  const performAgentAction = async (action, ch, client, h, lender = null, policy = null, minigame) => {
     const tail = (prefix) => action.path.startsWith(prefix) ? action.path.slice(prefix.length) : null;
     switch (action.kind) {
-      case 'crime': return G.doCrime(ch, tail('/v1/crimes/'), client, h, action.body?.approach, action.body?.puzzle);
+      case 'crime': return crimeWithDecisionContext(ch, tail('/v1/crimes/'), client, h, action.body?.approach, action.body?.puzzle,
+        verifyCrimeMinigame(ch, tail('/v1/crimes/'), action.body?.approach, minigame));
       case 'business_buy': return Business.buyBusiness(ch, tail('/v1/business/').replace(/\/buy$/, ''), client, h);
       case 'business_upkeep': return Business.payBusinessUpkeep(ch, client, h,
         { maxCash: action.cost.cash, minimumReserve: policy.cashReserve });
@@ -3023,13 +3028,13 @@ export async function buildServer() {
       'That action was not issued by this turn. Refresh and choose a current executable action.');
     return { action, current };
   };
-  const executeAgentAction = async (client, ch, h, turnId, actionId, lender = null, decisionCallId = null) => {
+  const executeAgentAction = async (client, ch, h, turnId, actionId, lender = null, decisionCallId = null, minigame) => {
     const { action, current } = await authorizeAgentAction(client, ch, h, turnId, actionId);
     const decision = decisionCallId === null ? null : await validateDecisionCall(client, {
       callId: decisionCallId, accountId: ch.account_id, characterId: ch.id,
       generation: Number(ch.generation), turnId, actionId,
     });
-    const result = await performAgentAction(action, ch, client, h, lender, current.policy);
+    const result = await performAgentAction(action, ch, client, h, lender, current.policy, minigame);
     const decisionProof = decision ? await recordDecisionExecution(client, decision, { actionKind: action.kind, result }) : null;
     const blockerCodes = [...new Set(current.blockedActions.flatMap((candidate) =>
       (candidate.blockedBy || []).map((blocker) => blocker.code)).filter(Boolean))].sort();
@@ -3068,35 +3073,35 @@ export async function buildServer() {
         const advance = (await pool.query("SELECT loan_id FROM delivery_loan_requests WHERE commitment_id=$1 AND state='active'", [financedMatch[1]])).rows[0];
         const creditor = advance?.loan_id && (await pool.query("SELECT lender_character FROM loans WHERE id=$1 AND status='active'", [advance.loan_id])).rows[0]?.lender_character;
         if (creditor) result = await G.withTwoCharacters(pool, req.user.sub, creditor,
-          (ch, lender, client, h) => executeAgentAction(client, ch, h, turnId, actionId, lender, decisionCallId), { meet: false });
+          (ch, lender, client, h) => executeAgentAction(client, ch, h, turnId, actionId, lender, decisionCallId, req.body?.minigame), { meet: false });
         else result = await G.withCharacter(pool, req.user.sub,
-          (ch, client, h) => executeAgentAction(client, ch, h, turnId, actionId, null, decisionCallId), agentActionLocks);
+          (ch, client, h) => executeAgentAction(client, ch, h, turnId, actionId, null, decisionCallId, req.body?.minigame), agentActionLocks);
       } else if (storefrontMatch) {
         const ownerId = (await pool.query("SELECT owner_character FROM business_depots WHERE id=$1 AND status='open'", [storefrontMatch[2]])).rows[0]?.owner_character;
         if (ownerId) {
           result = await G.withTwoCharacters(pool, req.user.sub, ownerId, (ch, owner, client, h) =>
-            executeAgentAction(client, ch, h, turnId, actionId, owner, decisionCallId));
+            executeAgentAction(client, ch, h, turnId, actionId, owner, decisionCallId, req.body?.minigame));
         } else {
           result = await G.withCharacter(pool, req.user.sub, (ch, client, h) =>
-            executeAgentAction(client, ch, h, turnId, actionId, null, decisionCallId), agentActionLocks);
+            executeAgentAction(client, ch, h, turnId, actionId, null, decisionCallId, req.body?.minigame), agentActionLocks);
         }
       } else if (loanMatch && loanMatch[1] !== 'house') {
         const lenderId = (await pool.query(
           "SELECT lender_character FROM loans WHERE id=$1 AND status='active'", [loanMatch[1]])).rows[0]?.lender_character;
         if (lenderId) {
           result = await G.withTwoCharacters(pool, req.user.sub, lenderId, async (ch, lender, client, h) => {
-            return executeAgentAction(client, ch, h, turnId, actionId, lender, decisionCallId);
+            return executeAgentAction(client, ch, h, turnId, actionId, lender, decisionCallId, req.body?.minigame);
           });
         } else {
           // Re-enter the normal locked validator so a disappeared loan reports stale_turn (or an
           // invented id reports unknown_action), rather than leaking an unrelated lookup result.
           result = await G.withCharacter(pool, req.user.sub, async (ch, client, h) => {
-            return executeAgentAction(client, ch, h, turnId, actionId, null, decisionCallId);
+            return executeAgentAction(client, ch, h, turnId, actionId, null, decisionCallId, req.body?.minigame);
           }, agentActionLocks);
         }
       } else {
         result = await G.withCharacter(pool, req.user.sub, async (ch, client, h) => {
-          return executeAgentAction(client, ch, h, turnId, actionId, null, decisionCallId);
+          return executeAgentAction(client, ch, h, turnId, actionId, null, decisionCallId, req.body?.minigame);
         }, agentActionLocks);
       }
     } catch (e) {

@@ -1,3 +1,4 @@
+import { injectWithCrimeMinigame } from './crime-fixture.js';
 // M4 test: the Kitchen (makings → cook → collect → deal, crew sales + raids in
 // accrual, laylow/cleanpapers), paths, trade ranks, heist, missions, daily
 // contracts, First Week (+capstone), referrals (§7.13 incl. agent-recruit exclusion),
@@ -23,7 +24,7 @@ process.env.STANDING_CACHE_MS = '0';
 const app = await buildServer();
 const pool = app.pool;
 const call = async (method, url, { token, body, headers } = {}) => {
-  const res = await app.inject({ method, url, payload: body,
+  const res = await injectWithCrimeMinigame(app, { method, url, payload: body,
     headers: { ...(token ? { authorization: `Bearer ${token}` } : {}), ...(headers || {}) } });
   return { code: res.statusCode, body: res.json() };
 };

@@ -1,3 +1,4 @@
+import { injectWithCrimeMinigame } from './crime-fixture.js';
 // ENGAGEMENT + RETENTION test (the 55th suite) — guards src/engagement.js.
 //
 // The thing that would quietly break this report is catalog drift: someone adds a system, its
@@ -69,7 +70,7 @@ const call = async (method, url, { token, mod, body } = {}) => {
   const headers = {};
   if (token) headers.authorization = `Bearer ${token}`;
   if (mod) headers['x-mod-key'] = 'test-mod-key';
-  const res = await app.inject({ method, url, headers, payload: body });
+  const res = await injectWithCrimeMinigame(app, { method, url, headers, payload: body });
   return { code: res.statusCode, body: res.json() };
 };
 const mk = async (name) => {

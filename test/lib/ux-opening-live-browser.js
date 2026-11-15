@@ -1,3 +1,4 @@
+import { solveCrimeMinigame } from '../crime-fixture.js';
 // The opening journey against the unchanged application page and real disposable API.
 import assert from 'node:assert/strict';
 import { existsSync, mkdtempSync } from 'node:fs';
@@ -90,6 +91,7 @@ export async function runOpeningLiveBrowserProof() {
       Math.random = () => 0.01;
       const result = page.waitForResponse(response => new URL(response.url()).pathname === '/v1/crimes/pick' && response.request().method() === 'POST');
       await page.locator('#tab-streets [data-do="POST /v1/crimes/pick"].prime:enabled').click();
+      await solveCrimeMinigame(page);
       job = await (await result).json();
       assert.equal(job.success, true); assert(job.take > 0);
       await page.waitForFunction(() => document.body.style.cursor !== 'progress');

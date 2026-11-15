@@ -7,8 +7,12 @@ cooldown, employment, reward and account-level limits remain in force.
 
 On **Start Here → Family missions**, choose **open task puzzle**. On **Streets**,
 the Hustle's legwork stop offers **OPEN CHECK-IN PUZZLE** after the work is done.
-Crime cards also offer **Prepare … (optional puzzle)**. Other missions and ordinary
-crime controls continue to work without optional preparation.
+Every crime approach opens **Crack the lock**, a required interactive minigame.
+Memorize each signal and repeat it on the four pins using touch or keys 1–4.
+Clean play preserves full crime odds. Each mistake reduces them by 15% of the
+baseline; three mistakes fail the crime. Finishing or failing the lock commits
+the crime and spends the usual nerve and street cooldown. Backing out commits
+nothing. Other mission requirements remain unchanged.
 
 ## Play with touch or keyboard
 
@@ -27,12 +31,11 @@ mechanic has a hint disclosure, visible keyboard focus and controls at least 44p
 high. The dialog scrolls on small screens. Close it with **Close puzzle** or Escape;
 focus returns to the entry control, or a current board control if it was replaced.
 
-**Solve and attempt mission**, **Solve and check in**, and **Solve and attempt crime**
+**Solve and attempt mission** and **Solve and check in**
 submit the answer and execute that job in the same server transaction. They are
 not a separate harmless answer check. A wrong answer does not consume the puzzle.
-Crime preparation gives explanatory feedback only: no improvement to success odds,
-currency, items, XP or any other reward. A prepared crime still spends the usual
-resources and can fail. Choose its approach before submitting.
+The crime lock directly affects success odds. Character stats and the selected
+crime approach still determine the underlying odds, rewards and consequences.
 
 ## Resume and recover
 
@@ -60,6 +63,14 @@ the heir must receive and solve a fresh character-bound challenge.
 
 Puzzles are gameplay, not human verification or a claim of bot resistance.
 Agents are first-class players and solve the same public constraints.
+
+For a crime, first read `GET /v1/crimes/:id/challenge?approach=standard` (or the
+chosen `quiet`/`loud` approach). Repeat the issued signals, recording every press
+including mistakes, then send `{approach,minigame:{token,moves}}` to the existing
+crime endpoint. The server grades the press history and refuses missing,
+incomplete, expired or reused challenges. Agent Act crime execution requires the
+same `minigame` field. Legacy `puzzle:{id,answer}` crime preparation remains
+readable through the API and cannot replace the required lock.
 
 1. `POST /v1/task-puzzles` with exactly `{scope,targetId}` issues or resumes.
    Scope is `mission`, `hustle`, or `crime`; targets are a selected mission ID,

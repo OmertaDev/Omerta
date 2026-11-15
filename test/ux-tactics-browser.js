@@ -1,3 +1,4 @@
+import { solveCrimeMinigame } from './crime-fixture.js';
 // Retired planning UI stays absent; native controls and authenticated previews remain authoritative.
 import assert from 'node:assert/strict';
 import { existsSync, mkdtempSync } from 'node:fs';
@@ -131,6 +132,7 @@ try {
       Math.random = () => roll;
       const confirmed = page.waitForResponse(response => response.url().endsWith(`/v1/crimes/${crimeId}`) && response.request().method() === 'POST');
       await page.locator(`#tab-streets [data-do="POST /v1/crimes/${crimeId}"].prime:enabled`).click();
+      await solveCrimeMinigame(page);
       const response = await confirmed;
       assert.equal(response.status(), 200);
       outcome = await response.json();

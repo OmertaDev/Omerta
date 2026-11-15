@@ -37,6 +37,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
 import { buildServer } from '../src/server.js';
+import { solveCrimeMinigame } from '../test/crime-fixture.js';
 import { compileContentPack } from '../src/content/compiler.js';
 
 const VIEWPORTS = [
@@ -470,7 +471,9 @@ for (const vp of VIEWPORTS) {
       try {
         const crimeResponse = page.waitForResponse((response) =>
           response.request().method() === 'POST' && new URL(response.url()).pathname.startsWith('/v1/crimes/'));
-        const [, response] = await Promise.all([crime.tap(), crimeResponse]);
+        await crime.tap();
+        await solveCrimeMinigame(page);
+        const response = await crimeResponse;
         if (!response.ok() || response.request().postDataJSON()?.approach !== 'standard')
           fail('(first action)', vp, `the chosen standard job was not confirmed (${response.status()})`);
         // Small phones show success in a toast while retaining receipt history off the fold.

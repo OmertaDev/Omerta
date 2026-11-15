@@ -43,6 +43,7 @@
 // away, 503 rather than 500 while it is gone, and recovery with no redeploy.
 import crypto from 'node:crypto';
 import { spawn, execSync } from 'node:child_process';
+import { completeCrimeMinigame } from './crime-minigame-client.js';
 
 if (!process.env.DATABASE_URL) {
   console.error('chaos needs DATABASE_URL pointed at a THROWAWAY Postgres — it kills backends and may restart the server.');
@@ -83,7 +84,7 @@ let pool = app.pool;
 await app.listen({ port: 0, host: '127.0.0.1' });
 let base = `http://127.0.0.1:${app.server.address().port}`;
 
-const api = async (method, path, { token, body } = {}) => {
+const send = async (method, path, { token, body } = {}) => {
   try {
     const res = await fetch(base + path, {
       method,
@@ -94,6 +95,8 @@ const api = async (method, path, { token, body } = {}) => {
     return { code: res.status, body: await res.json().catch(() => null) };
   } catch (e) { return { code: 0, body: null, err: e.code || e.message }; }
 };
+const api = (method, path, options) => method === 'POST' && /^\/v1\/crimes\/[^/?]+$/.test(path)
+  ? completeCrimeMinigame(send, path, options) : send(method, path, options);
 
 // §10.4, as a map, so scenarios can assert a DELTA rather than an absolute (the harness seeds by SQL,
 // so the baseline is non-zero by construction — the question is only whether chaos moved it).

@@ -1,3 +1,4 @@
+import { solveCrimeMinigame } from './crime-fixture.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { chromium } from 'playwright-core';
@@ -170,90 +171,18 @@ try {
   assert.equal(seen.size, 4, 'All four different mechanics played through actual mission and Hustle controls.');
   await page.keyboard.press('Escape');
   await page.getByText('Stop 3 of 3', { exact: true }).waitFor();
-  await page.setViewportSize({ width: 1280, height: 1000 });
+  // Crime preparation has become the mandatory interactive lock on every approach.
   await app.pool.query('UPDATE characters SET street_action_at=NULL,jail_until=NULL,nerve=50 WHERE id=$1', [ch.id]);
   await page.reload({ waitUntil: 'domcontentloaded' }); await page.locator('#screen-main:not(.hidden)').waitFor(); await navigate('streets');
-  await crimeBook(); await page.locator('[data-task-crime="pick"]').click(); await dialog().getByRole('button', { name: 'Solve and attempt crime' }).waitFor();
-  assert.match(await dialog().innerText(), /feedback only.*no.*odds.*reward/i);
-  const cp = await puzzleOf('crime', 'pick', token); await choose(cp);
-  await page.screenshot({ path: `${artifacts}/desktop-crime-preparation.png` });
-  // A different committed attempt makes the open preparation stale. Never automatically reroll/resubmit.
-  await api('POST', '/v1/crimes/pick', token, {});
-  await app.pool.query('UPDATE characters SET street_action_at=NULL,jail_until=NULL,nerve=50 WHERE id=$1', [ch.id]);
-  const stale = page.waitForResponse(r => r.url().endsWith('/v1/crimes/pick') && r.request().method() === 'POST');
-  await dialog().getByRole('button', { name: 'Solve and attempt crime' }).click();
-  assert.equal((await (await stale).json()).error, 'stale_task_puzzle');
-  await dialog().getByRole('button', { name: 'Reopen current task' }).click();
-  await dialog().getByRole('button', { name: 'Solve and attempt crime' }).waitFor();
-  const current = await puzzleOf('crime', 'pick', token); assert.notEqual(current.id, cp.id); await choose(current);
-  await dialog().getByLabel('Crime approach').selectOption('quiet');
-  const revisionBefore = Number((await app.pool.query('SELECT crime_puzzle_revision FROM characters WHERE id=$1', [ch.id])).rows[0].crime_puzzle_revision);
-  await page.route('**/v1/crimes/pick', route => route.abort('failed'));
-  await dialog().getByRole('button', { name: 'Solve and attempt crime' }).click();
-  await dialog().getByRole('button', { name: 'Check task status' }).waitFor();
-  await page.unroute('**/v1/crimes/pick');
-  const originalAttempt = requests.filter(r => r.url === '/v1/crimes/pick').at(-1);
-  assert.equal(originalAttempt.body.approach, 'quiet', 'Optional preparation preserves the explicitly selected approach.');
-  // Reload while a submission has an unknown outcome. The same draft and exact request key survive.
-  await page.reload({ waitUntil: 'domcontentloaded' }); await page.locator('#screen-main:not(.hidden)').waitFor(); await navigate('streets'); await crimeBook();
-  await page.locator('[data-task-crime="pick"]').click(); await dialog().getByRole('button', { name: 'Check task status' }).waitFor();
-  assert.equal((await puzzleOf('crime', 'pick', token)).id, current.id);
-  assert.equal(await dialog().getByLabel('Crime approach').inputValue(), 'quiet', 'Recovery displays the approach that will actually be retried.');
-  await page.route('**/v1/task-puzzles?*', route => route.abort('failed'));
-  await dialog().getByRole('button', { name: 'Check task status' }).click();
-  await dialog().getByRole('status').filter({ hasText: 'Status is unavailable' }).waitFor();
-  assert.equal(await dialog().getByRole('button', { name: 'Solve and attempt crime' }).isDisabled(), true);
-  await page.unroute('**/v1/task-puzzles?*');
-  await dialog().getByRole('button', { name: 'Check task status' }).click();
-  await dialog().getByRole('button', { name: 'Retry same submission' }).waitFor();
-  const prepared = page.waitForResponse(r => r.url().endsWith('/v1/crimes/pick') && r.request().method() === 'POST');
-  await dialog().getByRole('button', { name: 'Retry same submission' }).click();
-  assert.equal((await (await prepared).json()).puzzle.completed, true);
-  const retryAttempt = requests.filter(r => r.url === '/v1/crimes/pick').at(-1);
-  assert.deepEqual(retryAttempt, originalAttempt, 'Uncertain retry uses the exact original request key, answer and approach.');
-  await dialog().getByRole('status').filter({ hasText: 'recorded' }).waitFor(); await page.keyboard.press('Escape');
-  assert.equal(Number((await app.pool.query('SELECT crime_puzzle_revision FROM characters WHERE id=$1', [ch.id])).rows[0].crime_puzzle_revision), revisionBefore + 1, 'One committed prepared attempt after failed dispatch and reload.');
-  for (const recovery of ['dismissal', 'reload']) {
-    await app.pool.query('UPDATE characters SET street_action_at=NULL,jail_until=NULL,nerve=50 WHERE id=$1', [ch.id]);
-    await page.reload({ waitUntil: 'domcontentloaded' }); await page.locator('#screen-main:not(.hidden)').waitFor(); await navigate('streets'); await crimeBook();
-    await page.locator('[data-task-crime="pick"]').click(); await dialog().getByRole('button', { name: 'Solve and attempt crime' }).waitFor();
-    const pendingPuzzle = await puzzleOf('crime', 'pick', token); await choose(pendingPuzzle);
-    const revision = Number((await app.pool.query('SELECT crime_puzzle_revision FROM characters WHERE id=$1', [ch.id])).rows[0].crime_puzzle_revision);
-    const crimeRequests = requests.filter(r => r.url === '/v1/crimes/pick').length;
-    await page.route('**/v1/crimes/pick', async route => {
-      const committed = await route.fetch();
-      assert.equal(committed.status(), 200); assert.equal((await committed.json()).puzzle.completed, true);
-      await route.abort('failed');
-    });
-    await dialog().getByRole('button', { name: 'Solve and attempt crime' }).click();
-    await dialog().getByRole('button', { name: 'Check task status' }).waitFor();
-    await page.unroute('**/v1/crimes/pick');
-    // Only readiness changes: the committed attempt's occurrence revision is deliberately retained.
-    await app.pool.query('UPDATE characters SET street_action_at=NULL,jail_until=NULL,nerve=50 WHERE id=$1', [ch.id]);
-    const issues = requests.filter(r => r.url === '/v1/task-puzzles').length;
-    if (recovery === 'reload') {
-      await page.reload({ waitUntil: 'domcontentloaded' }); await page.locator('#screen-main:not(.hidden)').waitFor(); await navigate('streets'); await crimeBook();
-    } else await page.keyboard.press('Escape');
-    await page.locator('[data-task-crime="pick"]').click(); await dialog().waitFor(); await page.waitForLoadState('networkidle');
-    assert.equal(requests.filter(r => r.url === '/v1/task-puzzles').length, issues,
-      `${recovery}: unresolved committed crime is discovered by task selector before issuing any new puzzle.`);
-    await dialog().getByRole('status').filter({ hasText: 'occurrence changed' }).waitFor();
-    assert.equal(await dialog().getByRole('button', { name: 'Solve and attempt crime' }).isDisabled(), true);
-    assert.equal(await puzzleOf('crime', 'pick', token), null, 'Receipt reconciliation must not itself issue the new occurrence.');
-    assert.equal(requests.filter(r => r.url === '/v1/crimes/pick').length, crimeRequests + 1, 'Recovery never resends the committed crime.');
-    assert.equal(Number((await app.pool.query('SELECT crime_puzzle_revision FROM characters WHERE id=$1', [ch.id])).rows[0].crime_puzzle_revision), revision + 1);
-    await dialog().getByRole('button', { name: 'Reopen current task' }).click();
-    await dialog().getByRole('button', { name: 'Solve and attempt crime' }).waitFor();
-    assert.equal(await dialog().getByRole('button', { name: 'Solve and attempt crime' }).isDisabled(), false);
-    assert.notEqual((await puzzleOf('crime', 'pick', token)).id, pendingPuzzle.id, 'Only explicit reopening issues the next occurrence.');
-    await page.keyboard.press('Escape');
-  }
-  await app.pool.query('UPDATE characters SET street_action_at=NULL,jail_until=NULL,nerve=50 WHERE id=$1', [ch.id]);
-  await page.reload({ waitUntil: 'domcontentloaded' }); await page.locator('#screen-main:not(.hidden)').waitFor(); await navigate('streets');
-  const ordinary = page.waitForResponse(r => r.url().endsWith('/v1/crimes/pick') && r.request().method() === 'POST');
-  await crimeBook(); await page.locator('[data-do="POST /v1/crimes/pick"]').filter({ hasText: 'do it' }).first().click();
-  assert.equal((await ordinary).status(), 200, 'Ordinary crime still works with no preparation.');
+  await crimeBook();
+  assert.equal(await page.locator('[data-task-crime]').count(), 0, 'The obsolete optional preparation entry is removed.');
+  const attempted = page.waitForResponse(r => r.url().endsWith('/v1/crimes/pick') && r.request().method() === 'POST');
+  await page.locator('[data-do="POST /v1/crimes/pick"]').filter({ hasText: 'do it' }).first().click();
+  await solveCrimeMinigame(page);
+  const completed = await attempted;
+  assert.equal(completed.status(), 200);
+  assert.equal((await completed.json()).minigame.completed, true, 'The real crime control completes the required minigame.');
   assert.deepEqual(errors, []);
-  console.log(`task puzzle browser: real production mission/Hustle/crime entries, four mechanics, keyboard/touch, hints, wrong retry, drafts/reload/dismissal, pending/lost-response recovery, stale reopen, one reward and mobile fit passed; screenshots ${artifacts}`);
+  console.log(`task puzzle browser: mission/Hustle entries, four mechanics, keyboard/touch, hints, wrong retry, drafts/reload/dismissal, pending/lost-response recovery, one reward, mobile fit and required crime minigame passed; screenshots ${artifacts}`);
 } catch (error) { if (page) await page.screenshot({ path: `${artifacts}/failure.png` }).catch(() => {}); throw error; }
 finally { if (browser) await browser.close(); await app.close(); }

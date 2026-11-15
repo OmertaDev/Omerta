@@ -56,6 +56,7 @@ if (!process.env.DATABASE_URL) process.env.SEASON_PHASE = process.env.SEASON_PHA
 // test-only season overrides. Do not bypass that guard to run a release proof.
 import assert from 'node:assert';
 import { buildServer } from '../src/server.js';
+import { completeCrimeMinigame } from './crime-minigame-client.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { runPopulation, runResidentBehaviour } from '../src/population.js';
 import { HEIST_JOBS } from '../src/rules.js';
@@ -86,12 +87,15 @@ const checkTransition = async (label) => {
   assert.equal(changed.length, 0, `${label}: conservation changed at transition ${transitionChecks}: ${JSON.stringify(changed)}`);
 };
 
-const call = async (method, url, token, body) => {
+const send = async (method, url, token, body) => {
   const res = await app.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload: body });
   let json = null; try { json = res.json(); } catch { /* empty body */ }
   await checkTransition(`${method} ${url} -> ${res.statusCode}`);
   return { code: res.statusCode, body: json || {} };
 };
+const call = (method, url, token, body) => method === 'POST' && /^\/v1\/crimes\/[^/?]+$/.test(url)
+  ? completeCrimeMinigame((m, p, options) => send(m, p, options.token, options.body), url, { token, body })
+  : send(method, url, token, body);
 
 // ── the population ──────────────────────────────────────────────────────────────────────────────
 // Archetypes, not optimal play. A real town is a mix, and a market's liquidity depends on whether the

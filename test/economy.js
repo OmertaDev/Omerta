@@ -1,3 +1,4 @@
+import { injectWithCrimeMinigame } from './crime-fixture.js';
 // M2 economy smoke test: deterministic market, garage, workshop, goods, rackets,
 // assets, swap, staking, gear, buyback worker — plus the §10.4 cash-ledger and
 // car-conservation invariants. Runs on pg-mem — zero infra.
@@ -59,7 +60,7 @@ import { recordPlayerIntel } from '../src/playerintel.js';
 const app = await buildServer();
 const pool = app.pool;
 const call = async (method, url, { token, body, headers } = {}) => {
-  const res = await app.inject({ method, url,
+  const res = await injectWithCrimeMinigame(app, { method, url,
     headers: { ...(token ? { authorization: `Bearer ${token}` } : {}), ...(headers || {}) }, payload: body });
   return { code: res.statusCode, body: res.json() };
 };

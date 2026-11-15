@@ -84,6 +84,8 @@ function crimeDescriptor(crime, { executable, blockedBy } = {}) {
   return valued({
     id: `crime:${crime.id}:standard`, kind: 'crime', label: crime.name,
     method: 'POST', path: `/v1/crimes/${crime.id}`, body: { approach: 'standard' }, executable,
+    minigame: { required: true, challengePath: `/v1/crimes/${crime.id}/challenge?approach=standard`,
+      kind: 'signal-lock', note: 'Fetch and play the challenge, then include {token,moves} as minigame when executing this action. Three mistakes fail the job.' },
     cost: { nerve: crime.nerve },
     reward: { cash: { min: crime.cash[0], max: crime.cash[1] }, respect: crime.respect },
     // The catalog stint is seconds, before character/season/approach modifiers. Keep the legacy

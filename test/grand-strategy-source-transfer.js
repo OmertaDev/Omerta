@@ -6,6 +6,8 @@ import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { AGE_REMOVAL_SOURCE, ageRemovalHistoricalRecord } from '../tools/age-removal-source-transfer.js';
+import { CRIME_MINIGAME_SOURCE, qualifyCrimeMinigameRelease, crimeMinigameActual,
+  crimeMinigameHistoricalInput, crimeMinigameHistoricalEntry } from '../tools/crime-minigame-source-compatibility.js';
 import { GRAND_STRATEGY_SOURCE as source, GRAND_STRATEGY_PREDECESSOR, GRAND_STRATEGY_SCOPE,
   GRAND_STRATEGY_GENERATED_FILES, GRAND_STRATEGY_RELEASE_FILES, grandStrategySourceDataBytes,
   grandStrategyActual, qualifyGrandStrategySource, grandStrategyHistoricalInput,
@@ -35,7 +37,9 @@ assert.deepEqual([...Object.keys(source.files), ...Object.keys(source.additions)
   GRAND_STRATEGY_SCOPE.filter(file => !excluded.has(file)), 'Every authored runtime, test, helper and binary asset has one exact pin');
 for (const file of excluded) assert(!Object.hasOwn(source.files, file) && !Object.hasOwn(source.additions, file));
 const postCandidate = git('diff', '--name-only', '--no-renames', '-z', source.revision, 'HEAD').split('\0').filter(Boolean);
-assert(postCandidate.every(file => excluded.has(file)), 'Only the fixed independently generated domains may follow the reviewed candidate');
+const successor = qualifyCrimeMinigameRelease();
+assert(postCandidate.every(file => excluded.has(file) || file === 'tools/crime-minigame-source-data.js' || successor.files.includes(file)),
+  'Only the exact sealed minigame successor and fixed generated domains may follow the reviewed candidate');
 assert.equal(fs.readFileSync('tools/grand-strategy-source-data.js', 'utf8').replaceAll('\r\n', '\n'), grandStrategySourceDataBytes(source),
   'The sole generated self-reference contains exact data and no executable additions');
 assert.equal(git('diff', '--name-only', source.predecessor, 'HEAD', '--',
@@ -49,10 +53,10 @@ const rows = output => new Map(output.split('\0').filter(Boolean).map(row => [ro
 const heads = rows(git('ls-tree', '-z', 'HEAD', '--', ...names));
 const indexes = rows(git('ls-files', '--stage', '-z', '--', ...names));
 for (const [file, pin] of Object.entries(pins)) {
-  assert.equal(heads.get(file), entry(file, pin, 'tree'), 'Whole genuine HEAD identity: ' + file);
-  assert.equal(indexes.get(file), entry(file, pin, 'index'), 'Whole genuine stage-zero identity: ' + file);
+  assert.equal(crimeMinigameHistoricalEntry(file, heads.get(file), 'tree'), entry(file, pin, 'tree'), 'Whole genuine HEAD identity: ' + file);
+  assert.equal(crimeMinigameHistoricalEntry(file, indexes.get(file), 'index'), entry(file, pin, 'index'), 'Whole genuine stage-zero identity: ' + file);
   const stat = fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink());
-  const physical = fs.readFileSync(file);
+  const physical = crimeMinigameHistoricalInput(file, fs.readFileSync(file));
   let canonical = physical;
   if (pin.text) {
     const raw = physical.toString('utf8'); assert(Buffer.from(raw).equals(physical));
@@ -102,6 +106,7 @@ for (const [file, row] of Object.entries(source.files)) {
   assert.throws(() => grandStrategyHistoricalInput(file, invalid), /Lossless UTF-8/); refusals += 2;
 }
 const observedFile = 'public/index.html', observed = grandStrategyActual(observedFile);
+const currentObserved = crimeMinigameActual(observedFile);
 const priorObserved = grandStrategyHistoricalRecord(observedFile, observed);
 for (const file of ['public/index.html', 'public/sw.js', 'src/server.js']) {
   const actual = grandStrategyActual(file), pin = AGE_REMOVAL_SOURCE.files[file].baseline;
@@ -145,7 +150,7 @@ try {
   const environment = { ...process.env, GIT_DIR: git('rev-parse', '--absolute-git-dir').trim(),
     GIT_WORK_TREE: temporary, GIT_INDEX_FILE: path.join(temporary, 'reviewed-index') };
   execFileSync('git', ['--no-replace-objects', 'read-tree', 'HEAD'], { cwd: temporary, env: environment, windowsHide: true });
-  fs.mkdirSync(path.join(temporary, 'public')); fs.writeFileSync(path.join(temporary, observedFile), observed.physical);
+  fs.mkdirSync(path.join(temporary, 'public')); fs.writeFileSync(path.join(temporary, observedFile), currentObserved.physical);
   const script = 'import { grandStrategyActual } from ' + JSON.stringify(new URL('../tools/grand-strategy-source-transfer.js', import.meta.url).href)
     + '; grandStrategyActual(' + JSON.stringify(observedFile) + ');';
   const child = (env, code = script) => spawnSync(process.execPath, ['--input-type=module', '-e', code], {
@@ -159,29 +164,30 @@ try {
     + ' committed: bytes, physical: bytes, regular: true, symbolic: false });';
   const currentRecordScript = ending => 'import { execFileSync } from "node:child_process"; import { GRAND_STRATEGY_SOURCE as source, grandStrategyHistoricalRecord } from '
     + JSON.stringify(new URL('../tools/grand-strategy-source-transfer.js', import.meta.url).href)
+    + '; import { CRIME_MINIGAME_SOURCE } from ' + JSON.stringify(new URL('../tools/crime-minigame-source-compatibility.js', import.meta.url).href)
     + '; import { ageRemovalHistoricalRecord } from ' + JSON.stringify(new URL('../tools/age-removal-source-transfer.js', import.meta.url).href)
     + '; const file = ' + JSON.stringify(observedFile)
-    + '; const pin = source.files[file].current; const bytes = execFileSync("git", ["--no-replace-objects", "show", "HEAD:" + file], { maxBuffer: 64 * 1024 * 1024, windowsHide: true });'
+    + '; const pin = CRIME_MINIGAME_SOURCE.files[file].current; const bytes = execFileSync("git", ["--no-replace-objects", "show", "HEAD:" + file], { maxBuffer: 64 * 1024 * 1024, windowsHide: true });'
     + ' const physical = ' + (ending === 'LF' ? 'bytes' : 'Buffer.from(bytes.toString("utf8").replaceAll("\\n", "\\r\\n"))') + ';'
     + ' for (const qualify of [grandStrategyHistoricalRecord, ageRemovalHistoricalRecord]) qualify(file, { head: { mode: pin.mode, blob: pin.blob }, index: pin.mode + " " + pin.blob + " 0\\t" + file,'
     + ' committed: bytes, physical, regular: true, symbolic: false });';
   assert.equal(child(environment).status, 0, 'Genuine closed source succeeds in an isolated checkout');
   assert.equal(child(environment, historicalScript).status, 0, 'Historical tuples are idempotent only after genuine current admission');
-  for (const physical of [observed.committed, Buffer.from(observed.committed.toString('utf8').replaceAll('\n', '\r\n'))]) {
+  for (const physical of [currentObserved.committed, Buffer.from(currentObserved.committed.toString('utf8').replaceAll('\n', '\r\n'))]) {
     fs.writeFileSync(path.join(temporary, observedFile), physical);
     for (const ending of ['LF', 'CRLF']) {
       assert.equal(child(environment, currentRecordScript(ending)).status, 0,
         'Genuine LF/CRLF disk bytes admit either whole supplied representation through the historical chain'); positives += 2;
     }
   }
-  fs.writeFileSync(path.join(temporary, observedFile), observed.physical);
+  fs.writeFileSync(path.join(temporary, observedFile), currentObserved.physical);
   fs.appendFileSync(path.join(temporary, observedFile), 'x');
   const changed = child(environment); assert.notEqual(changed.status, 0); assert.match(changed.stderr, /Physical source/); refusals++;
   const forgedPrior = child(environment, historicalScript); assert.notEqual(forgedPrior.status, 0);
   assert.match(forgedPrior.stderr, /Physical source/); refusals++;
   const forgedCurrent = child(environment, currentRecordScript('LF')); assert.notEqual(forgedCurrent.status, 0);
   assert.match(forgedCurrent.stderr, /Physical source/); refusals++;
-  fs.writeFileSync(path.join(temporary, observedFile), observed.physical);
+  fs.writeFileSync(path.join(temporary, observedFile), currentObserved.physical);
   const changedIndex = child({ ...environment, GIT_INDEX_FILE: path.join(temporary, 'empty-index') });
   assert.notEqual(changedIndex.status, 0); assert.match(changedIndex.stderr, /stage-zero index/); refusals++;
   const forgedIndex = child({ ...environment, GIT_INDEX_FILE: path.join(temporary, 'empty-index') }, historicalScript);

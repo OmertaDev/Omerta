@@ -1,3 +1,4 @@
+import { injectWithCrimeMinigame } from './crime-fixture.js';
 // MARRIAGES & SOLDIERS (founder picks #2+#3 — omerta-marriage-soldiers-design.md).
 // Covers: the marriage flow (propose/accept gates + fees + the wedding burying the feud), monogamy,
 // THE SCANDAL (killing your in-law → honor hit + auto-dissolve), divorce (honor hit), the
@@ -19,7 +20,7 @@ const call = async (method, url, { token, body, mod } = {}) => {
   const headers = {};
   if (token) headers.authorization = `Bearer ${token}`;
   if (mod) headers['x-mod-key'] = 'test-mod-key';
-  const res = await app.inject({ method, url, headers, payload: body });
+  const res = await injectWithCrimeMinigame(app, { method, url, headers, payload: body });
   let body2; try { body2 = res.json(); } catch { body2 = null; }
   return { code: res.statusCode, body: body2 };
 };

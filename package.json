@@ -6,7 +6,9 @@
     "node": ">=20"
   },
   "scripts": {
-    "test:task-puzzles": "node test/task-puzzle-engine.js && node test/task-puzzles.js && node test/task-puzzle-jobs.js",
+    "test:task-puzzles": "node test/task-puzzle-engine.js && node test/task-puzzles.js && node test/task-puzzle-jobs.js && npm run test:crime-minigame",
+    "test:crime-minigame": "node test/crime-minigame.js",
+    "test:crime-minigame:browser": "node test/crime-minigame-browser.js",
     "test:task-puzzles:postgres": "node test/task-puzzle-postgres.js",
     "test:site": "node test/site-basics-source-transfer.js && node test/site-seo.js && node test/site-basics.js && node test/site-analytics.js && node test/site-analytics-isolation.js",
     "test:site:browser": "node test/site-entry-browser.js && node test/client-shell-browser.js",
@@ -289,7 +291,7 @@
     "test:legal-security": "node test/age.js && node test/db-rls.js && node test/legal-security.js && node test/payment-receipts.js",
     "release:media": "node tools/release-media.mjs unpack",
     "postinstall": "node tools/release-media.mjs unpack",
-    "test:release-source-transfer": "node test/economy-release-composition.js && node test/release-source-transfer.js",
+    "test:release-source-transfer": "node test/crime-minigame-source-transfer.js && node test/economy-release-composition.js && node test/release-source-transfer.js",
     "build:funded-work-artifact": "mkdir -p omerta-contracts/lib/openzeppelin-contracts && oz_archive=$(mktemp omerta-contracts/lib/.openzeppelin-contracts-v5.6.1.XXXXXX) && trap 'rm -f -- \"$oz_archive\"' EXIT && curl --fail --location --connect-timeout 15 --max-time 120 --retry 3 --retry-all-errors --retry-max-time 180 --output \"$oz_archive\" https://codeload.github.com/OpenZeppelin/openzeppelin-contracts/tar.gz/refs/tags/v5.6.1 && gzip -t \"$oz_archive\" && tar -tzf \"$oz_archive\" openzeppelin-contracts-5.6.1/package.json openzeppelin-contracts-5.6.1/contracts/token/ERC20/ERC20.sol > /dev/null && tar xzf \"$oz_archive\" -C omerta-contracts/lib/openzeppelin-contracts --strip-components=1 && forge build --root omerta-contracts src/market-v2/OmertaWorkEscrowV2.sol",
     "test:company-autonomy": "node test/rc1-fifth-batch-source-compatibility.js && node test/combined-fifth-release-phase2-migration-catalog.js && node test/company-autonomy-native-guard.js && node test/company-autonomy-fixture-guards.js && node test/economicintelligence.js && node test/agentoperatingmemory.js && node test/managementteams.js && node test/managementteams-retry-integration.js && node test/strategylaboratories.js && node test/strategylaboratories-integration.js && node test/fundedexternalwork.js && node test/fundedworkchainobservations.js && node test/fundedworkescrowadapter.js && node test/company-late-five-integration.js && node test/company-autonomy-contracts.js && node test/company-autonomy-contracts.js --laboratories",
     "test:company-autonomy:postgres": "node tools/company-autonomy-native.js",
@@ -329,7 +331,7 @@
     "test:foundry-release-api": "node test/foundry-release-api.js",
     "test:agent-onboarding:postgres": "node test/agent-onboarding-postgres.js",
     "test:casino-rakeback:postgres": "node test/casino-rakeback-postgres.js",
-    "test:task-puzzles:browser": "node test/task-puzzles-browser.js"
+    "test:task-puzzles:browser": "node test/task-puzzles-browser.js && npm run test:crime-minigame:browser"
   },
   "dependencies": {
     "@fastify/jwt": "^10.2.0",

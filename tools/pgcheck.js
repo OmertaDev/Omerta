@@ -22,6 +22,7 @@
 // disposable PostgreSQL superuser); §9e changes it only inside the fixture holder.
 import crypto from 'node:crypto';
 import fs from 'node:fs';
+import { completeCrimeMinigame } from './crime-minigame-client.js';
 import { SHIPMENT, TREASURY } from '../src/rules.js'; // read live prices/floors, never restate them
 
 if (!process.env.DATABASE_URL) {
@@ -59,13 +60,15 @@ const pool = app.pool;
 // SQL-seed and therefore assert a before/after DELTA, §6 asserts the ledger identities ABSOLUTELY —
 // which is only meaningful on a database nothing has seeded value into behind its back.
 const preExistingChars = Number((await pool.query('SELECT count(*) n FROM characters')).rows[0].n);
-const call = async (method, url, { token, body } = {}) => {
+const send = async (method, url, { token, body } = {}) => {
   const res = await app.inject({ method, url,
     headers: { ...(token ? { authorization: `Bearer ${token}` } : {}), 'idempotency-key': crypto.randomUUID() },
     payload: body });
   let json = null; try { json = res.json(); } catch {}
   return { code: res.statusCode, body: json };
 };
+const call = (method, url, options) => method === 'POST' && /^\/v1\/crimes\/[^/?]+$/.test(url)
+  ? completeCrimeMinigame(send, url, options) : send(method, url, options);
 
 // ─────────────────────────────────────────────────────────────────────────────
 console.log('\n1. THE SAFETY VALVES actually reach the server');

@@ -1297,6 +1297,7 @@
 <link rel="stylesheet" href="/ux-quest-quality.css?v=20261107-1">
 <link rel="stylesheet" href="/ux-clues.css?v=20261106-1">
 <link rel="stylesheet" href="/ux-task-puzzles.css?v=20261110-1">
+<link rel="stylesheet" href="/ux-crime-minigame.css?v=20261115-1">
 <link rel="stylesheet" href="/ux-community.css?v=20261025-1">
 <link rel="stylesheet" href="/ux-investigation.css?v=20261024-2">
 <link rel="stylesheet" href="/ux-coordination.css?v=20261024-2">
@@ -1780,6 +1781,7 @@
 <script src="/ux-quests.js?v=20261107-1"></script>
 <script src="/ux-clues.js?v=20261106-1"></script>
 <script src="/ux-task-puzzles.js?v=20261110-1"></script>
+<script src="/ux-crime-minigame.js?v=20261115-1"></script>
 <script src="/ux-community.js?v=20261025-1"></script>
 <script src="/ux-investigation.js?v=20261024-2"></script>
 <script src="/ux-coordination.js?v=20261024-2"></script>
@@ -3717,6 +3719,10 @@
       bits.push((body.jailSeconds ? `BUSTED${body.approach === 'loud' ? ' (went loud)' : ''} — ${minsTxt(body.jailSeconds)} in lockup`
         : body.hospSeconds ? `driven off${body.outfit ? ` by ${art(body.outfit)}` : ''} — ${minsTxt(body.hospSeconds)} in the hospital`
         : 'it went sideways') + (body.victim ? ` · the mark got away: ${body.victim}` : ''));
+    if (body.minigame?.kind === 'signal-lock')
+      bits.push(body.minigame.completed
+        ? `lock cracked · ${body.minigame.mistakes} alarm${body.minigame.mistakes === 1 ? '' : 's'} · ${Math.round((body.successChance || 0) * 100)}% final crime odds`
+        : 'three alarms · the lock failed and the crime was lost');
     // THE HUSTLE — a checked-in stop vs the payoff (the `contact` field is the chain's marker)
     if (body.contact && body.step !== undefined && body.of === 3)
       bits.push(body.pay ? `🤝 THE PAYOFF — $${fmt(body.pay)}. That's a day's hustle done.` : `🤝 checked in (${body.step}/3) — next: ${body.what || 'keep moving'}`);
@@ -5633,14 +5639,38 @@
     setTimeout(() => v.classList.add('out'), 1250);
     setTimeout(gone, 1700);
   }
+  let crimeMinigamePending = false;
+  const crimeMinigameAttempts = new Map();
   async function act(method, path, body, options = {}) {
-    if (acting) { toast('easy — one move at a time', false); return { code: 429, body: {} }; }
+    if (acting || crimeMinigamePending) { toast('easy — one move at a time', false); return { code: 429, body: {} }; }
     const trigger = activatedControl?.isConnected ? activatedControl : null;
     activatedControl = null;
     const label = operationName(method, path, trigger, options.label);
     const idempotencyKey = method === 'GET' ? null : (options.idempotencyKey || uuid());
     const actor = `${me?.id}:${me?.generation}`, tab = currentTab;
     const actorCurrent = () => actor === `${me?.id}:${me?.generation}`;
+    const crimeAttemptKey = `${actor}:${path}:${idempotencyKey}`;
+    if (method === 'POST' && /^\/v1\/crimes\/[a-z0-9_-]+$/.test(path) && !body?.minigame && crimeMinigameAttempts.has(crimeAttemptKey))
+      body = { ...body, minigame: crimeMinigameAttempts.get(crimeAttemptKey) };
+    if (method === 'POST' && /^\/v1\/crimes\/[a-z0-9_-]+$/.test(path) && !body?.minigame) {
+      if (typeof window.playOmertaCrimeMinigame !== 'function') {
+        toast('The crime minigame could not load. Refresh and try again.', true);
+        return { code: 503, body: { error: 'crime_minigame_unavailable' } };
+      }
+      const current = () => actorCurrent() && (!options.isCurrent || options.isCurrent());
+      if (!current() || (options.beforeDispatch && !options.beforeDispatch())) return { code: 0, body: {}, ignored: true };
+      crimeMinigamePending = true;
+      let minigame;
+      try {
+        minigame = await window.playOmertaCrimeMinigame({ path, approach: body?.approach || 'standard',
+          request: (m, p) => api(m, p, undefined, { isCurrent: current, beforeDispatch: current }),
+          label, returnFocus: trigger, isCurrent: current });
+      } finally { crimeMinigamePending = false; }
+      if (!minigame || !current()) return { code: 0, body: { cancelled: true } };
+      body = { ...body, minigame };
+      crimeMinigameAttempts.set(crimeAttemptKey, minigame);
+      if (crimeMinigameAttempts.size > 32) crimeMinigameAttempts.delete(crimeMinigameAttempts.keys().next().value);
+    }
     const before = operationSnapshot(me);
     const resourceStamp = projections.snapshot(), resourceKey = cityIdentity();
     const resourceCurrent = () => !!resourceKey && resourceKey === cityIdentity() && projections.current(resourceStamp)
@@ -9010,13 +9040,13 @@
         · <b>STANDARD</b> baseline odds and take
         · <b>LOUD</b> ${loud.payMult ? `${Math.round((loud.payMult - 1) * 100)}% larger win, ` : ''}+${loud.heat || 0} heat${loud.jailMult ? `, ${Math.round((loud.jailMult - 1) * 100)}% longer jail` : ''}
       ${compact ? '<p>Pay is not guaranteed. Your roll, approach, stats and perks determine the outcome.</p>' : ''}</${compact ? 'details' : 'div'}>
+      <div class="d operation-choice-terms">Required lock minigame: mistakes lower your crime odds; three alarms fail the job.</div>
       ${blocked ? `<div class="d operation-terms"><b>BLOCKED:</b> ${esc(blocked)}</div>` : ''}</div>`;
     const choices = [['quiet', 'case it', ''], ['standard', 'do it', 'prime'], ['loud', 'go loud', 'risk']].map(([approach, label, style]) =>
       `<button class="act ${style}" data-operation-label="${esc(crime.name)}: ${approach}" aria-describedby="${termsId}" ${compact
         ? `data-city-crime="${crime.id}" data-city-approach="${approach}"`
         : `data-do="POST /v1/crimes/${crime.id}" data-body='{"approach":"${approach}"}'`}${blocked || !approaches[approach] ? ` disabled aria-disabled="true" title="${esc(blocked || 'Refresh to load job terms.')}"` : ''}>${label}${compact ? `<small>${approach === 'quiet' ? 'safer · smaller win' : approach === 'loud' ? '+' + Number(loud.heat || 0) + ' heat' : 'baseline'}</small>` : ''}</button>`).join('');
-    const preparation = crime.puzzle ? `<button type="button" class="act" data-task-crime="${crime.id}"${blocked ? ' disabled' : ''}>Prepare ${esc(crime.name)} (optional puzzle)</button>` : '';
-    return { terms, choices: choices + preparation, blocked };
+    return { terms, choices, blocked };
   }
 
   function cityActorScope() {
@@ -10423,7 +10453,7 @@ async function renderStart() {
     const crimeCard = (c) => {
       const { terms, choices } = coreCrimeMarkup(c);
       return `<article class="card noir-job-card">${aart('crime', c.id)}<div class="noir-job-content">
-        <div class="noir-job-eyebrow">Street job · Level ${c.lvl}</div><span class="t">${esc(c.name)}</span>
+        <div class="noir-job-eyebrow">Street job · Level ${c.lvl} · Required lock minigame</div><span class="t">${esc(c.name)}</span>
         ${terms}<div class="verbrow">${choices}</div></div></article>`;
     };
     const allCrimes = [...(rules?.crimes || [])].sort((a, b) => a.lvl - b.lvl);
@@ -13931,14 +13961,6 @@ ${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [
       focusFallback: () => { const panel = document.getElementById(`tab-${currentTab}`); const control = [...(panel?.querySelectorAll('button:not(:disabled), summary') || [])].find(node => node.getClientRects().length); (control || panel)?.focus(); } });
     taskPuzzleUI.open(options);
   }
-  document.addEventListener('click', event => {
-    const button = event.target?.closest?.('[data-task-crime]');
-    if (!button || button.disabled) return;
-    const crime = rules?.crimes?.find(c => c.id === button.dataset.taskCrime);
-    if (crime) openTaskPuzzle({ selector: { scope: 'crime', targetId: crime.id }, path: `/v1/crimes/${crime.id}`,
-      label: `Prepare ${crime.name}`, submitLabel: 'Solve and attempt crime', trigger: button, body: { approach: 'standard' }, approaches: rules?.crimeApproaches });
-  });
-
   // data-do buttons (POST/GET; an optional data-body='{...}' rides along).
   // A button may also carry data-confirm="Title|the consequence" — most of the irreversible verbs
   // in the game are declarative data-do buttons, so the guard has to live here rather than being
