@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `93f053e16757`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `d825b1399b78`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 5962 |
+| Commits in clone | 5964 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-11-16 — chore(questing): refresh exact browser qualification inputs |
+| Latest commit | 2026-11-16 — Merge pull request #339 from OmertaDev/codex/mandatory-crime-minigame-20261115 |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 4823 |
+| OmertaDev | 4825 |
 | crvydev | 647 |
 | github-actions[bot] | 156 |
 | Claude | 156 |
@@ -31,10 +31,10 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 998 | historical |
-| knowledge/generated/graph-summary.md | 998 | historical |
-| knowledge/generated/graph.json | 998 | historical |
-| knowledge/generated/inventory.md | 998 | historical |
+| knowledge/generated/github-history.md | 999 | historical |
+| knowledge/generated/graph-summary.md | 999 | historical |
+| knowledge/generated/graph.json | 999 | historical |
+| knowledge/generated/inventory.md | 999 | historical |
 | [SPEC.md](../../SPEC.md) | 668 | yes |
 | [public/index.html](../../public/index.html) | 519 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |

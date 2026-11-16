@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "93f053e16757e34fc113ef91b5602bf17017e8f3",
+  "sourceRevision": "d825b1399b782a2cd43544b11d59a475e1eba5e5",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 19500,
-    "edges": 77454,
+    "nodes": 19502,
+    "edges": 77460,
     "byNodeType": {
       "Artifact": 7951,
       "Command": 326,
-      "Commit": 5962,
+      "Commit": 5964,
       "Contract": 156,
       "Document": 980,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 6148,
-      "CHANGED": 30361,
+      "CHANGED": 30365,
       "CONTAINS": 7972,
       "DECLARES": 326,
       "DEFINED_IN": 1823,
       "DEPENDS_ON": 69,
       "EXECUTES": 1284,
       "HANDLED_BY": 956,
-      "HAS_COMMIT": 5962,
+      "HAS_COMMIT": 5964,
       "IMPLEMENTS": 124,
       "IMPORTS": 9529,
       "INHERITS": 47,
@@ -264396,6 +264396,22 @@
       ]
     },
     {
+      "key": "Commit:ce0ff03642821900d9385121e0ad80059ada75c4",
+      "type": "Commit",
+      "id": "ce0ff03642821900d9385121e0ad80059ada75c4",
+      "label": "chore(knowledge): publish verified mandatory crime minigame release",
+      "title": "chore(knowledge): publish verified mandatory crime minigame release",
+      "date": "2026-11-16T17:55:52.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/ce0ff03642821900d9385121e0ad80059ada75c4",
+      "provenance": [
+        {
+          "commit": "ce0ff03642821900d9385121e0ad80059ada75c4",
+          "url": "https://github.com/OmertaDev/Omerta/commit/ce0ff03642821900d9385121e0ad80059ada75c4"
+        }
+      ]
+    },
+    {
       "key": "Commit:ce1219c69c5a7fce9c8dd7f7465dc6e6be2c28d3",
       "type": "Commit",
       "id": "ce1219c69c5a7fce9c8dd7f7465dc6e6be2c28d3",
@@ -267736,6 +267752,22 @@
         {
           "commit": "d821851b71614606d7d94e0ed16dd517cc220751",
           "url": "https://github.com/OmertaDev/Omerta/commit/d821851b71614606d7d94e0ed16dd517cc220751"
+        }
+      ]
+    },
+    {
+      "key": "Commit:d825b1399b782a2cd43544b11d59a475e1eba5e5",
+      "type": "Commit",
+      "id": "d825b1399b782a2cd43544b11d59a475e1eba5e5",
+      "label": "Merge pull request #339 from OmertaDev/codex/mandatory-crime-minigame-20261115",
+      "title": "Merge pull request #339 from OmertaDev/codex/mandatory-crime-minigame-20261115",
+      "date": "2026-11-16T18:03:58.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/d825b1399b782a2cd43544b11d59a475e1eba5e5",
+      "provenance": [
+        {
+          "commit": "d825b1399b782a2cd43544b11d59a475e1eba5e5",
+          "url": "https://github.com/OmertaDev/Omerta/commit/d825b1399b782a2cd43544b11d59a475e1eba5e5"
         }
       ]
     },
@@ -313470,6 +313502,9 @@
           "commit": "cdf533f684e7902be56fb29eafb3a760feb5d535"
         },
         {
+          "commit": "ce0ff03642821900d9385121e0ad80059ada75c4"
+        },
+        {
           "commit": "ce1b8efcc913f88e7d45fc801767aaa7e78d4e1b"
         },
         {
@@ -316473,6 +316508,9 @@
           "commit": "cdf533f684e7902be56fb29eafb3a760feb5d535"
         },
         {
+          "commit": "ce0ff03642821900d9385121e0ad80059ada75c4"
+        },
+        {
           "commit": "ce1b8efcc913f88e7d45fc801767aaa7e78d4e1b"
         },
         {
@@ -319474,6 +319512,9 @@
         },
         {
           "commit": "cdf533f684e7902be56fb29eafb3a760feb5d535"
+        },
+        {
+          "commit": "ce0ff03642821900d9385121e0ad80059ada75c4"
         },
         {
           "commit": "ce1b8efcc913f88e7d45fc801767aaa7e78d4e1b"
@@ -323272,6 +323313,9 @@
         },
         {
           "commit": "cdf533f684e7902be56fb29eafb3a760feb5d535"
+        },
+        {
+          "commit": "ce0ff03642821900d9385121e0ad80059ada75c4"
         },
         {
           "commit": "ce1b8efcc913f88e7d45fc801767aaa7e78d4e1b"
@@ -339195,8 +339239,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "93f053e16757e34fc113ef91b5602bf17017e8f3",
-      "currentBranch": "codex/mandatory-crime-minigame-20261115",
+      "revision": "d825b1399b782a2cd43544b11d59a475e1eba5e5",
+      "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -642858,6 +642902,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:ce0ff03642821900d9385121e0ad80059ada75c4",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "ce0ff03642821900d9385121e0ad80059ada75c4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ce0ff03642821900d9385121e0ad80059ada75c4",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "ce0ff03642821900d9385121e0ad80059ada75c4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ce0ff03642821900d9385121e0ad80059ada75c4",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "ce0ff03642821900d9385121e0ad80059ada75c4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ce0ff03642821900d9385121e0ad80059ada75c4",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "ce0ff03642821900d9385121e0ad80059ada75c4"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:ce1219c69c5a7fce9c8dd7f7465dc6e6be2c28d3",
       "to": "Artifact:docs/company-succession-security-review.md",
       "provenance": {
@@ -843218,6 +843294,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:ce0ff03642821900d9385121e0ad80059ada75c4",
+      "provenance": {
+        "commit": "ce0ff03642821900d9385121e0ad80059ada75c4"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:ce1219c69c5a7fce9c8dd7f7465dc6e6be2c28d3",
       "provenance": {
         "commit": "ce1219c69c5a7fce9c8dd7f7465dc6e6be2c28d3"
@@ -844885,6 +844969,14 @@
       "to": "Commit:d821851b71614606d7d94e0ed16dd517cc220751",
       "provenance": {
         "commit": "d821851b71614606d7d94e0ed16dd517cc220751"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:d825b1399b782a2cd43544b11d59a475e1eba5e5",
+      "provenance": {
+        "commit": "d825b1399b782a2cd43544b11d59a475e1eba5e5"
       }
     },
     {
