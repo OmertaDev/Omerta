@@ -2653,7 +2653,7 @@ async function progressionRoleAndLevelStopTest() {
 }
 
 async function crimeMinigameApi({ dropFirst = false, staleFirst = false,
-  challengePath = '/v1/crimes/pick/challenge?approach=standard' } = {}) {
+  challengePath = '/v1/crimes/pick/challenge?approach=standard', reviseTurn } = {}) {
   const app = Fastify({ logger: false }), receipts = new Map();
   const state = { turnCalls: 0, challengeCalls: 0, actBodies: [], actKeys: [], mutations: 0 };
   const rounds = [[0, 1, 2], [3, 0, 1, 2], [1, 2, 3, 0, 1]];
@@ -2661,10 +2661,13 @@ async function crimeMinigameApi({ dropFirst = false, staleFirst = false,
     character: { id: 'crime-agent', name: 'Alpha Machine', generation: 1 } }));
   app.get('/v1/agent/turn', async () => {
     state.turnCalls++;
-    return { turnId: `crime-turn-${state.turnCalls}`, recommendedActionId: 'crime:pick:standard', policy: POLICY,
+    const turn = { turnId: `crime-turn-${state.turnCalls}`, recommendedActionId: 'crime:pick:standard', policy: POLICY,
+      state: { identity: { id: 'crime-agent', generation: 1, level: 1 } },
       actions: [{ id: 'crime:pick:standard', kind: 'crime', method: 'POST', path: '/v1/crimes/pick',
         body: { approach: 'standard', prompt: 'do not persist authored bodies' }, executable: true,
         minigame: { required: true, kind: 'signal-lock', challengePath } }] };
+    if (reviseTurn) reviseTurn(turn, state.turnCalls);
+    return turn;
   });
   app.get('/v1/crimes/pick/challenge', async () => {
     state.challengeCalls++;
@@ -2708,7 +2711,7 @@ async function crimeMinigameRecoveryTest() {
       fetchImpl: inspectFetch });
     assert.equal(resumed.actions, 1);
     assert.equal(api.state.challengeCalls, 1, 'an ambiguous replay never fetches or substitutes another challenge');
-    assert.equal(api.state.turnCalls, 1, 'pending recovery uses its original turn');
+    assert.equal(api.state.turnCalls, 2, 'pending recovery uses the final observed turn without another observation');
     assert.deepEqual(api.state.actBodies[0], api.state.actBodies[1]);
     assert.equal(api.state.actKeys[0], api.state.actKeys[1]);
     assert.equal(api.state.mutations, 1, 'the replay confirms exactly one committed crime');
@@ -2749,10 +2752,60 @@ async function crimeMinigameOriginTest() {
   });
 }
 
+async function crimeMinigameFreshTurnTest() {
+  const api = await crimeMinigameApi({ reviseTurn(turn, call) {
+    turn.state.resources = { energy: 50 + call, nerve: 9 + call };
+    turn.actions[0].decisionCall = { callId: `crime-decision-${call}`, turnId: turn.turnId, actionId: turn.actions[0].id };
+  } });
+  await withReadySession(api, 'omerta-agent-alpha-crime-fresh-', async ({ sessionFile, reportFile }) => {
+    let challengeAt, observedAt;
+    const checkingFetch = async (url, options) => {
+      const pathname = new URL(url).pathname;
+      if (pathname === '/v1/agent/turn' && api.state.challengeCalls) {
+        assert(testNow - challengeAt >= 3100, 'The shared cadence is paid before final authority is observed.');
+        assert.equal(JSON.parse(await readFile(sessionFile, 'utf8')).pending, null, 'An undispatched challenge is not yet a durable operation.');
+        observedAt = testNow;
+      }
+      if (pathname === '/v1/agent/act') {
+        const pending = JSON.parse(await readFile(sessionFile, 'utf8')).pending;
+        assert.equal(testNow, observedAt, 'No cadence delay ages the final observed turn.');
+        assert.equal(pending.turnId, 'crime-turn-2');
+        assert.equal(pending.decisionCallId, 'crime-decision-2', 'Only the final turn can supply the associated decision.');
+        assert.equal(JSON.parse(options.body).decisionCallId, pending.decisionCallId);
+      }
+      const response = await fetch(url, options);
+      if (pathname.endsWith('/challenge')) challengeAt = testNow;
+      return response;
+    };
+    const result = await runAgentAlpha({ baseUrl: api.baseUrl, sessionFile, reportFile, maxActions: 1, fetchImpl: checkingFetch });
+    assert.equal(result.actions, 1);
+    assert.equal(api.state.challengeCalls, 1);
+    assert.equal(api.state.turnCalls, 2);
+    assert.equal(api.state.mutations, 1);
+  });
+  for (const change of ['actor', 'actor_goal', 'body', 'minigame', 'policy', 'goal']) {
+    const changed = await crimeMinigameApi({ reviseTurn(turn, call) {
+      if (call < 2) return;
+      if (change === 'actor' || change === 'actor_goal') turn.state.identity.generation++;
+      if (change === 'body') turn.actions[0].body.approach = 'quiet';
+      if (change === 'minigame') turn.actions[0].minigame.challengePath = '/v1/crimes/other/challenge';
+      if (change === 'policy') turn.policy = { ...POLICY, allowPvP: true };
+      if (change === 'goal' || change === 'actor_goal') turn.state.identity.level = 100;
+    } });
+    await withReadySession(changed, `omerta-agent-alpha-crime-changed-${change}-`, async ({ sessionFile, reportFile }) => {
+      const result = await runAgentAlpha({ baseUrl: changed.baseUrl, sessionFile, reportFile, maxActions: 1, stopAtLevel: 100 });
+      assert.equal(result.status, change === 'goal' ? 'level_reached' : 'refused');
+      assert.equal(changed.state.actBodies.length, 0, 'A changed actor, action, policy or completed goal cannot spend the prepared trace.');
+      assert.equal(JSON.parse(await readFile(sessionFile, 'utf8')).pending, null);
+    });
+  }
+}
+
 if (process.argv.includes('--crime-minigame')) {
   await crimeMinigameRecoveryTest();
   await crimeMinigameStaleTest();
   await crimeMinigameOriginTest();
+  await crimeMinigameFreshTurnTest();
 } else if (process.argv.includes('--decision-recovery')) {
   await decisionAnnotationTest();
   await hardCrashReplayTest({ decisionCall: true });
@@ -2805,5 +2858,6 @@ await progressionRoleAndLevelStopTest();
 await crimeMinigameRecoveryTest();
 await crimeMinigameStaleTest();
 await crimeMinigameOriginTest();
+await crimeMinigameFreshTurnTest();
 }
 console.log('agent-alpha tests passed');

@@ -9,7 +9,7 @@ function find(node,name){if(node?.type==='FunctionDeclaration'&&node.id.name===n
 const source=name=>{const n=find(tree,name);assert(n,name);return script.slice(n.start,n.end);};
 for (const analytics of [undefined, {}]) for (const stage of ['api','refresh','ignored','queued']) {
  const resp={textContent:''},receipts=[];let callback=0,sent=0;
- const c=vm.createContext({console,OmertaSiteAnalytics:analytics,document:{body:{style:{}}},activatedControl:null,acting:false,operationPending:null,
+ const c=vm.createContext({console,OmertaSiteAnalytics:analytics,document:{body:{style:{}}},activatedControl:null,acting:false,crimeMinigamePending:false,crimeMinigameAttempts:new Map(),operationPending:null,
  me:{id:'a',generation:1},currentTab:'market',operationName:()=> 'buy',uuid:()=> 'once',operationSnapshot:m=>m,
  projections:{snapshot:()=>1,current:()=>true},cityIdentity:()=> 'key',renderOperationPending(){},busy:{removeAttribute(){},setAttribute(){},classList:{add(){},remove(){}}},
  toast(){},describe:()=>'',shake(){},sfx(){},$:()=>resp,_operationResponseCurrent:null,

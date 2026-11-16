@@ -10,7 +10,7 @@ import { createServer } from 'node:net';
 import { basename, dirname, join, resolve } from 'node:path';
 import { performance } from 'node:perf_hooks';
 import { fileURLToPath } from 'node:url';
-import { promisify } from 'node:util';
+import { isDeepStrictEqual, promisify } from 'node:util';
 
 const SESSION_VERSION = 1;
 const MIN_INTERVAL_MS = 3100;
@@ -1126,13 +1126,13 @@ async function runUnlocked(options, timing) {
     const returnedRecommendation = currentTurn && recommendationOf(currentTurn, role);
     if (returnedRecommendation && !returnedRecommendation.action && !returnedRecommendation.errorCode) break;
     await waitForCadence(timing, intervalMs);
-    const turn = await requestJson(fetchImpl, base, '/v1/agent/turn', { token: session.token });
+    let turn = await requestJson(fetchImpl, base, '/v1/agent/turn', { token: session.token });
     currentTurn = null;
     if (stopAtLevel !== undefined && Number(turn?.state?.identity?.level) >= stopAtLevel) {
       return { status: 'level_reached', actions, level: Number(turn.state.identity.level) };
     }
     const recommendation = recommendationOf(turn, role);
-    const action = recommendation.action;
+    let action = recommendation.action;
     if (!action) {
       if (recommendation.errorCode) {
         await appendReport(reportStore, {
@@ -1149,6 +1149,27 @@ async function runUnlocked(options, timing) {
       break;
     }
     const minigame = await prepareCrimeMinigame({ base, fetchImpl, session, action });
+    if (minigame) {
+      // The challenge shares the action's hard cadence. Observe final authority
+      // after that wait, before creating any durable or dispatched operation.
+      await waitForCadence(timing, intervalMs);
+      const fresh = await requestJson(fetchImpl, base, '/v1/agent/turn', { token: session.token });
+      const owner = turn.state?.identity, current = fresh.state?.identity;
+      const sameActor = typeof owner?.id === 'string' && owner.id.length > 0
+        && Number.isSafeInteger(owner.generation) && owner.generation >= 1
+        && owner.id === current?.id && owner.generation === current?.generation;
+      if (sameActor && stopAtLevel !== undefined && Number(current.level) >= stopAtLevel)
+        return { status: 'level_reached', actions, level: Number(current.level) };
+      const selected = recommendationOf(fresh, role), next = selected.action;
+      if (!sameActor || !next || !isDeepStrictEqual(
+        [action.id, action.kind, action.method, action.path, action.body, action.cost, action.minigame],
+        [next.id, next.kind, next.method, next.path, next.body, next.cost, next.minigame])) {
+        await appendReport(reportStore, { timestamp: new Date().toISOString(), status: 'refused',
+          errorCode: selected.errorCode || 'crime_action_changed', actionKind: 'crime', actionId: action.id });
+        return { status: 'refused', actions };
+      }
+      turn = fresh; action = next;
+    }
     const operationId = role === 'general' ? crypto.randomUUID() : `${role}:${crypto.randomUUID()}`;
     session = {
       ...session,
