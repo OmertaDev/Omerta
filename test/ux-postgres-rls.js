@@ -1,3 +1,4 @@
+import { injectWithCrimeMinigame } from './crime-fixture.js';
 // Native Community concurrency and direct-client RLS proof, isolated from every existing database.
 import assert from 'node:assert/strict';
 import { randomUUID } from 'node:crypto';
@@ -25,7 +26,7 @@ try {
  const { buildServer } = await import('./server-fixture.js'); app = await buildServer(); const pool = app.pool, route = '/v1/ux/community';
  assert.equal((await pool.query('SELECT current_database() name')).rows[0].name, database, 'all fixtures must use the newly created database');
  const call = async (method, url, player, payload, status = 200) => {
-  const r = await app.inject({ method, url, payload, headers: { ...(player ? { authorization: 'Bearer ' + player.token } : {}), ...(!['GET', 'HEAD'].includes(method) ? { 'idempotency-key': randomUUID() } : {}) } });
+  const r = await injectWithCrimeMinigame(app, { method, url, payload, headers: { ...(player ? { authorization: 'Bearer ' + player.token } : {}), ...(!['GET', 'HEAD'].includes(method) ? { 'idempotency-key': randomUUID() } : {}) } });
   assert.equal(r.statusCode, status, `${method} ${url}: ${r.body}`); return r.json();
  };
  const create = async (name) => { const { token } = await call('POST', '/v1/auth/guest'); const player = { token, account: app.jwt.verify(token).sub }; await call('POST', '/v1/character', player, { name }); player.ch = (await pool.query('SELECT * FROM characters WHERE account_id=$1 AND alive', [player.account])).rows[0]; return player; };
