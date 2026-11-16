@@ -2,6 +2,11 @@ import assert from 'node:assert/strict';
 import { fixture } from './lib/ux-personal-fixture.js';
 const { page, errors, close } = await fixture();
 try {
+  await page.evaluate(() => { const menu = document.createElement('div'); menu.id='game-menu-content'; document.getElementById('top').append(menu); feel.render(); tools.render(); });
+  for (const control of ['feel', 'tools']) {
+    assert.equal(await page.locator(`#game-menu-content [data-${control}-open]`).count(), 1, 'Personal controls remain in Menu until the workspace toolbar mounts.');
+    assert.equal(await page.locator(`#top > [data-${control}-open]`).count(), 0, 'Personal controls do not widen the mobile header row.');
+  }
   await page.evaluate(() => { const toolbar = document.createElement('section'); toolbar.id='ux-workspace-toolbar'; toolbar.innerHTML='<div class="ux-workspace-controls"></div>'; document.querySelector('main').before(toolbar); feel.render(); tools.render(); });
   assert.equal(await page.locator('#ux-workspace-toolbar [data-feel-open]').count(),1); assert.equal(await page.locator('#top [data-feel-open]').count(),0); assert.equal(await page.locator('[data-feel-open]').count(),1,'Room relocates its existing control to the workspace toolbar.');
   await page.locator('[data-feel-open]').click();

@@ -132,7 +132,7 @@
     function render() {
       if (!scope()) { document.querySelector('[data-feel-open]')?.remove(); document.querySelectorAll('[data-feel-loading],[data-feel-desk]').forEach(node => node.remove()); return; }
       if (!preview) preferences = normalize(workspace?.get?.('feel', {}) || {});
-      const host = document.querySelector('#ux-workspace-toolbar .ux-workspace-controls') || document.getElementById('top');
+      const host = document.querySelector('#ux-workspace-toolbar .ux-workspace-controls') || document.getElementById('game-menu-content') || document.getElementById('top');
       let button = document.querySelector('[data-feel-open]'); if (host && !button) { button = document.createElement('button'); button.type = 'button'; button.className = 'act'; button.dataset.feelOpen = ''; button.textContent = 'Room'; button.title = 'Optional room atmosphere and soundscape'; button.onclick = openSettings; }
       if (host && button && button.parentElement !== host) host.append(button);
       desk(); apply(); loadingPaint();

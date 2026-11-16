@@ -181,7 +181,7 @@
     function render() {
       if (!scope()) { document.querySelector('[data-tools-open]')?.remove(); document.querySelectorAll('[data-tools-personal-tray]').forEach(node => node.remove()); return; }
       data = storage() || {};
-      const host = document.querySelector('#ux-workspace-toolbar .ux-workspace-controls') || document.getElementById('top');
+      const host = document.querySelector('#ux-workspace-toolbar .ux-workspace-controls') || document.getElementById('game-menu-content') || document.getElementById('top');
       let button = document.querySelector('[data-tools-open]'); if (host && !button) { button = document.createElement('button'); button.type = 'button'; button.className = 'act'; button.dataset.toolsOpen = ''; button.textContent = 'Working desk'; button.title = 'Inventory tray, builds, bookmarks and undo'; button.onclick = () => open(); }
       if (host && button && button.parentElement !== host) host.append(button);
       renderTray();
