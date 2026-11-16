@@ -96,9 +96,11 @@ try {
   const child = env => spawnSync(process.execPath, ['--input-type=module', '-e', script], {
     cwd: temporary, env, windowsHide: true, encoding: 'utf8',
   });
-  assert.equal(child(environment).status, 0); positives++;
-  fs.writeFileSync(target, Buffer.from(observed.committed.toString('utf8').replaceAll('\n', '\r\n')));
-  assert.equal(child(environment).status, 0); positives++;
+  const genuineLf = child(environment);
+  assert.equal(genuineLf.status, 0, genuineLf.stderr || genuineLf.stdout); positives++;
+  fs.writeFileSync(target, Buffer.from(currentObserved.committed.toString('utf8').replaceAll('\n', '\r\n')));
+  const genuineCrlf = child(environment);
+  assert.equal(genuineCrlf.status, 0, genuineCrlf.stderr || genuineCrlf.stdout); positives++;
   fs.appendFileSync(target, 'x');
   const changed = child(environment); assert.notEqual(changed.status, 0); assert.match(changed.stderr, /Physical source/); refusals++;
   fs.writeFileSync(target, currentObserved.physical);
