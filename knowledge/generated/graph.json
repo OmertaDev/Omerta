@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "4149986050ec6265b2dace5ebc5ae2a04ca018e6",
+  "sourceRevision": "a2e05ba500eb36f12c72bcc2c4792a2cef5ec6a6",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 19489,
-    "edges": 77422,
+    "nodes": 19493,
+    "edges": 77436,
     "byNodeType": {
       "Artifact": 7951,
       "Command": 326,
-      "Commit": 5951,
+      "Commit": 5955,
       "Contract": 156,
       "Document": 980,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 6148,
-      "CHANGED": 30340,
+      "CHANGED": 30350,
       "CONTAINS": 7972,
       "DECLARES": 326,
       "DEFINED_IN": 1823,
       "DEPENDS_ON": 69,
       "EXECUTES": 1284,
       "HANDLED_BY": 956,
-      "HAS_COMMIT": 5951,
+      "HAS_COMMIT": 5955,
       "IMPLEMENTS": 124,
       "IMPORTS": 9529,
       "INHERITS": 47,
@@ -132080,20 +132080,20 @@
       "path": "public/ux-crime-minigame.css",
       "kind": "web-surface",
       "extension": ".css",
-      "bytes": 3426,
-      "lines": 41,
-      "version": "62e48060a7f03881",
+      "bytes": 4819,
+      "lines": 66,
+      "version": "f7c1731e5fd612b9",
       "text": true,
       "provenance": [
         {
           "file": "public/ux-crime-minigame.css",
           "line": 1,
-          "version": "62e48060a7f03881"
+          "version": "f7c1731e5fd612b9"
         }
       ],
-      "lastChangedAt": "2026-11-15T23:41:04.000Z",
+      "lastChangedAt": "2026-11-16T16:18:05.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4adbde51e7d4571f265ff6a0fc1aeebb27130aea"
+      "lastChangedCommit": "a03b46f5b7363837a0f61394b7d0bff48641bf17"
     },
     {
       "key": "Artifact:public/ux-crime-minigame.js",
@@ -161221,20 +161221,20 @@
       "path": "test/nativegarage-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 21857,
-      "lines": 322,
-      "version": "bf8e5903fa71810c",
+      "bytes": 21945,
+      "lines": 327,
+      "version": "4daa7dee8d4a5ade",
       "text": true,
       "provenance": [
         {
           "file": "test/nativegarage-browser.js",
           "line": 1,
-          "version": "bf8e5903fa71810c"
+          "version": "4daa7dee8d4a5ade"
         }
       ],
-      "lastChangedAt": "2026-11-16T01:32:07.000Z",
+      "lastChangedAt": "2026-11-16T16:18:05.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "086ab18d77b7495e82114cacacab3d26979c84cf"
+      "lastChangedCommit": "a03b46f5b7363837a0f61394b7d0bff48641bf17"
     },
     {
       "key": "Artifact:test/nativegarage-client.js",
@@ -171088,20 +171088,20 @@
       "path": "test/ux-shell-browser.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 20459,
-      "lines": 325,
-      "version": "4e1c70bbb574446a",
+      "bytes": 21428,
+      "lines": 336,
+      "version": "b25b37b511920cc7",
       "text": true,
       "provenance": [
         {
           "file": "test/ux-shell-browser.js",
           "line": 1,
-          "version": "4e1c70bbb574446a"
+          "version": "b25b37b511920cc7"
         }
       ],
-      "lastChangedAt": "2026-11-15T23:41:04.000Z",
+      "lastChangedAt": "2026-11-16T16:18:05.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4adbde51e7d4571f265ff6a0fc1aeebb27130aea"
+      "lastChangedCommit": "a03b46f5b7363837a0f61394b7d0bff48641bf17"
     },
     {
       "key": "Artifact:test/ux-social-browser.js",
@@ -174520,20 +174520,20 @@
       "path": "tools/crime-minigame-source-data.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 413659,
-      "lines": 3321,
-      "version": "a618062d81604cca",
+      "bytes": 419785,
+      "lines": 3392,
+      "version": "317aef11d8a0c741",
       "text": true,
       "provenance": [
         {
           "file": "tools/crime-minigame-source-data.js",
           "line": 1,
-          "version": "a618062d81604cca"
+          "version": "317aef11d8a0c741"
         }
       ],
-      "lastChangedAt": "2026-11-16T13:27:45.000Z",
+      "lastChangedAt": "2026-11-16T16:18:30.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4160a33641bbd6ab5c73c2b4fa2a76174fe52bed"
+      "lastChangedCommit": "5bc5830be11d5dd26921860757d7ef056996ac7b"
     },
     {
       "key": "Artifact:tools/current-economic-terms-source-data.js",
@@ -175485,18 +175485,18 @@
       "extension": ".js",
       "bytes": 504764,
       "lines": 13449,
-      "version": "301fdfac21775a3a",
+      "version": "64a5803af32fc93d",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-questing-inputs.js",
           "line": 1,
-          "version": "301fdfac21775a3a"
+          "version": "64a5803af32fc93d"
         }
       ],
-      "lastChangedAt": "2026-11-16T13:28:28.000Z",
+      "lastChangedAt": "2026-11-16T16:18:36.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4149986050ec6265b2dace5ebc5ae2a04ca018e6"
+      "lastChangedCommit": "a2e05ba500eb36f12c72bcc2c4792a2cef5ec6a6"
     },
     {
       "key": "Artifact:tools/enterprise-native-questing-seal.js",
@@ -221068,6 +221068,22 @@
       ]
     },
     {
+      "key": "Commit:5bc5830be11d5dd26921860757d7ef056996ac7b",
+      "type": "Commit",
+      "id": "5bc5830be11d5dd26921860757d7ef056996ac7b",
+      "label": "chore(crime): seal mobile minigame verification source",
+      "title": "chore(crime): seal mobile minigame verification source",
+      "date": "2026-11-16T16:18:30.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/5bc5830be11d5dd26921860757d7ef056996ac7b",
+      "provenance": [
+        {
+          "commit": "5bc5830be11d5dd26921860757d7ef056996ac7b",
+          "url": "https://github.com/OmertaDev/Omerta/commit/5bc5830be11d5dd26921860757d7ef056996ac7b"
+        }
+      ]
+    },
+    {
       "key": "Commit:5bd8fc785f3be520a848936b6a615375c759f2a5",
       "type": "Commit",
       "id": "5bd8fc785f3be520a848936b6a615375c759f2a5",
@@ -241852,6 +241868,22 @@
       ]
     },
     {
+      "key": "Commit:91a144457eb52e70001866436ace73dd2f8daa3b",
+      "type": "Commit",
+      "id": "91a144457eb52e70001866436ace73dd2f8daa3b",
+      "label": "Refresh knowledge for corrected launch route counts",
+      "title": "Refresh knowledge for corrected launch route counts",
+      "date": "2026-11-16T13:33:02.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/91a144457eb52e70001866436ace73dd2f8daa3b",
+      "provenance": [
+        {
+          "commit": "91a144457eb52e70001866436ace73dd2f8daa3b",
+          "url": "https://github.com/OmertaDev/Omerta/commit/91a144457eb52e70001866436ace73dd2f8daa3b"
+        }
+      ]
+    },
+    {
       "key": "Commit:91b0203ed87e1e6cf6c06af169a00cdfff660734",
       "type": "Commit",
       "id": "91b0203ed87e1e6cf6c06af169a00cdfff660734",
@@ -247692,6 +247724,22 @@
       ]
     },
     {
+      "key": "Commit:a03b46f5b7363837a0f61394b7d0bff48641bf17",
+      "type": "Commit",
+      "id": "a03b46f5b7363837a0f61394b7d0bff48641bf17",
+      "label": "fix(crime): preserve mobile approaches and required minigame checks",
+      "title": "fix(crime): preserve mobile approaches and required minigame checks",
+      "date": "2026-11-16T16:18:05.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a03b46f5b7363837a0f61394b7d0bff48641bf17",
+      "provenance": [
+        {
+          "commit": "a03b46f5b7363837a0f61394b7d0bff48641bf17",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a03b46f5b7363837a0f61394b7d0bff48641bf17"
+        }
+      ]
+    },
+    {
       "key": "Commit:a03e2d0de9d685c1dcc93ecfe39ee9bd155c6bb4",
       "type": "Commit",
       "id": "a03e2d0de9d685c1dcc93ecfe39ee9bd155c6bb4",
@@ -248760,6 +248808,22 @@
         {
           "commit": "a2d9c715ba167d79d578cadfabf4552de9d007d7",
           "url": "https://github.com/OmertaDev/Omerta/commit/a2d9c715ba167d79d578cadfabf4552de9d007d7"
+        }
+      ]
+    },
+    {
+      "key": "Commit:a2e05ba500eb36f12c72bcc2c4792a2cef5ec6a6",
+      "type": "Commit",
+      "id": "a2e05ba500eb36f12c72bcc2c4792a2cef5ec6a6",
+      "label": "chore(questing): refresh exact current input catalog",
+      "title": "chore(questing): refresh exact current input catalog",
+      "date": "2026-11-16T16:18:36.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a2e05ba500eb36f12c72bcc2c4792a2cef5ec6a6",
+      "provenance": [
+        {
+          "commit": "a2e05ba500eb36f12c72bcc2c4792a2cef5ec6a6",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a2e05ba500eb36f12c72bcc2c4792a2cef5ec6a6"
         }
       ]
     },
@@ -310255,6 +310319,9 @@
           "commit": "9179a0a4bee230a26f332fefff28ad181a8562f5"
         },
         {
+          "commit": "91a144457eb52e70001866436ace73dd2f8daa3b"
+        },
+        {
           "commit": "91db4909214338796f96aff174c8f82860f4e6d9"
         },
         {
@@ -312575,6 +312642,9 @@
         },
         {
           "commit": "9179a0a4bee230a26f332fefff28ad181a8562f5"
+        },
+        {
+          "commit": "91a144457eb52e70001866436ace73dd2f8daa3b"
         },
         {
           "commit": "91db4909214338796f96aff174c8f82860f4e6d9"
@@ -315574,6 +315644,9 @@
           "commit": "9179a0a4bee230a26f332fefff28ad181a8562f5"
         },
         {
+          "commit": "91a144457eb52e70001866436ace73dd2f8daa3b"
+        },
+        {
           "commit": "91db4909214338796f96aff174c8f82860f4e6d9"
         },
         {
@@ -318569,6 +318642,9 @@
         },
         {
           "commit": "9179a0a4bee230a26f332fefff28ad181a8562f5"
+        },
+        {
+          "commit": "91a144457eb52e70001866436ace73dd2f8daa3b"
         },
         {
           "commit": "91db4909214338796f96aff174c8f82860f4e6d9"
@@ -322361,6 +322437,9 @@
         },
         {
           "commit": "9179a0a4bee230a26f332fefff28ad181a8562f5"
+        },
+        {
+          "commit": "91a144457eb52e70001866436ace73dd2f8daa3b"
         },
         {
           "commit": "91db4909214338796f96aff174c8f82860f4e6d9"
@@ -338992,7 +339071,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "4149986050ec6265b2dace5ebc5ae2a04ca018e6",
+      "revision": "a2e05ba500eb36f12c72bcc2c4792a2cef5ec6a6",
       "currentBranch": "codex/mandatory-crime-minigame-20261115",
       "defaultBranch": "main",
       "visibility": "public",
@@ -386271,13 +386350,13 @@
       "type": "TestSuite",
       "id": "test/nativegarage-browser.js",
       "label": "test/nativegarage-browser.js",
-      "lines": 322,
-      "version": "bf8e5903fa71810c",
+      "lines": 327,
+      "version": "4daa7dee8d4a5ade",
       "provenance": [
         {
           "file": "test/nativegarage-browser.js",
           "line": 1,
-          "version": "bf8e5903fa71810c"
+          "version": "4daa7dee8d4a5ade"
         }
       ]
     },
@@ -392706,13 +392785,13 @@
       "type": "TestSuite",
       "id": "test/ux-shell-browser.js",
       "label": "test/ux-shell-browser.js",
-      "lines": 325,
-      "version": "4e1c70bbb574446a",
+      "lines": 336,
+      "version": "b25b37b511920cc7",
       "provenance": [
         {
           "file": "test/ux-shell-browser.js",
           "line": 1,
-          "version": "4e1c70bbb574446a"
+          "version": "b25b37b511920cc7"
         }
       ]
     },
@@ -526335,6 +526414,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:5bc5830be11d5dd26921860757d7ef056996ac7b",
+      "to": "Artifact:tools/crime-minigame-source-data.js",
+      "provenance": {
+        "commit": "5bc5830be11d5dd26921860757d7ef056996ac7b"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:5bd8fc785f3be520a848936b6a615375c759f2a5",
       "to": "Artifact:MARKETING-POSTS.md",
       "provenance": {
@@ -574567,6 +574654,46 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:91a144457eb52e70001866436ace73dd2f8daa3b",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "91a144457eb52e70001866436ace73dd2f8daa3b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:91a144457eb52e70001866436ace73dd2f8daa3b",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "91a144457eb52e70001866436ace73dd2f8daa3b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:91a144457eb52e70001866436ace73dd2f8daa3b",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "91a144457eb52e70001866436ace73dd2f8daa3b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:91a144457eb52e70001866436ace73dd2f8daa3b",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "91a144457eb52e70001866436ace73dd2f8daa3b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:91a144457eb52e70001866436ace73dd2f8daa3b",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "91a144457eb52e70001866436ace73dd2f8daa3b"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:91b0203ed87e1e6cf6c06af169a00cdfff660734",
       "to": "Artifact:test/manufacturinglicenses-native-acquisition.js",
       "provenance": {
@@ -589695,6 +589822,30 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:a03b46f5b7363837a0f61394b7d0bff48641bf17",
+      "to": "Artifact:public/ux-crime-minigame.css",
+      "provenance": {
+        "commit": "a03b46f5b7363837a0f61394b7d0bff48641bf17"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a03b46f5b7363837a0f61394b7d0bff48641bf17",
+      "to": "Artifact:test/nativegarage-browser.js",
+      "provenance": {
+        "commit": "a03b46f5b7363837a0f61394b7d0bff48641bf17"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a03b46f5b7363837a0f61394b7d0bff48641bf17",
+      "to": "Artifact:test/ux-shell-browser.js",
+      "provenance": {
+        "commit": "a03b46f5b7363837a0f61394b7d0bff48641bf17"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:a03e2d0de9d685c1dcc93ecfe39ee9bd155c6bb4",
       "to": "HistoricalArtifact:knowledge/generated/github-history.md",
       "provenance": {
@@ -591595,6 +591746,14 @@
       "to": "Artifact:test/rc1-worker-restart-equivalence.js",
       "provenance": {
         "commit": "a2d9c715ba167d79d578cadfabf4552de9d007d7"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a2e05ba500eb36f12c72bcc2c4792a2cef5ec6a6",
+      "to": "Artifact:tools/enterprise-native-questing-inputs.js",
+      "provenance": {
+        "commit": "a2e05ba500eb36f12c72bcc2c4792a2cef5ec6a6"
       }
     },
     {
@@ -821183,6 +821342,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:5bc5830be11d5dd26921860757d7ef056996ac7b",
+      "provenance": {
+        "commit": "5bc5830be11d5dd26921860757d7ef056996ac7b"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:5bd8fc785f3be520a848936b6a615375c759f2a5",
       "provenance": {
         "commit": "5bd8fc785f3be520a848936b6a615375c759f2a5"
@@ -831575,6 +831742,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:91a144457eb52e70001866436ace73dd2f8daa3b",
+      "provenance": {
+        "commit": "91a144457eb52e70001866436ace73dd2f8daa3b"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:91b0203ed87e1e6cf6c06af169a00cdfff660734",
       "provenance": {
         "commit": "91b0203ed87e1e6cf6c06af169a00cdfff660734"
@@ -834495,6 +834670,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:a03b46f5b7363837a0f61394b7d0bff48641bf17",
+      "provenance": {
+        "commit": "a03b46f5b7363837a0f61394b7d0bff48641bf17"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:a03e2d0de9d685c1dcc93ecfe39ee9bd155c6bb4",
       "provenance": {
         "commit": "a03e2d0de9d685c1dcc93ecfe39ee9bd155c6bb4"
@@ -835026,6 +835209,14 @@
       "to": "Commit:a2d9c715ba167d79d578cadfabf4552de9d007d7",
       "provenance": {
         "commit": "a2d9c715ba167d79d578cadfabf4552de9d007d7"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:a2e05ba500eb36f12c72bcc2c4792a2cef5ec6a6",
+      "provenance": {
+        "commit": "a2e05ba500eb36f12c72bcc2c4792a2cef5ec6a6"
       }
     },
     {
@@ -926590,7 +926781,7 @@
       "to": "Artifact:test/crime-fixture.js",
       "provenance": {
         "file": "tools/crime-minigame-source-data.js",
-        "line": 3040
+        "line": 3111
       }
     },
     {
@@ -926599,7 +926790,7 @@
       "to": "Artifact:tools/crime-minigame-client.js",
       "provenance": {
         "file": "tools/crime-minigame-source-data.js",
-        "line": 2905
+        "line": 2976
       }
     },
     {
@@ -926608,7 +926799,7 @@
       "to": "Artifact:tools/crime-minigame-client.js",
       "provenance": {
         "file": "tools/crime-minigame-source-data.js",
-        "line": 2936
+        "line": 3007
       }
     },
     {
@@ -926617,7 +926808,7 @@
       "to": "Artifact:tools/crime-minigame-client.js",
       "provenance": {
         "file": "tools/crime-minigame-source-data.js",
-        "line": 3014
+        "line": 3085
       }
     },
     {
@@ -926626,7 +926817,7 @@
       "to": "Artifact:tools/crime-minigame-client.js",
       "provenance": {
         "file": "tools/crime-minigame-source-data.js",
-        "line": 3132
+        "line": 3203
       }
     },
     {
@@ -926635,7 +926826,7 @@
       "to": "Artifact:tools/crime-minigame-client.js",
       "provenance": {
         "file": "tools/crime-minigame-source-data.js",
-        "line": 3163
+        "line": 3234
       }
     },
     {
@@ -926644,7 +926835,7 @@
       "to": "Artifact:tools/crime-minigame-client.js",
       "provenance": {
         "file": "tools/crime-minigame-source-data.js",
-        "line": 3215
+        "line": 3286
       }
     },
     {
@@ -926653,7 +926844,7 @@
       "to": "Artifact:tools/crime-minigame-client.js",
       "provenance": {
         "file": "tools/crime-minigame-source-data.js",
-        "line": 3246
+        "line": 3317
       }
     },
     {
@@ -926680,7 +926871,7 @@
       "to": "Artifact:tools/crime-minigame-source-compatibility.js",
       "provenance": {
         "file": "tools/crime-minigame-source-data.js",
-        "line": 3066
+        "line": 3137
       }
     },
     {
