@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const NATIVE_GARAGE_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_NATIVE_GARAGE_SOURCE_COMPARISON_ONLY",
-  "revision": "bf6d369ae6cb4d5b22e8aec9b4925ff9338b09f1",
-  "tree": "3786d1e5ff280353378743f4235891d8994d623e",
+  "revision": "7aa6a4721a2a5cba0efda75e12fe4dd0e398bb23",
+  "tree": "08d0f69ce4d016f3b927fc8fbb5a51cb4d9db15f",
   "predecessor": "9cf7ced8beedd0950018a14bbab71b08b71a3d5b",
   "predecessorTree": "9477c277cca6b47b3a3ce20901e85a451243642f",
   "files": {
@@ -434,9 +434,9 @@ export const NATIVE_GARAGE_SOURCE = freeze({
     "tools/grand-strategy-source-transfer.js": {
       "current": {
         "mode": "100644",
-        "blob": "1bcfaee1198cbb44c78ca98628b3e70312e89d7d",
-        "sha256": "ea37a1b91ba65ffe360577b57f668cf49e0f01876dca5f840f129eb24d6e75ec",
-        "bytes": 16189
+        "blob": "b335f3225ca9e30bdc9c3d9a6f25fc905d76c54e",
+        "sha256": "144d04856c3986eea90a9f5c3c5ceb43aef9a80c7ea83a7a22343adac3a0fb7c",
+        "bytes": 16304
       },
       "baseline": {
         "mode": "100644",
@@ -452,26 +452,26 @@ export const NATIVE_GARAGE_SOURCE = freeze({
         },
         {
           "at": 10779,
-          "current": "  assert(pin, 'Only a finite reviewed successor domain');\n  const headEntry = git('ls-tree', 'HEAD', '--', file).trim();\n  const index = git('ls-files', '--stage', '--', file).trim();\n  const stat = fs.lstatSync(file), physical = fs.readFileSync(file);\n  assert(stat.isFile() && !stat.isSymbolicLink(), 'Regular physical reviewed source required');\n  const raw = execFileSync('git', ['--no-replace-objects', 'show', 'HEAD:' + file], {\n    windowsHide: true, maxBuffer: 64 * 1024 * 1024,\n  });\n  const head = headEntry.match(/^(100644|100755) blob ([a-f0-9]{40})\\t/);\n  assert(head, 'Regular genuine HEAD blob required');\n  const actual = nativeGarageHistoricalRecord(file, { head: { mode: head[1], blob: head[2] }, index,\n    committed: raw, physical, regular: stat.isFile(), symbolic: stat.isSymbolicLink() });\n  assert.equal(entry(file, actual.head, 'tree'), entry(file, pin, 'tree'), 'Genuine current HEAD must equal reviewed successor');\n  assert.equal(actual.index, entry(file, pin, 'index'), 'Genuine stage-zero index must equal reviewed successor');\n  const committed = actual.committed;\n  fingerprint(committed, pin);\n  if (source.files[file] || pin.text) {\n    const current = canonical(committed);\n    assert(current && !committed.includes(13), 'Canonical committed LF UTF-8 source');\n    assert(actual.physical.equals(committed) || actual.physical.equals(Buffer.from(current.lf.replaceAll('\\n', '\\r\\n'))),\n      'Physical source must equal whole current HEAD in LF or uniform CRLF');\n  } else assert(actual.physical.equals(committed), 'Binary source is admitted only byte-for-byte');\n  return actual;\n}\nfunction baselineText(file, input) {\n  const current = canonical(input); assert(current, 'Uniform complete LF/CRLF source required');\n",
+          "current": "  assert(pin, 'Only a finite reviewed successor domain');\n  const headEntry = git('ls-tree', 'HEAD', '--', file).trim();\n  const index = git('ls-files', '--stage', '--', file).trim();\n  const stat = fs.lstatSync(file);\n  assert(stat.isFile() && !stat.isSymbolicLink(), 'Regular physical reviewed source required');\n  const descriptor = fs.openSync(file, 'r');\n  let physical;\n  try { physical = fs.readFileSync(descriptor); } finally { fs.closeSync(descriptor); }\n  const raw = execFileSync('git', ['--no-replace-objects', 'show', 'HEAD:' + file], {\n    windowsHide: true, maxBuffer: 64 * 1024 * 1024,\n  });\n  const head = headEntry.match(/^(100644|100755) blob ([a-f0-9]{40})\\t/);\n  assert(head, 'Regular genuine HEAD blob required');\n  const actual = nativeGarageHistoricalRecord(file, { head: { mode: head[1], blob: head[2] }, index,\n    committed: raw, physical, regular: stat.isFile(), symbolic: stat.isSymbolicLink() });\n  assert.equal(entry(file, actual.head, 'tree'), entry(file, pin, 'tree'), 'Genuine current HEAD must equal reviewed successor');\n  assert.equal(actual.index, entry(file, pin, 'index'), 'Genuine stage-zero index must equal reviewed successor');\n  const committed = actual.committed;\n  fingerprint(committed, pin);\n  if (source.files[file] || pin.text) {\n    const current = canonical(committed);\n    assert(current && !committed.includes(13), 'Canonical committed LF UTF-8 source');\n    assert(actual.physical.equals(committed) || actual.physical.equals(Buffer.from(current.lf.replaceAll('\\n', '\\r\\n'))),\n      'Physical source must equal whole current HEAD in LF or uniform CRLF');\n  } else assert(actual.physical.equals(committed), 'Binary source is admitted only byte-for-byte');\n  return actual;\n}\nfunction baselineText(file, input) {\n  const current = canonical(input); assert(current, 'Uniform complete LF/CRLF source required');\n",
           "baseline": "  assert(pin, 'Only a finite reviewed successor domain');\n  const headEntry = git('ls-tree', 'HEAD', '--', file).trim();\n  const index = git('ls-files', '--stage', '--', file).trim();\n  assert.equal(headEntry, entry(file, pin, 'tree'), 'Genuine current HEAD must equal reviewed successor');\n  assert.equal(index, entry(file, pin, 'index'), 'Genuine stage-zero index must equal reviewed successor');\n  const stat = fs.lstatSync(file), physical = fs.readFileSync(file);\n  assert(stat.isFile() && !stat.isSymbolicLink(), 'Regular physical reviewed source required');\n  const committed = execFileSync('git', ['--no-replace-objects', 'show', 'HEAD:' + file], {\n    windowsHide: true, maxBuffer: 64 * 1024 * 1024,\n  });\n  fingerprint(committed, pin);\n  if (source.files[file] || pin.text) {\n    const current = canonical(committed);\n    assert(current && !committed.includes(13), 'Canonical committed LF UTF-8 source');\n    assert(physical.equals(committed) || physical.equals(Buffer.from(current.lf.replaceAll('\\n', '\\r\\n'))),\n      'Physical source must equal whole current HEAD in LF or uniform CRLF');\n  } else assert(physical.equals(committed), 'Binary source is admitted only byte-for-byte');\n  return { head: { mode: pin.mode, blob: pin.blob }, index, committed, physical,\n    regular: stat.isFile(), symbolic: stat.isSymbolicLink() };\n}\nfunction baselineText(file, input) {\n  const current = canonical(input); assert(current, 'Uniform complete LF/CRLF source required');\n"
         },
         {
-          "at": 13099,
+          "at": 13214,
           "current": "  return { current, restored };\n}\nexport function qualifyGrandStrategySource(file, input) {\n  input = nativeGarageHistoricalInput(file, input);\n  assert.equal(arguments.length, 2); definition(); assert(known(file), 'No predecessor reconstruction for added or unknown source');\n  const result = baselineText(file, input);\n  grandStrategyActual(file);\n",
           "baseline": "  return { current, restored };\n}\nexport function qualifyGrandStrategySource(file, input) {\n  assert.equal(arguments.length, 2); definition(); assert(known(file), 'No predecessor reconstruction for added or unknown source');\n  const result = baselineText(file, input);\n  grandStrategyActual(file);\n"
         },
         {
-          "at": 13602,
+          "at": 13717,
           "current": "}\n// Unknown input passes unchanged to the original refusing historical qualifier.\nexport function grandStrategyHistoricalInput(file, input) {\n  input = nativeGarageHistoricalInput(file, input);\n  if (!known(file)) return input;\n  const current = canonical(input);\n  if (!current || sha(current.lf) !== source.files[file].current.sha256) return input;\n",
           "baseline": "}\n// Unknown input passes unchanged to the original refusing historical qualifier.\nexport function grandStrategyHistoricalInput(file, input) {\n  if (!known(file)) return input;\n  const current = canonical(input);\n  if (!current || sha(current.lf) !== source.files[file].current.sha256) return input;\n"
         },
         {
-          "at": 14091,
+          "at": 14206,
           "current": "}\nexport function grandStrategyHistoricalEntry(file, input, kind) {\n  assert(kind === 'tree' || kind === 'index');\n  input = nativeGarageHistoricalEntry(file, input, kind);\n  if (!known(file)) return input;\n  const row = source.files[file], expected = entry(file, row.current, kind);\n  if (input !== expected && input !== expected + '\\n') return input;\n",
           "baseline": "}\nexport function grandStrategyHistoricalEntry(file, input, kind) {\n  assert(kind === 'tree' || kind === 'index');\n  if (!known(file)) return input;\n  const row = source.files[file], expected = entry(file, row.current, kind);\n  if (input !== expected && input !== expected + '\\n') return input;\n"
         },
         {
-          "at": 14552,
+          "at": 14667,
           "current": "}\nexport function grandStrategyHistoricalRecord(file, actual) {\n  assert.equal(arguments.length, 2);\n  actual = nativeGarageHistoricalRecord(file, actual);\n  if (!known(file)) return actual;\n  definition(); shape(actual);\n  const row = source.files[file];\n",
           "baseline": "}\nexport function grandStrategyHistoricalRecord(file, actual) {\n  assert.equal(arguments.length, 2);\n  if (!known(file)) return actual;\n  definition(); shape(actual);\n  const row = source.files[file];\n"
         }
@@ -684,9 +684,9 @@ export const NATIVE_GARAGE_SOURCE = freeze({
     },
     "test/native-garage-source-transfer.js": {
       "mode": "100644",
-      "blob": "1f0793bf94f6055469b61e4636f6a198be749fae",
-      "sha256": "f5a93a01be796fb0b482e5023ee4c426fe00f23746c206914d8d7c7a4568f49a",
-      "bytes": 8859,
+      "blob": "79c40b4d0ddceee0c0a16c519c0be7006d9e1eb0",
+      "sha256": "5cf7ffa00a638ad0cca23ada2ff1a51f4caaf1c90eefcc23cb08e0915abbbbba",
+      "bytes": 9120,
       "text": true
     },
     "test/nativegarage-browser.js": {
@@ -733,4 +733,4 @@ export const NATIVE_GARAGE_SOURCE = freeze({
     }
   }
 });
-export const NATIVE_GARAGE_SOURCE_SHA256 = '8bb7fd8fca6596f0eae0c231db1e9b652b4df6b8994077d81a0453b0b35b73fa';
+export const NATIVE_GARAGE_SOURCE_SHA256 = '4f137f5bffd13cce2de496af7e1790d0ca769b803772a011cea168b99d546a3f';
