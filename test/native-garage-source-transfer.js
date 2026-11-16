@@ -15,6 +15,13 @@ assertNativeGarageCurrentSource();
 assert.equal(new Set(NATIVE_GARAGE_SCOPE).size, NATIVE_GARAGE_SCOPE.length);
 assert(!NATIVE_GARAGE_SCOPE.includes('schema.sql') && !NATIVE_GARAGE_SCOPE.includes('src/db.js'));
 assert(NATIVE_GARAGE_GENERATED_FILES.includes('tools/native-garage-source-data.js'));
+assert.deepEqual([...NATIVE_GARAGE_GENERATED_FILES].sort(), [
+  'tools/native-garage-source-data.js',
+  'knowledge/generated/graph.json', 'knowledge/generated/graph-summary.md',
+  'knowledge/generated/github-history.md', 'knowledge/generated/inventory.md',
+  'knowledge/generated/modules.md', 'knowledge/generated/routes.md', 'knowledge/generated/documents.md',
+  'knowledge/generated/graph.mmd', 'knowledge/generated/schema.md',
+].sort(), 'Only the measured independently generated domains may follow the source candidate');
 let positives = 0, refusals = 0;
 const entry = (file, pin, kind) => kind === 'tree' ? pin.mode + ' blob ' + pin.blob + '\t' + file
   : pin.mode + ' ' + pin.blob + ' 0\t' + file;
@@ -104,16 +111,20 @@ try {
     GIT_COMMITTER_NAME: 'Source fixture', GIT_COMMITTER_EMAIL: 'source@example.test' };
   const localGit = (args, input) => execFileSync('git', args, { cwd: isolated, env: isolatedEnv,
     windowsHide: true, encoding: 'utf8', input });
-  localGit(['init', '--quiet', isolated]); localGit(['read-tree', git('rev-parse', 'HEAD').trim()]);
-  const extra = localGit(['hash-object', '-w', '--stdin'], 'unreviewed\n').trim();
-  localGit(['update-index', '--add', '--cacheinfo', '100644', extra, 'src/unreviewed.js']);
-  const tree = localGit(['write-tree']).trim();
-  const commit = localGit(['commit-tree', tree, '-p', git('rev-parse', 'HEAD').trim()], 'Unreviewed source fixture\n').trim();
-  localGit(['update-ref', 'HEAD', commit]);
-  const check = spawnSync(process.execPath, ['--input-type=module', '-e',
-    'import { assertNativeGarageCurrentSource } from ' + JSON.stringify(moduleUrl) + '; assertNativeGarageCurrentSource();'],
-  { cwd: isolated, env: isolatedEnv, windowsHide: true, encoding: 'utf8' });
-  assert.notEqual(check.status, 0); assert.match(check.stderr, /Only fixed independently generated domains/); refusals++;
+  localGit(['init', '--quiet', isolated]);
+  for (const file of ['src/unreviewed.js', 'knowledge/generated/unreviewed.md',
+    'knowledge/generated/contracts.md', 'tools/knowledge.js']) {
+    localGit(['read-tree', git('rev-parse', 'HEAD').trim()]);
+    const extra = localGit(['hash-object', '-w', '--stdin'], 'unreviewed\n').trim();
+    localGit(['update-index', '--add', '--cacheinfo', '100644', extra, file]);
+    const tree = localGit(['write-tree']).trim();
+    const commit = localGit(['commit-tree', tree, '-p', git('rev-parse', 'HEAD').trim()], 'Unreviewed source fixture\n').trim();
+    localGit(['update-ref', 'HEAD', commit]);
+    const check = spawnSync(process.execPath, ['--input-type=module', '-e',
+      'import { assertNativeGarageCurrentSource } from ' + JSON.stringify(moduleUrl) + '; assertNativeGarageCurrentSource();'],
+    { cwd: isolated, env: isolatedEnv, windowsHide: true, encoding: 'utf8' });
+    assert.notEqual(check.status, 0); assert.match(check.stderr, /Only fixed independently generated domains/); refusals++;
+  }
 } finally {
   assert(path.resolve(temporary).startsWith(path.resolve(os.tmpdir()) + path.sep)
     && path.basename(temporary).startsWith('omerta-native-source-'));

@@ -12,6 +12,7 @@ export const NATIVE_GARAGE_GENERATED_FILES = Object.freeze([
   'knowledge/generated/graph.json', 'knowledge/generated/graph-summary.md',
   'knowledge/generated/github-history.md', 'knowledge/generated/inventory.md',
   'knowledge/generated/modules.md', 'knowledge/generated/routes.md', 'knowledge/generated/documents.md',
+  'knowledge/generated/graph.mmd', 'knowledge/generated/schema.md',
 ]);
 export const NATIVE_GARAGE_SCOPE = Object.freeze([
   ".github/workflows/ci.yml",
