@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const NATIVE_GARAGE_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_NATIVE_GARAGE_SOURCE_COMPARISON_ONLY",
-  "revision": "2e29ee7ff32e8b198d24ea5ceb43a5840b371fac",
-  "tree": "4ec7cf41441955386232e4c6aecbedaed69ee48c",
+  "revision": "de4f36328906c608d5d242e215ddd9632c14f00d",
+  "tree": "63f3d58e59ba498fc768cda15cc7d9052115e550",
   "predecessor": "9cf7ced8beedd0950018a14bbab71b08b71a3d5b",
   "predecessorTree": "9477c277cca6b47b3a3ce20901e85a451243642f",
   "files": {
@@ -367,9 +367,9 @@ export const NATIVE_GARAGE_SOURCE = freeze({
     "tools/enterprise-native-questing.js": {
       "current": {
         "mode": "100644",
-        "blob": "30a953e9593a50ee452cf2c6bce56643d36df27e",
-        "sha256": "3586274bc2f27f9e296991b1a66be82c5a019db813e5ce1f82d19d726e83f4db",
-        "bytes": 27585
+        "blob": "9c96e4e7edacd78cddf9c7f7b1c179e038f43185",
+        "sha256": "8c54c69eecd9ba81fef7a9d9d1402904d3067c14d59c85875de1e828775592f2",
+        "bytes": 27732
       },
       "baseline": {
         "mode": "100644",
@@ -380,17 +380,22 @@ export const NATIVE_GARAGE_SOURCE = freeze({
       "inverses": [
         {
           "at": 750,
-          "current": "import { enterpriseUxImports, enterpriseUxMetadataBytes } from './enterprise-native-ux.js';\nimport { ENTERPRISE_NATIVE_UX_INPUTS as predecessor, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as predecessorHash } from './enterprise-native-contract-release-inputs.js';\nimport { QUESTING_ENTERPRISE_NATIVE_INPUTS as declaration, QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 as declarationHash } from './enterprise-native-questing-inputs.js';\nimport {\n  nativeGarageEnterprisePredecessor, assertNativeGarageEnterpriseClosure,\n  nativeGarageEnterpriseScope, nativeGarageEnterpriseHistoricalInput,\n} from './native-garage-enterprise-source.js';\n\nexport const QUESTING_NATIVE_METADATA = 'tools/enterprise-native-questing-inputs.js';\nexport const QUESTING_NATIVE_PREDECESSOR_METADATA = 'tools/enterprise-native-contract-release-inputs.js';\n",
+          "current": "import { enterpriseUxImports, enterpriseUxMetadataBytes } from './enterprise-native-ux.js';\nimport { ENTERPRISE_NATIVE_UX_INPUTS as predecessor, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as predecessorHash } from './enterprise-native-contract-release-inputs.js';\nimport { QUESTING_ENTERPRISE_NATIVE_INPUTS as declaration, QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 as declarationHash } from './enterprise-native-questing-inputs.js';\nimport {\n  nativeGarageEnterprisePredecessor, assertNativeGarageEnterpriseClosure,\n  nativeGarageEnterpriseScope, nativeGarageEnterpriseHistoricalInput, nativeGarageEnterpriseBinary,\n} from './native-garage-enterprise-source.js';\n\nexport const QUESTING_NATIVE_METADATA = 'tools/enterprise-native-questing-inputs.js';\nexport const QUESTING_NATIVE_PREDECESSOR_METADATA = 'tools/enterprise-native-contract-release-inputs.js';\n",
           "baseline": "import { enterpriseUxImports, enterpriseUxMetadataBytes } from './enterprise-native-ux.js';\nimport { ENTERPRISE_NATIVE_UX_INPUTS as predecessor, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as predecessorHash } from './enterprise-native-contract-release-inputs.js';\nimport { QUESTING_ENTERPRISE_NATIVE_INPUTS as declaration, QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 as declarationHash } from './enterprise-native-questing-inputs.js';\n\nexport const QUESTING_NATIVE_METADATA = 'tools/enterprise-native-questing-inputs.js';\nexport const QUESTING_NATIVE_PREDECESSOR_METADATA = 'tools/enterprise-native-contract-release-inputs.js';\n"
         },
         {
-          "at": 9827,
+          "at": 9857,
           "current": "function assertQuestingTrackedPin(file, current, authored, bytes, expected) {\n  assert.ok(expected, `No undeclared actual-current native input: ${file}`);\n  assert.ok(Buffer.isBuffer(bytes) && current && authored);\n  ({ current, bytes } = nativeGarageEnterprisePredecessor(file, current, bytes, expected));\n  assert.equal(current.type, 'blob'); assert.equal(authored.type, 'blob');\n  assert.equal(current.mode, expected.mode); assert.equal(authored.mode, expected.mode);\n  assert.equal(current.blob, expected.blob, 'Actual HEAD input differs from its new native pin');\n",
           "baseline": "function assertQuestingTrackedPin(file, current, authored, bytes, expected) {\n  assert.ok(expected, `No undeclared actual-current native input: ${file}`);\n  assert.ok(Buffer.isBuffer(bytes) && current && authored);\n  assert.equal(current.type, 'blob'); assert.equal(authored.type, 'blob');\n  assert.equal(current.mode, expected.mode); assert.equal(authored.mode, expected.mode);\n  assert.equal(current.blob, expected.blob, 'Actual HEAD input differs from its new native pin');\n"
         },
         {
-          "at": 15225,
-          "current": "  const records = tree(revision), current = new Map(records.map(row => [row.file, row]));\n  const authored = new Map(tree(declaration.authoredRevision).map(row => [row.file, row]));\n  const read = actualReader(records), files = {};\n  const actualClosure = questingNativeClosure(file => read(file).canonical);\n  const historicalClosure = questingNativeClosure(file => nativeGarageEnterpriseHistoricalInput(file, read(file).canonical));\n  assertNativeGarageEnterpriseClosure(actualClosure, historicalClosure, declaration.files.map(row => row.file));\n  for (const expected of declaration.files) {\n    const actual = read(expected.file);\n    const original = authored.get(expected.file);\n    assertQuestingTrackedPin(expected.file, current.get(expected.file), original, actual.canonical, expected);\n    files[expected.file] = { sha256: sha(actual.raw), gitSha256: actual.pin.sha256, blob: actual.pin.blob, binary: binary.has(expected.file), bytes: actual.raw.length };\n  }\n  // Fresh native proofs exercise the real successor. Keep every scoped byte in\n  // their stability receipt, including browser assets outside the JS traversal.\n  for (const file of new Set([...actualClosure, ...nativeGarageEnterpriseScope()])) {\n    if (Object.hasOwn(files, file)) continue;\n    const actual = read(file);\n    files[file] = { sha256: sha(actual.raw), gitSha256: actual.pin.sha256, blob: actual.pin.blob,\n      binary: binary.has(file), bytes: actual.raw.length };\n  }\n  const metadata = read(QUESTING_NATIVE_METADATA), originalMetadata = authored.get(QUESTING_NATIVE_METADATA);\n  assert.ok(originalMetadata && originalMetadata.type === 'blob'); assert.equal(metadata.pin.mode, originalMetadata.mode);\n",
+          "at": 12613,
+          "current": "    assert.ok(stat.isFile() && !stat.isSymbolicLink(), `Physical regular input: ${file}`);\n    const raw = fs.readFileSync(full); assert.equal(stat.size, raw.length);\n    const canonical = blob(raw) === row.blob ? raw : Buffer.from(raw.toString('utf8').replaceAll('\\r\\n', '\\n'));\n    assertEnterpriseNativeTrackedBytes(raw, canonical, nativeGarageEnterpriseBinary(file, binary.has(file)));\n    assert.equal(blob(canonical), row.blob, `Physical input equals actual Git bytes: ${file}`);\n    const result = { canonical, raw, pin: Object.freeze({ file, mode: row.mode, blob: row.blob, sha256: sha(canonical) }) };\n    cache.set(file, result); return result;\n",
+          "baseline": "    assert.ok(stat.isFile() && !stat.isSymbolicLink(), `Physical regular input: ${file}`);\n    const raw = fs.readFileSync(full); assert.equal(stat.size, raw.length);\n    const canonical = blob(raw) === row.blob ? raw : Buffer.from(raw.toString('utf8').replaceAll('\\r\\n', '\\n'));\n    assertEnterpriseNativeTrackedBytes(raw, canonical, binary.has(file));\n    assert.equal(blob(canonical), row.blob, `Physical input equals actual Git bytes: ${file}`);\n    const result = { canonical, raw, pin: Object.freeze({ file, mode: row.mode, blob: row.blob, sha256: sha(canonical) }) };\n    cache.set(file, result); return result;\n"
+        },
+        {
+          "at": 15291,
+          "current": "  const records = tree(revision), current = new Map(records.map(row => [row.file, row]));\n  const authored = new Map(tree(declaration.authoredRevision).map(row => [row.file, row]));\n  const read = actualReader(records), files = {};\n  const actualClosure = questingNativeClosure(file => read(file).canonical);\n  const historicalClosure = questingNativeClosure(file => nativeGarageEnterpriseHistoricalInput(file, read(file).canonical));\n  assertNativeGarageEnterpriseClosure(actualClosure, historicalClosure, declaration.files.map(row => row.file));\n  for (const expected of declaration.files) {\n    const actual = read(expected.file);\n    const original = authored.get(expected.file);\n    assertQuestingTrackedPin(expected.file, current.get(expected.file), original, actual.canonical, expected);\n    files[expected.file] = { sha256: sha(actual.raw), gitSha256: actual.pin.sha256, blob: actual.pin.blob, binary: nativeGarageEnterpriseBinary(expected.file, binary.has(expected.file)), bytes: actual.raw.length };\n  }\n  // Fresh native proofs exercise the real successor. Keep every scoped byte in\n  // their stability receipt, including browser assets outside the JS traversal.\n  for (const file of new Set([...actualClosure, ...nativeGarageEnterpriseScope()])) {\n    if (Object.hasOwn(files, file)) continue;\n    const actual = read(file);\n    files[file] = { sha256: sha(actual.raw), gitSha256: actual.pin.sha256, blob: actual.pin.blob,\n      binary: nativeGarageEnterpriseBinary(file, binary.has(file)), bytes: actual.raw.length };\n  }\n  const metadata = read(QUESTING_NATIVE_METADATA), originalMetadata = authored.get(QUESTING_NATIVE_METADATA);\n  assert.ok(originalMetadata && originalMetadata.type === 'blob'); assert.equal(metadata.pin.mode, originalMetadata.mode);\n",
           "baseline": "  const records = tree(revision), current = new Map(records.map(row => [row.file, row]));\n  const authored = new Map(tree(declaration.authoredRevision).map(row => [row.file, row]));\n  const read = actualReader(records), files = {};\n  assert.deepEqual(questingNativeClosure(file => read(file).canonical), declaration.files.map(row => row.file), 'Complete actual current import/asset closure');\n  for (const expected of declaration.files) {\n    const actual = read(expected.file); assert.deepEqual(actual.pin, expected);\n    const original = authored.get(expected.file);\n    assertQuestingTrackedPin(expected.file, current.get(expected.file), original, actual.canonical, expected);\n    files[expected.file] = { sha256: sha(actual.raw), gitSha256: expected.sha256, blob: expected.blob, binary: binary.has(expected.file), bytes: actual.raw.length };\n  }\n  const metadata = read(QUESTING_NATIVE_METADATA), originalMetadata = authored.get(QUESTING_NATIVE_METADATA);\n  assert.ok(originalMetadata && originalMetadata.type === 'blob'); assert.equal(metadata.pin.mode, originalMetadata.mode);\n"
         }
       ]
@@ -452,23 +457,23 @@ export const NATIVE_GARAGE_SOURCE = freeze({
     },
     "docs/reviews/2026-11-15-native-garage-ui/MANIFEST.json": {
       "mode": "100644",
-      "blob": "463dc9eec02e0fba72f58c100cfbc30d14a2304b",
-      "sha256": "42047fd3e342b1669a1cbbbb9369d64e1b2b3d4ec9c3410925fbafcae83f47c7",
+      "blob": "f9a2d97c9a332961cb95f2d88979749dd369f928",
+      "sha256": "69a72b83f8230187023142270b75ccdd9c9dc6b578fbcbb855c7304b7c61de72",
       "bytes": 2575,
       "text": true
     },
     "docs/reviews/2026-11-15-native-garage-ui/MANIFEST.sha256": {
       "mode": "100644",
-      "blob": "46d9ceaf5d248cc94a592f3f27e5371a20f908d1",
-      "sha256": "d423bb954b811d3c6b1c34bd54737a1a7ee5cfb39d5ebccfed0f2aefe09aeca4",
+      "blob": "00e52702b2a31a3c13793550c65b469851a246ba",
+      "sha256": "825182fca80f96b793357d3f672b82bfd108682be61b888686cfcc1af24a30ce",
       "bytes": 80,
       "text": true
     },
     "docs/reviews/2026-11-15-native-garage-ui/REVIEW.md": {
       "mode": "100644",
-      "blob": "db7cadf47deb82b4dd98e711588a4ffe2a37afd0",
-      "sha256": "ceab7131f7459dec8e5e20f2b1f91806162ea7411a39a4e42acaca7561323ee7",
-      "bytes": 4493,
+      "blob": "98561dee174928297992aef7f7bc9b8db1406ef7",
+      "sha256": "c290db57817d5867de412c2ac4813ff4d66c527e3eddac25e33892fb13831597",
+      "bytes": 4883,
       "text": true
     },
     "docs/reviews/2026-11-15-native-garage-ui/evidence/checks-summary.json": {
@@ -641,9 +646,9 @@ export const NATIVE_GARAGE_SOURCE = freeze({
     },
     "test/native-garage-enterprise-source.js": {
       "mode": "100644",
-      "blob": "92eca934d3fe89bceba048f819458508aefa0f17",
-      "sha256": "1e91b275f88597337d136b05ed14ba666f622e53421a15fdc2f7953315c62907",
-      "bytes": 3995,
+      "blob": "7b772874e0a56ca4f5c3864cb418ca3dfb6fb23c",
+      "sha256": "7306ea85dc794cd0a4bca5c8f74d4db7f21248a5065f56906bc76578b4517d60",
+      "bytes": 4431,
       "text": true
     },
     "test/native-garage-source-transfer.js": {
@@ -676,9 +681,9 @@ export const NATIVE_GARAGE_SOURCE = freeze({
     },
     "tools/native-garage-enterprise-source.js": {
       "mode": "100644",
-      "blob": "b11fd8f6204a423ffa9903c8c6a29f113828bab6",
-      "sha256": "53813344b40260da36ff77b24f1aa586b20a3f160d2894b8e75ac4d7daa59d83",
-      "bytes": 3005,
+      "blob": "ad95d4efb8551f60fcc3a1ff18663202bcf2eea4",
+      "sha256": "f56586cc88c39644bb8405db7eb16356373ab10a255a31830248bfea58409c17",
+      "bytes": 3167,
       "text": true
     },
     "tools/native-garage-source-seal.js": {
@@ -690,11 +695,11 @@ export const NATIVE_GARAGE_SOURCE = freeze({
     },
     "tools/native-garage-source-transfer.js": {
       "mode": "100644",
-      "blob": "3bcc5d8f742cfe1e971a8f26ecb713525eb6812b",
-      "sha256": "1834a974b357ec9672c985f9ed96148f6764ff26492c250494b8efc0b7acf812",
-      "bytes": 13034,
+      "blob": "14beaac89ca1c24927b4c89847559c8efc039c86",
+      "sha256": "a199d6a909c0467d7a05d27d3354f507320ef06f3cdc591075044e572d65343a",
+      "bytes": 13059,
       "text": true
     }
   }
 });
-export const NATIVE_GARAGE_SOURCE_SHA256 = '5217dd8e7f7c1fc64cf043ee9273811f65836a560ec372a9e7797185a383cd89';
+export const NATIVE_GARAGE_SOURCE_SHA256 = '41e1c34cd27750e073e0b803d3aa760920238b609d66b0aca816d6a6d8f4ce54';
