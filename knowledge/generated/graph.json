@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "4c521fc0909c65851a9ff4626c32837d78aecfde",
+  "sourceRevision": "2bf8335266ea18bd74ef2515052933a590b0ec52",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 19481,
-    "edges": 77396,
+    "nodes": 19485,
+    "edges": 77411,
     "byNodeType": {
       "Artifact": 7951,
       "Command": 326,
-      "Commit": 5943,
+      "Commit": 5947,
       "Contract": 156,
       "Document": 980,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 6148,
-      "CHANGED": 30322,
+      "CHANGED": 30333,
       "CONTAINS": 7972,
       "DECLARES": 326,
       "DEFINED_IN": 1823,
       "DEPENDS_ON": 69,
       "EXECUTES": 1284,
       "HANDLED_BY": 956,
-      "HAS_COMMIT": 5943,
+      "HAS_COMMIT": 5947,
       "IMPLEMENTS": 124,
       "IMPORTS": 9529,
       "INHERITS": 47,
@@ -161198,20 +161198,20 @@
       "path": "test/native-garage-source-transfer.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 10153,
-      "lines": 139,
-      "version": "414985471b62eb3c",
+      "bytes": 10306,
+      "lines": 141,
+      "version": "f0996dcde14aecbe",
       "text": true,
       "provenance": [
         {
           "file": "test/native-garage-source-transfer.js",
           "line": 1,
-          "version": "414985471b62eb3c"
+          "version": "f0996dcde14aecbe"
         }
       ],
-      "lastChangedAt": "2026-11-16T07:45:38.000Z",
+      "lastChangedAt": "2026-11-16T11:12:01.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "56d0f2339b4ff6d25818caaf0b94446311d56d73"
+      "lastChangedCommit": "4a2659c264a8342ee967bfeaef967a9bebf16887"
     },
     {
       "key": "Artifact:test/nativegarage-browser.js",
@@ -174520,20 +174520,20 @@
       "path": "tools/crime-minigame-source-data.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 412957,
-      "lines": 3316,
-      "version": "18705275f424c4a8",
+      "bytes": 413659,
+      "lines": 3321,
+      "version": "5afe07e71c1498ab",
       "text": true,
       "provenance": [
         {
           "file": "tools/crime-minigame-source-data.js",
           "line": 1,
-          "version": "18705275f424c4a8"
+          "version": "5afe07e71c1498ab"
         }
       ],
-      "lastChangedAt": "2026-11-16T10:56:53.000Z",
+      "lastChangedAt": "2026-11-16T11:12:57.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e85d544cfbb534d39235768e4b204187bdf9cf97"
+      "lastChangedCommit": "0e025ce8ef6fa662f7581099ed8f046636d91de5"
     },
     {
       "key": "Artifact:tools/current-economic-terms-source-data.js",
@@ -175485,18 +175485,18 @@
       "extension": ".js",
       "bytes": 504764,
       "lines": 13449,
-      "version": "efadc44e7fd18d23",
+      "version": "42d11a401390339a",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-questing-inputs.js",
           "line": 1,
-          "version": "efadc44e7fd18d23"
+          "version": "42d11a401390339a"
         }
       ],
-      "lastChangedAt": "2026-11-16T10:57:20.000Z",
+      "lastChangedAt": "2026-11-16T11:13:12.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4c521fc0909c65851a9ff4626c32837d78aecfde"
+      "lastChangedCommit": "2bf8335266ea18bd74ef2515052933a590b0ec52"
     },
     {
       "key": "Artifact:tools/enterprise-native-questing-seal.js",
@@ -192172,6 +192172,22 @@
       ]
     },
     {
+      "key": "Commit:0e025ce8ef6fa662f7581099ed8f046636d91de5",
+      "type": "Commit",
+      "id": "0e025ce8ef6fa662f7581099ed8f046636d91de5",
+      "label": "Seal corrected current-source fixture bytes",
+      "title": "Seal corrected current-source fixture bytes",
+      "date": "2026-11-16T11:12:57.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/0e025ce8ef6fa662f7581099ed8f046636d91de5",
+      "provenance": [
+        {
+          "commit": "0e025ce8ef6fa662f7581099ed8f046636d91de5",
+          "url": "https://github.com/OmertaDev/Omerta/commit/0e025ce8ef6fa662f7581099ed8f046636d91de5"
+        }
+      ]
+    },
+    {
       "key": "Commit:0e02724224334c3bc0e8ad778340741d3cfe63fa",
       "type": "Commit",
       "id": "0e02724224334c3bc0e8ad778340741d3cfe63fa",
@@ -203272,6 +203288,22 @@
         {
           "commit": "2bd8091b5469ebc5b36337b7dfcee04a4a6ecf8b",
           "url": "https://github.com/OmertaDev/Omerta/commit/2bd8091b5469ebc5b36337b7dfcee04a4a6ecf8b"
+        }
+      ]
+    },
+    {
+      "key": "Commit:2bf8335266ea18bd74ef2515052933a590b0ec52",
+      "type": "Commit",
+      "id": "2bf8335266ea18bd74ef2515052933a590b0ec52",
+      "label": "Pin native inputs for the corrected source fixture",
+      "title": "Pin native inputs for the corrected source fixture",
+      "date": "2026-11-16T11:13:12.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/2bf8335266ea18bd74ef2515052933a590b0ec52",
+      "provenance": [
+        {
+          "commit": "2bf8335266ea18bd74ef2515052933a590b0ec52",
+          "url": "https://github.com/OmertaDev/Omerta/commit/2bf8335266ea18bd74ef2515052933a590b0ec52"
         }
       ]
     },
@@ -214824,6 +214856,22 @@
         {
           "commit": "4a237ad07301a0e6f70736bb5a0e999d2eac9d88",
           "url": "https://github.com/OmertaDev/Omerta/commit/4a237ad07301a0e6f70736bb5a0e999d2eac9d88"
+        }
+      ]
+    },
+    {
+      "key": "Commit:4a2659c264a8342ee967bfeaef967a9bebf16887",
+      "type": "Commit",
+      "id": "4a2659c264a8342ee967bfeaef967a9bebf16887",
+      "label": "Use genuine current bytes in the CRLF source fixture",
+      "title": "Use genuine current bytes in the CRLF source fixture",
+      "date": "2026-11-16T11:12:01.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/4a2659c264a8342ee967bfeaef967a9bebf16887",
+      "provenance": [
+        {
+          "commit": "4a2659c264a8342ee967bfeaef967a9bebf16887",
+          "url": "https://github.com/OmertaDev/Omerta/commit/4a2659c264a8342ee967bfeaef967a9bebf16887"
         }
       ]
     },
@@ -260396,6 +260444,22 @@
       ]
     },
     {
+      "key": "Commit:c373ecd77825c97274046461a799c133ef869b38",
+      "type": "Commit",
+      "id": "c373ecd77825c97274046461a799c133ef869b38",
+      "label": "Refresh knowledge for the combined crime and garage release",
+      "title": "Refresh knowledge for the combined crime and garage release",
+      "date": "2026-11-16T11:02:52.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/c373ecd77825c97274046461a799c133ef869b38",
+      "provenance": [
+        {
+          "commit": "c373ecd77825c97274046461a799c133ef869b38",
+          "url": "https://github.com/OmertaDev/Omerta/commit/c373ecd77825c97274046461a799c133ef869b38"
+        }
+      ]
+    },
+    {
       "key": "Commit:c37f3b2b55a1c74f242719c4ffbd6bd3a7e4335c",
       "type": "Commit",
       "id": "c37f3b2b55a1c74f242719c4ffbd6bd3a7e4335c",
@@ -300692,7 +300756,7 @@
       "provenance": [
         {
           "file": "test/native-garage-source-transfer.js",
-          "line": 127
+          "line": 129
         },
         {
           "file": "test/native-garage-source-transfer.js",
@@ -310421,6 +310485,9 @@
           "commit": "c35a6fd4c0fcbd2c5301e8b84ac1544ab9efdeab"
         },
         {
+          "commit": "c373ecd77825c97274046461a799c133ef869b38"
+        },
+        {
           "commit": "c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c"
         },
         {
@@ -313029,6 +313096,9 @@
         },
         {
           "commit": "c35a6fd4c0fcbd2c5301e8b84ac1544ab9efdeab"
+        },
+        {
+          "commit": "c373ecd77825c97274046461a799c133ef869b38"
         },
         {
           "commit": "c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c"
@@ -316022,6 +316092,9 @@
           "commit": "c35a6fd4c0fcbd2c5301e8b84ac1544ab9efdeab"
         },
         {
+          "commit": "c373ecd77825c97274046461a799c133ef869b38"
+        },
+        {
           "commit": "c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c"
         },
         {
@@ -319013,6 +319086,9 @@
           "commit": "c35a6fd4c0fcbd2c5301e8b84ac1544ab9efdeab"
         },
         {
+          "commit": "c373ecd77825c97274046461a799c133ef869b38"
+        },
+        {
           "commit": "c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c"
         },
         {
@@ -320283,6 +320359,9 @@
         },
         {
           "commit": "c22e53d366a290268c13cc700fbcdd6d68998352"
+        },
+        {
+          "commit": "c373ecd77825c97274046461a799c133ef869b38"
         },
         {
           "commit": "c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c"
@@ -322796,6 +322875,9 @@
           "commit": "c35a6fd4c0fcbd2c5301e8b84ac1544ab9efdeab"
         },
         {
+          "commit": "c373ecd77825c97274046461a799c133ef869b38"
+        },
+        {
           "commit": "c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c"
         },
         {
@@ -324233,6 +324315,9 @@
           "commit": "c22e53d366a290268c13cc700fbcdd6d68998352"
         },
         {
+          "commit": "c373ecd77825c97274046461a799c133ef869b38"
+        },
+        {
           "commit": "c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c"
         },
         {
@@ -324867,6 +324952,9 @@
         },
         {
           "commit": "c22e53d366a290268c13cc700fbcdd6d68998352"
+        },
+        {
+          "commit": "c373ecd77825c97274046461a799c133ef869b38"
         },
         {
           "commit": "c3da29067508933acaa7bbfdbf4dbf99ce5c2f7c"
@@ -338828,7 +338916,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "4c521fc0909c65851a9ff4626c32837d78aecfde",
+      "revision": "2bf8335266ea18bd74ef2515052933a590b0ec52",
       "currentBranch": "codex/mandatory-crime-minigame-20261115",
       "defaultBranch": "main",
       "visibility": "public",
@@ -386092,13 +386180,13 @@
       "type": "TestSuite",
       "id": "test/native-garage-source-transfer.js",
       "label": "test/native-garage-source-transfer.js",
-      "lines": 139,
-      "version": "414985471b62eb3c",
+      "lines": 141,
+      "version": "f0996dcde14aecbe",
       "provenance": [
         {
           "file": "test/native-garage-source-transfer.js",
           "line": 1,
-          "version": "414985471b62eb3c"
+          "version": "f0996dcde14aecbe"
         }
       ]
     },
@@ -458043,6 +458131,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:0e025ce8ef6fa662f7581099ed8f046636d91de5",
+      "to": "Artifact:tools/crime-minigame-source-data.js",
+      "provenance": {
+        "commit": "0e025ce8ef6fa662f7581099ed8f046636d91de5"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:0e02724224334c3bc0e8ad778340741d3cfe63fa",
       "to": "Artifact:BALANCE.md",
       "provenance": {
@@ -484103,6 +484199,14 @@
       "to": "Artifact:omerta-contracts/test/Omerta.t.sol",
       "provenance": {
         "commit": "2bd8091b5469ebc5b36337b7dfcee04a4a6ecf8b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2bf8335266ea18bd74ef2515052933a590b0ec52",
+      "to": "Artifact:tools/enterprise-native-questing-inputs.js",
+      "provenance": {
+        "commit": "2bf8335266ea18bd74ef2515052933a590b0ec52"
       }
     },
     {
@@ -511111,6 +511215,14 @@
       "to": "Artifact:SPEC.md",
       "provenance": {
         "commit": "4a237ad07301a0e6f70736bb5a0e999d2eac9d88"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:4a2659c264a8342ee967bfeaef967a9bebf16887",
+      "to": "Artifact:test/native-garage-source-transfer.js",
+      "provenance": {
+        "commit": "4a2659c264a8342ee967bfeaef967a9bebf16887"
       }
     },
     {
@@ -634623,6 +634735,70 @@
       "to": "Artifact:tools/economy-release-tail-source-transfer.js",
       "provenance": {
         "commit": "c36f92c144bd73390d9e9323aba870dc63f42736"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c373ecd77825c97274046461a799c133ef869b38",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "c373ecd77825c97274046461a799c133ef869b38"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c373ecd77825c97274046461a799c133ef869b38",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "c373ecd77825c97274046461a799c133ef869b38"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c373ecd77825c97274046461a799c133ef869b38",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "c373ecd77825c97274046461a799c133ef869b38"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c373ecd77825c97274046461a799c133ef869b38",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "c373ecd77825c97274046461a799c133ef869b38"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c373ecd77825c97274046461a799c133ef869b38",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "c373ecd77825c97274046461a799c133ef869b38"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c373ecd77825c97274046461a799c133ef869b38",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "c373ecd77825c97274046461a799c133ef869b38"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c373ecd77825c97274046461a799c133ef869b38",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "c373ecd77825c97274046461a799c133ef869b38"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:c373ecd77825c97274046461a799c133ef869b38",
+      "to": "HistoricalArtifact:knowledge/generated/routes.md",
+      "provenance": {
+        "commit": "c373ecd77825c97274046461a799c133ef869b38"
       }
     },
     {
@@ -806427,6 +806603,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:0e025ce8ef6fa662f7581099ed8f046636d91de5",
+      "provenance": {
+        "commit": "0e025ce8ef6fa662f7581099ed8f046636d91de5"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:0e02724224334c3bc0e8ad778340741d3cfe63fa",
       "provenance": {
         "commit": "0e02724224334c3bc0e8ad778340741d3cfe63fa"
@@ -811974,6 +812158,14 @@
       "to": "Commit:2bd8091b5469ebc5b36337b7dfcee04a4a6ecf8b",
       "provenance": {
         "commit": "2bd8091b5469ebc5b36337b7dfcee04a4a6ecf8b"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:2bf8335266ea18bd74ef2515052933a590b0ec52",
+      "provenance": {
+        "commit": "2bf8335266ea18bd74ef2515052933a590b0ec52"
       }
     },
     {
@@ -817750,6 +817942,14 @@
       "to": "Commit:4a237ad07301a0e6f70736bb5a0e999d2eac9d88",
       "provenance": {
         "commit": "4a237ad07301a0e6f70736bb5a0e999d2eac9d88"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:4a2659c264a8342ee967bfeaef967a9bebf16887",
+      "provenance": {
+        "commit": "4a2659c264a8342ee967bfeaef967a9bebf16887"
       }
     },
     {
@@ -840534,6 +840734,14 @@
       "to": "Commit:c36f92c144bd73390d9e9323aba870dc63f42736",
       "provenance": {
         "commit": "c36f92c144bd73390d9e9323aba870dc63f42736"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:c373ecd77825c97274046461a799c133ef869b38",
+      "provenance": {
+        "commit": "c373ecd77825c97274046461a799c133ef869b38"
       }
     },
     {
@@ -900307,7 +900515,7 @@
       "to": "ExternalDependency: + JSON.stringify(moduleUrl) + ",
       "provenance": {
         "file": "test/native-garage-source-transfer.js",
-        "line": 127
+        "line": 129
       }
     },
     {
@@ -926218,7 +926426,7 @@
       "to": "Artifact:test/crime-fixture.js",
       "provenance": {
         "file": "tools/crime-minigame-source-data.js",
-        "line": 3035
+        "line": 3040
       }
     },
     {
@@ -926227,7 +926435,7 @@
       "to": "Artifact:tools/crime-minigame-client.js",
       "provenance": {
         "file": "tools/crime-minigame-source-data.js",
-        "line": 2900
+        "line": 2905
       }
     },
     {
@@ -926236,7 +926444,7 @@
       "to": "Artifact:tools/crime-minigame-client.js",
       "provenance": {
         "file": "tools/crime-minigame-source-data.js",
-        "line": 2931
+        "line": 2936
       }
     },
     {
@@ -926245,7 +926453,7 @@
       "to": "Artifact:tools/crime-minigame-client.js",
       "provenance": {
         "file": "tools/crime-minigame-source-data.js",
-        "line": 3009
+        "line": 3014
       }
     },
     {
@@ -926254,7 +926462,7 @@
       "to": "Artifact:tools/crime-minigame-client.js",
       "provenance": {
         "file": "tools/crime-minigame-source-data.js",
-        "line": 3127
+        "line": 3132
       }
     },
     {
@@ -926263,7 +926471,7 @@
       "to": "Artifact:tools/crime-minigame-client.js",
       "provenance": {
         "file": "tools/crime-minigame-source-data.js",
-        "line": 3158
+        "line": 3163
       }
     },
     {
@@ -926272,7 +926480,7 @@
       "to": "Artifact:tools/crime-minigame-client.js",
       "provenance": {
         "file": "tools/crime-minigame-source-data.js",
-        "line": 3210
+        "line": 3215
       }
     },
     {
@@ -926281,7 +926489,7 @@
       "to": "Artifact:tools/crime-minigame-client.js",
       "provenance": {
         "file": "tools/crime-minigame-source-data.js",
-        "line": 3241
+        "line": 3246
       }
     },
     {
@@ -926308,7 +926516,7 @@
       "to": "Artifact:tools/crime-minigame-source-compatibility.js",
       "provenance": {
         "file": "tools/crime-minigame-source-data.js",
-        "line": 3061
+        "line": 3066
       }
     },
     {
