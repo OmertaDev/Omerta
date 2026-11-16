@@ -655,6 +655,8 @@
 | [docs/release/readiness-work/world-resource-observer.md](../../docs/release/readiness-work/world-resource-observer.md) | documentation | 41 | 2026-09-21 |
 | [docs/release/readiness-work/world-turf-terminal-observer.md](../../docs/release/readiness-work/world-turf-terminal-observer.md) | documentation | 82 | 2026-09-21 |
 | [docs/resource-economy-security-review.md](../../docs/resource-economy-security-review.md) | documentation | 118 | 2026-10-08 |
+| [docs/reviews/2026-11-15-native-garage-ui/LOCAL-REVIEW.md](../../docs/reviews/2026-11-15-native-garage-ui/LOCAL-REVIEW.md) | documentation | 59 | 2026-11-16 |
+| [docs/reviews/2026-11-15-native-garage-ui/REVIEW.md](../../docs/reviews/2026-11-15-native-garage-ui/REVIEW.md) | documentation | 69 | 2026-11-16 |
 | [docs/sale-attribution-native.md](../../docs/sale-attribution-native.md) | documentation | 12 | 2026-10-16 |
 | [docs/sale-attribution.md](../../docs/sale-attribution.md) | documentation | 16 | 2026-10-16 |
 | [docs/second-batch-source-compatibility-proposal-review.md](../../docs/second-batch-source-compatibility-proposal-review.md) | documentation | 18 | 2026-10-13 |
@@ -833,5 +835,5 @@
 | [PRODUCTION_DEPLOYMENT_CHECKLIST.md](../../PRODUCTION_DEPLOYMENT_CHECKLIST.md) | documentation | 59 | 2026-09-25 |
 | [README.md](../../README.md) | documentation | 70 | 2026-09-25 |
 | [SIGN-OFF.md](../../SIGN-OFF.md) | documentation | 918 | 2026-09-25 |
-| [SPEC.md](../../SPEC.md) | documentation | 762 | 2026-11-15 |
+| [SPEC.md](../../SPEC.md) | documentation | 762 | 2026-11-16 |
 | [UNISWAP-ROUTING.md](../../UNISWAP-ROUTING.md) | documentation | 37 | 2026-08-25 |

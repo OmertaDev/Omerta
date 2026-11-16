@@ -358,6 +358,7 @@
 | [src/multihopcourier-contracts.js](../../src/multihopcourier-contracts.js) | 7 | platform-core | 0 / 2 | 0 | 1 | 1 |
 | [src/multihopcourier.js](../../src/multihopcourier.js) | 129 | platform-core | 9 / 9 | 0 | 9 | 3 |
 | [src/mysteries.js](../../src/mysteries.js) | 2174 | world-graph | 10 / 30 | 0 | 13 | 19 |
+| [src/nativegarage.js](../../src/nativegarage.js) | 503 | platform-core | 0 / 1 | 0 | 3 | 0 |
 | [src/nft-art.js](../../src/nft-art.js) | 152 | platform-core | 1 / 4 | 0 | 2 | 1 |
 | [src/nft.js](../../src/nft.js) | 123 | chain-economy | 3 / 3 | 0 | 2 | 1 |
 | [src/notoriety.js](../../src/notoriety.js) | 31 | world-progression | 1 / 2 | 0 | 2 | 0 |
@@ -542,7 +543,7 @@
 | [src/saleattribution.js](../../src/saleattribution.js) | 380 | platform-core | 6 / 7 | 0 | 7 | 2 |
 | [src/season.js](../../src/season.js) | 150 | world-progression | 1 / 7 | 2 | 8 | 4 |
 | [src/secrets.js](../../src/secrets.js) | 203 | law-intelligence | 4 / 6 | 5 | 6 | 2 |
-| [src/server.js](../../src/server.js) | 4139 | platform-core | 259 / 49 | 462 | 46 | 22 |
+| [src/server.js](../../src/server.js) | 4147 | platform-core | 260 / 49 | 462 | 46 | 22 |
 | [src/servicesubscriptions.js](../../src/servicesubscriptions.js) | 65 | platform-core | 5 / 6 | 0 | 10 | 2 |
 | [src/shipment.js](../../src/shipment.js) | 175 | enterprise-logistics | 2 / 3 | 3 | 8 | 1 |
 | [src/shoppingbasket-api.js](../../src/shoppingbasket-api.js) | 13 | platform-core | 3 / 1 | 0 | 2 | 0 |
