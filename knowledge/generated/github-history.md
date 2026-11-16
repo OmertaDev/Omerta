@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `f39dc0fd1838`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `2ca9afc5190f`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 5899 |
+| Commits in clone | 5903 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-11-16 — Refresh native input catalog for crime fixture |
+| Latest commit | 2026-11-16 — Refresh native inputs after accrual fixture correction |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 4761 |
+| OmertaDev | 4765 |
 | crvydev | 647 |
 | Claude | 156 |
 | github-actions[bot] | 155 |
@@ -31,10 +31,10 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 987 | historical |
-| knowledge/generated/graph-summary.md | 987 | historical |
-| knowledge/generated/graph.json | 987 | historical |
-| knowledge/generated/inventory.md | 987 | historical |
+| knowledge/generated/github-history.md | 988 | historical |
+| knowledge/generated/graph-summary.md | 988 | historical |
+| knowledge/generated/graph.json | 988 | historical |
+| knowledge/generated/inventory.md | 988 | historical |
 | [SPEC.md](../../SPEC.md) | 666 | yes |
 | [public/index.html](../../public/index.html) | 518 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
@@ -59,7 +59,7 @@
 | [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | 128 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 127 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
-| [tools/enterprise-native-questing-inputs.js](../../tools/enterprise-native-questing-inputs.js) | 105 | yes |
+| [tools/enterprise-native-questing-inputs.js](../../tools/enterprise-native-questing-inputs.js) | 106 | yes |
 | [src/agentgateway.js](../../src/agentgateway.js) | 105 | yes |
 | [public/wiki.html](../../public/wiki.html) | 105 | yes |
 | [test/growth.js](../../test/growth.js) | 98 | yes |
