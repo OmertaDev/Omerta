@@ -25,7 +25,12 @@ try {
   const { token } = await api('POST', '/v1/auth/guest');
   await api('POST', '/v1/character', token, { name: 'Lock Browser Player' });
   const ch = (await app.pool.query("SELECT * FROM characters WHERE name='Lock Browser Player'")).rows[0];
-  const reset = () => app.pool.query('UPDATE characters SET nerve=100,cunning=200,speed=200,jail_until=NULL,street_action_at=NULL,last_accrued_at=$2 WHERE id=$1', [ch.id, new Date()]);
+  const reset = async () => {
+    // A full, valid pool stays stable when a read checkpoints lazy accrual.
+    const { character } = await api('GET', '/v1/me', token);
+    assert(character.maxNerve > 0, 'The fixture reads its actual nerve cap.');
+    await app.pool.query('UPDATE characters SET nerve=$2,cunning=200,speed=200,jail_until=NULL,street_action_at=NULL,last_accrued_at=$3 WHERE id=$1', [ch.id, character.maxNerve, new Date()]);
+  };
   await reset();
   await app.listen({ host: '127.0.0.1', port: 0 });
   browser = await chromium.launch({ executablePath, headless: true });
@@ -55,7 +60,11 @@ try {
     return { nerve: Number(row.nerve), cash: Number(row.cash), street: row.street_action_at };
   };
   await openStreets();
+  const { character: baseline } = await api('GET', '/v1/me', token);
   const before = await snapshot();
+  assert.equal(before.nerve, baseline.maxNerve, 'The no-spend baseline starts at the authoritative full nerve cap.');
+  // Exercise the same normal accrual boundary that exposed the invalid old fixture.
+  await app.pool.query('UPDATE characters SET last_accrued_at=$2 WHERE id=$1', [ch.id, new Date(Date.now() - 2000)]);
   const selectedJob = await job().getAttribute('data-do');
   await page.locator(`#tab-streets .prime[data-do="${selectedJob}"]`).click(); await dialog.locator('[data-crime-begin]').waitFor();
   assert.equal(attempts.length, 0, 'Opening the required minigame cannot commit the crime.');

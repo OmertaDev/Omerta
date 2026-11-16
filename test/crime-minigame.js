@@ -93,8 +93,15 @@ if (!process.argv.includes('--unit-only')) {
     const token = (await request('POST', '/v1/auth/guest')).body.token;
     assert.equal((await request('POST', '/v1/character', token, { name: 'Crime Minigame Reader' })).code, 200);
     const actor = (await app.pool.query("SELECT * FROM characters WHERE name='Crime Minigame Reader'")).rows[0];
-    const reset = () => app.pool.query('UPDATE characters SET street_action_at=NULL,jail_until=NULL,nerve=100,cunning=200,speed=200 WHERE id=$1', [actor.id]);
-    await reset();
+    const reset = async () => {
+      const current = await request('GET', '/v1/me', token);
+      assert.equal(current.code, 200);
+      const maxNerve = current.body.character.maxNerve;
+      assert(maxNerve > 0, 'The API fixture reads its actual nerve cap.');
+      await app.pool.query('UPDATE characters SET street_action_at=NULL,jail_until=NULL,nerve=$2,cunning=200,speed=200,last_accrued_at=$3 WHERE id=$1', [actor.id, maxNerve, new Date(Date.now() - 2000)]);
+      return maxNerve;
+    };
+    const maxNerve = await reset();
     const issued = (await request('GET', '/v1/crimes/pick/challenge?approach=standard', token)).body.minigame;
     assert(issued?.token);
     const before = Number((await app.pool.query('SELECT COUNT(*) n FROM transactions WHERE character_id=$1', [actor.id])).rows[0].n);
@@ -103,6 +110,7 @@ if (!process.argv.includes('--unit-only')) {
     assert.equal((await request('POST', '/v1/crimes/pick', token, { approach: 'quiet', minigame: answer(issued) })).body.error, 'stale_crime_minigame');
     const unchanged = (await app.pool.query('SELECT nerve,street_action_at FROM characters WHERE id=$1', [actor.id])).rows[0];
     assert.equal(unchanged.street_action_at, null);
+    assert.equal(Number(unchanged.nerve), maxNerve, 'Rejected minigames spend no nerve across normal accrual checkpoints.');
     assert.equal(Number((await app.pool.query('SELECT COUNT(*) n FROM transactions WHERE character_id=$1', [actor.id])).rows[0].n), before);
     Math.random = () => 0.9;
     const body = { approach: 'standard', minigame: answer(issued) }, key = 'crime-minigame-once';
