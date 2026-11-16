@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const CRIME_MINIGAME_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_CRIME_MINIGAME_SOURCE_COMPARISON_ONLY",
-  "revision": "8b205f333c7cf8ca275b2b0e21b9c85620e4e86c",
-  "tree": "542d1484affd112f04cc0ca613a271f756650a35",
+  "revision": "d0f6d9b726733de56ba326c5e87163e63da39db2",
+  "tree": "0810bfb2a552c0292c8df06fea4be90b7b3a4ab6",
   "predecessor": "9cf7ced8beedd0950018a14bbab71b08b71a3d5b",
   "predecessorTree": "9477c277cca6b47b3a3ce20901e85a451243642f",
   "files": {
@@ -1293,6 +1293,32 @@ export const CRIME_MINIGAME_SOURCE = freeze({
         }
       ]
     },
+    "test/playthrough-truth.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "a288743f6f14898d0034d9a5dc30326170dadd43",
+        "bytes": 3607,
+        "sha256": "20c6ee449b421086e76fecdb4bac5e5552ad0a9a15dd896e99d93a59cf46f84e"
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "dc312070966cccc4bfd1a80e244805b32cf57c53",
+        "bytes": 3019,
+        "sha256": "f735e49b8a7f5c5e7f1a99863510eb0b17bbd6508f8074caee46a3cec30c97f8"
+      },
+      "inverses": [
+        {
+          "at": 1786,
+          "current": "  import crypto from 'node:crypto';\n  import { syncBuiltinESMExports } from 'node:module';\n  import { mock } from 'node:test';\n  // Resident queries order by UUID; calendar time also selects their behavior.\n  // Control both inputs without changing combat or settlement outcomes.\n  let identity = 0;\n  crypto.randomUUID = () => '00000000-0000-4000-8000-' + (++identity).toString(16).padStart(12, '0');\n  syncBuiltinESMExports();\n  mock.timers.enable({ apis: ['Date'], now: Date.parse('2026-11-10T12:00:00Z') });\n",
+          "baseline": ""
+        },
+        {
+          "at": 3325,
+          "current": "  'the actual current coach hint identifies the assigned rival and the harness clears First Blood'\n    + '\\nHarness report (last 12,000 characters):\\n' + stdout.slice(-12000));\n",
+          "baseline": "  'the actual current coach hint identifies the assigned rival and the harness clears First Blood');\n"
+        }
+      ]
+    },
     "test/rc1-aggression-heir.js": {
       "current": {
         "mode": "100644",
@@ -2034,4 +2060,4 @@ export const CRIME_MINIGAME_SOURCE = freeze({
     }
   }
 });
-export const CRIME_MINIGAME_SOURCE_SHA256 = 'cb289e5aaaf2ac7ea05f047d4605ad6d491133a53dd03efff6c25b4feaf78d17';
+export const CRIME_MINIGAME_SOURCE_SHA256 = 'dcaaa0d132ca11b9cb9dfae6d7f82ef53b0694ba6c898ed58a06860d275b680a';
