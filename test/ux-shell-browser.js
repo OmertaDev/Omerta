@@ -77,13 +77,15 @@ async function reachableCrimePocket(page, label) {
         const points = [[rect.left + 3, rect.top + 3], [rect.right - 3, rect.top + 3],
           [rect.left + 3, rect.bottom - 3], [rect.right - 3, rect.bottom - 3],
           [(rect.left + rect.right) / 2, (rect.top + rect.bottom) / 2]];
-        return { text: button.textContent, ...rect,
+        return { text: button.textContent, approach: JSON.parse(button.dataset.body).approach, ...rect,
           unclipped: rect.top >= clip.top && rect.bottom <= clip.bottom && rect.left >= clip.left && rect.right <= clip.right,
           hit: points.every(([x, y]) => button.contains(document.elementFromPoint(x, y))) };
       }),
     };
   });
-  assert.equal(geometry.buttons.length, 4, `${label}: all three approaches and optional preparation remain available`);
+  assert.equal(geometry.buttons.length, 3, `${label}: all three crime approaches remain available`);
+  assert.deepEqual(new Set(geometry.buttons.map(button => button.approach)), new Set(['quiet', 'standard', 'loud']),
+    `${label}: each crime approach has one reachable control`);
   for (const button of geometry.buttons) {
     assert.ok(button.width >= 44 && button.height >= 44, `${label}: 44px touch target: ${JSON.stringify(button)}`);
     assert.ok(button.unclipped && button.hit, `${label}: action is clipped or covered: ${JSON.stringify(button)}`);
@@ -255,7 +257,7 @@ try {
       await openTab(page, 'start');
       await openTab(page, 'streets');
       const label = `${viewport.width}x${viewport.height} rotation ${rotation} visit ${visit + 1}`;
-      await page.locator('#ux-action-pocket [data-task-crime]').waitFor();
+      await page.locator('#ux-action-pocket [data-do^="POST /v1/crimes/"][data-body*=standard]:enabled').waitFor();
       await reachableCrimePocket(page, label);
       await noOverflow(page, label);
       const terms = page.locator('#ux-action-pocket .operation-action-terms');
@@ -271,17 +273,21 @@ try {
         await page.mouse.wheel(0, -500);
         await page.waitForFunction(() => document.querySelector('#ux-action-pocket .operation-action-terms').scrollTop === 0);
       }
-      const prepare = page.locator('#ux-action-pocket [data-task-crime]');
-      await prepare.focus();
-      assert.equal(await prepare.evaluate(element => element === document.activeElement), true, `${label}: keyboard focus reaches preparation`);
+      const action = page.locator('#ux-action-pocket [data-do^="POST /v1/crimes/"][data-body*=standard]:enabled');
+      await action.focus();
+      assert.equal(await action.evaluate(element => element === document.activeElement), true, `${label}: keyboard focus reaches the crime`);
       await page.keyboard.press('Enter');
-      const puzzle = page.getByRole('dialog', { name: /Task puzzle/ });
-      await puzzle.getByRole('button', { name: 'Solve and attempt crime' }).waitFor();
+      const minigame = page.getByRole('dialog', { name: 'Crack the lock' });
+      await minigame.getByRole('button', { name: 'Enter sequence' }).waitFor();
+      assert.equal(await minigame.getByText('REQUIRED · STREET JOB', { exact: true }).isVisible(), true,
+        `${label}: the crime opens its required minigame`);
+      assert.equal(await minigame.locator('[data-crime-pad]').count(), 4, `${label}: all four lock pins are available`);
+      assert.equal(crimeRequests.length, 0, 'A crime cannot submit before the required minigame ends');
       await page.keyboard.press('Escape');
-      await puzzle.waitFor({ state: 'detached' });
-      assert.equal(await prepare.evaluate(element => element === document.activeElement), true, `${label}: closing restores preparation focus`);
-      await reachableCrimePocket(page, `${label} after puzzle dismissal`);
-      assert.equal(crimeRequests.length, 0, 'Opening and closing optional preparation never attempts the crime');
+      await minigame.waitFor({ state: 'detached' });
+      assert.equal(await action.evaluate(element => element === document.activeElement), true, `${label}: cancellation restores crime focus`);
+      await reachableCrimePocket(page, `${label} after minigame cancellation`);
+      assert.equal(crimeRequests.length, 0, 'Cancelling the required minigame never attempts the crime');
       await page.screenshot({ path: path.join(artifacts, `shell-pocket-${viewport.width}-${viewport.height}-${rotation}-${visit + 1}.png`) });
     }
   }
@@ -299,11 +305,16 @@ try {
   await freshPage.screenshot({ path: path.join(artifacts, 'shell-first-session.png') });
   const primary = page.locator('#ux-action-pocket [data-do^="POST /v1/crimes/"][data-body*=standard]:enabled');
   await primary.focus();
-  assert.equal(await primary.evaluate(element => element === document.activeElement), true, 'The ordinary crime remains keyboard reachable after repeated preparation and navigation');
+  assert.equal(await primary.evaluate(element => element === document.activeElement), true, 'The ordinary crime remains keyboard reachable after repeated minigame cancellation and navigation');
   const ordinaryAttempt = page.waitForResponse(response => response.request().method() === 'POST' && new URL(response.url()).pathname.startsWith('/v1/crimes/'));
   await page.keyboard.press('Enter');
   await solveCrimeMinigame(page);
-  assert.equal((await ordinaryAttempt).status(), 200, 'Keyboard activation reaches the real ordinary crime endpoint');
+  const completedAttempt = await ordinaryAttempt;
+  assert.equal(completedAttempt.status(), 200, 'Keyboard activation reaches the real ordinary crime endpoint');
+  const receipt = await completedAttempt.json();
+  assert.equal(receipt.minigame.completed, true, 'The actual crime requires a completed lock');
+  assert.equal(receipt.minigame.mistakes, 0);
+  assert.equal(receipt.minigame.multiplier, 1);
   assert.equal(crimeRequests.length, 1, 'One keyboard activation attempts exactly one ordinary crime');
   assert.deepEqual(faults, [], 'the redesigned shell introduces no runtime failures');
   console.log('ux-shell-browser: PASS (focused onboarding, desktop/mobile navigation, utilities, feed, refresh, full city access)');

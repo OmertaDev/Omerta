@@ -154,6 +154,11 @@ try {
   const action = (page, name) => page.locator(`[data-ng-action="${name}"]`).first();
   const sent = fixture => fixture.calls.filter(entry => entry.method === 'eth_sendTransaction');
   const pendingStored = page => page.evaluate(() => Object.keys(sessionStorage).some(key => key.startsWith('omerta:native-garage:v1:')));
+  const submittedStored = page => page.waitForFunction(expectedHash => Object.keys(sessionStorage).some(key => {
+    if (!key.startsWith('omerta:native-garage:v1:')) return false;
+    try { const record = JSON.parse(sessionStorage.getItem(key)); return record.stage === 'submitted' && record.hash === expectedHash; }
+    catch { return false; }
+  }), hash);
   const check = name => { checks.push(name); console.log('PASS ' + name); };
 
   const disabledLane = await open({ enabled: false, migrated: false });
@@ -240,7 +245,7 @@ try {
   await action(salvage.page, 'salvage').waitFor();
   await action(salvage.page, 'salvage').click();
   await chooseWallet(salvage.page);
-  await salvage.page.waitForFunction(() => Object.keys(sessionStorage).some(key => key.startsWith('omerta:native-garage:v1:')));
+  await submittedStored(salvage.page);
   assert.equal(sent(salvage.fixture).length, 1);
   assert.equal(await salvage.page.locator('.ng-materials div').filter({ hasText: /^Scrap/ }).locator('dd').innerText(), '0', 'broadcast does not credit salvage');
   assert.equal(await salvage.page.locator('[data-ng-car="7"]').count(), 1, 'broadcast does not remove confirmed car');
@@ -261,7 +266,7 @@ try {
   assert.equal(await action(approval.page, 'harden').count(), 0, 'approval is its own action');
   await action(approval.page, 'approve').click();
   await chooseWallet(approval.page);
-  await approval.page.waitForFunction(() => Object.keys(sessionStorage).some(key => key.startsWith('omerta:native-garage:v1:')));
+  await submittedStored(approval.page);
   approval.fixture.approved = true; approval.fixture.receiptStatus = 'confirmed';
   await action(approval.page, 'harden').waitFor();
   assert.equal(approval.fixture.prepares.length, 1);
@@ -275,7 +280,7 @@ try {
   await action(recovery.page, 'requestGta').waitFor();
   await action(recovery.page, 'requestGta').click();
   await chooseWallet(recovery.page);
-  await recovery.page.waitForFunction(() => Object.keys(sessionStorage).some(key => key.startsWith('omerta:native-garage:v1:')));
+  await submittedStored(recovery.page);
   await recovery.page.locator('#tab-control-start').evaluate(node => node.click());
   await recovery.page.locator('#tab-control-garage').evaluate(node => node.click());
   await recovery.page.locator('#native-garage [data-ng-status]').waitFor();
