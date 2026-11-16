@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const NATIVE_GARAGE_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_NATIVE_GARAGE_SOURCE_COMPARISON_ONLY",
-  "revision": "80378162d2ef17970376e4afb7fb020deeb3a600",
-  "tree": "9484a7ca1369aaa206b8337512fcf589d2d92f23",
+  "revision": "ddc39582534f05ed756f37cc0ab864e5600f600b",
+  "tree": "efeb00706c6efa0b97b076946e1e3079d0d2801d",
   "predecessor": "9cf7ced8beedd0950018a14bbab71b08b71a3d5b",
   "predecessorTree": "9477c277cca6b47b3a3ce20901e85a451243642f",
   "files": {
@@ -367,9 +367,9 @@ export const NATIVE_GARAGE_SOURCE = freeze({
     "test/task-puzzle-native-integration-guard.js": {
       "current": {
         "mode": "100644",
-        "blob": "2f74f1e1445b07e29dda1a73e4a20cbd0084026c",
-        "sha256": "18bd1d6e41566dbb346124ea23751dc48c453c80122bc997c22516056edd2418",
-        "bytes": 75711
+        "blob": "2df2a30149160c6bf4550bf9bf01488fc937bf5e",
+        "sha256": "5c1a0b1c1fca82f5f503f29314ec7073bd50ee33427478988669923314f07ac3",
+        "bytes": 75751
       },
       "baseline": {
         "mode": "100644",
@@ -387,6 +387,11 @@ export const NATIVE_GARAGE_SOURCE = freeze({
           "at": 49955,
           "current": "      assert.deepEqual(trace,['source','admit','initial-live','initial-literal','positive-references','live47','projection','retained-live','profile','final-live','stable','prior-verify']);\n    }\n    for(const file of ['tools/task-puzzle-enterprise-catalog.js','test/enterprise-release-phase2-migration-catalog.js','test/phase2-postgres.js','test/director-migration.js','tools/enterprise-native-questing.js','schema.sql']){\n      assert.equal(nativeGarageHistoricalInput(file,fs.readFileSync(file,'utf8')).replaceAll('\\r\\n','\\n'),execFileSync('git',['--no-replace-objects','show','0a3b4aba5b0940bcbc70ef79ddabae53cb4a07c7:'+file],{encoding:'utf8',windowsHide:true,maxBuffer:32e6}),'Exact caller, Enterprise inventory/order/budgets and schema: '+file);\n    }\n    const enterpriseText=fs.readFileSync('test/enterprise-release-phase2-migration-catalog.js','utf8').replaceAll('\\r\\n','\\n');\n    const first=enterpriseText.indexOf('      assert.equal(result.actualTables,586);'),end=enterpriseText.indexOf('      console.log(JSON.stringify({phase:result.phase',first);assert(first>0&&end>first);\n",
           "baseline": "      assert.deepEqual(trace,['source','admit','initial-live','initial-literal','positive-references','live47','projection','retained-live','profile','final-live','stable','prior-verify']);\n    }\n    for(const file of ['tools/task-puzzle-enterprise-catalog.js','test/enterprise-release-phase2-migration-catalog.js','test/phase2-postgres.js','test/director-migration.js','tools/enterprise-native-questing.js','schema.sql']){\n      assert.equal(fs.readFileSync(file,'utf8').replaceAll('\\r\\n','\\n'),execFileSync('git',['--no-replace-objects','show','0a3b4aba5b0940bcbc70ef79ddabae53cb4a07c7:'+file],{encoding:'utf8',windowsHide:true,maxBuffer:32e6}),'Exact caller, Enterprise inventory/order/budgets and schema: '+file);\n    }\n    const enterpriseText=fs.readFileSync('test/enterprise-release-phase2-migration-catalog.js','utf8').replaceAll('\\r\\n','\\n');\n    const first=enterpriseText.indexOf('      assert.equal(result.actualTables,586);'),end=enterpriseText.indexOf('      console.log(JSON.stringify({phase:result.phase',first);assert(first>0&&end>first);\n"
+        },
+        {
+          "at": 74232,
+          "current": "}\nconst nativeFile='tools/enterprise-native-questing.js',oldNative=git('show','73d8d41dd7aec4768bd0aee9118d2a3930844aa6:'+nativeFile);\nconst support=\"  'tools/task-puzzle-native-catalog.js', 'tools/task-puzzle-enterprise-catalog.js',\\n  'test/task-puzzle-native-catalog-guard.js', 'test/task-puzzle-native-integration-guard.js',\\n\";\nconst native=nativeGarageHistoricalInput(nativeFile,fs.readFileSync(nativeFile,'utf8')).replaceAll('\\r\\n','\\n');assert.equal(native.split(support).length,2);assert.equal(native.replace(support,''),oldNative,'All16 native tuples, ordering, capture, deadlines and cleanup remain byte-exact');\nconsole.log(JSON.stringify({phase:'TASK_PUZZLE586_OUTER_CONSERVATION',conserved,conservationRefusals,nativeAttempts:0}));\n\nconst frozenFile='tools/enterprise-deed-release-phase2-migration-catalog.js';\n",
+          "baseline": "}\nconst nativeFile='tools/enterprise-native-questing.js',oldNative=git('show','73d8d41dd7aec4768bd0aee9118d2a3930844aa6:'+nativeFile);\nconst support=\"  'tools/task-puzzle-native-catalog.js', 'tools/task-puzzle-enterprise-catalog.js',\\n  'test/task-puzzle-native-catalog-guard.js', 'test/task-puzzle-native-integration-guard.js',\\n\";\nconst native=fs.readFileSync(nativeFile,'utf8').replaceAll('\\r\\n','\\n');assert.equal(native.split(support).length,2);assert.equal(native.replace(support,''),oldNative,'All16 native tuples, ordering, capture, deadlines and cleanup remain byte-exact');\nconsole.log(JSON.stringify({phase:'TASK_PUZZLE586_OUTER_CONSERVATION',conserved,conservationRefusals,nativeAttempts:0}));\n\nconst frozenFile='tools/enterprise-deed-release-phase2-migration-catalog.js';\n"
         }
       ]
     },
@@ -728,4 +733,4 @@ export const NATIVE_GARAGE_SOURCE = freeze({
     }
   }
 });
-export const NATIVE_GARAGE_SOURCE_SHA256 = 'ee20027ce2df81ac6fdc7a78e96aac1ee01022d6ba444192691334fd4c09b0c6';
+export const NATIVE_GARAGE_SOURCE_SHA256 = '7bc254347759577a2449d9ed47b57b44cc1b0fa116d1908ea0551b1765205c6d';
