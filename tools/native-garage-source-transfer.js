@@ -109,8 +109,12 @@ export function nativeGarageActual(file) {
   const head = git('ls-tree', 'HEAD', '--', file).trim(), index = git('ls-files', '--stage', '--', file).trim();
   assert.equal(head, entry(file, pin, 'tree'), 'Genuine current HEAD must equal reviewed native successor');
   assert.equal(index, entry(file, pin, 'index'), 'Genuine stage-zero index must equal reviewed native successor');
-  const stat = fs.lstatSync(file), physical = fs.readFileSync(file);
+  const stat = fs.lstatSync(file);
   assert(stat.isFile() && !stat.isSymbolicLink(), 'Regular physical reviewed native source required');
+  // Historical fixtures project path reads; descriptors retain genuine current physical bytes.
+  const descriptor = fs.openSync(file, 'r');
+  let physical;
+  try { physical = fs.readFileSync(descriptor); } finally { fs.closeSync(descriptor); }
   const committed = execFileSync('git', ['--no-replace-objects', 'show', 'HEAD:' + file], {
     windowsHide: true, maxBuffer: 64 * 1024 * 1024,
   });

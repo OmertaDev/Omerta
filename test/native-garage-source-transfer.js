@@ -61,6 +61,17 @@ assert.strictEqual(nativeGarageHistoricalInput('src/unreviewed.js', 'arbitrary')
 const observedFile = 'public/index.html', observed = nativeGarageActual(observedFile);
 const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'omerta-native-source-'));
 const moduleUrl = new URL('../tools/native-garage-source-transfer.js', import.meta.url).href;
+const wrappedRead = spawnSync(process.execPath, ['--input-type=module', '-e',
+  'import assert from "node:assert/strict"; import fs from "node:fs"; import {execFileSync} from "node:child_process";'
+  + ' import {nativeGarageActual,nativeGarageHistoricalInput,NATIVE_GARAGE_SOURCE} from ' + JSON.stringify(moduleUrl) + ';'
+  + ' const file="src/game.js",read=fs.readFileSync,current=read(file); let calls=0;'
+  + ' fs.readFileSync=(candidate,options)=>{const raw=read(candidate,options);if(candidate!==file)return raw;calls++;return nativeGarageHistoricalInput(file,raw)};'
+  + ' try {const actual=nativeGarageActual(file);assert(actual.physical.equals(current));assert.equal(calls,0);'
+  + ' const projected=fs.readFileSync(file);assert.equal(calls,1);'
+  + ' assert(projected.equals(execFileSync("git",["show",NATIVE_GARAGE_SOURCE.predecessor+":"+file],{windowsHide:true})));}'
+  + ' finally {fs.readFileSync=read;}'
+], { windowsHide: true, encoding: 'utf8' });
+assert.equal(wrappedRead.status, 0, wrappedRead.stderr); positives++;
 try {
   const environment = { ...process.env, GIT_DIR: git('rev-parse', '--absolute-git-dir').trim(),
     GIT_WORK_TREE: temporary, GIT_INDEX_FILE: path.join(temporary, 'reviewed-index') };
