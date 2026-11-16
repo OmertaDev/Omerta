@@ -7,6 +7,7 @@ import { execFileSync } from 'node:child_process';
 import { parse } from 'acorn';
 import { commerceCurrentDeedSources } from '../tools/commerce-deed-release-phase2-native-catalog.js';
 import { ageRemovalHistoricalInput } from '../tools/age-removal-source-transfer.js';
+import { nativeGarageHistoricalInput } from '../tools/native-garage-source-transfer.js';
 import { deedQuestSourceBaseline } from '../tools/deed-quest-source-transfer.js';
 import { questingCatalogSource } from '../tools/questing-enterprise-catalog.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as immutablePredecessor, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as immutablePredecessorHash } from '../tools/enterprise-native-contract-release-inputs.js';
@@ -391,7 +392,7 @@ for(const changed of [scopedSource.replace(scopedAddition,''),scopedSource.repla
       assert.deepEqual(trace,['source','admit','initial-live','initial-literal','positive-references','live47','projection','retained-live','profile','final-live','stable','prior-verify']);
     }
     for(const file of ['tools/task-puzzle-enterprise-catalog.js','test/enterprise-release-phase2-migration-catalog.js','test/phase2-postgres.js','test/director-migration.js','tools/enterprise-native-questing.js','schema.sql']){
-      assert.equal(fs.readFileSync(file,'utf8').replaceAll('\r\n','\n'),execFileSync('git',['--no-replace-objects','show','0a3b4aba5b0940bcbc70ef79ddabae53cb4a07c7:'+file],{encoding:'utf8',windowsHide:true,maxBuffer:32e6}),'Exact caller, Enterprise inventory/order/budgets and schema: '+file);
+      assert.equal(nativeGarageHistoricalInput(file,fs.readFileSync(file,'utf8')).replaceAll('\r\n','\n'),execFileSync('git',['--no-replace-objects','show','0a3b4aba5b0940bcbc70ef79ddabae53cb4a07c7:'+file],{encoding:'utf8',windowsHide:true,maxBuffer:32e6}),'Exact caller, Enterprise inventory/order/budgets and schema: '+file);
     }
     const enterpriseText=fs.readFileSync('test/enterprise-release-phase2-migration-catalog.js','utf8').replaceAll('\r\n','\n');
     const first=enterpriseText.indexOf('      assert.equal(result.actualTables,586);'),end=enterpriseText.indexOf('      console.log(JSON.stringify({phase:result.phase',first);assert(first>0&&end>first);

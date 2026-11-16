@@ -58,6 +58,7 @@ export const NATIVE_GARAGE_SCOPE = Object.freeze([
   "test/nativegarage-browser.js",
   "test/nativegarage-client.js",
   "test/nativegarage.js",
+  "test/task-puzzle-native-integration-guard.js",
   "tools/enterprise-native-questing.js",
   "tools/grand-strategy-source-transfer.js",
   "tools/native-garage-enterprise-source.js",
