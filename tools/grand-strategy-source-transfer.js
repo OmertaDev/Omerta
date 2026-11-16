@@ -4,9 +4,9 @@ import fs from 'node:fs';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { GRAND_STRATEGY_SOURCE, GRAND_STRATEGY_SOURCE_SHA256 } from './grand-strategy-source-data.js';
-import { crimeMinigameHistoricalInput, crimeMinigameHistoricalEntry, crimeMinigameHistoricalRecord } from './crime-minigame-source-compatibility.js';
+import { nativeGarageHistoricalInput, nativeGarageHistoricalEntry, nativeGarageHistoricalRecord } from './native-garage-source-transfer.js';
 
-// Actual-current checks must not consume a historical fixture's projected read.
+// Keep genuine physical admission independent of later historical read projections.
 const readActualPhysical = fs.readFileSync.bind(fs);
 
 export { GRAND_STRATEGY_SOURCE };
@@ -181,29 +181,31 @@ export function grandStrategyActual(file) {
     'Only an explicitly owned reviewed source domain');
   const pin = source.files[file]?.current || source.additions[file];
   assert(pin, 'Only a finite reviewed successor domain');
-  const rawHead = git('ls-tree', 'HEAD', '--', file).trim();
-  const rawIndex = git('ls-files', '--stage', '--', file).trim();
-  const stat = fs.lstatSync(file), rawPhysical = readActualPhysical(file);
-  const rawCommitted = execFileSync('git', ['--no-replace-objects', 'show', 'HEAD:' + file], {
+  const headEntry = git('ls-tree', 'HEAD', '--', file).trim();
+  const index = git('ls-files', '--stage', '--', file).trim();
+  const stat = fs.lstatSync(file);
+  assert(stat.isFile() && !stat.isSymbolicLink(), 'Regular physical reviewed source required');
+  const descriptor = fs.openSync(file, 'r');
+  let physical;
+  try { physical = readActualPhysical(descriptor); } finally { fs.closeSync(descriptor); }
+  const raw = execFileSync('git', ['--no-replace-objects', 'show', 'HEAD:' + file], {
     windowsHide: true, maxBuffer: 64 * 1024 * 1024,
   });
-  const headMatch = rawHead.match(/^(100644|100755) blob ([a-f0-9]{40})\t/);
-  assert(headMatch, 'Regular genuine current Git source required');
-  const actual = crimeMinigameHistoricalRecord(file, { head: { mode: headMatch[1], blob: headMatch[2] },
-    index: rawIndex, committed: rawCommitted, physical: rawPhysical, regular: stat.isFile(), symbolic: stat.isSymbolicLink() });
-  const headEntry = entry(file, actual.head, 'tree'), { index, committed, physical } = actual;
-  assert.equal(headEntry, entry(file, pin, 'tree'), 'Genuine current HEAD must equal reviewed successor');
-  assert.equal(index, entry(file, pin, 'index'), 'Genuine stage-zero index must equal reviewed successor');
-  assert(stat.isFile() && !stat.isSymbolicLink(), 'Regular physical reviewed source required');
+  const head = headEntry.match(/^(100644|100755) blob ([a-f0-9]{40})\t/);
+  assert(head, 'Regular genuine HEAD blob required');
+  const actual = nativeGarageHistoricalRecord(file, { head: { mode: head[1], blob: head[2] }, index,
+    committed: raw, physical, regular: stat.isFile(), symbolic: stat.isSymbolicLink() });
+  assert.equal(entry(file, actual.head, 'tree'), entry(file, pin, 'tree'), 'Genuine current HEAD must equal reviewed successor');
+  assert.equal(actual.index, entry(file, pin, 'index'), 'Genuine stage-zero index must equal reviewed successor');
+  const committed = actual.committed;
   fingerprint(committed, pin);
   if (source.files[file] || pin.text) {
     const current = canonical(committed);
     assert(current && !committed.includes(13), 'Canonical committed LF UTF-8 source');
-    assert(physical.equals(committed) || physical.equals(Buffer.from(current.lf.replaceAll('\n', '\r\n'))),
+    assert(actual.physical.equals(committed) || actual.physical.equals(Buffer.from(current.lf.replaceAll('\n', '\r\n'))),
       'Physical source must equal whole current HEAD in LF or uniform CRLF');
-  } else assert(physical.equals(committed), 'Binary source is admitted only byte-for-byte');
-  return { head: { mode: pin.mode, blob: pin.blob }, index, committed, physical,
-    regular: stat.isFile(), symbolic: stat.isSymbolicLink() };
+  } else assert(actual.physical.equals(committed), 'Binary source is admitted only byte-for-byte');
+  return actual;
 }
 function baselineText(file, input) {
   const current = canonical(input); assert(current, 'Uniform complete LF/CRLF source required');
@@ -219,6 +221,7 @@ function baselineText(file, input) {
   return { current, restored };
 }
 export function qualifyGrandStrategySource(file, input) {
+  input = nativeGarageHistoricalInput(file, input);
   assert.equal(arguments.length, 2); definition(); assert(known(file), 'No predecessor reconstruction for added or unknown source');
   const result = baselineText(file, input);
   grandStrategyActual(file);
@@ -227,7 +230,7 @@ export function qualifyGrandStrategySource(file, input) {
 }
 // Unknown input passes unchanged to the original refusing historical qualifier.
 export function grandStrategyHistoricalInput(file, input) {
-  input = crimeMinigameHistoricalInput(file, input);
+  input = nativeGarageHistoricalInput(file, input);
   if (!known(file)) return input;
   const current = canonical(input);
   if (!current || sha(current.lf) !== source.files[file].current.sha256) return input;
@@ -235,8 +238,8 @@ export function grandStrategyHistoricalInput(file, input) {
   return current.buffer ? Buffer.from(proof.baselineText) : proof.baselineText;
 }
 export function grandStrategyHistoricalEntry(file, input, kind) {
-  input = crimeMinigameHistoricalEntry(file, input, kind);
   assert(kind === 'tree' || kind === 'index');
+  input = nativeGarageHistoricalEntry(file, input, kind);
   if (!known(file)) return input;
   const row = source.files[file], expected = entry(file, row.current, kind);
   if (input !== expected && input !== expected + '\n') return input;
@@ -245,7 +248,7 @@ export function grandStrategyHistoricalEntry(file, input, kind) {
 }
 export function grandStrategyHistoricalRecord(file, actual) {
   assert.equal(arguments.length, 2);
-  actual = crimeMinigameHistoricalRecord(file, actual);
+  actual = nativeGarageHistoricalRecord(file, actual);
   if (!known(file)) return actual;
   definition(); shape(actual);
   const row = source.files[file];

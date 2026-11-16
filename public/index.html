@@ -14,6 +14,7 @@
 <meta name="apple-mobile-web-app-title" content="OMERTÀ">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preload" href="/art/display.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/nativegarage.css">
 <title>OMERTÀ | Multiplayer mafia browser game</title>
 <meta name="description" content="Play a free multiplayer mafia browser game alongside people and AI agents. Run jobs, build a family, and survive the city. On-chain features are not active in production.">
 <link rel="canonical" href="https://www.omerta.fun/">
@@ -7200,6 +7201,7 @@
   }
   function renderSheet() {
     if (!me) return;
+    document.body.classList.toggle('native-source-character', !!me.onchainCrafting);
     renderActionReadiness();
     // (C5) the FAMILY chat room only works in a family — hide the tab for the family-less (was a
     // silent dead-end: clicking it 400'd no_gang into a blank pane). Fall back to the live feed.
@@ -7208,7 +7210,7 @@
       fam.classList.toggle('hidden', !me.gang);
       if (!me.gang && wtab === 'family') { $('[data-wtab="feed"]')?.click(); }
     }
-    $('#whoami').innerHTML = `<b>${esc(me.name)}</b> · gen ${me.generation} · lvl ${me.level} · <button id="go-travel" title="travel">${esc(me.loc)} ⇄</button>` +
+    $('#whoami').innerHTML = `<b>${esc(me.name)}</b> · gen ${me.generation} · lvl ${me.level} · ${me.onchainCrafting ? esc(me.loc) + ' · onchain character' : `<button id="go-travel" title="travel">${esc(me.loc)} ⇄</button>`}` +
       (me.gang ? ` · <span style="color:${me.gang.color || 'var(--dim)'}">${esc(me.gang.tag)}</span>` : '');
     const capitalBalance = $('#capital-balance');
     const walletEntry = $('#btn-wallet');
@@ -7217,7 +7219,7 @@
       sessionStorage.removeItem('omerta-wallet-onboarding');
       toast('Welcome. Use Connect wallet above to link your address, then Mint your character NFT.');
     }
-    if (capitalBalance) capitalBalance.textContent = fmt(Math.floor(Number(me.omr) || 0));
+    if (capitalBalance) capitalBalance.textContent = me.onchainCrafting ? '—' : fmt(Math.floor(Number(me.omr) || 0));
     const gt = $('#go-travel'); if (gt) gt.onclick = openTravel;   // move from ANY screen
     const chips = [];
     // LIVE countdowns (mins() ticks in place) — a short jail reads "0:08" and drains, not a static, wrong "1m"
@@ -7234,8 +7236,9 @@
     // YOUR TURN. The coach remains the server-authoritative decision; the desk makes its status,
     // current resources, destination, result receipts, and recovery paths one coherent surface.
     {
-      const plan = me.coachPlan || [];
-      const order = me.coach || { label: 'No urgent order',
+      const plan = me.onchainCrafting ? [] : me.coachPlan || [];
+      const order = me.onchainCrafting ? { label: 'Open your onchain garage',
+        hint: 'Your live energy, cars, materials and tools are read from chain.', tab: 'garage' } : me.coach || { label: 'No urgent order',
         hint: 'The city has no emergency for you. Keep working the operation in front of you, or open Start Here for the live board.',
         tab: currentTab || 'start' };
       let readiness = { tone: 'ready', label: 'READY', detail: 'Costs and risk are shown beside each operation.' };
@@ -7247,6 +7250,7 @@
       else if (Number(me.nerve) < 2) readiness = { tone: 'caution', label: 'LOW NERVE', detail: 'Crime waits on nerve. Training and collections use other resources.' };
       // THE ROAD TO LEVEL 5 — presentational only (the same published divisor the sheet's level bar
       // uses): a literal progress bar toward the Path unlock, so "get to level 5" has a visible dial.
+      if (me.onchainCrafting) readiness = { tone: 'ready', label: 'ONCHAIN', detail: 'City statistics are a frozen snapshot. Open Garage for live onchain state.' };
       let road5 = '';
       const D5 = rules?.pacing?.levelDivisor;
       if (D5 && me.level < 5) {
@@ -7289,7 +7293,7 @@
     // even when the banner has scrolled away. Cleared first (the coach moves as you progress), and
     // never lit while you're already standing on the target tab.
     document.querySelectorAll('.coachhint').forEach((b) => b.classList.remove('coachhint'));
-    if (me.coach && me.coach.tab && currentTab !== me.coach.tab) {
+    if (!me.onchainCrafting && me.coach && me.coach.tab && currentTab !== me.coach.tab) {
       const grp = groupOf(me.coach.tab);
       for (const sel of [`#tabs [data-tab="${me.coach.tab}"]`, `[data-group="${grp}"]`, `#bnav [data-go="${me.coach.tab}"]`, `#bnav [data-go="${grp}"]`]) {
         const b = document.querySelector(sel); if (b) b.classList.add('coachhint');
@@ -7344,6 +7348,12 @@
         document.body.classList.toggle('sheetopen', open === '1');
         sm.textContent = open === '1' ? 'less ▴' : 'the full sheet ▾'; }; }
     document.body.classList.toggle('sheetopen', localStorage.getItem('omerta_sheet_open') === '1');
+    if (me.onchainCrafting) {
+      const label = document.createElement('p'); label.className = 'ng-snapshot-label';
+      label.textContent = 'City snapshot · open Garage for live onchain energy, inventory and materials.';
+      $('#sheet-body').prepend(label);
+      $('#vitals').textContent = 'Onchain mode · live inventory in Garage';
+    }
     // money tick — a brief up/down flash + a smooth count-up when the pocket changes (with the toast haptic)
     { const prev = renderSheet._cash; renderSheet._cash = me.cash;
       if (prev !== undefined && prev !== me.cash) { const m = $('#sheet .money');
@@ -7374,7 +7384,7 @@
     // there. Here it is the in-session TRANSITION only, so it must not fire before the panels exist:
     // renderSheet() runs first at boot, and a setTab('pen') at that moment threw on a null panel and
     // spent the latch. `$('#tab-pen')` is the honest test for "has the app been built yet".
-    { const was = renderSheet._jailed; const isJ = Number(me.jailSeconds) > 0; renderSheet._jailed = isJ;
+    { const was = renderSheet._jailed; const isJ = !me.onchainCrafting && Number(me.jailSeconds) > 0; renderSheet._jailed = isJ;
       if (isJ && was === false) sfx('jail');
       if (isJ && was === false && currentTab !== 'pen' && $('#tab-pen')) {
         setTab('pen');
@@ -7444,7 +7454,7 @@
         + (ci.next ? `, and tomorrow it's <b>$${fmt(ci.next)}</b>` : `, the top of the ladder`));
       terms.innerHTML = lines.join('<br>');
     }
-    checkTips(me);
+    if (!me.onchainCrafting) checkTips(me);
   }
 
   // ── MILESTONE TIPS — one-time explainers for the first time something happens TO you.
@@ -7707,7 +7717,7 @@
     // every other reason to land somewhere — being in a cell is the strongest thing the game can say
     // about what you should be doing next.
     const jailed = Number(me?.jailSeconds) > 0;
-    setTab(jailed ? 'pen' : 'streets');
+    setTab(me?.onchainCrafting ? 'garage' : jailed ? 'pen' : 'streets');
     // THE LOGIN HOOK — where a returning player lands. The Morning Paper (while-you-were-gone) and
     // THE SITUATION (your people/threats) are the returning-player hook, and they live on Home — so a
     // player with anything to see there should LAND there, not a tab away:
@@ -7717,7 +7727,7 @@
     //   • an active same-session player with nothing new → Streets (their bread and butter)
     // A jailed player is none of these — the digest keeps until they're out.
     const landingRevision = navigationRevision;
-    if (!jailed) Promise.all([api('GET', '/v1/onboard'), api('GET', '/v1/paper')]).then(([o, p]) => {
+    if (!jailed && !me?.onchainCrafting) Promise.all([api('GET', '/v1/onboard'), api('GET', '/v1/paper')]).then(([o, p]) => {
       if (navigationRevision === landingRevision && ((o.body && !o.body.allDone) || (p.body && p.body.fresh))) setTab('start');
     }).catch(() => { /* the current screen remains usable if optional landing data is unavailable */ });
   }
@@ -11991,10 +12001,53 @@ ${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [
         <div style="flex:1;min-width:200px"><div class="d"><b>PATRON FAMILIES</b></div>${(b.families || []).slice(0, 8).map((g) => `<div class="d">#${g.rank} ${esc(g.name)}${g.tag ? ` [${esc(g.tag)}]` : ''} — Ξ${g.spentEth} (${g.patrons})</div>`).join('') || '<div class="d">none yet</div>'}</div></div>`; }; }
   }
 
+  let nativeGarageView, nativeGarageSession, nativeGarageRevision = 0;
+  async function mountNativeGarage(element) {
+    const revision = ++nativeGarageRevision, expectedToken = token;
+    try {
+      const { createNativeGarageView } = await import('/nativegarage.js');
+      if (revision !== nativeGarageRevision || expectedToken !== token || !element.isConnected) return;
+      if (!nativeGarageView || nativeGarageSession !== expectedToken) {
+        nativeGarageView?.dispose();
+        nativeGarageSession = expectedToken;
+        nativeGarageView = createNativeGarageView({
+          api: async (method, path, body) => {
+            if (token !== expectedToken) throw new Error('Your session changed. Reopen the garage.');
+            const response = await api(method, path, body);
+            if (response.code >= 400) throw Object.assign(new Error(response.body?.message || response.body?.error || 'The onchain garage is unavailable. Try again.'), { code: response.body?.error });
+            return response.body;
+          },
+          pickProvider: async (pickerOptions) => {
+            if (token !== expectedToken) throw new Error('Your session changed. Reopen the garage.');
+            const provider = await pickProvider(pickerOptions);
+            if (provider) connectedProvider = provider;
+            return provider;
+          },
+          getExpectedWallet: () => {
+            if (token !== expectedToken) throw new Error('Your session changed. Reopen the garage.');
+            const board = nativeGarageView?.client.getState().board;
+            return board?.profile?.wallet || board?.wallet || me?.wallet || null;
+          },
+          storage: sessionStorage,
+        });
+      }
+      await nativeGarageView.mount(element);
+    } catch (error) {
+      if (expectedToken === token && element.isConnected) {
+        element.innerHTML = `<h2>Onchain Garage</h2><p role="alert">${esc(error?.message || 'Unable to load wallet controls. Reopen the garage to retry.')}</p>`;
+      }
+    }
+  }
+
   // ── THE GARAGE: your iron + the armory ──
   async function renderGarage() {
     const t = $('#tab-garage');
     await refresh();
+    if (me?.onchainCrafting) {
+      t.innerHTML = '<section id="native-garage" class="native-garage" aria-label="Onchain garage and foundry"><h2>Onchain Garage</h2><p role="status">Reading confirmed chain state…</p></section>';
+      await mountNativeGarage(t.querySelector('#native-garage'));
+      return;
+    }
     const ownedGuns = new Set(me.guns || []);
     // THE COLLECTION — rarity + the on-chain rail. Bound the covered way (GETBIND) so the
     // mirror guard actually checks these reads.
@@ -12004,6 +12057,7 @@ ${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [
     // guard checks every read.
     const exch = (await api('GET', '/v1/exchange')).body || {};
     t.innerHTML = `
+      <section id="native-garage" class="native-garage" aria-label="Onchain garage and foundry"><h2>Onchain Garage</h2><p role="status">Reading confirmed chain state…</p></section>
       ${!(me.cars || []).length && !(me.guns || []).length ? coachCard('Your garage &amp; armory', 'Boost cars to fence for cash or melt into ammo. Buy a gun and a vest below before fighting or taking a contract.') : ''}
       <h2>The Fleet (${(me.cars || []).length}) <button class="act" data-do="POST /v1/garage/boost" style="margin-left:8px">boost a car (GTA)</button></h2>
       ${(me.cars || []).length ? `<div class="grid">${me.cars.map((c) => `
@@ -12079,6 +12133,7 @@ ${decisionCard('Cash exposure', (()=>{const b=PlayerExperience.bank(me);return [
           ${c.desc ? `<div class="d" style="color:var(--dim);font-size:11px">${esc(c.desc)}</div>` : ''}
           <button class="act" data-craft="${c.id}">craft</button>${(me.items && me.items[c.id]) ? ` <button class="act" data-useitem="${c.id}">use it</button>` : ''}</div>`).join('')}</div>
       <div style="margin-top:8px"><button class="act" id="craft-ammo">roll 30 rounds (1 crate + $400)</button></div>`;
+    await mountNativeGarage(t.querySelector('#native-garage'));
     t.querySelectorAll('[data-craft]').forEach((b) => b.onclick = () =>
       act('POST', `/v1/workshop/craft/${b.dataset.craft}`, {}).then(() => renderGarage()));
     t.querySelectorAll('[data-useitem]').forEach((b) => b.onclick = () =>

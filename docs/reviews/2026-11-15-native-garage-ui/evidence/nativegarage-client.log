@@ -1,0 +1,22 @@
+PASS read-only loading never opens a wallet and disabled deployments never send
+PASS exact ABI intent switches and rechecks chain, then refetches authoritative balances
+PASS malformed target, calldata, value, chain, wallet, profile, manifest and timing never reach wallet send
+PASS a wallet that reports a successful switch but stays on the wrong chain cannot send
+PASS account, network round-trip and application wallet changes invalidate prepared plans
+PASS the final state callback cannot invalidate a wallet just before an unchecked send
+PASS double clicks and navigation during a wallet prompt never create a second transaction
+PASS signature rejection clears the unsent record and permits an explicit retry
+PASS pending timeout and page reload retain the lock and resume without resending
+PASS an unknown broadcast remains recoverable until an exact matching hash is supplied
+PASS reverted and successful production receipts both wait for five confirmations
+PASS confirmed receipt plus failed board refresh stays ambiguous and cannot resend
+PASS approval is exact, separate, and never creates a local allowance flag
+PASS fulfillment uses only the exact pending request and a canonical 64-byte proof call
+PASS transfers use the wallet as sender and only authoritative refresh removes ownership
+PASS storage errors stop a send and corrupt tracking never silently unlocks a duplicate
+PASS disposing during a wallet prompt still persists the returned hash for later recovery
+PASS stale confirmed blocks and unfinished indexing keep a confirmed transaction locked
+PASS pagination survives prepare and confirmed refresh, and explicit wallet choice forwards force
+PASS explicit wallet selection reads a different garage without linking or sending
+PASS explicit selection retains session guards before and after wallet awaits
+nativegarage-client: PASS (21 wallet/controller behavior groups)

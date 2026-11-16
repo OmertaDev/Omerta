@@ -1923,7 +1923,7 @@ export function view(ch, acct = {}, owned = {}) {
   const eff = (s) => effStat(ch[s], s, assets, gear);
   const checkinState = checkinStateOf(ch, acct);
   const checkinQuote = checkinQuoteOf(ch, acct, dayOf(), !!owned.checkinClaimed);
-  return { id: ch.id, name: ch.name, generation: ch.generation, level: lvl,
+  return { id: ch.id, name: ch.name, generation: ch.generation, level: lvl, onchainCrafting: false,
     respect: Number(ch.respect), energy: Math.floor(Number(ch.energy)), nerve: Math.floor(Number(ch.nerve)),
     health: Math.floor(Number(ch.health)), cash: Math.floor(Number(ch.cash)), bank: Math.floor(Number(ch.bank)),
     omr: Number(acct.omr || 0), staked: Number(acct.staked || 0), rewards: Number(acct.rewards || 0),

@@ -2,27 +2,27 @@
 
 A complete inventory of the built system, and an honest technical-debt register.
 
-The census below records the combined release source inventory measured on 2026-11-07. Availability and activation are documented separately in the deployment guides.
+The census below records dated source inventory snapshots. Availability and activation are documented separately in the deployment guides.
 
 ---
 
 ## 1. Size, measured
 
-Counts were measured for the combined release source on 2026-11-07, before generated release records; they do not identify a deployed revision.
+File counts and backend/test line totals were measured from the combined merge source on 2026-11-16. Other line totals retain their recorded snapshots; no count identifies a deployed revision.
 
-File counts include the required crime minigame as of 2026-11-15. Backend and test line totals were refreshed for this change; other line totals retain their recorded snapshots.
+The combined inventory includes the required crime minigame, closed native garage interface, quest-quality additions and task puzzles. The route row retains the required-minigame snapshot pending the combined route check.
 
 | | |
 |---|---|
-| Backend modules | **623** files, **142551** lines (recursive source inventory) |
-| Test suites | **1052** files, **220452** lines (recursive source inventory; this row refreshed 2026-11-15) |
-| HTTP routes | **1408** registrations (**1408** unique; 1278 under `/v1`) |
+| Backend modules | **624** files, **143061** lines (recursive source inventory) |
+| Test suites | **1057** files, **221795** lines (recursive source inventory; this row refreshed 2026-11-16) |
+| HTTP routes | **1415** registrations (**1415** unique; 1282 under `/v1`; measured 2026-11-16) |
 | Database tables | **586** (`schema.sql`, 9848 lines) |
 | Client | **14683** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |
 | Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |
 | Smart contracts | **41** top-level Solidity files, **11590** lines, **1125** declared top-level Foundry test functions; the release gate re-measures the passing suite |
 | Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |
-| Design + audit docs | **991** markdown files, **158775** lines — dated security evidence is indexed in `docs/AUDITS.md` |
+| Design + audit docs | **993** markdown files, **158914** lines — dated security evidence is indexed in `docs/AUDITS.md` |
 | Ledger invariants | **133** checks — **127** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |
 
 Roughly **369,000 lines** of backend code, tests, schema and top-level contracts.

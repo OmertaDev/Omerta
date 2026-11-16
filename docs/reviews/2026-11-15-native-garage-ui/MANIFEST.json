@@ -1,0 +1,37 @@
+{
+  "phase": "closed backend release candidate",
+  "baseCommit": "9cf7ced8beedd0950018a14bbab71b08b71a3d5b",
+  "sourcePins": "evidence/source-pins.json",
+  "localChecks": {
+    "rpc": 14,
+    "walletController": 21,
+    "browser": 10,
+    "realLocalWalletTransactions": 23
+  },
+  "hostedCi": "required, pending",
+  "productionNativeActivation": false,
+  "files": {
+    "LOCAL-REVIEW.md": "bc90671d8bea23d9ba96286a350c89c225ce9adca9b63a34a9ad32377f367765",
+    "REVIEW.md": "c290db57817d5867de412c2ac4813ff4d66c527e3eddac25e33892fb13831597",
+    "evidence/checks-summary.json": "cf5139c7fa4672d73b590a631d6094d04164523a1025196380fe49bcc6e3436e",
+    "evidence/client.log": "5374adadf53f42fc955474b8b10603e1d440b685a3104584c396a9e7d72e1f4f",
+    "evidence/current-copy.log": "75c3c90cfaf403dcd3444a62e349dd144fffda3db2f439036989bbc77d274ea6",
+    "evidence/desktop.png": "29904c9dd9aab78e0949f578952e3d6e1ccaf771a0e80a838abe3db6d89b4833",
+    "evidence/gates.log": "d62cacfef36a0bf9111e42338838546bc1ca1b3448c86d89f1269e14eaac0973",
+    "evidence/mobile.png": "6ffad094a939a6d7daba7252db3c2626540b21e985586909985f27a9ec24e78f",
+    "evidence/nativegarage-browser.log": "3044f288714c02137423191975c1d90c7e41287af966987dacf99a1576ec6d10",
+    "evidence/nativegarage-client.log": "08ddcce1e87d5b80cc14f9d252a35c3c5f9747bbea4bd70f56bcac436334aeb2",
+    "evidence/nativegarage.log": "05e92fb9f9bc3aaec409fd8f0dfdd7175692a499f086bff2713bc7639c7d5ea5",
+    "evidence/original-source-pins.json": "d3175ded612602a91388d7b11165b41ec20973550d117b1d3dc804ac04514b2a",
+    "evidence/preflight.log": "f01d16f1cfd4bf7d09fb73db1b2b716c4a7b6f21fc08541ac4482e7ce740d503",
+    "evidence/real-chain-browser.exit": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "evidence/real-chain-browser.json": "70ab5b009ed8af3e0867f2cec04734cad326fa001eb88e3462fd23ba0a7beed8",
+    "evidence/real-chain-browser.log": "6271a1886429c5651d67801c3596b41b671d6971634b8b08d53afe719e1b1ee2",
+    "evidence/routes.log": "1936079b571f723d296582499cf94d9b73ab5ac2c7eff6ab2254a316d1c42f47",
+    "evidence/security-xss.png": "8f9a849d350675ba1d744499b2cb38b6f60f62ccbd50b8efb1d55ef296e734f9",
+    "evidence/site-basics.log": "712a712f6bb5f5184a9b656791a4449019a5908811f4ba4a7cf233cd4dfd5ce8",
+    "evidence/source-pins.json": "d536339c93c5c578382f271faf9077f100b9575e16b309f71ebe31c8f924cea4",
+    "evidence/sql-scope.json": "9563285fdf5b52e2a61c0de2f8d2bc04af774fc995b3062f292dc67fc08066d7",
+    "evidence/worldgraph.log": "29bf515e6fe5acbaa3557f396f4af7fc7da8296dbdb0c132636274599c4808a0"
+  }
+}

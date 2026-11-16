@@ -9,6 +9,7 @@ import { CRIME_MINIGAME_SOURCE as source, CRIME_MINIGAME_PREDECESSOR, CRIME_MINI
   qualifyCrimeMinigameRelease, crimeMinigameSourceDataBytes, crimeMinigameActual,
   qualifyCrimeMinigameSource, crimeMinigameHistoricalInput, crimeMinigameHistoricalEntry,
   crimeMinigameHistoricalRecord } from '../tools/crime-minigame-source-compatibility.js';
+import { NATIVE_GARAGE_SOURCE, nativeGarageActual, nativeGarageHistoricalInput, nativeGarageHistoricalRecord } from '../tools/native-garage-source-transfer.js';
 import { grandStrategyActual } from '../tools/grand-strategy-source-transfer.js';
 
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], {
@@ -25,8 +26,8 @@ assert(!CRIME_MINIGAME_GENERATED_FILES.some((file) => file.startsWith('src/') ||
 assert.deepEqual(CRIME_MINIGAME_GENERATED_FILES.filter((file) => file.startsWith('knowledge/generated/')).sort(), [
   'knowledge/generated/documents.md', 'knowledge/generated/github-history.md', 'knowledge/generated/graph-summary.md',
   'knowledge/generated/graph.json', 'knowledge/generated/graph.mmd', 'knowledge/generated/inventory.md',
-  'knowledge/generated/modules.md', 'knowledge/generated/routes.md',
-], 'The eight knowledge outputs form an explicit fixed generated domain');
+  'knowledge/generated/modules.md', 'knowledge/generated/routes.md', 'knowledge/generated/schema.md',
+], 'The nine knowledge outputs form an explicit fixed generated domain');
 for (const file of ['public/index.html', 'src/game.js', 'src/server.js', 'src/ux-tactics.js',
   'src/agentgateway.js', 'src/agentturn.js', 'src/task-puzzle-jobs.js', 'tools/grand-strategy-source-transfer.js',
   'test/grand-strategy-source-transfer.js']) assert(Object.hasOwn(source.files, file), 'Required exact inverse: ' + file);
@@ -34,7 +35,8 @@ for (const file of ['src/crime-minigame.js', 'public/ux-crime-minigame.js', 'pub
   'tools/crime-minigame-source-compatibility.js', 'tools/seal-crime-minigame-source.js',
   'test/crime-minigame-source-transfer.js']) assert(Object.hasOwn(source.additions, file), 'Required exact addition: ' + file);
 assert.equal(git('diff', '--name-only', source.predecessor, 'HEAD', '--',
-  'tools/grand-strategy-source-data.js', 'tools/ui-trim-source-data.js', 'tools/age-removal-source-data.js'), '',
+  'tools/grand-strategy-source-data.js', 'tools/ui-trim-source-data.js', 'tools/age-removal-source-data.js',
+  'tools/native-garage-source-data.js'), '',
   'Earlier historical seals stay immutable');
 let positives = 0, refusals = 0;
 for (const [file, row] of Object.entries(source.files)) {
@@ -88,6 +90,16 @@ for (const file of ['__proto__', 'constructor', 'src/unreviewed-successor.js']) 
   const input = Buffer.from([0xff]); assert.throws(() => qualifyCrimeMinigameSource(file, input));
   assert.strictEqual(crimeMinigameHistoricalInput(file, input), input); refusals++;
 }
+// Each layer proves its own whole reviewed source before the older comparison.
+for (const file of ['public/index.html', 'src/game.js', 'src/server.js']) {
+  const actual = crimeMinigameActual(file);
+  const main = crimeMinigameHistoricalRecord(file, actual);
+  assert.deepEqual(nativeGarageActual(file), main);
+  const prior = git('show', NATIVE_GARAGE_SOURCE.predecessor + ':' + file);
+  assert.equal(String(nativeGarageHistoricalInput(file, actual.committed)), prior);
+  assert.equal(nativeGarageHistoricalRecord(file, actual).committed.toString('utf8'), prior);
+  positives += 3;
+}
 // A cold historical fixture installs a projecting fs reader after importing
 // these qualifiers. Genuine current admission must never recurse into that view.
 const originalRead = fs.readFileSync, projectedFiles = ['src/game.js', 'src/server.js'];
@@ -104,7 +116,7 @@ try {
     const actual = crimeMinigameActual(file);
     assert.equal(sha(actual.physical.toString('utf8').replaceAll('\r\n', '\n')), source.files[file].current.sha256);
   }
-  assert.equal(sha(grandStrategyActual('src/server.js').committed), source.files['src/server.js'].baseline.sha256);
+  assert.equal(sha(grandStrategyActual('src/server.js').committed), NATIVE_GARAGE_SOURCE.files['src/server.js'].baseline.sha256);
   assert.equal(projectedReads, 0, 'Actual authority never re-enters a projected filesystem read');
   for (const file of projectedFiles)
     assert.equal(sha(fs.readFileSync(file).toString('utf8').replaceAll('\r\n', '\n')), source.files[file].baseline.sha256);

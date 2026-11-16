@@ -213,7 +213,7 @@
 | [.agents/skills/viem-integration/references/wagmi-react.md](../../.agents/skills/viem-integration/references/wagmi-react.md) | documentation | 624 | 2026-08-27 |
 | [.agents/skills/viem-integration/references/writing-transactions.md](../../.agents/skills/viem-integration/references/writing-transactions.md) | documentation | 467 | 2026-08-27 |
 | [.agents/skills/viem-integration/SKILL.md](../../.agents/skills/viem-integration/SKILL.md) | documentation | 271 | 2026-08-27 |
-| [AGENTS.md](../../AGENTS.md) | documentation | 797 | 2026-11-15 |
+| [AGENTS.md](../../AGENTS.md) | documentation | 787 | 2026-11-10 |
 | [AGENTS.override.md](../../AGENTS.override.md) | documentation | 32 | 2026-09-25 |
 | [AUDIT-bank-city-leg.md](../../AUDIT-bank-city-leg.md) | audit | 119 | 2026-08-12 |
 | [AUDIT-blood-war.md](../../AUDIT-blood-war.md) | audit | 95 | 2026-08-05 |
@@ -655,6 +655,8 @@
 | [docs/release/readiness-work/world-resource-observer.md](../../docs/release/readiness-work/world-resource-observer.md) | documentation | 41 | 2026-09-21 |
 | [docs/release/readiness-work/world-turf-terminal-observer.md](../../docs/release/readiness-work/world-turf-terminal-observer.md) | documentation | 82 | 2026-09-21 |
 | [docs/resource-economy-security-review.md](../../docs/resource-economy-security-review.md) | documentation | 118 | 2026-10-08 |
+| [docs/reviews/2026-11-15-native-garage-ui/LOCAL-REVIEW.md](../../docs/reviews/2026-11-15-native-garage-ui/LOCAL-REVIEW.md) | documentation | 59 | 2026-11-16 |
+| [docs/reviews/2026-11-15-native-garage-ui/REVIEW.md](../../docs/reviews/2026-11-15-native-garage-ui/REVIEW.md) | documentation | 69 | 2026-11-16 |
 | [docs/sale-attribution-native.md](../../docs/sale-attribution-native.md) | documentation | 12 | 2026-10-16 |
 | [docs/sale-attribution.md](../../docs/sale-attribution.md) | documentation | 16 | 2026-10-16 |
 | [docs/second-batch-source-compatibility-proposal-review.md](../../docs/second-batch-source-compatibility-proposal-review.md) | documentation | 18 | 2026-10-13 |
@@ -724,7 +726,7 @@
 | [docs/supplier-history-security-review.md](../../docs/supplier-history-security-review.md) | documentation | 56 | 2026-10-11 |
 | [docs/supply-cadence-security-review.md](../../docs/supply-cadence-security-review.md) | documentation | 81 | 2026-10-11 |
 | [docs/supply-tender-security-review.md](../../docs/supply-tender-security-review.md) | documentation | 63 | 2026-10-11 |
-| [docs/TASK-PUZZLES.md](../../docs/TASK-PUZZLES.md) | documentation | 101 | 2026-11-15 |
+| [docs/TASK-PUZZLES.md](../../docs/TASK-PUZZLES.md) | documentation | 90 | 2026-11-10 |
 | [docs/territory-economics-integration-design.md](../../docs/territory-economics-integration-design.md) | design | 36 | 2026-10-13 |
 | [docs/territory-economics-observation-review.md](../../docs/territory-economics-observation-review.md) | documentation | 16 | 2026-10-13 |
 | [docs/territory-economics-security-review.md](../../docs/territory-economics-security-review.md) | documentation | 65 | 2026-10-13 |
@@ -755,7 +757,7 @@
 | [LAUNCH-READINESS.md](../../LAUNCH-READINESS.md) | operations | 297 | 2026-09-25 |
 | [LAUNCH.md](../../LAUNCH.md) | operations | 237 | 2026-09-25 |
 | [MARKETING-COPY.md](../../MARKETING-COPY.md) | documentation | 431 | 2026-09-25 |
-| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 131 | 2026-11-15 |
+| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 131 | 2026-11-10 |
 | [MARKETING.md](../../MARKETING.md) | documentation | 352 | 2026-10-06 |
 | [OMERTA_LAUNCH_STATUS.md](../../OMERTA_LAUNCH_STATUS.md) | documentation | 52 | 2026-09-25 |
 | [omerta-backend-spec.md](../../omerta-backend-spec.md) | documentation | 80 | 2026-09-25 |
@@ -833,5 +835,5 @@
 | [PRODUCTION_DEPLOYMENT_CHECKLIST.md](../../PRODUCTION_DEPLOYMENT_CHECKLIST.md) | documentation | 59 | 2026-09-25 |
 | [README.md](../../README.md) | documentation | 70 | 2026-09-25 |
 | [SIGN-OFF.md](../../SIGN-OFF.md) | documentation | 918 | 2026-09-25 |
-| [SPEC.md](../../SPEC.md) | documentation | 762 | 2026-11-15 |
+| [SPEC.md](../../SPEC.md) | documentation | 762 | 2026-11-16 |
 | [UNISWAP-ROUTING.md](../../UNISWAP-ROUTING.md) | documentation | 37 | 2026-08-25 |

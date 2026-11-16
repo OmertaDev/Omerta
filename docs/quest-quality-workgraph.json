@@ -44,7 +44,7 @@
       "title": "Independent inference",
       "dependsOn": [],
       "acceptance": "Resolve a conclusion by joining independent clues; copying a single sentence cannot satisfy the advanced proof.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-three-witnesses-v2/pack.json",
         "src/content/narrative.js"
@@ -53,10 +53,7 @@
         "test/quest-quality-content.js",
         "test/quest-quality-rules.js"
       ],
-      "executionIds": [
-        "quality-mwii10x4-quest-quality-content",
-        "quality-mwii19ji-quest-quality-rules"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ02",
@@ -64,7 +61,7 @@
       "title": "Distinct quest identities",
       "dependsOn": [],
       "acceptance": "Each new case names and plays a distinct signature activity, central question and emotional turn.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "src/content/quest-quality-packs.js",
         "tools/quest-quality-studio.js"
@@ -73,10 +70,7 @@
         "test/quest-quality-content.js",
         "test/quest-quality-studio.js"
       ],
-      "executionIds": [
-        "quality-mwii10x4-quest-quality-content",
-        "quality-mwii1agt-quest-quality-studio"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ03",
@@ -84,7 +78,7 @@
       "title": "Private theories without suspicion",
       "dependsOn": [],
       "acceptance": "Saving, editing or clearing an actor's private draft changes no public revision, attempts, suspicion or NPC knowledge.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "src/content/quality-runtime.js",
         "public/ux-quest-quality.js"
@@ -97,14 +91,7 @@
         "test/quest-quality-postgres.js",
         "test/quest-quality-stateful.js"
       ],
-      "executionIds": [
-        "quality-mwii10x4-quest-quality-content",
-        "quality-mwii1c3t-quest-quality-runtime",
-        "quality-mwii1h7m-quest-quality-api",
-        "quality-mwii1lpp-quest-quality-browser",
-        "quality-mwii3zu5-quest-quality-postgres",
-        "quality-mwii2iui-quest-quality-stateful"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ04",
@@ -115,7 +102,7 @@
         "QQ06"
       ],
       "acceptance": "The proof verifier accepts at least two authored sufficient evidence sets and rejects unsupported or unknown evidence.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "src/content/narrative.js",
         "src/content/runtime.js",
@@ -128,13 +115,7 @@
         "test/quest-quality-api.js",
         "test/quest-quality-browser.js"
       ],
-      "executionIds": [
-        "quality-mwii10x4-quest-quality-content",
-        "quality-mwii19ji-quest-quality-rules",
-        "quality-mwii1c3t-quest-quality-runtime",
-        "quality-mwii1h7m-quest-quality-api",
-        "quality-mwii1lpp-quest-quality-browser"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ05",
@@ -145,7 +126,7 @@
         "QQ30"
       ],
       "acceptance": "A player can finish once a sufficient proof is collected without visiting every optional lead.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-three-witnesses-v2/pack.json",
         "src/content/runtime.js"
@@ -154,10 +135,7 @@
         "test/quest-quality-content.js",
         "test/quest-quality-runtime.js"
       ],
-      "executionIds": [
-        "quality-mwii10x4-quest-quality-content",
-        "quality-mwii1c3t-quest-quality-runtime"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ06",
@@ -165,7 +143,7 @@
       "title": "Explicit world assumptions",
       "dependsOn": [],
       "acceptance": "Players can inspect the case's applicable clocks, suspect scope and world rules before reasoning.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "src/content/quality.js",
         "content/packs/quest-three-witnesses-v2/pack.json"
@@ -175,11 +153,7 @@
         "test/quest-quality-rules.js",
         "test/quest-quality-studio.js"
       ],
-      "executionIds": [
-        "quality-mwii10x4-quest-quality-content",
-        "quality-mwii19ji-quest-quality-rules",
-        "quality-mwii1agt-quest-quality-studio"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ07",
@@ -187,7 +161,7 @@
       "title": "Precise logic language",
       "dependsOn": [],
       "acceptance": "Authored quantifiers, conditions, negation and uncertainty survive projection and clause views.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "src/content/quality.js",
         "content/packs/quest-quality-truce/pack.json"
@@ -197,11 +171,7 @@
         "test/quest-quality-rules.js",
         "test/quest-quality-studio.js"
       ],
-      "executionIds": [
-        "quality-mwii10x4-quest-quality-content",
-        "quality-mwii19ji-quest-quality-rules",
-        "quality-mwii1agt-quest-quality-studio"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ08",
@@ -212,7 +182,7 @@
         "QQ07"
       ],
       "acceptance": "An absent expected record is usable evidence only with an authored established expectation and a checked source.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-three-witnesses-v2/pack.json"
       ],
@@ -220,10 +190,7 @@
         "test/quest-quality-content.js",
         "test/quest-quality-rules.js"
       ],
-      "executionIds": [
-        "quality-mwii10x4-quest-quality-content",
-        "quality-mwii19ji-quest-quality-rules"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ09",
@@ -234,7 +201,7 @@
         "QQ04"
       ],
       "acceptance": "Wrong reasoning receives public-premise feedback without identifying secret correct items.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "src/content/runtime.js",
         "public/ux-quest-quality.js"
@@ -245,12 +212,7 @@
         "test/quest-quality-browser.js",
         "test/quest-quality-stateful.js"
       ],
-      "executionIds": [
-        "quality-mwii10x4-quest-quality-content",
-        "quality-mwii1c3t-quest-quality-runtime",
-        "quality-mwii1lpp-quest-quality-browser",
-        "quality-mwii2iui-quest-quality-stateful"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ10",
@@ -258,7 +220,7 @@
       "title": "Trustworthy narration",
       "dependsOn": [],
       "acceptance": "Direct narration is factual; uncertain or unreliable statements are visibly attributed.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "src/content/quality.js",
         "content/packs/quest-three-witnesses-v2/pack.json"
@@ -268,11 +230,7 @@
         "test/quest-quality-rules.js",
         "test/quest-quality-studio.js"
       ],
-      "executionIds": [
-        "quality-mwii10x4-quest-quality-content",
-        "quality-mwii19ji-quest-quality-rules",
-        "quality-mwii1agt-quest-quality-studio"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ11",
@@ -282,7 +240,7 @@
         "QQ02"
       ],
       "acceptance": "A playable alternative challenges the employer's premise and reaches a substantive resolution.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-three-witnesses-v2/pack.json",
         "content/packs/quest-quality-open-office/pack.json"
@@ -290,9 +248,7 @@
       "evaluations": [
         "test/quest-quality-content.js"
       ],
-      "executionIds": [
-        "quality-mwii10x4-quest-quality-content"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ12",
@@ -300,7 +256,7 @@
       "title": "Player motives without morality scores",
       "dependsOn": [],
       "acceptance": "Players can choose their own motive without hidden morality or currency effects.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "src/content/quality-runtime.js",
         "public/ux-quest-quality.js",
@@ -309,9 +265,7 @@
       "evaluations": [
         "test/quest-quality-content.js"
       ],
-      "executionIds": [
-        "quality-mwii10x4-quest-quality-content"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ13",
@@ -323,7 +277,7 @@
         "QQ41"
       ],
       "acceptance": "A witness can sincerely believe a false claim with an evidence-backed limitation and a playable correction.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-three-witnesses-v2/pack.json",
         "src/content/quality.js",
@@ -333,10 +287,7 @@
         "test/quest-quality-content.js",
         "test/quest-quality-rules.js"
       ],
-      "executionIds": [
-        "quality-mwii10x4-quest-quality-content",
-        "quality-mwii19ji-quest-quality-rules"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ14",
@@ -346,16 +297,14 @@
         "QQ41"
       ],
       "acceptance": "An antagonist follows an observable authored principle across decisions.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-quality-open-office/pack.json"
       ],
       "evaluations": [
         "test/quest-quality-content.js"
       ],
-      "executionIds": [
-        "quality-mwii10x4-quest-quality-content"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ15",
@@ -363,7 +312,7 @@
       "title": "Distinct NPC voices",
       "dependsOn": [],
       "acceptance": "Authored NPC dialogue has distinct diction and perspective in actual scenes.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-three-witnesses-v2/pack.json",
         "content/packs/quest-quality-night-edition/pack.json"
@@ -372,10 +321,7 @@
         "test/quest-quality-content.js",
         "test/quest-quality-studio.js"
       ],
-      "executionIds": [
-        "quality-mwii10x4-quest-quality-content",
-        "quality-mwii1agt-quest-quality-studio"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ16",
@@ -386,7 +332,7 @@
         "QQ42"
       ],
       "acceptance": "Decisive facts have reachable foreshadowing before the resolution; the reveal introduces no required new evidence.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "src/content/quality.js",
         "content/packs/quest-three-witnesses-v2/pack.json"
@@ -396,11 +342,7 @@
         "test/quest-quality-rules.js",
         "test/quest-quality-studio.js"
       ],
-      "executionIds": [
-        "quality-mwii10x4-quest-quality-content",
-        "quality-mwii19ji-quest-quality-rules",
-        "quality-mwii1agt-quest-quality-studio"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ17",
@@ -410,7 +352,7 @@
         "QQ16"
       ],
       "acceptance": "An investigated red herring receives a reachable explanation or closure.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-three-witnesses-v2/pack.json"
       ],
@@ -418,10 +360,7 @@
         "test/quest-quality-content.js",
         "test/quest-quality-studio.js"
       ],
-      "executionIds": [
-        "quality-mwii10x4-quest-quality-content",
-        "quality-mwii1agt-quest-quality-studio"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ18",
@@ -431,16 +370,14 @@
         "QQ11"
       ],
       "acceptance": "A reasoned disagreement is a completed outcome with retained consequences.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-quality-small-fire/pack.json"
       ],
       "evaluations": [
         "test/quest-quality-content.js"
       ],
-      "executionIds": [
-        "quality-mwii10x4-quest-quality-content"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ19",
@@ -448,16 +385,14 @@
       "title": "Human scale behind conspiracies",
       "dependsOn": [],
       "acceptance": "A playable investigation resolves an apparent conspiracy into a specific human problem.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-quality-small-fire/pack.json"
       ],
       "evaluations": [
         "test/quest-quality-content.js"
       ],
-      "executionIds": [
-        "quality-mwii10x4-quest-quality-content"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ20",
@@ -467,7 +402,7 @@
         "QQ06"
       ],
       "acceptance": "The case states a fixed external outcome and gives consequential choices over what remains controllable.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-quality-last-ferry/pack.json"
       ],
@@ -475,10 +410,7 @@
         "test/quest-quality-content.js",
         "test/quest-quality-studio.js"
       ],
-      "executionIds": [
-        "quality-mwii10x4-quest-quality-content",
-        "quality-mwii1agt-quest-quality-studio"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ21",
@@ -489,16 +421,14 @@
         "QQ20"
       ],
       "acceptance": "A known culprit case makes protecting legitimate dependants an actionable planning problem.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-quality-open-office/pack.json"
       ],
       "evaluations": [
         "test/quest-quality-content.js"
       ],
-      "executionIds": [
-        "quality-mwii10x4-quest-quality-content"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ22",
@@ -506,16 +436,14 @@
       "title": "Systemic mysteries without villains",
       "dependsOn": [],
       "acceptance": "A systemic failure case repairs handoffs and tests the repair without inventing a villain.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-quality-payday/pack.json"
       ],
       "evaluations": [
         "test/quest-quality-content.js"
       ],
-      "executionIds": [
-        "quality-mwii10x4-quest-quality-content"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ23",
@@ -527,7 +455,7 @@
         "QQ36"
       ],
       "acceptance": "A fictional agreement can be tested against clauses and authored boundary cases.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-quality-truce/pack.json"
       ],
@@ -536,11 +464,7 @@
         "test/quest-quality-rules.js",
         "test/quest-quality-studio.js"
       ],
-      "executionIds": [
-        "quality-mwii10x4-quest-quality-content",
-        "quality-mwii19ji-quest-quality-rules",
-        "quality-mwii1agt-quest-quality-studio"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ24",
@@ -548,16 +472,14 @@
       "title": "A contained legitimate work shift",
       "dependsOn": [],
       "acceptance": "A contained legitimate shift contains playable work decisions, interruptions and an end state.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-quality-night-edition/pack.json"
       ],
       "evaluations": [
         "test/quest-quality-content.js"
       ],
-      "executionIds": [
-        "quality-mwii10x4-quest-quality-content"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ25",
@@ -568,7 +490,7 @@
         "QQ41"
       ],
       "acceptance": "Players assign a bounded question and method, receive the authored report, and review the evidence.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-quality-field-notes/pack.json",
         "src/content/quality-runtime.js",
@@ -578,10 +500,7 @@
         "test/quest-quality-content.js",
         "test/quest-quality-social.js"
       ],
-      "executionIds": [
-        "quality-mwii10x4-quest-quality-content",
-        "quality-mwii2kwt-quest-quality-social"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ26",
@@ -589,16 +508,14 @@
       "title": "Fictional obligations network",
       "dependsOn": [],
       "acceptance": "A fictional favor/guarantee network can be inspected and resolved without real monetary effects.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-quality-favors/pack.json"
       ],
       "evaluations": [
         "test/quest-quality-content.js"
       ],
-      "executionIds": [
-        "quality-mwii10x4-quest-quality-content"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ27",
@@ -608,16 +525,14 @@
         "QQ07"
       ],
       "acceptance": "A case translates different institutional uses of the same terms using contrasting examples.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-quality-shared-meaning/pack.json"
       ],
       "evaluations": [
         "test/quest-quality-content.js"
       ],
-      "executionIds": [
-        "quality-mwii10x4-quest-quality-content"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ28",
@@ -628,7 +543,7 @@
         "QQ41"
       ],
       "acceptance": "Players preview recipients and explicitly route only evidence they know; NPC knowledge changes accordingly.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-quality-field-notes/pack.json",
         "src/content/quality-runtime.js"
@@ -640,13 +555,7 @@
         "test/quest-quality-browser.js",
         "test/quest-quality-stateful.js"
       ],
-      "executionIds": [
-        "quality-mwii10x4-quest-quality-content",
-        "quality-mwii1h7m-quest-quality-api",
-        "quality-mwii2kwt-quest-quality-social",
-        "quality-mwii1lpp-quest-quality-browser",
-        "quality-mwii2iui-quest-quality-stateful"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ29",
@@ -657,16 +566,14 @@
         "QQ41"
       ],
       "acceptance": "A case distinguishes player knowledge from character knowledge and offers sensible interventions.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-quality-last-ferry/pack.json"
       ],
       "evaluations": [
         "test/quest-quality-content.js"
       ],
-      "executionIds": [
-        "quality-mwii10x4-quest-quality-content"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ30",
@@ -674,16 +581,14 @@
       "title": "Open lead order",
       "dependsOn": [],
       "acceptance": "Independent leads can be visited in either order while essential proof remains reachable.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "content/packs/quest-three-witnesses-v2/pack.json"
       ],
       "evaluations": [
         "test/quest-quality-content.js"
       ],
-      "executionIds": [
-        "quality-mwii10x4-quest-quality-content"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ31",
@@ -693,7 +598,7 @@
         "QQ30"
       ],
       "acceptance": "Search indexes only revealed questions in the actor's own case.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "public/ux-quest-quality.js",
         "src/content/quality-runtime.js"
@@ -702,10 +607,7 @@
         "test/quest-quality-spoilers.js",
         "test/quest-quality-browser.js"
       ],
-      "executionIds": [
-        "quality-mwii2rk1-quest-quality-spoilers",
-        "quality-mwii1lpp-quest-quality-browser"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ32",
@@ -715,7 +617,7 @@
         "QQ01"
       ],
       "acceptance": "A repeat procedure can be skipped after demonstrated mastery while new deduction remains required.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "src/content/runtime.js",
         "content/packs/quest-three-witnesses-v2/pack.json",
@@ -726,11 +628,7 @@
         "test/quest-quality-runtime.js",
         "test/quest-quality-browser.js"
       ],
-      "executionIds": [
-        "quality-mwii10x4-quest-quality-content",
-        "quality-mwii1c3t-quest-quality-runtime",
-        "quality-mwii1lpp-quest-quality-browser"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ33",
@@ -741,7 +639,7 @@
         "QQ31"
       ],
       "acceptance": "Returning players see revealed facts, the current open question and a concise factual recap.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "public/ux-quest-quality.js",
         "src/content/quality-runtime.js"
@@ -751,11 +649,7 @@
         "test/quest-quality-spoilers.js",
         "test/quest-quality-browser.js"
       ],
-      "executionIds": [
-        "quality-mwii1c3t-quest-quality-runtime",
-        "quality-mwii2rk1-quest-quality-spoilers",
-        "quality-mwii1lpp-quest-quality-browser"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ34",
@@ -765,7 +659,7 @@
         "QQ03"
       ],
       "acceptance": "Players can pin and compare revealed evidence without automatic answer selection.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "public/ux-quest-quality.js",
         "src/content/quality-runtime.js"
@@ -774,10 +668,7 @@
         "test/quest-quality-runtime.js",
         "test/quest-quality-browser.js"
       ],
-      "executionIds": [
-        "quality-mwii1c3t-quest-quality-runtime",
-        "quality-mwii1lpp-quest-quality-browser"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ35",
@@ -787,7 +678,7 @@
         "QQ03"
       ],
       "acceptance": "Consequential actions show an intent preview; uncommitted drafts can be changed or cleared.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "public/ux-quest-quality.js",
         "src/content/quality-runtime.js"
@@ -798,12 +689,7 @@
         "test/quest-quality-browser.js",
         "test/quest-quality-stateful.js"
       ],
-      "executionIds": [
-        "quality-mwii1c3t-quest-quality-runtime",
-        "quality-mwii1h7m-quest-quality-api",
-        "quality-mwii1lpp-quest-quality-browser",
-        "quality-mwii2iui-quest-quality-stateful"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ36",
@@ -813,7 +699,7 @@
         "QQ07"
       ],
       "acceptance": "Clause views preserve the exact authored conditions, negation and uncertainty.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "public/ux-quest-quality.js",
         "src/content/quality.js"
@@ -823,11 +709,7 @@
         "test/quest-quality-rules.js",
         "test/quest-quality-browser.js"
       ],
-      "executionIds": [
-        "quality-mwii10x4-quest-quality-content",
-        "quality-mwii19ji-quest-quality-rules",
-        "quality-mwii1lpp-quest-quality-browser"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ37",
@@ -837,7 +719,7 @@
         "QQ03"
       ],
       "acceptance": "Each participant can privately record an impression or uncertainty and choose whether to share it.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "public/ux-quest-quality.js",
         "src/content/quality-runtime.js"
@@ -849,13 +731,7 @@
         "test/quest-quality-postgres.js",
         "test/quest-quality-stateful.js"
       ],
-      "executionIds": [
-        "quality-mwii1c3t-quest-quality-runtime",
-        "quality-mwii2kwt-quest-quality-social",
-        "quality-mwii1lpp-quest-quality-browser",
-        "quality-mwii3zu5-quest-quality-postgres",
-        "quality-mwii2iui-quest-quality-stateful"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ38",
@@ -866,7 +742,7 @@
         "QQ37"
       ],
       "acceptance": "A current member can propose a permitted scene delegate; affected participants acknowledge before commitment and can safely leave.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "public/ux-quest-quality.js",
         "src/content/quality-runtime.js",
@@ -881,15 +757,7 @@
         "test/quest-quality-postgres.js",
         "test/quest-quality-stateful.js"
       ],
-      "executionIds": [
-        "quality-mwii10x4-quest-quality-content",
-        "quality-mwii19ji-quest-quality-rules",
-        "quality-mwii1h7m-quest-quality-api",
-        "quality-mwii2kwt-quest-quality-social",
-        "quality-mwii1lpp-quest-quality-browser",
-        "quality-mwii3zu5-quest-quality-postgres",
-        "quality-mwii2iui-quest-quality-stateful"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ39",
@@ -899,7 +767,7 @@
         "QQ38"
       ],
       "acceptance": "Participants receive meaningful spotlight opportunities and can delegate without overriding original role gates.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "public/ux-quest-quality.js",
         "src/content/runtime.js",
@@ -912,13 +780,7 @@
         "test/quest-quality-browser.js",
         "test/quest-quality-postgres.js"
       ],
-      "executionIds": [
-        "quality-mwii10x4-quest-quality-content",
-        "quality-mwii19ji-quest-quality-rules",
-        "quality-mwii2kwt-quest-quality-social",
-        "quality-mwii1lpp-quest-quality-browser",
-        "quality-mwii3zu5-quest-quality-postgres"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ40",
@@ -929,7 +791,7 @@
         "QQ48"
       ],
       "acceptance": "Each player opens the verdict/debrief individually; other participants can finish independently without leaking the unopened verdict.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "public/ux-quest-quality.js",
         "src/content/quality-runtime.js",
@@ -944,15 +806,7 @@
         "test/quest-quality-postgres.js",
         "test/quest-quality-stateful.js"
       ],
-      "executionIds": [
-        "quality-mwii1c3t-quest-quality-runtime",
-        "quality-mwii1h7m-quest-quality-api",
-        "quality-mwii2kwt-quest-quality-social",
-        "quality-mwii2rk1-quest-quality-spoilers",
-        "quality-mwii1lpp-quest-quality-browser",
-        "quality-mwii3zu5-quest-quality-postgres",
-        "quality-mwii2iui-quest-quality-stateful"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ41",
@@ -960,7 +814,7 @@
       "title": "NPC knowledge and belief ledger",
       "dependsOn": [],
       "acceptance": "Authors declare what each NPC knows, believes, conceals and can learn; impossible knowledge and unjustified disclosures fail validation.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "src/content/quality.js",
         "src/content/quality-runtime.js",
@@ -972,11 +826,7 @@
         "test/quest-quality-rules.js",
         "test/quest-quality-studio.js"
       ],
-      "executionIds": [
-        "quality-mwii10x4-quest-quality-content",
-        "quality-mwii19ji-quest-quality-rules",
-        "quality-mwii1agt-quest-quality-studio"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ42",
@@ -986,7 +836,7 @@
         "QQ41"
       ],
       "acceptance": "Author tooling links narrative promises to reachable payoffs and reports unresolved promises.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "src/content/quality.js",
         "tools/quest-quality-studio.js"
@@ -995,10 +845,7 @@
         "test/quest-quality-rules.js",
         "test/quest-quality-studio.js"
       ],
-      "executionIds": [
-        "quality-mwii19ji-quest-quality-rules",
-        "quality-mwii1agt-quest-quality-studio"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ43",
@@ -1009,16 +856,14 @@
         "QQ42"
       ],
       "acceptance": "Changing a fact previews dependent clues, dialogue, proofs and other references.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "tools/quest-quality-studio.js"
       ],
       "evaluations": [
         "test/quest-quality-studio.js"
       ],
-      "executionIds": [
-        "quality-mwii1agt-quest-quality-studio"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ44",
@@ -1028,7 +873,7 @@
         "QQ42"
       ],
       "acceptance": "Author tooling reports branch costs and reconvergence while preserving authored consequences.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "src/content/quality.js",
         "tools/quest-quality-studio.js"
@@ -1037,10 +882,7 @@
         "test/quest-quality-rules.js",
         "test/quest-quality-studio.js"
       ],
-      "executionIds": [
-        "quality-mwii19ji-quest-quality-rules",
-        "quality-mwii1agt-quest-quality-studio"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ45",
@@ -1051,16 +893,14 @@
         "QQ43"
       ],
       "acceptance": "Authors preview scenes immediately with prior-state presets using the same validation and projection rules.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "tools/quest-quality-studio.js"
       ],
       "evaluations": [
         "test/quest-quality-studio.js"
       ],
-      "executionIds": [
-        "quality-mwii1agt-quest-quality-studio"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ46",
@@ -1070,7 +910,7 @@
         "QQ33"
       ],
       "acceptance": "An opted-in tester can submit what happened, why and what to do next; reports label evidence type and preserve raw responses.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "public/ux-quest-quality.js",
         "src/content/quality-runtime.js",
@@ -1084,13 +924,7 @@
         "test/quest-quality-stateful.js"
       ],
       "researchStatus": "awaiting_user_arranged_testers",
-      "executionIds": [
-        "quality-mwii1c3t-quest-quality-runtime",
-        "quality-mwii1h7m-quest-quality-api",
-        "quality-mwii1lpp-quest-quality-browser",
-        "quality-mwii2x0y-quest-quality-study",
-        "quality-mwii2iui-quest-quality-stateful"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ47",
@@ -1102,7 +936,7 @@
         "QQ45"
       ],
       "acceptance": "Authored tests exercise protecting a suspect, distrusting the employer and competing loyalties through real runtime paths.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "tools/quest-quality-studio.js",
         "test/quest-quality-content.js"
@@ -1111,10 +945,7 @@
         "test/quest-quality-content.js",
         "test/quest-quality-studio.js"
       ],
-      "executionIds": [
-        "quality-mwii10x4-quest-quality-content",
-        "quality-mwii1agt-quest-quality-studio"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ48",
@@ -1124,7 +955,7 @@
         "QQ10"
       ],
       "acceptance": "Author tooling flags spoiler-bearing titles, rewards, markers and errors before publication.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "tools/quest-quality-studio.js",
         "src/content/quality.js",
@@ -1135,11 +966,7 @@
         "test/quest-quality-spoilers.js",
         "test/quest-quality-studio.js"
       ],
-      "executionIds": [
-        "quality-mwii19ji-quest-quality-rules",
-        "quality-mwii2rk1-quest-quality-spoilers",
-        "quality-mwii1agt-quest-quality-studio"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ49",
@@ -1150,7 +977,7 @@
         "QQ44"
       ],
       "acceptance": "Author tooling measures reading, reasoning, repetition and travel; reports chores separately from quiet or comic beats.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "tools/quest-quality-studio.js",
         "src/content/quality.js"
@@ -1159,10 +986,7 @@
         "test/quest-quality-rules.js",
         "test/quest-quality-studio.js"
       ],
-      "executionIds": [
-        "quality-mwii19ji-quest-quality-rules",
-        "quality-mwii1agt-quest-quality-studio"
-      ]
+      "executionIds": []
     },
     {
       "id": "QQ50",
@@ -1172,7 +996,7 @@
         "QQ46"
       ],
       "acceptance": "An opted-in tester can submit enjoyment, understanding and unaided recall only after at least 24 hours of server time; results are not fabricated.",
-      "status": "verified",
+      "status": "implemented",
       "artifacts": [
         "public/ux-quest-quality.js",
         "src/content/quality-runtime.js",
@@ -1186,13 +1010,7 @@
         "test/quest-quality-stateful.js"
       ],
       "researchStatus": "awaiting_user_arranged_testers",
-      "executionIds": [
-        "quality-mwii1c3t-quest-quality-runtime",
-        "quality-mwii1h7m-quest-quality-api",
-        "quality-mwii1lpp-quest-quality-browser",
-        "quality-mwii2x0y-quest-quality-study",
-        "quality-mwii2iui-quest-quality-stateful"
-      ]
+      "executionIds": []
     }
   ],
   "executions": [
@@ -10350,6 +10168,558 @@
       "elapsedMs": 21860,
       "exitCode": 0,
       "log": "output/quest-quality-verification/quality-mwii3zu5-quest-quality-postgres.log",
+      "evidenceType": "automated_implementation_check"
+    },
+    {
+      "id": "quality-mwio4w9o-quest-quality-content",
+      "evaluator": "test/quest-quality-content.js",
+      "evaluatorHash": "0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266",
+      "sourceHashes": {
+        "content/packs/quest-quality-favors/pack.json": "c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71",
+        "content/packs/quest-quality-field-notes/pack.json": "c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a",
+        "content/packs/quest-quality-last-ferry/pack.json": "ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881",
+        "content/packs/quest-quality-night-edition/pack.json": "1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1",
+        "content/packs/quest-quality-open-office/pack.json": "97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff",
+        "content/packs/quest-quality-payday/pack.json": "855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed",
+        "content/packs/quest-quality-shared-meaning/pack.json": "cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072",
+        "content/packs/quest-quality-small-fire/pack.json": "64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7",
+        "content/packs/quest-quality-truce/pack.json": "2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08",
+        "content/packs/quest-three-witnesses-v2/pack.json": "294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423",
+        "package.json": "7cdd3916fb45488293efdc1a92e9634bb7157809c11ca50a34460acc650ef629",
+        "public/index.html": "fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba",
+        "public/ux-quest-quality.css": "8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f",
+        "public/ux-quest-quality.js": "e34b8b84be83f0c1d2af9149cba227225a830f371ee9e11f95b6b4f3c05c58f2",
+        "public/ux-quests.js": "8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205",
+        "src/agentgateway.js": "8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f",
+        "src/content/compiler.js": "20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641",
+        "src/content/narrative.js": "96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41",
+        "src/content/quality-runtime.js": "609bab529eae343b33a2873a9da34668d63c3ee2f91bbcca77f85bcdb43e5d4e",
+        "src/content/quality.js": "94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4",
+        "src/content/quest-quality-packs.js": "fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9",
+        "src/content/runtime.js": "c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2",
+        "src/quest-quality-contracts.js": "b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395",
+        "src/questing-contract.js": "15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71",
+        "src/routes/content.js": "12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e",
+        "src/server.js": "f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5",
+        "test/lib/quest-quality-fixture.js": "316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b",
+        "test/quest-quality-content.js": "0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266",
+        "tools/quest-quality-studio.js": "997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52",
+        "tools/quest-quality-study.js": "856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01",
+        "tools/quest-quality-workgraph.js": "c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11",
+        "src/client-shell.js": "561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4",
+        "public/landing-loader.js": "6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c"
+      },
+      "sourceStable": true,
+      "startedAt": "2026-11-16T02:52:55.260Z",
+      "elapsedMs": 9256,
+      "exitCode": 0,
+      "log": "output/quest-quality-verification/quality-mwio4w9o-quest-quality-content.log",
+      "evidenceType": "automated_implementation_check"
+    },
+    {
+      "id": "quality-mwio543p-quest-quality-rules",
+      "evaluator": "test/quest-quality-rules.js",
+      "evaluatorHash": "a826d549449bfff306a42553d5c218412d0b903d7acc0756791787cb19211b08",
+      "sourceHashes": {
+        "content/packs/quest-quality-favors/pack.json": "c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71",
+        "content/packs/quest-quality-field-notes/pack.json": "c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a",
+        "content/packs/quest-quality-last-ferry/pack.json": "ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881",
+        "content/packs/quest-quality-night-edition/pack.json": "1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1",
+        "content/packs/quest-quality-open-office/pack.json": "97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff",
+        "content/packs/quest-quality-payday/pack.json": "855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed",
+        "content/packs/quest-quality-shared-meaning/pack.json": "cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072",
+        "content/packs/quest-quality-small-fire/pack.json": "64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7",
+        "content/packs/quest-quality-truce/pack.json": "2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08",
+        "content/packs/quest-three-witnesses-v2/pack.json": "294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423",
+        "package.json": "7cdd3916fb45488293efdc1a92e9634bb7157809c11ca50a34460acc650ef629",
+        "public/index.html": "fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba",
+        "public/ux-quest-quality.css": "8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f",
+        "public/ux-quest-quality.js": "e34b8b84be83f0c1d2af9149cba227225a830f371ee9e11f95b6b4f3c05c58f2",
+        "public/ux-quests.js": "8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205",
+        "src/agentgateway.js": "8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f",
+        "src/content/compiler.js": "20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641",
+        "src/content/narrative.js": "96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41",
+        "src/content/quality-runtime.js": "609bab529eae343b33a2873a9da34668d63c3ee2f91bbcca77f85bcdb43e5d4e",
+        "src/content/quality.js": "94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4",
+        "src/content/quest-quality-packs.js": "fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9",
+        "src/content/runtime.js": "c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2",
+        "src/quest-quality-contracts.js": "b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395",
+        "src/questing-contract.js": "15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71",
+        "src/routes/content.js": "12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e",
+        "src/server.js": "f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5",
+        "test/lib/quest-quality-fixture.js": "316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b",
+        "test/quest-quality-content.js": "0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266",
+        "tools/quest-quality-studio.js": "997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52",
+        "tools/quest-quality-study.js": "856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01",
+        "tools/quest-quality-workgraph.js": "c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11",
+        "src/client-shell.js": "561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4",
+        "public/landing-loader.js": "6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c"
+      },
+      "sourceStable": true,
+      "startedAt": "2026-11-16T02:53:05.413Z",
+      "elapsedMs": 147,
+      "exitCode": 0,
+      "log": "output/quest-quality-verification/quality-mwio543p-quest-quality-rules.log",
+      "evidenceType": "automated_implementation_check"
+    },
+    {
+      "id": "quality-mwio54tx-quest-quality-studio",
+      "evaluator": "test/quest-quality-studio.js",
+      "evaluatorHash": "7312af34a011503deb2cd3a36ea4f9b667ddc9cc57c6de7e2ef384121ff944f6",
+      "sourceHashes": {
+        "content/packs/quest-quality-favors/pack.json": "c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71",
+        "content/packs/quest-quality-field-notes/pack.json": "c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a",
+        "content/packs/quest-quality-last-ferry/pack.json": "ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881",
+        "content/packs/quest-quality-night-edition/pack.json": "1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1",
+        "content/packs/quest-quality-open-office/pack.json": "97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff",
+        "content/packs/quest-quality-payday/pack.json": "855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed",
+        "content/packs/quest-quality-shared-meaning/pack.json": "cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072",
+        "content/packs/quest-quality-small-fire/pack.json": "64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7",
+        "content/packs/quest-quality-truce/pack.json": "2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08",
+        "content/packs/quest-three-witnesses-v2/pack.json": "294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423",
+        "package.json": "7cdd3916fb45488293efdc1a92e9634bb7157809c11ca50a34460acc650ef629",
+        "public/index.html": "fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba",
+        "public/ux-quest-quality.css": "8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f",
+        "public/ux-quest-quality.js": "e34b8b84be83f0c1d2af9149cba227225a830f371ee9e11f95b6b4f3c05c58f2",
+        "public/ux-quests.js": "8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205",
+        "src/agentgateway.js": "8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f",
+        "src/content/compiler.js": "20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641",
+        "src/content/narrative.js": "96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41",
+        "src/content/quality-runtime.js": "609bab529eae343b33a2873a9da34668d63c3ee2f91bbcca77f85bcdb43e5d4e",
+        "src/content/quality.js": "94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4",
+        "src/content/quest-quality-packs.js": "fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9",
+        "src/content/runtime.js": "c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2",
+        "src/quest-quality-contracts.js": "b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395",
+        "src/questing-contract.js": "15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71",
+        "src/routes/content.js": "12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e",
+        "src/server.js": "f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5",
+        "test/lib/quest-quality-fixture.js": "316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b",
+        "test/quest-quality-content.js": "0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266",
+        "tools/quest-quality-studio.js": "997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52",
+        "tools/quest-quality-study.js": "856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01",
+        "tools/quest-quality-workgraph.js": "c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11",
+        "src/client-shell.js": "561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4",
+        "public/landing-loader.js": "6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c"
+      },
+      "sourceStable": true,
+      "startedAt": "2026-11-16T02:53:06.357Z",
+      "elapsedMs": 1312,
+      "exitCode": 0,
+      "log": "output/quest-quality-verification/quality-mwio54tx-quest-quality-studio.log",
+      "evidenceType": "automated_implementation_check"
+    },
+    {
+      "id": "quality-mwio56a9-quest-quality-runtime",
+      "evaluator": "test/quest-quality-runtime.js",
+      "evaluatorHash": "3f227f0b0b8158b97d6e1790fcab5f5cdb788320446bcf0ecc378513a903e6a6",
+      "sourceHashes": {
+        "content/packs/quest-quality-favors/pack.json": "c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71",
+        "content/packs/quest-quality-field-notes/pack.json": "c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a",
+        "content/packs/quest-quality-last-ferry/pack.json": "ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881",
+        "content/packs/quest-quality-night-edition/pack.json": "1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1",
+        "content/packs/quest-quality-open-office/pack.json": "97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff",
+        "content/packs/quest-quality-payday/pack.json": "855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed",
+        "content/packs/quest-quality-shared-meaning/pack.json": "cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072",
+        "content/packs/quest-quality-small-fire/pack.json": "64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7",
+        "content/packs/quest-quality-truce/pack.json": "2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08",
+        "content/packs/quest-three-witnesses-v2/pack.json": "294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423",
+        "package.json": "7cdd3916fb45488293efdc1a92e9634bb7157809c11ca50a34460acc650ef629",
+        "public/index.html": "fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba",
+        "public/ux-quest-quality.css": "8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f",
+        "public/ux-quest-quality.js": "e34b8b84be83f0c1d2af9149cba227225a830f371ee9e11f95b6b4f3c05c58f2",
+        "public/ux-quests.js": "8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205",
+        "src/agentgateway.js": "8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f",
+        "src/content/compiler.js": "20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641",
+        "src/content/narrative.js": "96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41",
+        "src/content/quality-runtime.js": "609bab529eae343b33a2873a9da34668d63c3ee2f91bbcca77f85bcdb43e5d4e",
+        "src/content/quality.js": "94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4",
+        "src/content/quest-quality-packs.js": "fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9",
+        "src/content/runtime.js": "c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2",
+        "src/quest-quality-contracts.js": "b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395",
+        "src/questing-contract.js": "15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71",
+        "src/routes/content.js": "12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e",
+        "src/server.js": "f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5",
+        "test/lib/quest-quality-fixture.js": "316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b",
+        "test/quest-quality-content.js": "0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266",
+        "tools/quest-quality-studio.js": "997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52",
+        "tools/quest-quality-study.js": "856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01",
+        "tools/quest-quality-workgraph.js": "c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11",
+        "src/client-shell.js": "561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4",
+        "public/landing-loader.js": "6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c"
+      },
+      "sourceStable": true,
+      "startedAt": "2026-11-16T02:53:08.241Z",
+      "elapsedMs": 5667,
+      "exitCode": 0,
+      "log": "output/quest-quality-verification/quality-mwio56a9-quest-quality-runtime.log",
+      "evidenceType": "automated_implementation_check"
+    },
+    {
+      "id": "quality-mwio5b0q-quest-quality-api",
+      "evaluator": "test/quest-quality-api.js",
+      "evaluatorHash": "eb06739d7e08a8124b9a91371de7ea2b314339dd20f5a3451138efc08441bd8e",
+      "sourceHashes": {
+        "content/packs/quest-quality-favors/pack.json": "c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71",
+        "content/packs/quest-quality-field-notes/pack.json": "c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a",
+        "content/packs/quest-quality-last-ferry/pack.json": "ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881",
+        "content/packs/quest-quality-night-edition/pack.json": "1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1",
+        "content/packs/quest-quality-open-office/pack.json": "97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff",
+        "content/packs/quest-quality-payday/pack.json": "855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed",
+        "content/packs/quest-quality-shared-meaning/pack.json": "cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072",
+        "content/packs/quest-quality-small-fire/pack.json": "64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7",
+        "content/packs/quest-quality-truce/pack.json": "2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08",
+        "content/packs/quest-three-witnesses-v2/pack.json": "294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423",
+        "package.json": "7cdd3916fb45488293efdc1a92e9634bb7157809c11ca50a34460acc650ef629",
+        "public/index.html": "fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba",
+        "public/ux-quest-quality.css": "8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f",
+        "public/ux-quest-quality.js": "e34b8b84be83f0c1d2af9149cba227225a830f371ee9e11f95b6b4f3c05c58f2",
+        "public/ux-quests.js": "8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205",
+        "src/agentgateway.js": "8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f",
+        "src/content/compiler.js": "20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641",
+        "src/content/narrative.js": "96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41",
+        "src/content/quality-runtime.js": "609bab529eae343b33a2873a9da34668d63c3ee2f91bbcca77f85bcdb43e5d4e",
+        "src/content/quality.js": "94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4",
+        "src/content/quest-quality-packs.js": "fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9",
+        "src/content/runtime.js": "c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2",
+        "src/quest-quality-contracts.js": "b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395",
+        "src/questing-contract.js": "15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71",
+        "src/routes/content.js": "12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e",
+        "src/server.js": "f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5",
+        "test/lib/quest-quality-fixture.js": "316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b",
+        "test/quest-quality-content.js": "0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266",
+        "tools/quest-quality-studio.js": "997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52",
+        "tools/quest-quality-study.js": "856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01",
+        "tools/quest-quality-workgraph.js": "c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11",
+        "src/client-shell.js": "561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4",
+        "public/landing-loader.js": "6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c"
+      },
+      "sourceStable": true,
+      "startedAt": "2026-11-16T02:53:14.378Z",
+      "elapsedMs": 4949,
+      "exitCode": 0,
+      "log": "output/quest-quality-verification/quality-mwio5b0q-quest-quality-api.log",
+      "evidenceType": "automated_implementation_check"
+    },
+    {
+      "id": "quality-mwio5f4i-quest-quality-browser",
+      "evaluator": "test/quest-quality-browser.js",
+      "evaluatorHash": "0c51ee92b5ed3e722813498a7f5657fcb6fc4fffb2cabadc2f122035c78184f7",
+      "sourceHashes": {
+        "content/packs/quest-quality-favors/pack.json": "c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71",
+        "content/packs/quest-quality-field-notes/pack.json": "c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a",
+        "content/packs/quest-quality-last-ferry/pack.json": "ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881",
+        "content/packs/quest-quality-night-edition/pack.json": "1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1",
+        "content/packs/quest-quality-open-office/pack.json": "97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff",
+        "content/packs/quest-quality-payday/pack.json": "855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed",
+        "content/packs/quest-quality-shared-meaning/pack.json": "cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072",
+        "content/packs/quest-quality-small-fire/pack.json": "64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7",
+        "content/packs/quest-quality-truce/pack.json": "2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08",
+        "content/packs/quest-three-witnesses-v2/pack.json": "294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423",
+        "package.json": "7cdd3916fb45488293efdc1a92e9634bb7157809c11ca50a34460acc650ef629",
+        "public/index.html": "fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba",
+        "public/ux-quest-quality.css": "8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f",
+        "public/ux-quest-quality.js": "e34b8b84be83f0c1d2af9149cba227225a830f371ee9e11f95b6b4f3c05c58f2",
+        "public/ux-quests.js": "8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205",
+        "src/agentgateway.js": "8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f",
+        "src/content/compiler.js": "20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641",
+        "src/content/narrative.js": "96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41",
+        "src/content/quality-runtime.js": "609bab529eae343b33a2873a9da34668d63c3ee2f91bbcca77f85bcdb43e5d4e",
+        "src/content/quality.js": "94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4",
+        "src/content/quest-quality-packs.js": "fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9",
+        "src/content/runtime.js": "c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2",
+        "src/quest-quality-contracts.js": "b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395",
+        "src/questing-contract.js": "15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71",
+        "src/routes/content.js": "12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e",
+        "src/server.js": "f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5",
+        "test/lib/quest-quality-fixture.js": "316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b",
+        "test/quest-quality-content.js": "0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266",
+        "tools/quest-quality-studio.js": "997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52",
+        "tools/quest-quality-study.js": "856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01",
+        "tools/quest-quality-workgraph.js": "c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11",
+        "src/client-shell.js": "561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4",
+        "public/landing-loader.js": "6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c"
+      },
+      "sourceStable": true,
+      "startedAt": "2026-11-16T02:53:19.698Z",
+      "elapsedMs": 23567,
+      "exitCode": 0,
+      "log": "output/quest-quality-verification/quality-mwio5f4i-quest-quality-browser.log",
+      "evidenceType": "automated_implementation_check"
+    },
+    {
+      "id": "quality-mwio5xjr-quest-quality-postgres",
+      "evaluator": "test/quest-quality-postgres.js",
+      "evaluatorHash": "f8b535feb91fc5ad23b2b61c56432eca948c5c3eb4e9a5b6962eea9abd905e7a",
+      "sourceHashes": {
+        "content/packs/quest-quality-favors/pack.json": "c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71",
+        "content/packs/quest-quality-field-notes/pack.json": "c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a",
+        "content/packs/quest-quality-last-ferry/pack.json": "ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881",
+        "content/packs/quest-quality-night-edition/pack.json": "1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1",
+        "content/packs/quest-quality-open-office/pack.json": "97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff",
+        "content/packs/quest-quality-payday/pack.json": "855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed",
+        "content/packs/quest-quality-shared-meaning/pack.json": "cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072",
+        "content/packs/quest-quality-small-fire/pack.json": "64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7",
+        "content/packs/quest-quality-truce/pack.json": "2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08",
+        "content/packs/quest-three-witnesses-v2/pack.json": "294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423",
+        "package.json": "7cdd3916fb45488293efdc1a92e9634bb7157809c11ca50a34460acc650ef629",
+        "public/index.html": "fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba",
+        "public/ux-quest-quality.css": "8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f",
+        "public/ux-quest-quality.js": "e34b8b84be83f0c1d2af9149cba227225a830f371ee9e11f95b6b4f3c05c58f2",
+        "public/ux-quests.js": "8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205",
+        "src/agentgateway.js": "8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f",
+        "src/content/compiler.js": "20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641",
+        "src/content/narrative.js": "96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41",
+        "src/content/quality-runtime.js": "609bab529eae343b33a2873a9da34668d63c3ee2f91bbcca77f85bcdb43e5d4e",
+        "src/content/quality.js": "94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4",
+        "src/content/quest-quality-packs.js": "fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9",
+        "src/content/runtime.js": "c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2",
+        "src/quest-quality-contracts.js": "b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395",
+        "src/questing-contract.js": "15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71",
+        "src/routes/content.js": "12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e",
+        "src/server.js": "f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5",
+        "test/lib/quest-quality-fixture.js": "316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b",
+        "test/quest-quality-content.js": "0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266",
+        "tools/quest-quality-studio.js": "997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52",
+        "tools/quest-quality-study.js": "856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01",
+        "tools/quest-quality-workgraph.js": "c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11",
+        "src/client-shell.js": "561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4",
+        "public/landing-loader.js": "6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c"
+      },
+      "sourceStable": true,
+      "startedAt": "2026-11-16T02:53:43.575Z",
+      "elapsedMs": 1607,
+      "exitCode": 1,
+      "log": "output/quest-quality-verification/quality-mwio5xjr-quest-quality-postgres.log",
+      "evidenceType": "automated_implementation_check"
+    },
+    {
+      "id": "quality-mwio5z0w-quest-quality-stateful",
+      "evaluator": "test/quest-quality-stateful.js",
+      "evaluatorHash": "25b514da3ba7440638639362b814c4145ade0f5050b0297a4c6b39d3bc3e51df",
+      "sourceHashes": {
+        "content/packs/quest-quality-favors/pack.json": "c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71",
+        "content/packs/quest-quality-field-notes/pack.json": "c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a",
+        "content/packs/quest-quality-last-ferry/pack.json": "ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881",
+        "content/packs/quest-quality-night-edition/pack.json": "1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1",
+        "content/packs/quest-quality-open-office/pack.json": "97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff",
+        "content/packs/quest-quality-payday/pack.json": "855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed",
+        "content/packs/quest-quality-shared-meaning/pack.json": "cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072",
+        "content/packs/quest-quality-small-fire/pack.json": "64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7",
+        "content/packs/quest-quality-truce/pack.json": "2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08",
+        "content/packs/quest-three-witnesses-v2/pack.json": "294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423",
+        "package.json": "7cdd3916fb45488293efdc1a92e9634bb7157809c11ca50a34460acc650ef629",
+        "public/index.html": "fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba",
+        "public/ux-quest-quality.css": "8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f",
+        "public/ux-quest-quality.js": "e34b8b84be83f0c1d2af9149cba227225a830f371ee9e11f95b6b4f3c05c58f2",
+        "public/ux-quests.js": "8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205",
+        "src/agentgateway.js": "8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f",
+        "src/content/compiler.js": "20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641",
+        "src/content/narrative.js": "96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41",
+        "src/content/quality-runtime.js": "609bab529eae343b33a2873a9da34668d63c3ee2f91bbcca77f85bcdb43e5d4e",
+        "src/content/quality.js": "94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4",
+        "src/content/quest-quality-packs.js": "fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9",
+        "src/content/runtime.js": "c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2",
+        "src/quest-quality-contracts.js": "b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395",
+        "src/questing-contract.js": "15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71",
+        "src/routes/content.js": "12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e",
+        "src/server.js": "f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5",
+        "test/lib/quest-quality-fixture.js": "316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b",
+        "test/quest-quality-content.js": "0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266",
+        "tools/quest-quality-studio.js": "997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52",
+        "tools/quest-quality-study.js": "856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01",
+        "tools/quest-quality-workgraph.js": "c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11",
+        "src/client-shell.js": "561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4",
+        "public/landing-loader.js": "6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c"
+      },
+      "sourceStable": true,
+      "startedAt": "2026-11-16T02:53:45.488Z",
+      "elapsedMs": 1558,
+      "exitCode": 0,
+      "log": "output/quest-quality-verification/quality-mwio5z0w-quest-quality-stateful.log",
+      "evidenceType": "automated_implementation_check"
+    },
+    {
+      "id": "quality-mwio60ey-quest-quality-social",
+      "evaluator": "test/quest-quality-social.js",
+      "evaluatorHash": "a4dfce14e220a79d78651ea113c33efbfb4361906882ab2ffe20079c730964a6",
+      "sourceHashes": {
+        "content/packs/quest-quality-favors/pack.json": "c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71",
+        "content/packs/quest-quality-field-notes/pack.json": "c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a",
+        "content/packs/quest-quality-last-ferry/pack.json": "ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881",
+        "content/packs/quest-quality-night-edition/pack.json": "1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1",
+        "content/packs/quest-quality-open-office/pack.json": "97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff",
+        "content/packs/quest-quality-payday/pack.json": "855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed",
+        "content/packs/quest-quality-shared-meaning/pack.json": "cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072",
+        "content/packs/quest-quality-small-fire/pack.json": "64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7",
+        "content/packs/quest-quality-truce/pack.json": "2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08",
+        "content/packs/quest-three-witnesses-v2/pack.json": "294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423",
+        "package.json": "7cdd3916fb45488293efdc1a92e9634bb7157809c11ca50a34460acc650ef629",
+        "public/index.html": "fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba",
+        "public/ux-quest-quality.css": "8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f",
+        "public/ux-quest-quality.js": "e34b8b84be83f0c1d2af9149cba227225a830f371ee9e11f95b6b4f3c05c58f2",
+        "public/ux-quests.js": "8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205",
+        "src/agentgateway.js": "8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f",
+        "src/content/compiler.js": "20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641",
+        "src/content/narrative.js": "96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41",
+        "src/content/quality-runtime.js": "609bab529eae343b33a2873a9da34668d63c3ee2f91bbcca77f85bcdb43e5d4e",
+        "src/content/quality.js": "94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4",
+        "src/content/quest-quality-packs.js": "fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9",
+        "src/content/runtime.js": "c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2",
+        "src/quest-quality-contracts.js": "b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395",
+        "src/questing-contract.js": "15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71",
+        "src/routes/content.js": "12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e",
+        "src/server.js": "f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5",
+        "test/lib/quest-quality-fixture.js": "316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b",
+        "test/quest-quality-content.js": "0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266",
+        "tools/quest-quality-studio.js": "997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52",
+        "tools/quest-quality-study.js": "856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01",
+        "tools/quest-quality-workgraph.js": "c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11",
+        "src/client-shell.js": "561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4",
+        "public/landing-loader.js": "6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c"
+      },
+      "sourceStable": true,
+      "startedAt": "2026-11-16T02:53:47.290Z",
+      "elapsedMs": 6510,
+      "exitCode": 0,
+      "log": "output/quest-quality-verification/quality-mwio60ey-quest-quality-social.log",
+      "evidenceType": "automated_implementation_check"
+    },
+    {
+      "id": "quality-mwio65ko-quest-quality-spoilers",
+      "evaluator": "test/quest-quality-spoilers.js",
+      "evaluatorHash": "55fc0fc6512934fccfdf3628b5f178b95fe27722753aba704b1acc515d8876e4",
+      "sourceHashes": {
+        "content/packs/quest-quality-favors/pack.json": "c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71",
+        "content/packs/quest-quality-field-notes/pack.json": "c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a",
+        "content/packs/quest-quality-last-ferry/pack.json": "ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881",
+        "content/packs/quest-quality-night-edition/pack.json": "1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1",
+        "content/packs/quest-quality-open-office/pack.json": "97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff",
+        "content/packs/quest-quality-payday/pack.json": "855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed",
+        "content/packs/quest-quality-shared-meaning/pack.json": "cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072",
+        "content/packs/quest-quality-small-fire/pack.json": "64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7",
+        "content/packs/quest-quality-truce/pack.json": "2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08",
+        "content/packs/quest-three-witnesses-v2/pack.json": "294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423",
+        "package.json": "7cdd3916fb45488293efdc1a92e9634bb7157809c11ca50a34460acc650ef629",
+        "public/index.html": "fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba",
+        "public/ux-quest-quality.css": "8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f",
+        "public/ux-quest-quality.js": "e34b8b84be83f0c1d2af9149cba227225a830f371ee9e11f95b6b4f3c05c58f2",
+        "public/ux-quests.js": "8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205",
+        "src/agentgateway.js": "8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f",
+        "src/content/compiler.js": "20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641",
+        "src/content/narrative.js": "96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41",
+        "src/content/quality-runtime.js": "609bab529eae343b33a2873a9da34668d63c3ee2f91bbcca77f85bcdb43e5d4e",
+        "src/content/quality.js": "94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4",
+        "src/content/quest-quality-packs.js": "fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9",
+        "src/content/runtime.js": "c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2",
+        "src/quest-quality-contracts.js": "b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395",
+        "src/questing-contract.js": "15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71",
+        "src/routes/content.js": "12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e",
+        "src/server.js": "f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5",
+        "test/lib/quest-quality-fixture.js": "316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b",
+        "test/quest-quality-content.js": "0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266",
+        "tools/quest-quality-studio.js": "997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52",
+        "tools/quest-quality-study.js": "856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01",
+        "tools/quest-quality-workgraph.js": "c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11",
+        "src/client-shell.js": "561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4",
+        "public/landing-loader.js": "6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c"
+      },
+      "sourceStable": true,
+      "startedAt": "2026-11-16T02:53:53.976Z",
+      "elapsedMs": 4707,
+      "exitCode": 0,
+      "log": "output/quest-quality-verification/quality-mwio65ko-quest-quality-spoilers.log",
+      "evidenceType": "automated_implementation_check"
+    },
+    {
+      "id": "quality-mwio69bj-quest-quality-study",
+      "evaluator": "test/quest-quality-study.js",
+      "evaluatorHash": "6043fb8143c39ce3b1d418265670565faae908006e07d7760c0cef5f2c5a896b",
+      "sourceHashes": {
+        "content/packs/quest-quality-favors/pack.json": "c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71",
+        "content/packs/quest-quality-field-notes/pack.json": "c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a",
+        "content/packs/quest-quality-last-ferry/pack.json": "ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881",
+        "content/packs/quest-quality-night-edition/pack.json": "1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1",
+        "content/packs/quest-quality-open-office/pack.json": "97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff",
+        "content/packs/quest-quality-payday/pack.json": "855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed",
+        "content/packs/quest-quality-shared-meaning/pack.json": "cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072",
+        "content/packs/quest-quality-small-fire/pack.json": "64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7",
+        "content/packs/quest-quality-truce/pack.json": "2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08",
+        "content/packs/quest-three-witnesses-v2/pack.json": "294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423",
+        "package.json": "7cdd3916fb45488293efdc1a92e9634bb7157809c11ca50a34460acc650ef629",
+        "public/index.html": "fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba",
+        "public/ux-quest-quality.css": "8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f",
+        "public/ux-quest-quality.js": "e34b8b84be83f0c1d2af9149cba227225a830f371ee9e11f95b6b4f3c05c58f2",
+        "public/ux-quests.js": "8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205",
+        "src/agentgateway.js": "8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f",
+        "src/content/compiler.js": "20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641",
+        "src/content/narrative.js": "96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41",
+        "src/content/quality-runtime.js": "609bab529eae343b33a2873a9da34668d63c3ee2f91bbcca77f85bcdb43e5d4e",
+        "src/content/quality.js": "94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4",
+        "src/content/quest-quality-packs.js": "fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9",
+        "src/content/runtime.js": "c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2",
+        "src/quest-quality-contracts.js": "b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395",
+        "src/questing-contract.js": "15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71",
+        "src/routes/content.js": "12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e",
+        "src/server.js": "f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5",
+        "test/lib/quest-quality-fixture.js": "316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b",
+        "test/quest-quality-content.js": "0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266",
+        "tools/quest-quality-studio.js": "997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52",
+        "tools/quest-quality-study.js": "856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01",
+        "tools/quest-quality-workgraph.js": "c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11",
+        "src/client-shell.js": "561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4",
+        "public/landing-loader.js": "6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c"
+      },
+      "sourceStable": true,
+      "startedAt": "2026-11-16T02:53:58.831Z",
+      "elapsedMs": 222,
+      "exitCode": 0,
+      "log": "output/quest-quality-verification/quality-mwio69bj-quest-quality-study.log",
+      "evidenceType": "automated_implementation_check"
+    },
+    {
+      "id": "quality-mwio7bhm-quest-quality-postgres",
+      "evaluator": "test/quest-quality-postgres.js",
+      "evaluatorHash": "f8b535feb91fc5ad23b2b61c56432eca948c5c3eb4e9a5b6962eea9abd905e7a",
+      "sourceHashes": {
+        "content/packs/quest-quality-favors/pack.json": "c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71",
+        "content/packs/quest-quality-field-notes/pack.json": "c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a",
+        "content/packs/quest-quality-last-ferry/pack.json": "ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881",
+        "content/packs/quest-quality-night-edition/pack.json": "1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1",
+        "content/packs/quest-quality-open-office/pack.json": "97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff",
+        "content/packs/quest-quality-payday/pack.json": "855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed",
+        "content/packs/quest-quality-shared-meaning/pack.json": "cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072",
+        "content/packs/quest-quality-small-fire/pack.json": "64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7",
+        "content/packs/quest-quality-truce/pack.json": "2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08",
+        "content/packs/quest-three-witnesses-v2/pack.json": "294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423",
+        "package.json": "7cdd3916fb45488293efdc1a92e9634bb7157809c11ca50a34460acc650ef629",
+        "public/index.html": "fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba",
+        "public/ux-quest-quality.css": "8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f",
+        "public/ux-quest-quality.js": "e34b8b84be83f0c1d2af9149cba227225a830f371ee9e11f95b6b4f3c05c58f2",
+        "public/ux-quests.js": "8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205",
+        "src/agentgateway.js": "8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f",
+        "src/content/compiler.js": "20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641",
+        "src/content/narrative.js": "96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41",
+        "src/content/quality-runtime.js": "609bab529eae343b33a2873a9da34668d63c3ee2f91bbcca77f85bcdb43e5d4e",
+        "src/content/quality.js": "94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4",
+        "src/content/quest-quality-packs.js": "fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9",
+        "src/content/runtime.js": "c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2",
+        "src/quest-quality-contracts.js": "b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395",
+        "src/questing-contract.js": "15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71",
+        "src/routes/content.js": "12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e",
+        "src/server.js": "f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5",
+        "test/lib/quest-quality-fixture.js": "316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b",
+        "test/quest-quality-content.js": "0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266",
+        "tools/quest-quality-studio.js": "997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52",
+        "tools/quest-quality-study.js": "856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01",
+        "tools/quest-quality-workgraph.js": "c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11",
+        "src/client-shell.js": "561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4",
+        "public/landing-loader.js": "6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c"
+      },
+      "sourceStable": true,
+      "startedAt": "2026-11-16T02:54:48.298Z",
+      "elapsedMs": 15549,
+      "exitCode": 0,
+      "log": "output/quest-quality-verification/quality-mwio7bhm-quest-quality-postgres.log",
       "evidenceType": "automated_implementation_check"
     }
   ]

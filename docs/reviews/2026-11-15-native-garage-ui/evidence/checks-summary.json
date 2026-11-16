@@ -1,0 +1,33 @@
+{
+  "base": "9cf7ced8beedd0950018a14bbab71b08b71a3d5b",
+  "branch": "codex/native-garage-interface-and-sendready",
+  "committed": false,
+  "pushed": false,
+  "deployed": false,
+  "newChecks": {
+    "facade": 14,
+    "controller": 21,
+    "browser": 10
+  },
+  "passed": [
+    "node test/client.js",
+    "node test/routes.js",
+    "node test/preflight.js",
+    "node test/site-basics.js",
+    "node test/current-copy.js",
+    "node tools/worldgraph-content.js",
+    "node test/strategy-command-browser.js",
+    "node test/wallet-connect-browser.js",
+    "node test/noir-shell-browser.js",
+    "native source syntax checks",
+    "git diff --check",
+    "facade SQL extraction: zero query call sites; schema.sql and src/db.js unchanged",
+    "node test/gates.js"
+  ],
+  "pending": [],
+  "limits": [
+    "No full npm lifecycle or native PostgreSQL regression run in this local scope; required hosted CI remains.",
+    "Feature remains disabled by default; no bridge schema, source migration, token role or chain activation included.",
+    "node_modules is an ignored junction to original workspace for local verification."
+  ]
+}

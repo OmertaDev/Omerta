@@ -5,9 +5,10 @@ import os from 'node:os';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { execFileSync, spawnSync } from 'node:child_process';
+import { crimeMinigameActual } from '../tools/crime-minigame-source-compatibility.js';
 import { AGE_REMOVAL_SOURCE, ageRemovalHistoricalRecord } from '../tools/age-removal-source-transfer.js';
-import { CRIME_MINIGAME_GENERATED_FILES, qualifyCrimeMinigameRelease, crimeMinigameActual,
-  crimeMinigameHistoricalInput, crimeMinigameHistoricalEntry } from '../tools/crime-minigame-source-compatibility.js';
+import { NATIVE_GARAGE_PREDECESSOR, assertNativeGarageCurrentSource, nativeGarageActual,
+  nativeGarageHistoricalInput, nativeGarageHistoricalEntry } from '../tools/native-garage-source-transfer.js';
 import { GRAND_STRATEGY_SOURCE as source, GRAND_STRATEGY_PREDECESSOR, GRAND_STRATEGY_SCOPE,
   GRAND_STRATEGY_GENERATED_FILES, GRAND_STRATEGY_RELEASE_FILES, grandStrategySourceDataBytes,
   grandStrategyActual, qualifyGrandStrategySource, grandStrategyHistoricalInput,
@@ -36,10 +37,9 @@ assert.deepEqual(changes('DRTCUXB'), []);
 assert.deepEqual([...Object.keys(source.files), ...Object.keys(source.additions)].sort(),
   GRAND_STRATEGY_SCOPE.filter(file => !excluded.has(file)), 'Every authored runtime, test, helper and binary asset has one exact pin');
 for (const file of excluded) assert(!Object.hasOwn(source.files, file) && !Object.hasOwn(source.additions, file));
-const postCandidate = git('diff', '--name-only', '--no-renames', '-z', source.revision, 'HEAD').split('\0').filter(Boolean);
-const successor = qualifyCrimeMinigameRelease();
-assert(postCandidate.every(file => excluded.has(file) || CRIME_MINIGAME_GENERATED_FILES.includes(file) || successor.files.includes(file)),
-  'Only the exact sealed minigame successor and fixed generated domains may follow the reviewed candidate');
+assertNativeGarageCurrentSource();
+const postCandidate = git('diff', '--name-only', '--no-renames', '-z', source.revision, NATIVE_GARAGE_PREDECESSOR).split('\0').filter(Boolean);
+assert(postCandidate.every(file => excluded.has(file)), 'Only the fixed independently generated domains may follow the reviewed candidate');
 assert.equal(fs.readFileSync('tools/grand-strategy-source-data.js', 'utf8').replaceAll('\r\n', '\n'), grandStrategySourceDataBytes(source),
   'The sole generated self-reference contains exact data and no executable additions');
 assert.equal(git('diff', '--name-only', source.predecessor, 'HEAD', '--',
@@ -53,10 +53,10 @@ const rows = output => new Map(output.split('\0').filter(Boolean).map(row => [ro
 const heads = rows(git('ls-tree', '-z', 'HEAD', '--', ...names));
 const indexes = rows(git('ls-files', '--stage', '-z', '--', ...names));
 for (const [file, pin] of Object.entries(pins)) {
-  assert.equal(crimeMinigameHistoricalEntry(file, heads.get(file), 'tree'), entry(file, pin, 'tree'), 'Whole genuine HEAD identity: ' + file);
-  assert.equal(crimeMinigameHistoricalEntry(file, indexes.get(file), 'index'), entry(file, pin, 'index'), 'Whole genuine stage-zero identity: ' + file);
+  assert.equal(nativeGarageHistoricalEntry(file, heads.get(file), 'tree'), entry(file, pin, 'tree'), 'Whole genuine HEAD identity: ' + file);
+  assert.equal(nativeGarageHistoricalEntry(file, indexes.get(file), 'index'), entry(file, pin, 'index'), 'Whole genuine stage-zero identity: ' + file);
   const stat = fs.lstatSync(file); assert(stat.isFile() && !stat.isSymbolicLink());
-  const physical = crimeMinigameHistoricalInput(file, fs.readFileSync(file));
+  const physical = nativeGarageHistoricalInput(file, fs.readFileSync(file));
   let canonical = physical;
   if (pin.text) {
     const raw = physical.toString('utf8'); assert(Buffer.from(raw).equals(physical));
@@ -162,15 +162,13 @@ try {
     + '; const pin = source.files[file].baseline; const bytes = execFileSync("git", ["--no-replace-objects", "show", source.predecessor + ":" + file], { maxBuffer: 64 * 1024 * 1024, windowsHide: true });'
     + ' grandStrategyHistoricalRecord(file, { head: { mode: pin.mode, blob: pin.blob }, index: pin.mode + " " + pin.blob + " 0\\t" + file,'
     + ' committed: bytes, physical: bytes, regular: true, symbolic: false });';
-  const currentRecordScript = ending => 'import { execFileSync } from "node:child_process"; import { GRAND_STRATEGY_SOURCE as source, grandStrategyHistoricalRecord } from '
-    + JSON.stringify(new URL('../tools/grand-strategy-source-transfer.js', import.meta.url).href)
-    + '; import { CRIME_MINIGAME_SOURCE } from ' + JSON.stringify(new URL('../tools/crime-minigame-source-compatibility.js', import.meta.url).href)
+  const currentRecordScript = ending => 'import { crimeMinigameActual } from '
+    + JSON.stringify(new URL('../tools/crime-minigame-source-compatibility.js', import.meta.url).href)
+    + '; import { grandStrategyHistoricalRecord } from ' + JSON.stringify(new URL('../tools/grand-strategy-source-transfer.js', import.meta.url).href)
     + '; import { ageRemovalHistoricalRecord } from ' + JSON.stringify(new URL('../tools/age-removal-source-transfer.js', import.meta.url).href)
-    + '; const file = ' + JSON.stringify(observedFile)
-    + '; const pin = CRIME_MINIGAME_SOURCE.files[file].current; const bytes = execFileSync("git", ["--no-replace-objects", "show", "HEAD:" + file], { maxBuffer: 64 * 1024 * 1024, windowsHide: true });'
-    + ' const physical = ' + (ending === 'LF' ? 'bytes' : 'Buffer.from(bytes.toString("utf8").replaceAll("\\n", "\\r\\n"))') + ';'
-    + ' for (const qualify of [grandStrategyHistoricalRecord, ageRemovalHistoricalRecord]) qualify(file, { head: { mode: pin.mode, blob: pin.blob }, index: pin.mode + " " + pin.blob + " 0\\t" + file,'
-    + ' committed: bytes, physical, regular: true, symbolic: false });';
+    + '; const file = ' + JSON.stringify(observedFile) + '; const actual = crimeMinigameActual(file);'
+    + ' actual.physical = ' + (ending === 'LF' ? 'actual.committed' : 'Buffer.from(actual.committed.toString("utf8").replaceAll("\\n", "\\r\\n"))') + ';'
+    + ' for (const qualify of [grandStrategyHistoricalRecord, ageRemovalHistoricalRecord]) qualify(file, actual);';
   assert.equal(child(environment).status, 0, 'Genuine closed source succeeds in an isolated checkout');
   assert.equal(child(environment, historicalScript).status, 0, 'Historical tuples are idempotent only after genuine current admission');
   for (const physical of [currentObserved.committed, Buffer.from(currentObserved.committed.toString('utf8').replaceAll('\n', '\r\n'))]) {

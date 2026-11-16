@@ -1,0 +1,7 @@
+{
+  "scope": "new facade and unchanged release schema/DB bootstrap, not a full native PostgreSQL run",
+  "file": "src/nativegarage.js",
+  "sha256": "d056b2e3c6244678721f49d37dbf3d7d6f25692d0d44cf71baca032a60c92868",
+  "queryCallSites": 0,
+  "schemaOrBootstrapDiff": null
+}

@@ -10,13 +10,14 @@ import { CRIME_MINIGAME_SOURCE as source, CRIME_MINIGAME_SOURCE_SHA256 } from '.
 const readActualPhysical = fs.readFileSync.bind(fs);
 
 export { source as CRIME_MINIGAME_SOURCE };
-export const CRIME_MINIGAME_PREDECESSOR = '9cf7ced8beedd0950018a14bbab71b08b71a3d5b';
+export const CRIME_MINIGAME_PREDECESSOR = '8672b0147daced1d957ef772c9bb3fc07b327f81';
 export const CRIME_MINIGAME_GENERATED_FILES = Object.freeze([
   'tools/crime-minigame-source-data.js',
   'knowledge/generated/graph.json', 'knowledge/generated/graph.mmd', 'knowledge/generated/graph-summary.md',
   'knowledge/generated/github-history.md', 'knowledge/generated/inventory.md',
   'knowledge/generated/modules.md', 'knowledge/generated/routes.md', 'knowledge/generated/documents.md',
-  'tools/enterprise-native-questing-inputs.js', 'docs/questing-workgraph.json', 'docs/quest-quality-workgraph.json',
+  'knowledge/generated/schema.md',
+  'tools/enterprise-native-questing-inputs.js',
 ]);
 const flags = Object.freeze({ sourceOnly: true, runtime: false, native: false, migration: false,
   financial: false, activation: false, deployment: false, priorResultsTransferred: false });

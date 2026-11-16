@@ -201,6 +201,7 @@
         root?.remove(); root = createStage(desktop);
       } else if (panel !== currentPanel || stage !== root) disposeRenderer();
       panel = currentPanel; stage = root;
+      if (state().me?.onchainCrafting) panel.querySelectorAll('.start-first-week').forEach(node => node.remove());
       const firstWeek = panel.querySelector('.start-first-week'), orders = stage.querySelector('.strategy-orders');
       orders.hidden = !desktop;
       if (desktop) {
@@ -217,13 +218,15 @@
 
     function paintOrders(orders) {
       const { me, tabs } = state(), coach = me?.coach;
-      const title = coach?.label || 'Choose your next move', hint = coach?.hint || 'Review the work available on the streets and choose an opportunity.';
+      const migrated = !!me?.onchainCrafting;
+      const title = migrated ? 'Open your onchain garage' : coach?.label || 'Choose your next move';
+      const hint = migrated ? 'Read current cars, materials and action status from the chain in your garage.' : coach?.hint || 'Review the work available on the streets and choose an opportunity.';
       let content = orders.querySelector('.strategy-current-order');
       if (!content) {
         content = document.createElement('section'); content.className = 'strategy-current-order'; content.innerHTML = '<p class="strategy-order-kicker">YOUR NEXT ORDER</p><h3></h3><p class="strategy-order-hint"></p><button type="button"></button>'; orders.replaceChildren(content);
       }
       text(content.querySelector('h3'), title); text(content.querySelector('.strategy-order-hint'), hint);
-      const target = coach?.tab && tabs?.[coach.tab] ? coach.tab : 'streets', button = content.querySelector('button');
+      const target = migrated ? 'garage' : coach?.tab && tabs?.[coach.tab] ? coach.tab : 'streets', button = content.querySelector('button');
       text(button, `Open ${tabs?.[target] || 'Streets'}`); button.onclick = () => navigate(target);
     }
 

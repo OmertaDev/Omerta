@@ -229,6 +229,7 @@ import { register as registerUxCoordination } from './ux-coordination.js';
 import { register as registerUxInvestigation } from './ux-investigation.js';
 import { registerTacticsRoutes, crimeWithDecisionContext } from './ux-tactics.js';
 import { crimeChallenge, verifyCrimeMinigame } from './crime-minigame.js';
+import { registerNativeGarageRoutes } from './nativegarage.js';
 import { jobTaskPuzzle, missionPuzzle, crimePuzzle } from './task-puzzle-jobs.js';
 import * as Duels from './duels.js';
 import * as Clues from './clues.js';
@@ -363,7 +364,7 @@ export function startWorkerWatch(pool, {
   return { timer, check };
 }
 
-export async function buildServer() {
+export async function buildServer({ nativeGarageService } = {}) {
   // ── PREFLIGHT (src/preflight.js) ────────────────────────────────────────────────────────────
   // Every deploy check lives there as DATA, because the guards were never the weak part — the LIST
   // was. It sat inline here, so each drop that added a test-only knob had to remember to come update
@@ -665,6 +666,12 @@ export async function buildServer() {
       if (!page.ready) reply.header('X-Robots-Tag', 'noindex');
       return reply.code(page.ready ? 200 : 503).header('Cache-Control', 'no-store').type('text/html; charset=utf-8').send(html);
     });
+  }
+  for (const [file, contentType] of [['nativegarage.js', 'application/javascript'],
+    ['nativegarage-client.js', 'application/javascript'], ['nativegarage.css', 'text/css']]) {
+    app.get(`/${file}`, async (_req, reply) => reply.type(`${contentType}; charset=utf-8`)
+      .header('Cache-Control', 'public, max-age=300')
+      .send(readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public', file))));
   }
   app.get('/vendor/walletconnect.js', async (req, reply) => reply.type('application/javascript; charset=utf-8')
     .header('Cache-Control', 'public, max-age=3600').send(readFileSync(join(dirname(fileURLToPath(import.meta.url)), '..', 'public/vendor/walletconnect.js'))));
@@ -2494,6 +2501,7 @@ export async function buildServer() {
   registerUxCoordination(app, { pool, auth });
   registerUxInvestigation(app, { pool, auth });
   registerTacticsRoutes(app, { pool, auth, readCharacter: G.readCharacter });
+  registerNativeGarageRoutes(app, { auth, service: nativeGarageService });
   registerCity(app, { pool, auth, onlineIds: () => [...wsClients.keys()],
     activityRegistry: cityActivity, ownerActivityRegistry: cityOwnerActivity });
   registerCityHomes(app, { pool, auth });
