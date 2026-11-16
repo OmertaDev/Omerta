@@ -4,7 +4,7 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "ACTUAL_CURRENT_QUESTING_ENTERPRISE_NATIVE_INPUTS",
-  "authoredRevision": "77b2cf83d07786f3fac5b300df7c648301393878",
+  "authoredRevision": "ed80bfafbaa9291daa0964bfcec51b7e33125286",
   "predecessorDefinitionSha256": "6b9128d3311945fc511748f852803354ac415a23082b6b5ce017980a2b7596bf",
   "proofInventorySha256": "3fd878600cd363ebdd9d89bb59b7cc3de7650f895062d83711b2bd1774c298e9",
   "files": [
@@ -11381,14 +11381,14 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/crime-minigame-source-compatibility.js",
       "mode": "100644",
-      "blob": "d69167561915aa6c0c559b02b7d72af83339936c",
-      "sha256": "ec9c7d605f9796e06f9f4a1a4d914fb0a5ec2aecc24fe33c5ffa0f105fca2ba9"
+      "blob": "a2cee69de2ea023736acf1ffd3ed441d3f30354d",
+      "sha256": "8efef1d7c115f8d2875648e61efdc2c1a34080c98451c2dae5ce422edff815e7"
     },
     {
       "file": "tools/crime-minigame-source-data.js",
       "mode": "100644",
-      "blob": "b34eac21ec3805085b0a095ff2dbbf1c055652d7",
-      "sha256": "769feeb9165f2b1600307b3557240a299bf378ff117c698f176fdbab55516e6b"
+      "blob": "041e5445c0331de689c85c0120e0768ece27e869",
+      "sha256": "9ab93073614635479580220326d0dd2905d7881a81987cde1f2033ca6f12b32d"
     },
     {
       "file": "tools/enterprise-native-contract-release-inputs.js",
@@ -11423,8 +11423,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/grand-strategy-source-transfer.js",
       "mode": "100644",
-      "blob": "345d1996ab7cbf0c20cf78527f254203f0059ba2",
-      "sha256": "625db0ad05ff4bccf7addd1240280338cb2189e8791fd8256425d52df351ed9a"
+      "blob": "604a64c119f8b1b414c91de8c1f1f7176af54a44",
+      "sha256": "2cd99ada525702f463c1796498e160e0913d441f95e9fd8b8b0f41c36701c7f2"
     },
     {
       "file": "tools/install-foundry-verified.sh",
@@ -13245,14 +13245,14 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/crime-minigame-source-compatibility.js",
       "mode": "100644",
-      "blob": "d69167561915aa6c0c559b02b7d72af83339936c",
-      "sha256": "ec9c7d605f9796e06f9f4a1a4d914fb0a5ec2aecc24fe33c5ffa0f105fca2ba9"
+      "blob": "a2cee69de2ea023736acf1ffd3ed441d3f30354d",
+      "sha256": "8efef1d7c115f8d2875648e61efdc2c1a34080c98451c2dae5ce422edff815e7"
     },
     {
       "file": "tools/crime-minigame-source-data.js",
       "mode": "100644",
-      "blob": "b34eac21ec3805085b0a095ff2dbbf1c055652d7",
-      "sha256": "769feeb9165f2b1600307b3557240a299bf378ff117c698f176fdbab55516e6b"
+      "blob": "041e5445c0331de689c85c0120e0768ece27e869",
+      "sha256": "9ab93073614635479580220326d0dd2905d7881a81987cde1f2033ca6f12b32d"
     },
     {
       "file": "tools/enterprise-native-contract-release-inputs.js",
@@ -13287,8 +13287,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/grand-strategy-source-transfer.js",
       "mode": "100644",
-      "blob": "345d1996ab7cbf0c20cf78527f254203f0059ba2",
-      "sha256": "625db0ad05ff4bccf7addd1240280338cb2189e8791fd8256425d52df351ed9a"
+      "blob": "604a64c119f8b1b414c91de8c1f1f7176af54a44",
+      "sha256": "2cd99ada525702f463c1796498e160e0913d441f95e9fd8b8b0f41c36701c7f2"
     },
     {
       "file": "tools/install-foundry-verified.sh",
@@ -13352,4 +13352,4 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     }
   ]
 });
-export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "6cca20869e9402367e325633bf52615b2c4155f00683877f3d8af8e2ab24ee68";
+export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "0d34eb1a402de9a81c26b54b9f81b81b02df02853b21d6fc58cdee9691f76d09";
