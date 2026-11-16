@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const CRIME_MINIGAME_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_CRIME_MINIGAME_SOURCE_COMPARISON_ONLY",
-  "revision": "f69027d37c77f9952cdfaa0ab7993686bef23507",
-  "tree": "ebb0f72151afc279728ccd5088d6ca4e1be23315",
+  "revision": "2fca87ce93c7999b86e1e83dbeeb2ccea39e35bd",
+  "tree": "1c8d7947a162fd9d47a5b7772d720e06f4afada0",
   "predecessor": "9cf7ced8beedd0950018a14bbab71b08b71a3d5b",
   "predecessorTree": "9477c277cca6b47b3a3ce20901e85a451243642f",
   "files": {
@@ -1621,9 +1621,9 @@ export const CRIME_MINIGAME_SOURCE = freeze({
     "tools/grand-strategy-source-transfer.js": {
       "current": {
         "mode": "100644",
-        "blob": "345d1996ab7cbf0c20cf78527f254203f0059ba2",
-        "bytes": 16355,
-        "sha256": "625db0ad05ff4bccf7addd1240280338cb2189e8791fd8256425d52df351ed9a"
+        "blob": "604a64c119f8b1b414c91de8c1f1f7176af54a44",
+        "bytes": 16493,
+        "sha256": "2cd99ada525702f463c1796498e160e0913d441f95e9fd8b8b0f41c36701c7f2"
       },
       "baseline": {
         "mode": "100644",
@@ -1634,36 +1634,36 @@ export const CRIME_MINIGAME_SOURCE = freeze({
       "inverses": [
         {
           "at": 337,
-          "current": "import { crimeMinigameHistoricalInput, crimeMinigameHistoricalEntry, crimeMinigameHistoricalRecord } from './crime-minigame-source-compatibility.js';\n",
+          "current": "import { crimeMinigameHistoricalInput, crimeMinigameHistoricalEntry, crimeMinigameHistoricalRecord } from './crime-minigame-source-compatibility.js';\n\n// Actual-current checks must not consume a historical fixture's projected read.\nconst readActualPhysical = fs.readFileSync.bind(fs);\n",
           "baseline": ""
         },
         {
-          "at": 10846,
-          "current": "  const rawHead = git('ls-tree', 'HEAD', '--', file).trim();\n  const rawIndex = git('ls-files', '--stage', '--', file).trim();\n  const stat = fs.lstatSync(file), rawPhysical = fs.readFileSync(file);\n  const rawCommitted = execFileSync('git', ['--no-replace-objects', 'show', 'HEAD:' + file], {\n    windowsHide: true, maxBuffer: 64 * 1024 * 1024,\n  });\n  const headMatch = rawHead.match(/^(100644|100755) blob ([a-f0-9]{40})\\t/);\n  assert(headMatch, 'Regular genuine current Git source required');\n  const actual = crimeMinigameHistoricalRecord(file, { head: { mode: headMatch[1], blob: headMatch[2] },\n    index: rawIndex, committed: rawCommitted, physical: rawPhysical, regular: stat.isFile(), symbolic: stat.isSymbolicLink() });\n  const headEntry = entry(file, actual.head, 'tree'), { index, committed, physical } = actual;\n",
+          "at": 10981,
+          "current": "  const rawHead = git('ls-tree', 'HEAD', '--', file).trim();\n  const rawIndex = git('ls-files', '--stage', '--', file).trim();\n  const stat = fs.lstatSync(file), rawPhysical = readActualPhysical(file);\n  const rawCommitted = execFileSync('git', ['--no-replace-objects', 'show', 'HEAD:' + file], {\n    windowsHide: true, maxBuffer: 64 * 1024 * 1024,\n  });\n  const headMatch = rawHead.match(/^(100644|100755) blob ([a-f0-9]{40})\\t/);\n  assert(headMatch, 'Regular genuine current Git source required');\n  const actual = crimeMinigameHistoricalRecord(file, { head: { mode: headMatch[1], blob: headMatch[2] },\n    index: rawIndex, committed: rawCommitted, physical: rawPhysical, regular: stat.isFile(), symbolic: stat.isSymbolicLink() });\n  const headEntry = entry(file, actual.head, 'tree'), { index, committed, physical } = actual;\n",
           "baseline": "  const headEntry = git('ls-tree', 'HEAD', '--', file).trim();\n  const index = git('ls-files', '--stage', '--', file).trim();\n"
         },
         {
-          "at": 11887,
+          "at": 12025,
           "current": "",
           "baseline": "  const stat = fs.lstatSync(file), physical = fs.readFileSync(file);\n"
         },
         {
-          "at": 11983,
+          "at": 12121,
           "current": "",
           "baseline": "  const committed = execFileSync('git', ['--no-replace-objects', 'show', 'HEAD:' + file], {\n    windowsHide: true, maxBuffer: 64 * 1024 * 1024,\n  });\n"
         },
         {
-          "at": 13908,
+          "at": 14046,
           "current": "  input = crimeMinigameHistoricalInput(file, input);\n",
           "baseline": ""
         },
         {
-          "at": 14323,
+          "at": 14461,
           "current": "  input = crimeMinigameHistoricalEntry(file, input, kind);\n",
           "baseline": ""
         },
         {
-          "at": 14818,
+          "at": 14956,
           "current": "  actual = crimeMinigameHistoricalRecord(file, actual);\n",
           "baseline": ""
         }
@@ -1874,9 +1874,9 @@ export const CRIME_MINIGAME_SOURCE = freeze({
     },
     "test/crime-minigame-source-transfer.js": {
       "mode": "100644",
-      "blob": "5475876eeb3777385b13bbe6d65dd24a98926698",
-      "bytes": 8438,
-      "sha256": "732a0faba8176f09b1a3e85149444d775daeb63902740cf0a052c57fdfa19396"
+      "blob": "18b4e38f2f25b85785280fbcb72e29ed5a0ee3b1",
+      "bytes": 9921,
+      "sha256": "fcd74cd43cef8ba85c1a96665a87a6fdc9e336b34214777551b1d0c6c40238ec"
     },
     "test/crime-minigame.js": {
       "mode": "100644",
@@ -1892,9 +1892,9 @@ export const CRIME_MINIGAME_SOURCE = freeze({
     },
     "tools/crime-minigame-source-compatibility.js": {
       "mode": "100644",
-      "blob": "d69167561915aa6c0c559b02b7d72af83339936c",
-      "bytes": 9954,
-      "sha256": "ec9c7d605f9796e06f9f4a1a4d914fb0a5ec2aecc24fe33c5ffa0f105fca2ba9"
+      "blob": "a2cee69de2ea023736acf1ffd3ed441d3f30354d",
+      "bytes": 10171,
+      "sha256": "8efef1d7c115f8d2875648e61efdc2c1a34080c98451c2dae5ce422edff815e7"
     },
     "tools/seal-crime-minigame-source.js": {
       "mode": "100644",
@@ -1904,4 +1904,4 @@ export const CRIME_MINIGAME_SOURCE = freeze({
     }
   }
 });
-export const CRIME_MINIGAME_SOURCE_SHA256 = 'a3e57f6ba5ad60c020a082e2bceed8e0443e7e0831f6c3eadcb1fe72daff5ce7';
+export const CRIME_MINIGAME_SOURCE_SHA256 = 'f2ca773de4df690025db6a17409b4d70cec53b70033b11fc5a49e1261724f226';
