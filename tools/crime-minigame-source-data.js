@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const CRIME_MINIGAME_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_CRIME_MINIGAME_SOURCE_COMPARISON_ONLY",
-  "revision": "addba06178838091ed97747b57824461dfcdd4a3",
-  "tree": "e0a5ecb685f9891354615bdfc6fe5754aa9f9ed4",
+  "revision": "fea0ad4b00fb36ad9a7db1f0a838f3e7656e39e0",
+  "tree": "b92a6f0dcabff8fd666c4216ba35eef6262a0187",
   "predecessor": "9cf7ced8beedd0950018a14bbab71b08b71a3d5b",
   "predecessorTree": "9477c277cca6b47b3a3ce20901e85a451243642f",
   "files": {
@@ -1894,9 +1894,9 @@ export const CRIME_MINIGAME_SOURCE = freeze({
     },
     "test/crime-minigame-browser.js": {
       "mode": "100644",
-      "blob": "520794b4c34b4447ae2a97e202ca8f82960fd49e",
-      "bytes": 7846,
-      "sha256": "164a5becbd40cfb3e3a152d20d681e0dd0f241b2c5e4c50ab0c0cc2ab4c46188"
+      "blob": "43e51da3794610967b76c2ec59f9c40e5922b680",
+      "bytes": 8495,
+      "sha256": "710723a7e07d04671c16ad98c1f794c0fa264c1f1f22e0186798cf139e7d485d"
     },
     "test/crime-minigame-source-transfer.js": {
       "mode": "100644",
@@ -1906,9 +1906,9 @@ export const CRIME_MINIGAME_SOURCE = freeze({
     },
     "test/crime-minigame.js": {
       "mode": "100644",
-      "blob": "7ce61200b14d4e2274734f257d6b027c65e44d7b",
-      "bytes": 9969,
-      "sha256": "afa9be4c1f8a0971eead163b1aeddc022fe7f9a726c48ae33ef18dd46df22859"
+      "blob": "ea5981b52ba9c012a2f47c19d7fb5f50855cc13b",
+      "bytes": 10449,
+      "sha256": "0c12adf8fdb67673e954b38478f5a069713a86f5d936f57df4624e5b64ffd62d"
     },
     "tools/crime-minigame-client.js": {
       "mode": "100644",
@@ -1930,4 +1930,4 @@ export const CRIME_MINIGAME_SOURCE = freeze({
     }
   }
 });
-export const CRIME_MINIGAME_SOURCE_SHA256 = 'a351bda03fd0c24a8c7f2dc96a83e2426eb9aea8d3bf2b9d8f59494808bb000d';
+export const CRIME_MINIGAME_SOURCE_SHA256 = 'd2afc7304aa88a0f7064cea147b97a3f8cdb1e758b3301c1136df464148f02ae';
