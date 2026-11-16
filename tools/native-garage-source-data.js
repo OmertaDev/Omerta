@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const NATIVE_GARAGE_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_NATIVE_GARAGE_SOURCE_COMPARISON_ONLY",
-  "revision": "ddc39582534f05ed756f37cc0ab864e5600f600b",
-  "tree": "efeb00706c6efa0b97b076946e1e3079d0d2801d",
+  "revision": "bf6d369ae6cb4d5b22e8aec9b4925ff9338b09f1",
+  "tree": "3786d1e5ff280353378743f4235891d8994d623e",
   "predecessor": "9cf7ced8beedd0950018a14bbab71b08b71a3d5b",
   "predecessorTree": "9477c277cca6b47b3a3ce20901e85a451243642f",
   "files": {
@@ -684,9 +684,9 @@ export const NATIVE_GARAGE_SOURCE = freeze({
     },
     "test/native-garage-source-transfer.js": {
       "mode": "100644",
-      "blob": "499d874281859e77001f631364a801c34a3302bf",
-      "sha256": "3a892c54e4722d577cfc5be09bd82a8ac146a04ba51e17b7237fe0c90cd7a783",
-      "bytes": 7826,
+      "blob": "1f0793bf94f6055469b61e4636f6a198be749fae",
+      "sha256": "f5a93a01be796fb0b482e5023ee4c426fe00f23746c206914d8d7c7a4568f49a",
+      "bytes": 8859,
       "text": true
     },
     "test/nativegarage-browser.js": {
@@ -726,11 +726,11 @@ export const NATIVE_GARAGE_SOURCE = freeze({
     },
     "tools/native-garage-source-transfer.js": {
       "mode": "100644",
-      "blob": "1108f70ce42e0781ffc49788e9bb9a86391c906e",
-      "sha256": "bca5ce52b9aa4b8af4d85d2ae8d34798652c65c1de64d7daf7f43b3bee3e53f2",
-      "bytes": 13109,
+      "blob": "eddf665a4859940481a0b23fe9f23a6f279ae96f",
+      "sha256": "e637f16ed70ef52e22750eda4926333f5986743e57d85215b48d2e8f0ed5a0fc",
+      "bytes": 13320,
       "text": true
     }
   }
 });
-export const NATIVE_GARAGE_SOURCE_SHA256 = '7bc254347759577a2449d9ed47b57b44cc1b0fa116d1908ea0551b1765205c6d';
+export const NATIVE_GARAGE_SOURCE_SHA256 = '8bb7fd8fca6596f0eae0c231db1e9b652b4df6b8994077d81a0453b0b35b73fa';
