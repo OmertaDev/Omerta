@@ -1,6 +1,6 @@
 # Generated GitHub and Git history
 
-> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `2bf8335266ea`.
+> GitHub metadata snapshot: 2026-08-23. Commit lineage is from the local clone at `4149986050ec`.
 
 ## Repository
 
@@ -9,17 +9,17 @@
 | Repository | [OmertaDev/Omerta](https://github.com/OmertaDev/Omerta) |
 | Visibility | public |
 | Default branch | `main` |
-| Commits in clone | 5947 |
+| Commits in clone | 5951 |
 | Pull requests | 126 (124 merged, 1 open) |
 | Issues returned | 0 |
 | First commit | 2026-07-12 — M1: seed OMERTÀ backend skeleton |
-| Latest commit | 2026-11-16 — Pin native inputs for the corrected source fixture |
+| Latest commit | 2026-11-16 — Pin current inputs after launch copy correction |
 
 ## Commit authors
 
 | Author identity | Commits |
 |---|---:|
-| OmertaDev | 4808 |
+| OmertaDev | 4812 |
 | crvydev | 647 |
 | github-actions[bot] | 156 |
 | Claude | 156 |
@@ -31,10 +31,10 @@
 
 | Path | Commits touching path | Current? |
 |---|---:|---|
-| knowledge/generated/github-history.md | 995 | historical |
-| knowledge/generated/graph-summary.md | 995 | historical |
-| knowledge/generated/graph.json | 995 | historical |
-| knowledge/generated/inventory.md | 995 | historical |
+| knowledge/generated/github-history.md | 996 | historical |
+| knowledge/generated/graph-summary.md | 996 | historical |
+| knowledge/generated/graph.json | 996 | historical |
+| knowledge/generated/inventory.md | 996 | historical |
 | [SPEC.md](../../SPEC.md) | 668 | yes |
 | [public/index.html](../../public/index.html) | 519 | yes |
 | [CLAUDE.md](../../CLAUDE.md) | 516 | yes |
@@ -54,12 +54,12 @@
 | [test/client.js](../../test/client.js) | 150 | yes |
 | [.github/workflows/ci.yml](../../.github/workflows/ci.yml) | 148 | yes |
 | [src/worker.js](../../src/worker.js) | 144 | yes |
+| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | 130 | yes |
 | [tools/rc1-source-pair.js](../../tools/rc1-source-pair.js) | 130 | yes |
-| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | 129 | yes |
 | [docs/rc1-source-pair-additive-review.md](../../docs/rc1-source-pair-additive-review.md) | 128 | yes |
 | [src/rules.tail.js](../../src/rules.tail.js) | 127 | yes |
 | [src/social.js](../../src/social.js) | 125 | yes |
-| [tools/enterprise-native-questing-inputs.js](../../tools/enterprise-native-questing-inputs.js) | 111 | yes |
+| [tools/enterprise-native-questing-inputs.js](../../tools/enterprise-native-questing-inputs.js) | 112 | yes |
 | [src/agentgateway.js](../../src/agentgateway.js) | 105 | yes |
 | [public/wiki.html](../../public/wiki.html) | 105 | yes |
 | [test/growth.js](../../test/growth.js) | 98 | yes |
