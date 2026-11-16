@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const NATIVE_GARAGE_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_NATIVE_GARAGE_SOURCE_COMPARISON_ONLY",
-  "revision": "de4f36328906c608d5d242e215ddd9632c14f00d",
-  "tree": "63f3d58e59ba498fc768cda15cc7d9052115e550",
+  "revision": "80378162d2ef17970376e4afb7fb020deeb3a600",
+  "tree": "9484a7ca1369aaa206b8337512fcf589d2d92f23",
   "predecessor": "9cf7ced8beedd0950018a14bbab71b08b71a3d5b",
   "predecessorTree": "9477c277cca6b47b3a3ce20901e85a451243642f",
   "files": {
@@ -364,6 +364,32 @@ export const NATIVE_GARAGE_SOURCE = freeze({
         }
       ]
     },
+    "test/task-puzzle-native-integration-guard.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "2f74f1e1445b07e29dda1a73e4a20cbd0084026c",
+        "sha256": "18bd1d6e41566dbb346124ea23751dc48c453c80122bc997c22516056edd2418",
+        "bytes": 75711
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "6740b98c8498de90102519ac97d86a777cfaa287",
+        "sha256": "43aa717a602f60fb3cf1f81c0c0457fae2b46f9f0785e862c1e2e1f6cf331ba4",
+        "bytes": 75588
+      },
+      "inverses": [
+        {
+          "at": 282,
+          "current": "import { parse } from 'acorn';\nimport { commerceCurrentDeedSources } from '../tools/commerce-deed-release-phase2-native-catalog.js';\nimport { ageRemovalHistoricalInput } from '../tools/age-removal-source-transfer.js';\nimport { nativeGarageHistoricalInput } from '../tools/native-garage-source-transfer.js';\nimport { deedQuestSourceBaseline } from '../tools/deed-quest-source-transfer.js';\nimport { questingCatalogSource } from '../tools/questing-enterprise-catalog.js';\nimport { ENTERPRISE_NATIVE_UX_INPUTS as immutablePredecessor, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as immutablePredecessorHash } from '../tools/enterprise-native-contract-release-inputs.js';\n",
+          "baseline": "import { parse } from 'acorn';\nimport { commerceCurrentDeedSources } from '../tools/commerce-deed-release-phase2-native-catalog.js';\nimport { ageRemovalHistoricalInput } from '../tools/age-removal-source-transfer.js';\nimport { deedQuestSourceBaseline } from '../tools/deed-quest-source-transfer.js';\nimport { questingCatalogSource } from '../tools/questing-enterprise-catalog.js';\nimport { ENTERPRISE_NATIVE_UX_INPUTS as immutablePredecessor, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as immutablePredecessorHash } from '../tools/enterprise-native-contract-release-inputs.js';\n"
+        },
+        {
+          "at": 49955,
+          "current": "      assert.deepEqual(trace,['source','admit','initial-live','initial-literal','positive-references','live47','projection','retained-live','profile','final-live','stable','prior-verify']);\n    }\n    for(const file of ['tools/task-puzzle-enterprise-catalog.js','test/enterprise-release-phase2-migration-catalog.js','test/phase2-postgres.js','test/director-migration.js','tools/enterprise-native-questing.js','schema.sql']){\n      assert.equal(nativeGarageHistoricalInput(file,fs.readFileSync(file,'utf8')).replaceAll('\\r\\n','\\n'),execFileSync('git',['--no-replace-objects','show','0a3b4aba5b0940bcbc70ef79ddabae53cb4a07c7:'+file],{encoding:'utf8',windowsHide:true,maxBuffer:32e6}),'Exact caller, Enterprise inventory/order/budgets and schema: '+file);\n    }\n    const enterpriseText=fs.readFileSync('test/enterprise-release-phase2-migration-catalog.js','utf8').replaceAll('\\r\\n','\\n');\n    const first=enterpriseText.indexOf('      assert.equal(result.actualTables,586);'),end=enterpriseText.indexOf('      console.log(JSON.stringify({phase:result.phase',first);assert(first>0&&end>first);\n",
+          "baseline": "      assert.deepEqual(trace,['source','admit','initial-live','initial-literal','positive-references','live47','projection','retained-live','profile','final-live','stable','prior-verify']);\n    }\n    for(const file of ['tools/task-puzzle-enterprise-catalog.js','test/enterprise-release-phase2-migration-catalog.js','test/phase2-postgres.js','test/director-migration.js','tools/enterprise-native-questing.js','schema.sql']){\n      assert.equal(fs.readFileSync(file,'utf8').replaceAll('\\r\\n','\\n'),execFileSync('git',['--no-replace-objects','show','0a3b4aba5b0940bcbc70ef79ddabae53cb4a07c7:'+file],{encoding:'utf8',windowsHide:true,maxBuffer:32e6}),'Exact caller, Enterprise inventory/order/budgets and schema: '+file);\n    }\n    const enterpriseText=fs.readFileSync('test/enterprise-release-phase2-migration-catalog.js','utf8').replaceAll('\\r\\n','\\n');\n    const first=enterpriseText.indexOf('      assert.equal(result.actualTables,586);'),end=enterpriseText.indexOf('      console.log(JSON.stringify({phase:result.phase',first);assert(first>0&&end>first);\n"
+        }
+      ]
+    },
     "tools/enterprise-native-questing.js": {
       "current": {
         "mode": "100644",
@@ -695,11 +721,11 @@ export const NATIVE_GARAGE_SOURCE = freeze({
     },
     "tools/native-garage-source-transfer.js": {
       "mode": "100644",
-      "blob": "14beaac89ca1c24927b4c89847559c8efc039c86",
-      "sha256": "a199d6a909c0467d7a05d27d3354f507320ef06f3cdc591075044e572d65343a",
-      "bytes": 13059,
+      "blob": "1108f70ce42e0781ffc49788e9bb9a86391c906e",
+      "sha256": "bca5ce52b9aa4b8af4d85d2ae8d34798652c65c1de64d7daf7f43b3bee3e53f2",
+      "bytes": 13109,
       "text": true
     }
   }
 });
-export const NATIVE_GARAGE_SOURCE_SHA256 = '41e1c34cd27750e073e0b803d3aa760920238b609d66b0aca816d6a6d8f4ce54';
+export const NATIVE_GARAGE_SOURCE_SHA256 = 'ee20027ce2df81ac6fdc7a78e96aac1ee01022d6ba444192691334fd4c09b0c6';
