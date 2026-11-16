@@ -14,6 +14,10 @@ import { ENTERPRISE_NATIVE_BINARY_FILES, ENTERPRISE_NATIVE_DIRECTORY_MEMBERSHIPS
 import { enterpriseUxImports, enterpriseUxMetadataBytes } from './enterprise-native-ux.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as predecessor, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as predecessorHash } from './enterprise-native-contract-release-inputs.js';
 import { QUESTING_ENTERPRISE_NATIVE_INPUTS as declaration, QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 as declarationHash } from './enterprise-native-questing-inputs.js';
+import {
+  nativeGarageEnterprisePredecessor, assertNativeGarageEnterpriseClosure,
+  nativeGarageEnterpriseScope, nativeGarageEnterpriseHistoricalInput, nativeGarageEnterpriseBinary,
+} from './native-garage-enterprise-source.js';
 
 export const QUESTING_NATIVE_METADATA = 'tools/enterprise-native-questing-inputs.js';
 export const QUESTING_NATIVE_PREDECESSOR_METADATA = 'tools/enterprise-native-contract-release-inputs.js';
@@ -119,6 +123,7 @@ export function assertQuestingEnterpriseTrackedInput(file, current, authored, by
 function assertQuestingTrackedPin(file, current, authored, bytes, expected) {
   assert.ok(expected, `No undeclared actual-current native input: ${file}`);
   assert.ok(Buffer.isBuffer(bytes) && current && authored);
+  ({ current, bytes } = nativeGarageEnterprisePredecessor(file, current, bytes, expected));
   assert.equal(current.type, 'blob'); assert.equal(authored.type, 'blob');
   assert.equal(current.mode, expected.mode); assert.equal(authored.mode, expected.mode);
   assert.equal(current.blob, expected.blob, 'Actual HEAD input differs from its new native pin');
@@ -161,7 +166,7 @@ function actualReader(records) {
     assert.ok(stat.isFile() && !stat.isSymbolicLink(), `Physical regular input: ${file}`);
     const raw = fs.readFileSync(full); assert.equal(stat.size, raw.length);
     const canonical = blob(raw) === row.blob ? raw : Buffer.from(raw.toString('utf8').replaceAll('\r\n', '\n'));
-    assertEnterpriseNativeTrackedBytes(raw, canonical, binary.has(file));
+    assertEnterpriseNativeTrackedBytes(raw, canonical, nativeGarageEnterpriseBinary(file, binary.has(file)));
     assert.equal(blob(canonical), row.blob, `Physical input equals actual Git bytes: ${file}`);
     const result = { canonical, raw, pin: Object.freeze({ file, mode: row.mode, blob: row.blob, sha256: sha(canonical) }) };
     cache.set(file, result); return result;
@@ -196,12 +201,22 @@ export function captureQuestingEnterpriseSource() {
   const records = tree(revision), current = new Map(records.map(row => [row.file, row]));
   const authored = new Map(tree(declaration.authoredRevision).map(row => [row.file, row]));
   const read = actualReader(records), files = {};
-  assert.deepEqual(questingNativeClosure(file => read(file).canonical), declaration.files.map(row => row.file), 'Complete actual current import/asset closure');
+  const actualClosure = questingNativeClosure(file => read(file).canonical);
+  const historicalClosure = questingNativeClosure(file => nativeGarageEnterpriseHistoricalInput(file, read(file).canonical));
+  assertNativeGarageEnterpriseClosure(actualClosure, historicalClosure, declaration.files.map(row => row.file));
   for (const expected of declaration.files) {
-    const actual = read(expected.file); assert.deepEqual(actual.pin, expected);
+    const actual = read(expected.file);
     const original = authored.get(expected.file);
     assertQuestingTrackedPin(expected.file, current.get(expected.file), original, actual.canonical, expected);
-    files[expected.file] = { sha256: sha(actual.raw), gitSha256: expected.sha256, blob: expected.blob, binary: binary.has(expected.file), bytes: actual.raw.length };
+    files[expected.file] = { sha256: sha(actual.raw), gitSha256: actual.pin.sha256, blob: actual.pin.blob, binary: nativeGarageEnterpriseBinary(expected.file, binary.has(expected.file)), bytes: actual.raw.length };
+  }
+  // Fresh native proofs exercise the real successor. Keep every scoped byte in
+  // their stability receipt, including browser assets outside the JS traversal.
+  for (const file of new Set([...actualClosure, ...nativeGarageEnterpriseScope()])) {
+    if (Object.hasOwn(files, file)) continue;
+    const actual = read(file);
+    files[file] = { sha256: sha(actual.raw), gitSha256: actual.pin.sha256, blob: actual.pin.blob,
+      binary: nativeGarageEnterpriseBinary(file, binary.has(file)), bytes: actual.raw.length };
   }
   const metadata = read(QUESTING_NATIVE_METADATA), originalMetadata = authored.get(QUESTING_NATIVE_METADATA);
   assert.ok(originalMetadata && originalMetadata.type === 'blob'); assert.equal(metadata.pin.mode, originalMetadata.mode);

@@ -1,0 +1,31 @@
+{
+  "phase": "closed backend release candidate",
+  "baseCommit": "9cf7ced8beedd0950018a14bbab71b08b71a3d5b",
+  "branch": "codex/native-garage-interface-and-sendready",
+  "files": {
+    ".github/workflows/ci.yml": "53bd13d4110a14fe5525f21b76f0e588587dbd4665b9f66842a7215dd33d2f7e",
+    "public/index.html": "fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba",
+    "public/noir-shell.js": "0f3b685abf89b56cbf61fe74166232e32157d0894e4f16aa14e89325fb53ffdd",
+    "public/strategy-command.js": "dc63d2437d7342dd1ec0c5a3774f25667518baae2fbed1ce3a341e5b8a9dddbc",
+    "public/ux-identity.js": "af427ef5776bfbe4f671bb8a59bed865b758b814154554b025ba13bbed3675a9",
+    "public/ux-navigation.js": "baf682a3ec4de922bc446b1e94eaed9a66f8f10ac5fc49645bbcb88cbb354b40",
+    "public/ux-progression.js": "24baf2e3d04f27d4b0d81de41bb3075c6eaa7d4edc336d9073eac4e72c5d0ea6",
+    "public/nativegarage.js": "df0a645e348d5dc4362da49831b0cc60c242976d228426125480d9af4903e703",
+    "public/nativegarage-client.js": "a9a06fe88b54ba780a4cdf8f116b03e4db72ee62b2165c83b2ea0d51e17a8b51",
+    "public/nativegarage.css": "68a5596862b56d4db1217c9152654d55da108b3a719dee5cb882ddf7c20866e9",
+    "src/game.js": "8587a22f47ba3b5dfb1c5b99e0e968cf6e18d9f30fe4989cc79fd7e6b1a2d533",
+    "src/server.js": "f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5",
+    "src/nativegarage.js": "d056b2e3c6244678721f49d37dbf3d7d6f25692d0d44cf71baca032a60c92868",
+    "test/gates.js": "7efa56501608f71173a7a3ae54fd948850aaa981c7790835164b51b78ee0197f",
+    "test/nativegarage.js": "8c3467e419c0c0d0e9cf8d53f72c9fd89a780bda00d494781632fbdcf0c9b8d3",
+    "test/nativegarage-client.js": "8bdad9d0a2ef7552cc25ed3379eae0a1bbbd0932016fbe0904cdfe70eb162d6a",
+    "test/nativegarage-browser.js": "bf8e5903fa71810c344b843e0ee5578bab0adafccd78a571f7cf0379fb584b7b",
+    "package.json": "7cdd3916fb45488293efdc1a92e9634bb7157809c11ca50a34460acc650ef629",
+    "package-lock.json": "74c07666cfd58d378d34ab348a683b78b7fdae42b12504a09837d5f23dbc20dc"
+  },
+  "noSchemaChanges": true,
+  "noContractChanges": true,
+  "productionActivation": false,
+  "broaderHostedCi": "pending",
+  "hashMode": "sha256 of UTF-8 source with CRLF normalized to LF"
+}

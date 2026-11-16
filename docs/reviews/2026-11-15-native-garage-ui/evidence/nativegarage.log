@@ -1,0 +1,15 @@
+PASS closed by default and invalid manifest never calls RPC
+PASS deployment file exact byte hash, chain and minimum confirmations
+PASS confirmed board pins runtime, bindings and safe JSON
+PASS wrong chain, runtime, source commitment and stale clocks close reads
+PASS projection bounded chunks, pagination and live ownership exclude stale logs
+PASS cursor reorg rebuilds transfer history and anchor reorg fails closed
+PASS allowlisted plans simulate latest state and approve the exact fee only
+PASS payment, energy, ownership and material checks precede simulation
+PASS assigned tools block transfers, and retired owners retain exit operations
+PASS fulfill fetch is bound to pinned round and simulated real calldata
+PASS RPC errors redact transport details and surface decoded recipient failures
+PASS receipt confirms canonical blocks, includes exact transaction, and delays terminal reverts
+PASS authenticated routes require an explicit wallet and never read or mutate SQL
+PASS unconfigured receipt route rejects before any wallet or SQL lookup
+native garage: 14 mocked RPC groups passed

@@ -1,0 +1,95 @@
+{
+  "ok": true,
+  "contentHash": "bc89a2128c0f5ef931035cf55720a43a9c474ff6cf291a33c5c6c0caea0e91d9",
+  "packageIds": [
+    "core-materials",
+    "automotive-salvage",
+    "belladonna-demo",
+    "neighborhood-initiation",
+    "company-production-quality",
+    "district-docks-story",
+    "district-neon-story",
+    "district-foundry-story",
+    "district-brick-story",
+    "district-canal-story",
+    "district-cathedral-story",
+    "staged-crew-missions",
+    "city-neighbor-favors",
+    "city-shutter-lock",
+    "city-loading-route",
+    "city-careful-negotiation",
+    "city-sealed-record",
+    "city-rotating-account-0",
+    "city-rotating-account-1",
+    "city-rotating-account-2",
+    "city-rotating-account-3",
+    "neighborhood-broadcast",
+    "neighborhood-afterword",
+    "property-investigation",
+    "equipment-recovery"
+  ],
+  "packages": 25,
+  "nodes": 193,
+  "recipes": 5,
+  "omrRewards": 0,
+  "materials": {
+    "required": 3,
+    "sourced": 3,
+    "reachable": 4,
+    "sinkless": 1,
+    "sinklessMaterials": [
+      "mat:wire"
+    ],
+    "orphanedSources": []
+  },
+  "socialOperations": [
+    {
+      "nodeId": "operation:belladonna-lockbox",
+      "packageId": "belladonna-demo",
+      "minimumDistinctAccounts": 4,
+      "maximumDistinctAccounts": 4,
+      "requiredRoles": [
+        "investigator",
+        "driver",
+        "mechanic",
+        "enforcer"
+      ],
+      "rolesMayShareAccounts": false
+    },
+    {
+      "nodeId": "operation:quiet-pier-run",
+      "packageId": "staged-crew-missions",
+      "minimumDistinctAccounts": 3,
+      "maximumDistinctAccounts": 3,
+      "requiredRoles": [
+        "planner",
+        "lookout",
+        "driver"
+      ],
+      "rolesMayShareAccounts": false
+    }
+  ],
+  "executableDefinitions": {
+    "crafting": true,
+    "mysteries": true,
+    "operations": true
+  },
+  "economyPolicy": {
+    "omrAuthorityPaths": 0,
+    "cashRewardSourcePaths": 0,
+    "cashCosts": [
+      {
+        "recipeId": "recipe:hardened_steel",
+        "amount": 300
+      }
+    ]
+  },
+  "warnings": [
+    {
+      "code": "sinkless_material",
+      "nodeId": "mat:wire",
+      "message": "Material mat:wire has no declared sink or durable use"
+    }
+  ]
+}
+✅ Phase 1 world-graph executable definitions and economy policy compliant — mysteries and operations validated, zero OMR authority, zero cash rewards/sources, and the sole cash cost is recipe:hardened_steel at exactly $300; 25 packages, 193 nodes, 5 recipes; sha256 bc89a2128c0f5ef931035cf55720a43a9c474ff6cf291a33c5c6c0caea0e91d9

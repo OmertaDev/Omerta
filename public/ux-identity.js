@@ -148,6 +148,9 @@
       if (!scope()) return; codeBesideChoices();
       const tab = state().currentTab; if (!['profile', 'estate', 'garage', 'port', 'life'].includes(tab)) return;
       const parent = document.getElementById(`tab-${tab}`); if (!parent) return;
+      if (tab === 'garage' && state().me?.onchainCrafting) {
+        parent.querySelector(':scope > .ux-identity')?.remove(); signature = ''; return;
+      }
       let host = parent.querySelector(':scope > .ux-identity');
       const data = value(), next = JSON.stringify([tab, character, data, state().me.cars, state().me.trades, boards, pending]);
       if (host && next === signature) return;
