@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const CRIME_MINIGAME_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_CRIME_MINIGAME_SOURCE_COMPARISON_ONLY",
-  "revision": "2fca87ce93c7999b86e1e83dbeeb2ccea39e35bd",
-  "tree": "1c8d7947a162fd9d47a5b7772d720e06f4afada0",
+  "revision": "addba06178838091ed97747b57824461dfcdd4a3",
+  "tree": "e0a5ecb685f9891354615bdfc6fe5754aa9f9ed4",
   "predecessor": "9cf7ced8beedd0950018a14bbab71b08b71a3d5b",
   "predecessorTree": "9477c277cca6b47b3a3ce20901e85a451243642f",
   "files": {
@@ -1448,6 +1448,32 @@ export const CRIME_MINIGAME_SOURCE = freeze({
         }
       ]
     },
+    "test/ux-postgres-rls.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "d1eb2d2c1e27e5e8ec68eb4a475530c11ea1919a",
+        "bytes": 14543,
+        "sha256": "99bb002ccb9755a1caada09a7975a59c78f9ebc21d1ae59e50544768c14d39be"
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "4b6040108b76f3aa1913cd4b0de951009d5391f1",
+        "bytes": 14463,
+        "sha256": "aad968219a2953852ecaff9805fbdb7a5ab2c97c3c50a19ec00febe29233c6ce"
+      },
+      "inverses": [
+        {
+          "at": 0,
+          "current": "import { injectWithCrimeMinigame } from './crime-fixture.js';\n",
+          "baseline": ""
+        },
+        {
+          "at": 2567,
+          "current": "  const r = await injectWithCrimeMinigame(app, { method, url, payload, headers: { ...(player ? { authorization: 'Bearer ' + player.token } : {}), ...(!['GET', 'HEAD'].includes(method) ? { 'idempotency-key': randomUUID() } : {}) } });\n",
+          "baseline": "  const r = await app.inject({ method, url, payload, headers: { ...(player ? { authorization: 'Bearer ' + player.token } : {}), ...(!['GET', 'HEAD'].includes(method) ? { 'idempotency-key': randomUUID() } : {}) } });\n"
+        }
+      ]
+    },
     "test/ux-shell-browser.js": {
       "current": {
         "mode": "100644",
@@ -1904,4 +1930,4 @@ export const CRIME_MINIGAME_SOURCE = freeze({
     }
   }
 });
-export const CRIME_MINIGAME_SOURCE_SHA256 = 'f2ca773de4df690025db6a17409b4d70cec53b70033b11fc5a49e1261724f226';
+export const CRIME_MINIGAME_SOURCE_SHA256 = 'a351bda03fd0c24a8c7f2dc96a83e2426eb9aea8d3bf2b9d8f59494808bb000d';
