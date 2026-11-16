@@ -31,6 +31,15 @@ for (const label of ['Get to level 5', 'Pull your first job', 'Out of nerve']) {
 // the First Blood instruction permanently uncleared despite the assigned rival being present.
 const entry = new URL('../tools/playthrough.js', import.meta.url).href;
 const childCode = `
+  import crypto from 'node:crypto';
+  import { syncBuiltinESMExports } from 'node:module';
+  import { mock } from 'node:test';
+  // Resident queries order by UUID; calendar time also selects their behavior.
+  // Control both inputs without changing combat or settlement outcomes.
+  let identity = 0;
+  crypto.randomUUID = () => '00000000-0000-4000-8000-' + (++identity).toString(16).padStart(12, '0');
+  syncBuiltinESMExports();
+  mock.timers.enable({ apis: ['Date'], now: Date.parse('2026-11-10T12:00:00Z') });
   process.env.NODE_ENV = 'test';
   process.env.RATE_LIMIT = 'off';
   process.env.SEASON_MOD = 'dead_quiet';
@@ -50,6 +59,7 @@ assert.ok(attempts >= 8,
   `simulated street cooldowns must advance with the sitting; only ${attempts} crime attempts occurred`);
 const obeyed = stdout.match(/^  obeyed: (.*)$/m)?.[1] || '';
 assert.ok(obeyed.includes('Settle your first score'),
-  'the actual current coach hint identifies the assigned rival and the harness clears First Blood');
+  'the actual current coach hint identifies the assigned rival and the harness clears First Blood'
+    + '\nHarness report (last 12,000 characters):\n' + stdout.slice(-12000));
 
 console.log(`✓ playthrough coach-truth regression passed (${attempts} crimes; First Blood cleared)`);
