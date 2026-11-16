@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "2ca9afc5190f748f3e294ec0bc782432b16dcf67",
+  "sourceRevision": "059db7b9e1e5bd7b75397745b008e16f961f968f",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 19393,
-    "edges": 77109,
+    "nodes": 19397,
+    "edges": 77126,
     "byNodeType": {
       "Artifact": 7914,
       "Command": 326,
-      "Commit": 5903,
+      "Commit": 5907,
       "Contract": 156,
       "Document": 978,
       "Domain": 13,
@@ -65,16 +65,16 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 6133,
-      "CHANGED": 30189,
+      "CHANGED": 30201,
       "CONTAINS": 7935,
       "DECLARES": 326,
       "DEFINED_IN": 1823,
       "DEPENDS_ON": 69,
       "EXECUTES": 1284,
       "HANDLED_BY": 956,
-      "HAS_COMMIT": 5903,
+      "HAS_COMMIT": 5907,
       "IMPLEMENTS": 124,
-      "IMPORTS": 9493,
+      "IMPORTS": 9494,
       "INHERITS": 47,
       "REFERENCES": 3981,
       "REPRESENTS": 2798,
@@ -147168,20 +147168,20 @@
       "path": "test/agent-alpha.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 117655,
-      "lines": 2810,
-      "version": "3dc7fe94479ce909",
+      "bytes": 120987,
+      "lines": 2864,
+      "version": "aeb475d58f4ccfb0",
       "text": true,
       "provenance": [
         {
           "file": "test/agent-alpha.js",
           "line": 1,
-          "version": "3dc7fe94479ce909"
+          "version": "aeb475d58f4ccfb0"
         }
       ],
-      "lastChangedAt": "2026-11-15T23:41:04.000Z",
+      "lastChangedAt": "2026-11-16T06:14:42.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4adbde51e7d4571f265ff6a0fc1aeebb27130aea"
+      "lastChangedCommit": "8b205f333c7cf8ca275b2b0e21b9c85620e4e86c"
     },
     {
       "key": "Artifact:test/agent-business-transactions.js",
@@ -147214,20 +147214,20 @@
       "path": "test/agent-cohort.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 4256,
-      "lines": 75,
-      "version": "a0a7b4cd31ba9162",
+      "bytes": 4459,
+      "lines": 76,
+      "version": "af78d18ddf07ccf4",
       "text": true,
       "provenance": [
         {
           "file": "test/agent-cohort.js",
           "line": 1,
-          "version": "a0a7b4cd31ba9162"
+          "version": "af78d18ddf07ccf4"
         }
       ],
-      "lastChangedAt": "2026-11-08T07:23:02.000Z",
+      "lastChangedAt": "2026-11-16T06:14:42.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "8035cff3c015b19e2a3049c0caa6c5d69aab9ff4"
+      "lastChangedCommit": "8b205f333c7cf8ca275b2b0e21b9c85620e4e86c"
     },
     {
       "key": "Artifact:test/agent-economy-next-layer-estate.js",
@@ -147398,20 +147398,20 @@
       "path": "test/agentturn-jail-units.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 4193,
-      "lines": 68,
-      "version": "816f6bdc974be6ca",
+      "bytes": 4273,
+      "lines": 69,
+      "version": "37b9620a6488c177",
       "text": true,
       "provenance": [
         {
           "file": "test/agentturn-jail-units.js",
           "line": 1,
-          "version": "816f6bdc974be6ca"
+          "version": "37b9620a6488c177"
         }
       ],
-      "lastChangedAt": "2026-11-11T01:27:15.000Z",
+      "lastChangedAt": "2026-11-16T06:14:42.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "e2d24f4fb7bd50f0cd56282eea9ddb4910e26bb4"
+      "lastChangedCommit": "8b205f333c7cf8ca275b2b0e21b9c85620e4e86c"
     },
     {
       "key": "Artifact:test/agentturn.js",
@@ -149514,20 +149514,20 @@
       "path": "test/coldstart.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 26868,
-      "lines": 380,
-      "version": "74bbfb0ff5606e84",
+      "bytes": 26933,
+      "lines": 381,
+      "version": "d4f26ed32a2458db",
       "text": true,
       "provenance": [
         {
           "file": "test/coldstart.js",
           "line": 1,
-          "version": "74bbfb0ff5606e84"
+          "version": "d4f26ed32a2458db"
         }
       ],
-      "lastChangedAt": "2026-11-10T17:20:53.000Z",
+      "lastChangedAt": "2026-11-16T06:14:42.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "0735eeea89272ce706451829798be7165d0d799a"
+      "lastChangedCommit": "8b205f333c7cf8ca275b2b0e21b9c85620e4e86c"
     },
     {
       "key": "Artifact:test/collision.js",
@@ -152803,20 +152803,20 @@
       "path": "test/decision-guide-client.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 7606,
+      "bytes": 7665,
       "lines": 91,
-      "version": "1ec84d7069f9a4a7",
+      "version": "cc5b845208995855",
       "text": true,
       "provenance": [
         {
           "file": "test/decision-guide-client.js",
           "line": 1,
-          "version": "1ec84d7069f9a4a7"
+          "version": "cc5b845208995855"
         }
       ],
-      "lastChangedAt": "2026-11-08T07:51:25.000Z",
+      "lastChangedAt": "2026-11-16T06:14:42.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "3b3cd5d21eccc1b3cc4d12544a028013a07f329f"
+      "lastChangedCommit": "8b205f333c7cf8ca275b2b0e21b9c85620e4e86c"
     },
     {
       "key": "Artifact:test/decision-guide.js",
@@ -171778,20 +171778,20 @@
       "path": "tools/agent-alpha.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 53055,
-      "lines": 1274,
-      "version": "8c9ee6b8107486c1",
+      "bytes": 54515,
+      "lines": 1295,
+      "version": "18f9a39027c38b64",
       "text": true,
       "provenance": [
         {
           "file": "tools/agent-alpha.js",
           "line": 1,
-          "version": "8c9ee6b8107486c1"
+          "version": "18f9a39027c38b64"
         }
       ],
-      "lastChangedAt": "2026-11-15T23:41:04.000Z",
+      "lastChangedAt": "2026-11-16T06:14:42.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4adbde51e7d4571f265ff6a0fc1aeebb27130aea"
+      "lastChangedCommit": "8b205f333c7cf8ca275b2b0e21b9c85620e4e86c"
     },
     {
       "key": "Artifact:tools/agent-cohort.js",
@@ -173761,20 +173761,20 @@
       "path": "tools/crime-minigame-source-data.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 111831,
-      "lines": 1934,
-      "version": "f724d227007ba8e2",
+      "bytes": 120917,
+      "lines": 2038,
+      "version": "3bd0c494dff701fd",
       "text": true,
       "provenance": [
         {
           "file": "tools/crime-minigame-source-data.js",
           "line": 1,
-          "version": "f724d227007ba8e2"
+          "version": "3bd0c494dff701fd"
         }
       ],
-      "lastChangedAt": "2026-11-16T02:29:41.000Z",
+      "lastChangedAt": "2026-11-16T06:16:09.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "f2e44ce2a22e401e36d61c67954f75523cb83c4d"
+      "lastChangedCommit": "0e1b0f56b6cbe7278fa047cb5d39ee0428f4c150"
     },
     {
       "key": "Artifact:tools/current-economic-terms-source-data.js",
@@ -174726,18 +174726,18 @@
       "extension": ".js",
       "bytes": 501335,
       "lines": 13356,
-      "version": "59ebaf164e337f8a",
+      "version": "62deca08bcda0a2c",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-questing-inputs.js",
           "line": 1,
-          "version": "59ebaf164e337f8a"
+          "version": "62deca08bcda0a2c"
         }
       ],
-      "lastChangedAt": "2026-11-16T02:29:59.000Z",
+      "lastChangedAt": "2026-11-16T06:16:29.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "2ca9afc5190f748f3e294ec0bc782432b16dcf67"
+      "lastChangedCommit": "059db7b9e1e5bd7b75397745b008e16f961f968f"
     },
     {
       "key": "Artifact:tools/enterprise-native-questing-seal.js",
@@ -187849,6 +187849,22 @@
       ]
     },
     {
+      "key": "Commit:03b32b6eb40fae23a38263408c1ae30cd0ed0624",
+      "type": "Commit",
+      "id": "03b32b6eb40fae23a38263408c1ae30cd0ed0624",
+      "label": "Refresh knowledge for deterministic minigame fixtures",
+      "title": "Refresh knowledge for deterministic minigame fixtures",
+      "date": "2026-11-16T02:35:08.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/03b32b6eb40fae23a38263408c1ae30cd0ed0624",
+      "provenance": [
+        {
+          "commit": "03b32b6eb40fae23a38263408c1ae30cd0ed0624",
+          "url": "https://github.com/OmertaDev/Omerta/commit/03b32b6eb40fae23a38263408c1ae30cd0ed0624"
+        }
+      ]
+    },
+    {
       "key": "Commit:03b413a80e2fa20971cbe6e36b2ae2fbed1fa863",
       "type": "Commit",
       "id": "03b413a80e2fa20971cbe6e36b2ae2fbed1fa863",
@@ -188501,6 +188517,22 @@
         {
           "commit": "05942538b9abaa8e18e369a2dce7d646313f268d",
           "url": "https://github.com/OmertaDev/Omerta/commit/05942538b9abaa8e18e369a2dce7d646313f268d"
+        }
+      ]
+    },
+    {
+      "key": "Commit:059db7b9e1e5bd7b75397745b008e16f961f968f",
+      "type": "Commit",
+      "id": "059db7b9e1e5bd7b75397745b008e16f961f968f",
+      "label": "Refresh native inputs for paced minigame authority",
+      "title": "Refresh native inputs for paced minigame authority",
+      "date": "2026-11-16T06:16:29.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/059db7b9e1e5bd7b75397745b008e16f961f968f",
+      "provenance": [
+        {
+          "commit": "059db7b9e1e5bd7b75397745b008e16f961f968f",
+          "url": "https://github.com/OmertaDev/Omerta/commit/059db7b9e1e5bd7b75397745b008e16f961f968f"
         }
       ]
     },
@@ -191301,6 +191333,22 @@
         {
           "commit": "0e02a47a718dbd1703919e198c7fc0da6734d041",
           "url": "https://github.com/OmertaDev/Omerta/commit/0e02a47a718dbd1703919e198c7fc0da6734d041"
+        }
+      ]
+    },
+    {
+      "key": "Commit:0e1b0f56b6cbe7278fa047cb5d39ee0428f4c150",
+      "type": "Commit",
+      "id": "0e1b0f56b6cbe7278fa047cb5d39ee0428f4c150",
+      "label": "Seal fresh-authority minigame release source",
+      "title": "Seal fresh-authority minigame release source",
+      "date": "2026-11-16T06:16:09.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/0e1b0f56b6cbe7278fa047cb5d39ee0428f4c150",
+      "provenance": [
+        {
+          "commit": "0e1b0f56b6cbe7278fa047cb5d39ee0428f4c150",
+          "url": "https://github.com/OmertaDev/Omerta/commit/0e1b0f56b6cbe7278fa047cb5d39ee0428f4c150"
         }
       ]
     },
@@ -238085,6 +238133,22 @@
         {
           "commit": "8b1ab95834441198d0fabeabc8b647c96f4ab4c6",
           "url": "https://github.com/OmertaDev/Omerta/commit/8b1ab95834441198d0fabeabc8b647c96f4ab4c6"
+        }
+      ]
+    },
+    {
+      "key": "Commit:8b205f333c7cf8ca275b2b0e21b9c85620e4e86c",
+      "type": "Commit",
+      "id": "8b205f333c7cf8ca275b2b0e21b9c85620e4e86c",
+      "label": "Keep minigame actions within fresh authority and cadence",
+      "title": "Keep minigame actions within fresh authority and cadence",
+      "date": "2026-11-16T06:14:42.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/8b205f333c7cf8ca275b2b0e21b9c85620e4e86c",
+      "provenance": [
+        {
+          "commit": "8b205f333c7cf8ca275b2b0e21b9c85620e4e86c",
+          "url": "https://github.com/OmertaDev/Omerta/commit/8b205f333c7cf8ca275b2b0e21b9c85620e4e86c"
         }
       ]
     },
@@ -299185,7 +299249,7 @@
         },
         {
           "file": "tools/crime-minigame-source-data.js",
-          "line": 975
+          "line": 1064
         }
       ]
     },
@@ -309120,6 +309184,9 @@
           "commit": "03a915066b04c704e73248bbca1981a3e96959e6"
         },
         {
+          "commit": "03b32b6eb40fae23a38263408c1ae30cd0ed0624"
+        },
+        {
           "commit": "03d6a65a9f9ffaaca2573b15236592ade91de0ea"
         },
         {
@@ -312093,6 +312160,9 @@
           "commit": "03a915066b04c704e73248bbca1981a3e96959e6"
         },
         {
+          "commit": "03b32b6eb40fae23a38263408c1ae30cd0ed0624"
+        },
+        {
           "commit": "03d6a65a9f9ffaaca2573b15236592ade91de0ea"
         },
         {
@@ -315064,6 +315134,9 @@
         },
         {
           "commit": "03a915066b04c704e73248bbca1981a3e96959e6"
+        },
+        {
+          "commit": "03b32b6eb40fae23a38263408c1ae30cd0ed0624"
         },
         {
           "commit": "03d6a65a9f9ffaaca2573b15236592ade91de0ea"
@@ -318826,6 +318899,9 @@
         },
         {
           "commit": "03a915066b04c704e73248bbca1981a3e96959e6"
+        },
+        {
+          "commit": "03b32b6eb40fae23a38263408c1ae30cd0ed0624"
         },
         {
           "commit": "03d6a65a9f9ffaaca2573b15236592ade91de0ea"
@@ -337095,7 +337171,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "2ca9afc5190f748f3e294ec0bc782432b16dcf67",
+      "revision": "059db7b9e1e5bd7b75397745b008e16f961f968f",
       "currentBranch": "codex/mandatory-crime-minigame-20261115",
       "defaultBranch": "main",
       "visibility": "public",
@@ -375824,13 +375900,13 @@
       "type": "TestSuite",
       "id": "test/agent-alpha.js",
       "label": "test/agent-alpha.js",
-      "lines": 2810,
-      "version": "3dc7fe94479ce909",
+      "lines": 2864,
+      "version": "aeb475d58f4ccfb0",
       "provenance": [
         {
           "file": "test/agent-alpha.js",
           "line": 1,
-          "version": "3dc7fe94479ce909"
+          "version": "aeb475d58f4ccfb0"
         }
       ]
     },
@@ -375854,13 +375930,13 @@
       "type": "TestSuite",
       "id": "test/agent-cohort.js",
       "label": "test/agent-cohort.js",
-      "lines": 75,
-      "version": "a0a7b4cd31ba9162",
+      "lines": 76,
+      "version": "af78d18ddf07ccf4",
       "provenance": [
         {
           "file": "test/agent-cohort.js",
           "line": 1,
-          "version": "a0a7b4cd31ba9162"
+          "version": "af78d18ddf07ccf4"
         }
       ]
     },
@@ -375974,13 +376050,13 @@
       "type": "TestSuite",
       "id": "test/agentturn-jail-units.js",
       "label": "test/agentturn-jail-units.js",
-      "lines": 68,
-      "version": "816f6bdc974be6ca",
+      "lines": 69,
+      "version": "37b9620a6488c177",
       "provenance": [
         {
           "file": "test/agentturn-jail-units.js",
           "line": 1,
-          "version": "816f6bdc974be6ca"
+          "version": "37b9620a6488c177"
         }
       ]
     },
@@ -377354,13 +377430,13 @@
       "type": "TestSuite",
       "id": "test/coldstart.js",
       "label": "test/coldstart.js",
-      "lines": 380,
-      "version": "74bbfb0ff5606e84",
+      "lines": 381,
+      "version": "d4f26ed32a2458db",
       "provenance": [
         {
           "file": "test/coldstart.js",
           "line": 1,
-          "version": "74bbfb0ff5606e84"
+          "version": "d4f26ed32a2458db"
         }
       ]
     },
@@ -379500,12 +379576,12 @@
       "id": "test/decision-guide-client.js",
       "label": "test/decision-guide-client.js",
       "lines": 91,
-      "version": "1ec84d7069f9a4a7",
+      "version": "cc5b845208995855",
       "provenance": [
         {
           "file": "test/decision-guide-client.js",
           "line": 1,
-          "version": "1ec84d7069f9a4a7"
+          "version": "cc5b845208995855"
         }
       ]
     },
@@ -449076,6 +449152,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:03b32b6eb40fae23a38263408c1ae30cd0ed0624",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "03b32b6eb40fae23a38263408c1ae30cd0ed0624"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:03b32b6eb40fae23a38263408c1ae30cd0ed0624",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "03b32b6eb40fae23a38263408c1ae30cd0ed0624"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:03b32b6eb40fae23a38263408c1ae30cd0ed0624",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "03b32b6eb40fae23a38263408c1ae30cd0ed0624"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:03b32b6eb40fae23a38263408c1ae30cd0ed0624",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "03b32b6eb40fae23a38263408c1ae30cd0ed0624"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:03ca104bc507e1ea373b61e35a5330ad09e20029",
       "to": "Artifact:CLAUDE.md",
       "provenance": {
@@ -450592,6 +450700,14 @@
       "to": "Artifact:test/contractauctions.js",
       "provenance": {
         "commit": "0541f3440ec79e67d832dd7c81897175d6efacce"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:059db7b9e1e5bd7b75397745b008e16f961f968f",
+      "to": "Artifact:tools/enterprise-native-questing-inputs.js",
+      "provenance": {
+        "commit": "059db7b9e1e5bd7b75397745b008e16f961f968f"
       }
     },
     {
@@ -455928,6 +456044,14 @@
       "to": "Artifact:test/infrastructureconcessions.js",
       "provenance": {
         "commit": "0e02a47a718dbd1703919e198c7fc0da6734d041"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:0e1b0f56b6cbe7278fa047cb5d39ee0428f4c150",
+      "to": "Artifact:tools/crime-minigame-source-data.js",
+      "provenance": {
+        "commit": "0e1b0f56b6cbe7278fa047cb5d39ee0428f4c150"
       }
     },
     {
@@ -565552,6 +565676,54 @@
       "to": "Artifact:test/rwahealthoverlay.schema.js",
       "provenance": {
         "commit": "8b1ab95834441198d0fabeabc8b647c96f4ab4c6"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8b205f333c7cf8ca275b2b0e21b9c85620e4e86c",
+      "to": "Artifact:test/agent-alpha.js",
+      "provenance": {
+        "commit": "8b205f333c7cf8ca275b2b0e21b9c85620e4e86c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8b205f333c7cf8ca275b2b0e21b9c85620e4e86c",
+      "to": "Artifact:test/agent-cohort.js",
+      "provenance": {
+        "commit": "8b205f333c7cf8ca275b2b0e21b9c85620e4e86c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8b205f333c7cf8ca275b2b0e21b9c85620e4e86c",
+      "to": "Artifact:test/agentturn-jail-units.js",
+      "provenance": {
+        "commit": "8b205f333c7cf8ca275b2b0e21b9c85620e4e86c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8b205f333c7cf8ca275b2b0e21b9c85620e4e86c",
+      "to": "Artifact:test/coldstart.js",
+      "provenance": {
+        "commit": "8b205f333c7cf8ca275b2b0e21b9c85620e4e86c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8b205f333c7cf8ca275b2b0e21b9c85620e4e86c",
+      "to": "Artifact:test/decision-guide-client.js",
+      "provenance": {
+        "commit": "8b205f333c7cf8ca275b2b0e21b9c85620e4e86c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8b205f333c7cf8ca275b2b0e21b9c85620e4e86c",
+      "to": "Artifact:tools/agent-alpha.js",
+      "provenance": {
+        "commit": "8b205f333c7cf8ca275b2b0e21b9c85620e4e86c"
       }
     },
     {
@@ -801351,6 +801523,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:03b32b6eb40fae23a38263408c1ae30cd0ed0624",
+      "provenance": {
+        "commit": "03b32b6eb40fae23a38263408c1ae30cd0ed0624"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:03b413a80e2fa20971cbe6e36b2ae2fbed1fa863",
       "provenance": {
         "commit": "03b413a80e2fa20971cbe6e36b2ae2fbed1fa863"
@@ -801674,6 +801854,14 @@
       "to": "Commit:05942538b9abaa8e18e369a2dce7d646313f268d",
       "provenance": {
         "commit": "05942538b9abaa8e18e369a2dce7d646313f268d"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:059db7b9e1e5bd7b75397745b008e16f961f968f",
+      "provenance": {
+        "commit": "059db7b9e1e5bd7b75397745b008e16f961f968f"
       }
     },
     {
@@ -803074,6 +803262,14 @@
       "to": "Commit:0e02a47a718dbd1703919e198c7fc0da6734d041",
       "provenance": {
         "commit": "0e02a47a718dbd1703919e198c7fc0da6734d041"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:0e1b0f56b6cbe7278fa047cb5d39ee0428f4c150",
+      "provenance": {
+        "commit": "0e1b0f56b6cbe7278fa047cb5d39ee0428f4c150"
       }
     },
     {
@@ -826466,6 +826662,14 @@
       "to": "Commit:8b1ab95834441198d0fabeabc8b647c96f4ab4c6",
       "provenance": {
         "commit": "8b1ab95834441198d0fabeabc8b647c96f4ab4c6"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:8b205f333c7cf8ca275b2b0e21b9c85620e4e86c",
+      "provenance": {
+        "commit": "8b205f333c7cf8ca275b2b0e21b9c85620e4e86c"
       }
     },
     {
@@ -871798,7 +872002,16 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/agentturn-jail-units.js",
-        "line": 3
+        "line": 4
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/agentturn-jail-units.js",
+      "to": "Artifact:test/crime-fixture.js",
+      "provenance": {
+        "file": "test/agentturn-jail-units.js",
+        "line": 1
       }
     },
     {
@@ -871807,7 +872020,7 @@
       "to": "Artifact:test/server-fixture.js",
       "provenance": {
         "file": "test/agentturn-jail-units.js",
-        "line": 2
+        "line": 3
       }
     },
     {
@@ -922369,7 +922582,7 @@
       "to": "Artifact:test/crime-fixture.js",
       "provenance": {
         "file": "tools/crime-minigame-source-data.js",
-        "line": 1740
+        "line": 1844
       }
     },
     {
@@ -922378,7 +922591,7 @@
       "to": "Artifact:tools/crime-minigame-client.js",
       "provenance": {
         "file": "tools/crime-minigame-source-data.js",
-        "line": 1601
+        "line": 1705
       }
     },
     {
@@ -922387,7 +922600,7 @@
       "to": "Artifact:tools/crime-minigame-client.js",
       "provenance": {
         "file": "tools/crime-minigame-source-data.js",
-        "line": 1632
+        "line": 1736
       }
     },
     {
@@ -922396,7 +922609,7 @@
       "to": "Artifact:tools/crime-minigame-client.js",
       "provenance": {
         "file": "tools/crime-minigame-source-data.js",
-        "line": 1714
+        "line": 1818
       }
     },
     {
@@ -922405,7 +922618,7 @@
       "to": "Artifact:tools/crime-minigame-client.js",
       "provenance": {
         "file": "tools/crime-minigame-source-data.js",
-        "line": 1766
+        "line": 1870
       }
     },
     {
@@ -922414,7 +922627,7 @@
       "to": "Artifact:tools/crime-minigame-client.js",
       "provenance": {
         "file": "tools/crime-minigame-source-data.js",
-        "line": 1797
+        "line": 1901
       }
     },
     {
@@ -922423,7 +922636,7 @@
       "to": "Artifact:tools/crime-minigame-client.js",
       "provenance": {
         "file": "tools/crime-minigame-source-data.js",
-        "line": 1828
+        "line": 1932
       }
     },
     {
@@ -922432,7 +922645,7 @@
       "to": "Artifact:tools/crime-minigame-client.js",
       "provenance": {
         "file": "tools/crime-minigame-source-data.js",
-        "line": 1859
+        "line": 1963
       }
     },
     {
@@ -922441,7 +922654,7 @@
       "to": "Artifact:tools/crime-minigame-source-compatibility.js",
       "provenance": {
         "file": "tools/crime-minigame-source-data.js",
-        "line": 1663
+        "line": 1034
       }
     },
     {
@@ -922450,7 +922663,7 @@
       "to": "Artifact:tools/crime-minigame-source-compatibility.js",
       "provenance": {
         "file": "tools/crime-minigame-source-data.js",
-        "line": 945
+        "line": 1767
       }
     },
     {
@@ -922459,7 +922672,7 @@
       "to": "ExternalDependency: + JSON.stringify(new URL(",
       "provenance": {
         "file": "tools/crime-minigame-source-data.js",
-        "line": 975
+        "line": 1064
       }
     },
     {
@@ -995935,7 +996148,7 @@
       "to": "Artifact:src/rules.js",
       "provenance": {
         "file": "test/agentturn-jail-units.js",
-        "line": 3
+        "line": 4
       }
     },
     {
