@@ -69,6 +69,11 @@ jobs:
           cache: npm
       - run: npm ci
 
+      - name: Native garage RPC facade and wallet transaction controller
+        run: |
+          node test/nativegarage.js
+          node test/nativegarage-client.js
+
       - name: Install isolated MCP client dependencies
         run: npm install --prefix omerta-mcp --ignore-scripts --package-lock=false
       - name: MCP identity, recovery and shared-session regressions
@@ -249,6 +254,9 @@ jobs:
       # that quietly does nothing still goes green, and everyone assumes the screens were checked.
       - name: install chromium for the client harness
         run: npx playwright-core install --with-deps chromium
+
+      - name: Native garage wallet flow and confirmed projections in the browser
+        run: node test/nativegarage-browser.js
 
       - name: Invite gate and Crew invitation controls in the browser
         run: npm run test:invites:browser

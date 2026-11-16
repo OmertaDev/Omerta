@@ -134,10 +134,10 @@
       text(card.querySelector('.noir-player-location'), words(me.loc));
       for (const [key, max] of [['health', 'maxHealth'], ['energy', 'maxEnergy'], ['nerve', 'maxNerve']]) {
         const row = card.querySelector(`[data-noir-stat="${key}"]`), current = number(me[key]), limit = number(me[max]);
-        row.hidden = !current;
+        row.hidden = !!me.onchainCrafting || !current;
         text(row.querySelector('dd'), current + (limit ? ` / ${limit}` : ''));
       }
-      text(card.querySelector('.noir-player-status'), number(me.heat) ? `Heat ${number(me.heat)}` : '');
+      text(card.querySelector('.noir-player-status'), me.onchainCrafting ? 'Onchain mode · live balances in Garage' : number(me.heat) ? `Heat ${number(me.heat)}` : '');
     }
 
     function renderHeading() {

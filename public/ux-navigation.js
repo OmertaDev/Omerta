@@ -285,7 +285,11 @@
       }
     }
     function contextualRules(panel) {
-      if (!panel || panel.querySelector('[data-ux-rules]')) return;
+      if (!panel) return;
+      if (state().currentTab === 'garage' && state().me?.onchainCrafting) {
+        panel.querySelectorAll('[data-ux-rules]').forEach(node => node.remove()); return;
+      }
+      if (panel.querySelector('[data-ux-rules]')) return;
       const entry = RULES[state().currentTab];
       if (!entry) return;
       const details = document.createElement('details'); details.className = 'ux-context-rules'; details.dataset.uxRules = '';

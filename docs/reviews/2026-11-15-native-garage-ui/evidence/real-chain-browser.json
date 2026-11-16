@@ -1,0 +1,169 @@
+{
+  "status": "passed",
+  "startedAt": "2026-11-16T01:12:33.333Z",
+  "liveTransactions": 0,
+  "productionDatabaseWrites": 0,
+  "fixture": "historical clock, public disposable keys, pg-mem source identity, genuine archived drand proofs",
+  "checks": [
+    "Actual migrated game screen claims via existing wallet picker and reads confirmed profile state",
+    "Real UI requests, proves and settles thefts, abandons non-junkers and salvages an earned junker once",
+    "Exact separate OMR approval, paid hardening and unique tool crafting pass through the actual browser/controller/API",
+    "Assignment/unassignment and wallet transfer reconcile confirmed ownership"
+  ],
+  "transactions": [
+    {
+      "hash": "0xc8d3c68f5fbbac0e0acb27c30497276f826360922e22b439cfee0fad0314d0c7",
+      "to": "0x5fc8d32690cc91d4c39d9d3abcbd16989f875707",
+      "selector": "0xbd66528a"
+    },
+    {
+      "hash": "0xe8fb12851afe34f7460e49e84f08016c945e1acc6813d8316a621b590422d786",
+      "to": "0x5fc8d32690cc91d4c39d9d3abcbd16989f875707",
+      "selector": "0x331570cd"
+    },
+    {
+      "hash": "0xb41641a544d129ad07e2161ffb9353573b88c2fc973d2e3f5f56b3abda04c3da",
+      "to": "0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9",
+      "selector": "0x0d9577c6"
+    },
+    {
+      "hash": "0x40e893bae134f380bad7eb8b176dc3283e9e6863644029a9da9fcb9375cf7471",
+      "to": "0x5fc8d32690cc91d4c39d9d3abcbd16989f875707",
+      "selector": "0x6709c1d9"
+    },
+    {
+      "hash": "0x6a5d55b2804bd937657664942517b2274198414a74b5defd981554c45146377a",
+      "to": "0x5fc8d32690cc91d4c39d9d3abcbd16989f875707",
+      "selector": "0x82383450"
+    },
+    {
+      "hash": "0xd26d498b8079cf9743b51cf9df5424ddf3d69a48f241df0fb5291eb740c07c5f",
+      "to": "0x5fc8d32690cc91d4c39d9d3abcbd16989f875707",
+      "selector": "0x331570cd"
+    },
+    {
+      "hash": "0x69cb360931f838c07016e23d04ae73b9f30ac6311f2342bede19ef4e67a094ee",
+      "to": "0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9",
+      "selector": "0x0d9577c6"
+    },
+    {
+      "hash": "0x6b499a196c7cf1b954a9a2a78674e7943788ae73ffaf9d96fed781126e36591e",
+      "to": "0x5fc8d32690cc91d4c39d9d3abcbd16989f875707",
+      "selector": "0x6709c1d9"
+    },
+    {
+      "hash": "0x9fe615ce98237814e6039d4b8f8ce165197b5a2998e18af5917bcb261175ac94",
+      "to": "0x5fc8d32690cc91d4c39d9d3abcbd16989f875707",
+      "selector": "0x82383450"
+    },
+    {
+      "hash": "0x44f4e88b10a6f39e06234d76a39e9346685c3c67b4bc3420e16288ca815373f1",
+      "to": "0x5fc8d32690cc91d4c39d9d3abcbd16989f875707",
+      "selector": "0x331570cd"
+    },
+    {
+      "hash": "0xe45fb120a733fd58a44d2440c8d885976c4b05f7de1aca61d560bce06357f727",
+      "to": "0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9",
+      "selector": "0x0d9577c6"
+    },
+    {
+      "hash": "0xe7e67f248980cc911032b31c34e34fb4298d735c8fde05ec7d2a0d3744bd32b0",
+      "to": "0x5fc8d32690cc91d4c39d9d3abcbd16989f875707",
+      "selector": "0x6709c1d9"
+    },
+    {
+      "hash": "0x0a0ded4331a202bd3ad61961a6f237e41b4c624e8bcafbeccc5c5af39bca598d",
+      "to": "0x5fc8d32690cc91d4c39d9d3abcbd16989f875707",
+      "selector": "0x82383450"
+    },
+    {
+      "hash": "0x9f5b235c3eb33f231c0487dc74298d2e832c898bf5d723133540f5bcb36ea6b3",
+      "to": "0x5fc8d32690cc91d4c39d9d3abcbd16989f875707",
+      "selector": "0x331570cd"
+    },
+    {
+      "hash": "0x8a4b93fbb0470ebcd059ab9017bd8901d66e772cf5c1dc6c98269a028c7e1d33",
+      "to": "0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9",
+      "selector": "0x0d9577c6"
+    },
+    {
+      "hash": "0xdf093161728b4457598e1774afa4379b47c6af23cb2938ade0bfb3ff5b785159",
+      "to": "0x5fc8d32690cc91d4c39d9d3abcbd16989f875707",
+      "selector": "0x6709c1d9"
+    },
+    {
+      "hash": "0x4937ab3502b0b38ef910246fcd8f7e2218e16248c79f29fa736cb645b0e43109",
+      "to": "0x0165878a594ca255338adfa4d48449f69242eb8f",
+      "selector": "0xd96653c4"
+    },
+    {
+      "hash": "0x2d7d26a133f104135fa6dfc7dabd0912f5d05d4ef9a8c32725281560e2cf523a",
+      "to": "0x5fbdb2315678afecb367f032d93f642f64180aa3",
+      "selector": "0x095ea7b3"
+    },
+    {
+      "hash": "0x3eab00ece0888bbd71c7cc24a173ad00f7ee614a5739e89b381c49ea204c2b0c",
+      "to": "0x0165878a594ca255338adfa4d48449f69242eb8f",
+      "selector": "0x31adb5b2"
+    },
+    {
+      "hash": "0x8de1ce5fa4ae1228f36f58f51667ee2a1474596165be968dfd33a632b2efa2c7",
+      "to": "0x0165878a594ca255338adfa4d48449f69242eb8f",
+      "selector": "0x75965386"
+    },
+    {
+      "hash": "0xe1b5743532f8eef133b77782dff6c5ee40e8459b5555ee91fe2bdaabacf5cc74",
+      "to": "0x0165878a594ca255338adfa4d48449f69242eb8f",
+      "selector": "0x8aed312b"
+    },
+    {
+      "hash": "0x5a191f295919bf866138eb8ad0542a37aad69d60bde5530414534d1cff4200b6",
+      "to": "0x0165878a594ca255338adfa4d48449f69242eb8f",
+      "selector": "0x1be38c08"
+    },
+    {
+      "hash": "0x9f848951956bd6838714ae30343b3f87b89331304d167c124950c3e701f0f2f3",
+      "to": "0x0165878a594ca255338adfa4d48449f69242eb8f",
+      "selector": "0x42842e0e"
+    }
+  ],
+  "artifacts": {
+    "OmertaGtaAcquisition": "04ab59fcc47b826e0c3872d391d1db4247ba0c2af15b5a88245af47468ca330c",
+    "OmertaGtaRules": "1e67c61de9de3b94e9aa38f1466a175f5dbc7e33285111f01ab14fbaee88876e",
+    "OmertaDrandSource": "bb1a449f9643dc2d114053b50cc8ae9f2925eed80d9008d2bf71730edcbc77bd",
+    "OmertaNativeFoundry": "239ed0f5fae6297cb21a0b66463b2d62b9e219a668d14bdac983475cd3619ab2",
+    "OmertaRestrictedOMRV2": "e8f8709173a24899f46e7e3f7f534c3bc65bf0ab0dfc42404a677fd64635224e",
+    "FoundryManagerFixture": "c9505a260d4ba3c966de80e95f72129e93b107cdcfa26602ec361755c9127ff4",
+    "FoundryFundingFixture": "b60b0e144d904163f17b0c5d4636aeb52059973e5ecea04a515e22b083d01f7d"
+  },
+  "chain": {
+    "chainId": 31337,
+    "contracts": {
+      "engine": {
+        "address": "0x5fc8d32690cc91d4c39d9d3abcbd16989f875707",
+        "runtimeHash": "0x300de058fc0eb69cf14c277306fb799abd533b5e6eba3ff7b2818c7679bfa85a"
+      },
+      "module": {
+        "address": "0x0165878a594ca255338adfa4d48449f69242eb8f",
+        "runtimeHash": "0x83f17e67576c5387a18fe8e028c20c797ac9780ddc335e21179cb05095f4a67f"
+      },
+      "drand": {
+        "address": "0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9",
+        "runtimeHash": "0xbfed15d01703e1a5497a143c1b56d1cb513518d7e9aee5c91a6e7e4df91719b7"
+      },
+      "rules": {
+        "address": "0xdc64a140aa3e981100a9beca4e685f962f0cf6c9",
+        "runtimeHash": "0x5c4af432dcb6d019e5848ad9af3de3f437ab47cb4fba1d6016cc67ca54de22e1"
+      },
+      "omr": {
+        "address": "0x5fbdb2315678afecb367f032d93f642f64180aa3",
+        "runtimeHash": "0x94232f92b829c6efe61ac497baff0ecb8b5e5953e71157414a54936865532f7d"
+      }
+    },
+    "module": "0x0165878a594ca255338adfa4d48449f69242eb8f",
+    "engine": "0x5fc8d32690cc91d4c39d9d3abcbd16989f875707",
+    "drand": "0xcf7ed3acca5a467e9e704c703e8d87f634fb0fc9",
+    "token": "0x5fbdb2315678afecb367f032d93f642f64180aa3"
+  },
+  "finishedAt": "2026-11-16T01:13:00.429Z"
+}

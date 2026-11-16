@@ -591,7 +591,8 @@
       if (['start', 'streets', 'empire'].includes(tab) && data.openingHidden !== character
         && (data.opening?.actor === character || tab === 'start' && number(me.level) <= 5)) mount(active, 'opening', openingPanel);
       else document.querySelectorAll('[data-ux-progression="opening"]').forEach(host => host.remove());
-      if (tabTracks[tab]?.length) mount(active, 'context-trades', contextualTracks);
+      if (tab === 'garage' && me.onchainCrafting) active?.querySelectorAll('[data-ux-progression="context-trades"]').forEach(node => node.remove());
+      else if (tabTracks[tab]?.length) mount(active, 'context-trades', contextualTracks);
       // Life's renderer already reads its four progression boards. Reuse observe() instead of
       // racing those reads from refresh(). Extra archives load on entry, never on sheet polls.
       const needs = tab === 'profile' ? ['skills', 'seasons', 'collection', 'content']

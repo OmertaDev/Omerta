@@ -1,0 +1,92 @@
+{
+  "head": "e56cf576065c5f1bbb9bb55115f5961267f7d654",
+  "workingTree": "dirty",
+  "capturedAtUtc": "2026-11-16T01:17:47.5949233Z",
+  "phase": "local integration complete; mainnet deployed=false; real Anvil UI four groups passed",
+  "sources": [
+    {
+      "path": "public/nativegarage.js",
+      "sha256": "df0a645e348d5dc4362da49831b0cc60c242976d228426125480d9af4903e703",
+      "bytes": 16426
+    },
+    {
+      "path": "public/nativegarage-client.js",
+      "sha256": "983c6f70b7e94c48ecb87443125385d107b961dc8b87a221282feec0f735cffa",
+      "bytes": 28259
+    },
+    {
+      "path": "public/nativegarage.css",
+      "sha256": "68a5596862b56d4db1217c9152654d55da108b3a719dee5cb882ddf7c20866e9",
+      "bytes": 5997
+    },
+    {
+      "path": "src/nativegarage.js",
+      "sha256": "c77547bd235d883306a4524c570dc6b77a31e8a8ea46cb5890dbdd87c5d7c02c",
+      "bytes": 37527
+    },
+    {
+      "path": "src/server.js",
+      "sha256": "75c0c49c14e79958d10c3774785f4c4a3620760d52699ce69804309172a9ae39",
+      "bytes": 287960
+    },
+    {
+      "path": "public/index.html",
+      "sha256": "c8623699b54bc5c287e333df5134bf1c15c0087a71af476f6888d887e16b0f45",
+      "bytes": 1322242
+    },
+    {
+      "path": "public/noir-shell.js",
+      "sha256": "d1b4f4c5720b85a44fcd7433499fc094e5c91108def6a583f98e1512e99000f2",
+      "bytes": 18772
+    },
+    {
+      "path": "public/strategy-command.js",
+      "sha256": "dc63d2437d7342dd1ec0c5a3774f25667518baae2fbed1ce3a341e5b8a9dddbc",
+      "bytes": 25304
+    },
+    {
+      "path": "public/ux-identity.js",
+      "sha256": "651727012ff93ddf3f0315fe6fb27bb84b2cbb8e1e266595feb20a98ff659e44",
+      "bytes": 21478
+    },
+    {
+      "path": "public/ux-navigation.js",
+      "sha256": "25b5655c9ecd4442bc9cddd72d0e08304f77b3e938aa85e849046295c86dc019",
+      "bytes": 29036
+    },
+    {
+      "path": "public/ux-progression.js",
+      "sha256": "5d61c8ee439a2c4b591640cc3ca53e91af9fd181449c2609e1bf7a8c7708aa95",
+      "bytes": 38040
+    },
+    {
+      "path": "test/nativegarage-browser.js",
+      "sha256": "2faad972f62448a335c6e34ac18ae7f1c4c3dc00341b7141fa1900781fc404ef",
+      "bytes": 21096
+    },
+    {
+      "path": "test/nativegarage.js",
+      "sha256": "9d5c5e89955fcbdf6b46b52e7a6bc87db669dcffdf01e63d497f55d907c6e025",
+      "bytes": 20340
+    },
+    {
+      "path": "test/nativegarage-client.js",
+      "sha256": "db864c3b27cad15a1b3a15eb9a97417bd6f951cb3dd5c933fe0f48ac7926758f",
+      "bytes": 19564
+    },
+    {
+      "path": "tools/native-garage-ui-rehearsal.js",
+      "sha256": "69f93dfc90d0dbecda0837f88a4d3be174353fc9898111aa83d660144c332240",
+      "bytes": 19843
+    }
+  ],
+  "tools": {
+    "node": "v24.19.0",
+    "viem": "2.55.1",
+    "playwrightCore": "1.62.0",
+    "browserPath": "C:/Program Files/Google/Chrome/Application/chrome.exe",
+    "browserVersion": "157.0.8103.78"
+  },
+  "browserCommand": "node test/nativegarage-browser.js",
+  "browserExitCode": 0
+}
