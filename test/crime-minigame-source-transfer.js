@@ -21,6 +21,11 @@ assert.equal(source.status, 'SEALED');
 assert.equal(fs.readFileSync('tools/crime-minigame-source-data.js', 'utf8').replaceAll('\r\n', '\n'), crimeMinigameSourceDataBytes(source));
 assert(!CRIME_MINIGAME_GENERATED_FILES.some((file) => file.startsWith('src/') || file.startsWith('public/')),
   'Generated exclusions never include runtime source');
+assert.deepEqual(CRIME_MINIGAME_GENERATED_FILES.filter((file) => file.startsWith('knowledge/generated/')).sort(), [
+  'knowledge/generated/documents.md', 'knowledge/generated/github-history.md', 'knowledge/generated/graph-summary.md',
+  'knowledge/generated/graph.json', 'knowledge/generated/graph.mmd', 'knowledge/generated/inventory.md',
+  'knowledge/generated/modules.md', 'knowledge/generated/routes.md',
+], 'The eight knowledge outputs form an explicit fixed generated domain');
 for (const file of ['public/index.html', 'src/game.js', 'src/server.js', 'src/ux-tactics.js',
   'src/agentgateway.js', 'src/agentturn.js', 'src/task-puzzle-jobs.js', 'tools/grand-strategy-source-transfer.js',
   'test/grand-strategy-source-transfer.js']) assert(Object.hasOwn(source.files, file), 'Required exact inverse: ' + file);

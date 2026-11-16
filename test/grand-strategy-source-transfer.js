@@ -6,7 +6,7 @@ import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { AGE_REMOVAL_SOURCE, ageRemovalHistoricalRecord } from '../tools/age-removal-source-transfer.js';
-import { CRIME_MINIGAME_SOURCE, qualifyCrimeMinigameRelease, crimeMinigameActual,
+import { CRIME_MINIGAME_GENERATED_FILES, qualifyCrimeMinigameRelease, crimeMinigameActual,
   crimeMinigameHistoricalInput, crimeMinigameHistoricalEntry } from '../tools/crime-minigame-source-compatibility.js';
 import { GRAND_STRATEGY_SOURCE as source, GRAND_STRATEGY_PREDECESSOR, GRAND_STRATEGY_SCOPE,
   GRAND_STRATEGY_GENERATED_FILES, GRAND_STRATEGY_RELEASE_FILES, grandStrategySourceDataBytes,
@@ -38,7 +38,7 @@ assert.deepEqual([...Object.keys(source.files), ...Object.keys(source.additions)
 for (const file of excluded) assert(!Object.hasOwn(source.files, file) && !Object.hasOwn(source.additions, file));
 const postCandidate = git('diff', '--name-only', '--no-renames', '-z', source.revision, 'HEAD').split('\0').filter(Boolean);
 const successor = qualifyCrimeMinigameRelease();
-assert(postCandidate.every(file => excluded.has(file) || file === 'tools/crime-minigame-source-data.js' || successor.files.includes(file)),
+assert(postCandidate.every(file => excluded.has(file) || CRIME_MINIGAME_GENERATED_FILES.includes(file) || successor.files.includes(file)),
   'Only the exact sealed minigame successor and fixed generated domains may follow the reviewed candidate');
 assert.equal(fs.readFileSync('tools/grand-strategy-source-data.js', 'utf8').replaceAll('\r\n', '\n'), grandStrategySourceDataBytes(source),
   'The sole generated self-reference contains exact data and no executable additions');
