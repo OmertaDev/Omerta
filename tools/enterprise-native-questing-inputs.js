@@ -4,7 +4,7 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
   "version": 1,
   "status": "SEALED",
   "phase": "ACTUAL_CURRENT_QUESTING_ENTERPRISE_NATIVE_INPUTS",
-  "authoredRevision": "722d9afea815c02c8f666a65e08b0ccdea48fd6a",
+  "authoredRevision": "a63ad7bfd2f6b04feec4db6e8d903df295b2b5b0",
   "predecessorDefinitionSha256": "6b9128d3311945fc511748f852803354ac415a23082b6b5ce017980a2b7596bf",
   "proofInventorySha256": "3fd878600cd363ebdd9d89bb59b7cc3de7650f895062d83711b2bd1774c298e9",
   "files": [
@@ -11387,8 +11387,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/crime-minigame-source-data.js",
       "mode": "100644",
-      "blob": "cf6d2872fd8f4ba0c77a3f86d714f0a4b346b32c",
-      "sha256": "2142323f0de2e241323febfc94bee5f3bc58f6a5e80e44759ac02b41fcaed89d"
+      "blob": "062d1890c43225fa1ba5dc0bb986d640a7871d6c",
+      "sha256": "cd770bb42074d647fcf023385c7f2999ca71339c921d0533f14e7c6be4b2e69f"
     },
     {
       "file": "tools/enterprise-native-contract-release-inputs.js",
@@ -13251,8 +13251,8 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     {
       "file": "tools/crime-minigame-source-data.js",
       "mode": "100644",
-      "blob": "cf6d2872fd8f4ba0c77a3f86d714f0a4b346b32c",
-      "sha256": "2142323f0de2e241323febfc94bee5f3bc58f6a5e80e44759ac02b41fcaed89d"
+      "blob": "062d1890c43225fa1ba5dc0bb986d640a7871d6c",
+      "sha256": "cd770bb42074d647fcf023385c7f2999ca71339c921d0533f14e7c6be4b2e69f"
     },
     {
       "file": "tools/enterprise-native-contract-release-inputs.js",
@@ -13352,4 +13352,4 @@ export const QUESTING_ENTERPRISE_NATIVE_INPUTS = freeze({
     }
   ]
 });
-export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "2f6fbb96d116d820b7dd5831e82d83cd4ba94405c3d0f0e879043c123126e35c";
+export const QUESTING_ENTERPRISE_NATIVE_INPUTS_SHA256 = "8a909ab062eeb58c24b6d04fd593412a500b0fea73ccc12b0e438b6b507bf0d5";
