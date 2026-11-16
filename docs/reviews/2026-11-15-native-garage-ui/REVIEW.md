@@ -57,3 +57,6 @@ indexing/operations and the complete game's activation are separate releases.
 
 This review supports the scoped closed backend candidate at its source pins. It is not clearance
 to activate native gameplay, launch the market or migrate existing players.
+
+Source hashes use LF-normalized UTF-8 for portable checkout verification. Copied text evidence
+is retained with LF line endings; original native tool outputs remain in the local task evidence.

@@ -1,0 +1,56 @@
+[db] pg-mem in-memory database (set DATABASE_URL for Postgres)
+{"component":"player-command","phase":"request","correlationId":"df1ca87b-97e2-42d3-92d3-3824747b412a"}
+{"component":"player-command","phase":"authorization","correlationId":"df1ca87b-97e2-42d3-92d3-3824747b412a","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"df1ca87b-97e2-42d3-92d3-3824747b412a","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"df1ca87b-97e2-42d3-92d3-3824747b412a","statusCode":409,"elapsedMs":3}
+PASS disabled by default and separate city lane
+{"component":"player-command","phase":"request","correlationId":"79689b2d-cff6-4dd6-a9e8-b738fee99c4b"}
+{"component":"player-command","phase":"authorization","correlationId":"79689b2d-cff6-4dd6-a9e8-b738fee99c4b","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"79689b2d-cff6-4dd6-a9e8-b738fee99c4b","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"79689b2d-cff6-4dd6-a9e8-b738fee99c4b","statusCode":409,"elapsedMs":1}
+PASS migrated shell lands in chain garage and avoids stale SQL ownership
+{"component":"player-command","phase":"request","correlationId":"62b4768f-0fe5-46a6-8958-f5504928c94a"}
+{"component":"player-command","phase":"authorization","correlationId":"62b4768f-0fe5-46a6-8958-f5504928c94a","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"62b4768f-0fe5-46a6-8958-f5504928c94a","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"62b4768f-0fe5-46a6-8958-f5504928c94a","statusCode":409,"elapsedMs":1}
+PASS existing picker and explicit wallet rejection
+{"component":"player-command","phase":"request","correlationId":"0758e126-294e-46f9-8c0e-6a1277404447"}
+{"component":"player-command","phase":"authorization","correlationId":"0758e126-294e-46f9-8c0e-6a1277404447","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"0758e126-294e-46f9-8c0e-6a1277404447","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"0758e126-294e-46f9-8c0e-6a1277404447","statusCode":409,"elapsedMs":1}
+PASS wrong selected wallet is visible and cannot send
+{"component":"player-command","phase":"request","correlationId":"c4100266-e4d1-4b2a-80c3-5dbf7c597931"}
+{"component":"player-command","phase":"authorization","correlationId":"c4100266-e4d1-4b2a-80c3-5dbf7c597931","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"c4100266-e4d1-4b2a-80c3-5dbf7c597931","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"c4100266-e4d1-4b2a-80c3-5dbf7c597931","statusCode":409,"elapsedMs":1}
+PASS wrong network cannot send
+{"component":"player-command","phase":"request","correlationId":"5dc0f8f6-9874-4587-b582-320e4e35f5e3"}
+{"component":"player-command","phase":"authorization","correlationId":"5dc0f8f6-9874-4587-b582-320e4e35f5e3","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"5dc0f8f6-9874-4587-b582-320e4e35f5e3","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"5dc0f8f6-9874-4587-b582-320e4e35f5e3","statusCode":409,"elapsedMs":1}
+PASS session expiration invalidates an in-flight wallet selection
+{"component":"player-command","phase":"request","correlationId":"c8f88044-bb3e-4de4-8169-7173bf4092a6"}
+{"component":"player-command","phase":"authorization","correlationId":"c8f88044-bb3e-4de4-8169-7173bf4092a6","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"c8f88044-bb3e-4de4-8169-7173bf4092a6","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"c8f88044-bb3e-4de4-8169-7173bf4092a6","statusCode":409,"elapsedMs":1}
+PASS hash pending confirmation and authoritative refetch without optimistic credits
+{"component":"player-command","phase":"request","correlationId":"28769337-4147-4d55-8173-3e6da76ebeac"}
+{"component":"player-command","phase":"authorization","correlationId":"28769337-4147-4d55-8173-3e6da76ebeac","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"28769337-4147-4d55-8173-3e6da76ebeac","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"28769337-4147-4d55-8173-3e6da76ebeac","statusCode":409,"elapsedMs":1}
+PASS exact OMR approval remains distinct from paid hardening
+{"component":"player-command","phase":"request","correlationId":"a1dc4394-f4ed-4891-b96c-96fe089cb1a2"}
+{"component":"player-command","phase":"authorization","correlationId":"a1dc4394-f4ed-4891-b96c-96fe089cb1a2","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"a1dc4394-f4ed-4891-b96c-96fe089cb1a2","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"a1dc4394-f4ed-4891-b96c-96fe089cb1a2","statusCode":409,"elapsedMs":1}
+{"component":"player-command","phase":"request","correlationId":"c5387f74-b22a-44f6-85cf-6d385e0a688a"}
+{"component":"player-command","phase":"authorization","correlationId":"c5387f74-b22a-44f6-85cf-6d385e0a688a","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"c5387f74-b22a-44f6-85cf-6d385e0a688a","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"c5387f74-b22a-44f6-85cf-6d385e0a688a","statusCode":409,"elapsedMs":2}
+PASS pending transaction survives tab navigation and reload without replay
+{"component":"player-command","phase":"request","correlationId":"711dd657-c8dc-4e76-a9ab-627c0784a626"}
+{"component":"player-command","phase":"authorization","correlationId":"711dd657-c8dc-4e76-a9ab-627c0784a626","outcome":"allowed"}
+{"component":"player-command","phase":"failure","correlationId":"711dd657-c8dc-4e76-a9ab-627c0784a626","outcome":"unavailable"}
+{"component":"player-command","phase":"response","correlationId":"711dd657-c8dc-4e76-a9ab-627c0784a626","statusCode":409,"elapsedMs":1}
+PASS mobile layout and chain strings render as text
+PASS native garage browser: 10 groups
