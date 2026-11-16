@@ -3,11 +3,32 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const CRIME_MINIGAME_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_CRIME_MINIGAME_SOURCE_COMPARISON_ONLY",
-  "revision": "a03b46f5b7363837a0f61394b7d0bff48641bf17",
-  "tree": "d54fac2d9d0143385e6e98708eeb88f27c854ed9",
+  "revision": "95196e4d50e0769355d57574e6ec3ab0d6126950",
+  "tree": "ce634794f406666c309b05f31f85ed488e39140c",
   "predecessor": "8672b0147daced1d957ef772c9bb3fc07b327f81",
   "predecessorTree": "f0eabc99bc07a4a65d6bb2c527cdd84e102f5398",
   "files": {
+    ".github/workflows/ui-trim-source.yml": {
+      "current": {
+        "mode": "100644",
+        "blob": "1a0805b3002d5a9fe75980f57738ff263fe41841",
+        "bytes": 1946,
+        "sha256": "63b6e229d514c0a7cc15190006310651ef829f882a4eeeb66f44c393a6433208"
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "d0c6611dee75982f8e91ac04d491438cd0850c12",
+        "bytes": 838,
+        "sha256": "1e85075d7a44a014f885cfc4b38bea456e857ddaa7ed7a3e1ed2c79f2313c8fb"
+      },
+      "inverses": [
+        {
+          "at": 838,
+          "current": "\n  ui_browser:\n    name: Desktop and mobile browser checks\n    runs-on: ubuntu-latest\n    timeout-minutes: 20\n    env:\n      DATABASE_URL: ''\n      LEGAL_OPERATOR_NAME: CI Test Operator\n      LEGAL_POSTAL_ADDRESS: 123 Fixture Street, Test City\n      PRIVACY_CONTACT_EMAIL: privacy@example.test\n      DMCA_AGENT_NAME: CI Test Agent\n      DMCA_AGENT_EMAIL: copyright@example.test\n      DMCA_AGENT_ADDRESS: 123 Fixture Street, Test City\n      DMCA_AGENT_PHONE: '+1 202 555 0100'\n      DMCA_AGENT_REGISTERED: 'true'\n      PAYMENT_REFUND_POLICY: Test fixture policy; not a production policy.\n    steps:\n      - uses: actions/checkout@v7\n        with:\n          fetch-depth: 0\n      - uses: actions/setup-node@v7\n        with:\n          node-version: '22'\n          cache: npm\n      - run: npm ci\n      - run: npx playwright-core install --with-deps chromium\n      - name: Full desktop and mobile UX suite\n        run: |\n          export CHROMIUM_PATH=\"$(node --input-type=module -e 'import { chromium } from \"playwright-core\"; process.stdout.write(chromium.executablePath());')\"\n          npm run test:ux:browser\n",
+          "baseline": ""
+        }
+      ]
+    },
     "AGENTS.md": {
       "current": {
         "mode": "100644",
@@ -2750,9 +2771,9 @@ export const CRIME_MINIGAME_SOURCE = freeze({
     "test/ux-experience-browser.js": {
       "current": {
         "mode": "100644",
-        "blob": "3e3924a80ff0a8530a5111e0e5311a70db000212",
-        "bytes": 13298,
-        "sha256": "0577de571a10b7e801cd12b8b25be5baee1851cd9b640a2b6cbdba66577f58d4"
+        "blob": "bec46ac8dee7af67198ad46ce4985a6c03214214",
+        "bytes": 16840,
+        "sha256": "452fbf32c67fa12fef8dd6b5d603fb1fceb1534524265f161529121437f5e9ff"
       },
       "baseline": {
         "mode": "100644",
@@ -2767,7 +2788,12 @@ export const CRIME_MINIGAME_SOURCE = freeze({
           "baseline": ""
         },
         {
-          "at": 6936,
+          "at": 2887,
+          "current": "  if (dimensions.scroll > dimensions.width + 2) {\n    try {\n      const diagnostic = await page.evaluate(() => {\n        const box = element => {\n          const rect = element.getBoundingClientRect(), style = getComputedStyle(element);\n          return {\n            node: element.tagName.toLowerCase(), id: element.id, classes: String(element.className).slice(0,160),\n            left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom, width: rect.width, height: rect.height,\n            clientWidth: element.clientWidth, scrollWidth: element.scrollWidth,\n            display: style.display, position: style.position, visibility: style.visibility, opacity: style.opacity,\n            minWidth: style.minWidth, maxWidth: style.maxWidth, cssWidth: style.width, boxSizing: style.boxSizing,\n            overflowX: style.overflowX, overflowY: style.overflowY, flex: style.flex, grid: style.gridTemplateColumns,\n            whiteSpace: style.whiteSpace, overflowWrap: style.overflowWrap, transform: style.transform,\n          };\n        };\n        const ancestors = element => {\n          const parents = [];\n          for (let parent = element.parentElement; parent; parent = parent.parentElement) parents.push(parent);\n          return parents;\n        };\n        const offenders = [...document.querySelectorAll('body *')].map(element => {\n          const bounds = box(element);\n          if (!bounds.width || !bounds.height || bounds.right <= innerWidth + 2) return null;\n          const parents = ancestors(element);\n          const clipping = parents.filter(parent => /^(auto|scroll|hidden|clip)$/.test(getComputedStyle(parent).overflowX));\n          const visibleRight = Math.min(bounds.right, ...clipping.map(parent => {\n            const rect = parent.getBoundingClientRect(); return rect.left + parent.clientLeft + parent.clientWidth;\n          }));\n          return { ...bounds, text: element.textContent?.trim().slice(0,100), visibleRight,\n            clippingParents: clipping.slice(0,5).map(box), parents: parents.slice(0,5).map(box) };\n        }).filter(Boolean).sort((a,b) => b.visibleRight - a.visibleRight || b.right - a.right).slice(0,24);\n        const overlays = [...document.querySelectorAll('#toast,#toast>*,#brag,#wirepanel,#ux-screen-tools,#ux-screen-tools>.ux-screen-tools-body,dialog,.modal-bg,.ux-feel-arrival,.ux-reward-transfer')]\n          .map(element => ({ ...box(element), open: element.hasAttribute('open'), hidden: element.hasAttribute('hidden'),\n            text: element.textContent?.trim().slice(0,100) }));\n        return { width: innerWidth, height: innerHeight, root: box(document.documentElement), body: box(document.body),\n          fontStatus: document.fonts.status, fonts: [...document.fonts].slice(0,20).map(font => ({ family: font.family, status: font.status })),\n          focusView: document.body.classList.contains('ux-operation-focus'),\n          activeElement: document.activeElement ? box(document.activeElement) : null, offenders, overlays };\n      });\n      const record = { label, measured: dimensions, diagnostic };\n      console.log('UX_OVERFLOW_DIAGNOSTICS ' + JSON.stringify(record));\n      fs.writeFileSync(path.join(artifacts, `ux-overflow-${label.replace(/[^a-z0-9]+/gi,'-')}.json`), JSON.stringify(record,null,2));\n      await page.screenshot({ path: path.join(artifacts, 'ux-overflow-failure.png') });\n      console.log(`Overflow artifacts: ${artifacts}`);\n    } catch (error) { console.log('UX_OVERFLOW_DIAGNOSTIC_ERROR ' + String(error?.message || error)); }\n  }\n",
+          "baseline": ""
+        },
+        {
+          "at": 10478,
           "current": "    await solveCrimeMinigame(page);\n",
           "baseline": ""
         }
@@ -3388,4 +3414,4 @@ export const CRIME_MINIGAME_SOURCE = freeze({
     }
   }
 });
-export const CRIME_MINIGAME_SOURCE_SHA256 = 'c661c26f3e9d0917ff3f0abe7b0ba8110c8b919462032084cdcf7d5d5b830e34';
+export const CRIME_MINIGAME_SOURCE_SHA256 = 'a6684e6da7f2b47a0b0bc0344e2ef0b34d799490ae0a73fd388ee02f939c70e5';
