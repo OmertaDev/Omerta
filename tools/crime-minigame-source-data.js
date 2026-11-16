@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const CRIME_MINIGAME_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_CRIME_MINIGAME_SOURCE_COMPARISON_ONLY",
-  "revision": "95196e4d50e0769355d57574e6ec3ab0d6126950",
-  "tree": "ce634794f406666c309b05f31f85ed488e39140c",
+  "revision": "22f69e4dc93f490de58a1cca8177fd86534b9d81",
+  "tree": "1e0cac0671e12466cf8a2861eb8ce10de6834740",
   "predecessor": "8672b0147daced1d957ef772c9bb3fc07b327f81",
   "predecessorTree": "f0eabc99bc07a4a65d6bb2c527cdd84e102f5398",
   "files": {
@@ -2889,9 +2889,9 @@ export const CRIME_MINIGAME_SOURCE = freeze({
     "test/ux-tactics-browser.js": {
       "current": {
         "mode": "100644",
-        "blob": "9ee062e646dcb36ca5184c1383dc8631e0416e13",
-        "bytes": 12791,
-        "sha256": "0c19f6fd79c7a7073b7d40ba926f37ffe40b10fa0faf1930c52a44e933c99f6e"
+        "blob": "cbf1456286287e28ddda01d6c2c3c0ff10b78a38",
+        "bytes": 13295,
+        "sha256": "842c02f9e2f4e4290d93f4a484622cbca0b1a1bbd948cad7dde4adeb9ad5e648"
       },
       "baseline": {
         "mode": "100644",
@@ -2906,7 +2906,17 @@ export const CRIME_MINIGAME_SOURCE = freeze({
           "baseline": ""
         },
         {
-          "at": 10150,
+          "at": 9317,
+          "current": "    const view = await api('GET', '/v1/me', token);\n    assert.equal(view.code, 200);\n    const maxNerve = (view.body.character || view.body).maxNerve;\n    assert(Number.isFinite(maxNerve) && maxNerve >= nerve, 'The fixture uses its authoritative nerve cap.');\n    // Passive accrual stays capped while the required minigame is played.\n    await pool.query('UPDATE characters SET nerve=$2,last_accrued_at=$3,street_action_at=NULL WHERE id=$1',\n      [row.id, maxNerve, new Date()]);\n",
+          "baseline": "    await pool.query('UPDATE characters SET street_action_at=NULL WHERE id=$1', [row.id]);\n"
+        },
+        {
+          "at": 10190,
+          "current": "    assert.equal(Number(beforeCharacter.nerve), maxNerve, 'Each outcome starts from a full valid nerve pool.');\n",
+          "baseline": ""
+        },
+        {
+          "at": 10654,
           "current": "      await solveCrimeMinigame(page);\n",
           "baseline": ""
         }
@@ -3414,4 +3424,4 @@ export const CRIME_MINIGAME_SOURCE = freeze({
     }
   }
 });
-export const CRIME_MINIGAME_SOURCE_SHA256 = 'a6684e6da7f2b47a0b0bc0344e2ef0b34d799490ae0a73fd388ee02f939c70e5';
+export const CRIME_MINIGAME_SOURCE_SHA256 = '6460ddb890fc8f420fa9edb4251f854ca2d116dbbfffe8026661fef68dd22e49';
