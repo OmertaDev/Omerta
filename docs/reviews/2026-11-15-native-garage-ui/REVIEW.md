@@ -6,6 +6,12 @@ native garage/foundry interface, RPC facade and related presentation guards onto
 The original dirty workspace and its unrelated work are preserved. The preceding scoped methods,
 authority traces and findings are retained in [LOCAL-REVIEW.md](LOCAL-REVIEW.md).
 
+The 19 interface source pins and execution logs record that validation point in time.
+Subsequent comparison-only admission adapters and exact CI/proof bytes are pinned by
+[native-garage-source-data.js](../../../tools/native-garage-source-data.js) and its source controls;
+they transfer no runtime or native results. Fresh hosted native PostgreSQL checks are
+required at the final PR head.
+
 The canonical character view explicitly returns `onchainCrafting: false`. This release does not
 install a character migration bridge or change any schema, contract, token role, economic balance
 or source character. Its future onchain-mode presentation is exercised through controlled browser

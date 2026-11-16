@@ -6,7 +6,7 @@ import { QUESTING_ENTERPRISE_NATIVE_INPUTS as declaration } from '../tools/enter
 import {
   nativeGarageEnterprisePredecessor, assertNativeGarageEnterpriseClosure,
   nativeGarageEnterpriseScope, nativeGarageEnterpriseHistoricalInput,
-  NATIVE_GARAGE_SOURCE_METADATA,
+  NATIVE_GARAGE_SOURCE_METADATA, nativeGarageEnterpriseBinary,
 } from '../tools/native-garage-enterprise-source.js';
 
 const sha = bytes => createHash('sha256').update(bytes).digest('hex');
@@ -50,4 +50,9 @@ const scope = nativeGarageEnterpriseScope();
 assert.equal(new Set(scope).size, scope.length);
 assert(scope.includes(NATIVE_GARAGE_SOURCE_METADATA));
 assert(scope.includes('public/nativegarage.css') && scope.includes('test/nativegarage-browser.js'));
-console.log(`Native garage actual enterprise source: ${checks + 12} assertions, retained predecessor pins and unknown-source refusals`);
+for (const file of ['desktop.png', 'mobile.png', 'security-xss.png'])
+  assert.equal(nativeGarageEnterpriseBinary('docs/reviews/2026-11-15-native-garage-ui/evidence/' + file), true);
+assert.equal(nativeGarageEnterpriseBinary('src/nativegarage.js'), false);
+assert.equal(nativeGarageEnterpriseBinary('historical-image.png', true), true);
+assert.equal(nativeGarageEnterpriseBinary('unreviewed.png'), false);
+console.log(`Native garage actual enterprise source: ${checks + 18} assertions, retained predecessor pins and unknown-source refusals`);

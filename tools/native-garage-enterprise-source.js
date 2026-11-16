@@ -7,6 +7,9 @@ import {
 } from './native-garage-source-transfer.js';
 
 export const NATIVE_GARAGE_SOURCE_METADATA = 'tools/native-garage-source-data.js';
+export function nativeGarageEnterpriseBinary(file, baselineBinary = false) {
+  return baselineBinary || NATIVE_GARAGE_SOURCE.additions?.[file]?.text === false;
+}
 const sha = bytes => createHash('sha256').update(bytes).digest('hex');
 const blob = bytes => createHash('sha1').update(`blob ${bytes.length}\0`).update(bytes).digest('hex');
 
