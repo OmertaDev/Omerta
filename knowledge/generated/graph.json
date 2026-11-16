@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "ac426a9a1b338cf7c63bb7b41beac7f25842194d",
+  "sourceRevision": "decfd9eb84d31ed0f1e4c188cf2da43de278966d",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 19401,
-    "edges": 77137,
+    "nodes": 19405,
+    "edges": 77148,
     "byNodeType": {
       "Artifact": 7914,
       "Command": 326,
-      "Commit": 5911,
+      "Commit": 5915,
       "Contract": 156,
       "Document": 978,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 6133,
-      "CHANGED": 30208,
+      "CHANGED": 30215,
       "CONTAINS": 7935,
       "DECLARES": 326,
       "DEFINED_IN": 1823,
       "DEPENDS_ON": 69,
       "EXECUTES": 1284,
       "HANDLED_BY": 956,
-      "HAS_COMMIT": 5911,
+      "HAS_COMMIT": 5915,
       "IMPLEMENTS": 124,
       "IMPORTS": 9494,
       "INHERITS": 47,
@@ -173761,20 +173761,20 @@
       "path": "tools/crime-minigame-source-data.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 122421,
-      "lines": 2064,
-      "version": "2142323f0de2e241",
+      "bytes": 123124,
+      "lines": 2085,
+      "version": "cd770bb42074d647",
       "text": true,
       "provenance": [
         {
           "file": "tools/crime-minigame-source-data.js",
           "line": 1,
-          "version": "2142323f0de2e241"
+          "version": "cd770bb42074d647"
         }
       ],
-      "lastChangedAt": "2026-11-16T08:51:47.000Z",
+      "lastChangedAt": "2026-11-16T10:32:21.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "722d9afea815c02c8f666a65e08b0ccdea48fd6a"
+      "lastChangedCommit": "a63ad7bfd2f6b04feec4db6e8d903df295b2b5b0"
     },
     {
       "key": "Artifact:tools/current-economic-terms-source-data.js",
@@ -174726,18 +174726,18 @@
       "extension": ".js",
       "bytes": 501335,
       "lines": 13356,
-      "version": "3a3066ffb9b34c40",
+      "version": "033d535322fc1a16",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-questing-inputs.js",
           "line": 1,
-          "version": "3a3066ffb9b34c40"
+          "version": "033d535322fc1a16"
         }
       ],
-      "lastChangedAt": "2026-11-16T08:52:11.000Z",
+      "lastChangedAt": "2026-11-16T10:32:40.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "ac426a9a1b338cf7c63bb7b41beac7f25842194d"
+      "lastChangedCommit": "decfd9eb84d31ed0f1e4c188cf2da43de278966d"
     },
     {
       "key": "Artifact:tools/enterprise-native-questing-seal.js",
@@ -179467,20 +179467,20 @@
       "path": "tools/rc1-postgres-client.sh",
       "kind": "engineering-harness",
       "extension": ".sh",
-      "bytes": 1375,
-      "lines": 28,
-      "version": "b7ece65c49a874bd",
+      "bytes": 1467,
+      "lines": 29,
+      "version": "fa562d1f99324f47",
       "text": true,
       "provenance": [
         {
           "file": "tools/rc1-postgres-client.sh",
           "line": 1,
-          "version": "b7ece65c49a874bd"
+          "version": "fa562d1f99324f47"
         }
       ],
-      "lastChangedAt": "2026-09-21T04:43:35.000Z",
+      "lastChangedAt": "2026-11-16T10:31:54.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "f674cb7c429727fea70058bb263618318563b0eb"
+      "lastChangedCommit": "126f315f27cde534ca11d192084f9616aedc2245"
     },
     {
       "key": "Artifact:tools/rc1-pressure-world-adapter.js",
@@ -192949,6 +192949,22 @@
         {
           "commit": "126e410b6dd957cda0e4ce5980139bc1b6c1c832",
           "url": "https://github.com/OmertaDev/Omerta/commit/126e410b6dd957cda0e4ce5980139bc1b6c1c832"
+        }
+      ]
+    },
+    {
+      "key": "Commit:126f315f27cde534ca11d192084f9616aedc2245",
+      "type": "Commit",
+      "id": "126f315f27cde534ca11d192084f9616aedc2245",
+      "label": "Retry transient PostgreSQL signing-key downloads",
+      "title": "Retry transient PostgreSQL signing-key downloads",
+      "date": "2026-11-16T10:31:54.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/126f315f27cde534ca11d192084f9616aedc2245",
+      "provenance": [
+        {
+          "commit": "126f315f27cde534ca11d192084f9616aedc2245",
+          "url": "https://github.com/OmertaDev/Omerta/commit/126f315f27cde534ca11d192084f9616aedc2245"
         }
       ]
     },
@@ -218101,6 +218117,22 @@
         {
           "commit": "55fbb2b6d3f8d5b1e8ce131b63f8fd6b63d0eae4",
           "url": "https://github.com/OmertaDev/Omerta/commit/55fbb2b6d3f8d5b1e8ce131b63f8fd6b63d0eae4"
+        }
+      ]
+    },
+    {
+      "key": "Commit:55ff089ed81ef00199c4eda7d582372d9a2b1869",
+      "type": "Commit",
+      "id": "55ff089ed81ef00199c4eda7d582372d9a2b1869",
+      "label": "Refresh knowledge for the stable playthrough release",
+      "title": "Refresh knowledge for the stable playthrough release",
+      "date": "2026-11-16T08:56:47.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/55ff089ed81ef00199c4eda7d582372d9a2b1869",
+      "provenance": [
+        {
+          "commit": "55ff089ed81ef00199c4eda7d582372d9a2b1869",
+          "url": "https://github.com/OmertaDev/Omerta/commit/55ff089ed81ef00199c4eda7d582372d9a2b1869"
         }
       ]
     },
@@ -248617,6 +248649,22 @@
       ]
     },
     {
+      "key": "Commit:a63ad7bfd2f6b04feec4db6e8d903df295b2b5b0",
+      "type": "Commit",
+      "id": "a63ad7bfd2f6b04feec4db6e8d903df295b2b5b0",
+      "label": "Seal the PostgreSQL setup retry candidate",
+      "title": "Seal the PostgreSQL setup retry candidate",
+      "date": "2026-11-16T10:32:21.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a63ad7bfd2f6b04feec4db6e8d903df295b2b5b0",
+      "provenance": [
+        {
+          "commit": "a63ad7bfd2f6b04feec4db6e8d903df295b2b5b0",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a63ad7bfd2f6b04feec4db6e8d903df295b2b5b0"
+        }
+      ]
+    },
+    {
       "key": "Commit:a64d87737fc4b170f1cd60e3e89682d2574ce0e2",
       "type": "Commit",
       "id": "a64d87737fc4b170f1cd60e3e89682d2574ce0e2",
@@ -268501,6 +268549,22 @@
         {
           "commit": "dec6e919081a4e15bdc5a25178cbc93ac333de1b",
           "url": "https://github.com/OmertaDev/Omerta/commit/dec6e919081a4e15bdc5a25178cbc93ac333de1b"
+        }
+      ]
+    },
+    {
+      "key": "Commit:decfd9eb84d31ed0f1e4c188cf2da43de278966d",
+      "type": "Commit",
+      "id": "decfd9eb84d31ed0f1e4c188cf2da43de278966d",
+      "label": "Pin native inputs for PostgreSQL setup retries",
+      "title": "Pin native inputs for PostgreSQL setup retries",
+      "date": "2026-11-16T10:32:40.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/decfd9eb84d31ed0f1e4c188cf2da43de278966d",
+      "provenance": [
+        {
+          "commit": "decfd9eb84d31ed0f1e4c188cf2da43de278966d",
+          "url": "https://github.com/OmertaDev/Omerta/commit/decfd9eb84d31ed0f1e4c188cf2da43de278966d"
         }
       ]
     },
@@ -310220,6 +310284,9 @@
           "commit": "55af0548f88f9efeb4237b256576a5a5811ff528"
         },
         {
+          "commit": "55ff089ed81ef00199c4eda7d582372d9a2b1869"
+        },
+        {
           "commit": "56206d1a470459f7fbb94f61d617929475076aff"
         },
         {
@@ -313199,6 +313266,9 @@
           "commit": "55af0548f88f9efeb4237b256576a5a5811ff528"
         },
         {
+          "commit": "55ff089ed81ef00199c4eda7d582372d9a2b1869"
+        },
+        {
           "commit": "56206d1a470459f7fbb94f61d617929475076aff"
         },
         {
@@ -316176,6 +316246,9 @@
         },
         {
           "commit": "55af0548f88f9efeb4237b256576a5a5811ff528"
+        },
+        {
+          "commit": "55ff089ed81ef00199c4eda7d582372d9a2b1869"
         },
         {
           "commit": "56206d1a470459f7fbb94f61d617929475076aff"
@@ -319944,6 +320017,9 @@
         },
         {
           "commit": "55af0548f88f9efeb4237b256576a5a5811ff528"
+        },
+        {
+          "commit": "55ff089ed81ef00199c4eda7d582372d9a2b1869"
         },
         {
           "commit": "56206d1a470459f7fbb94f61d617929475076aff"
@@ -337247,7 +337323,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "ac426a9a1b338cf7c63bb7b41beac7f25842194d",
+      "revision": "decfd9eb84d31ed0f1e4c188cf2da43de278966d",
       "currentBranch": "codex/mandatory-crime-minigame-20261115",
       "defaultBranch": "main",
       "visibility": "public",
@@ -459188,6 +459264,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:126f315f27cde534ca11d192084f9616aedc2245",
+      "to": "Artifact:tools/rc1-postgres-client.sh",
+      "provenance": {
+        "commit": "126f315f27cde534ca11d192084f9616aedc2245"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:127190299aec0ef3cba7153a04313d89245bb808",
       "to": "Artifact:docs/release/readiness-work/harness-failure-reducer-artifact-index.json",
       "provenance": {
@@ -520272,6 +520356,38 @@
       "to": "Artifact:test/migrate.js",
       "provenance": {
         "commit": "55fbb2b6d3f8d5b1e8ce131b63f8fd6b63d0eae4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:55ff089ed81ef00199c4eda7d582372d9a2b1869",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "55ff089ed81ef00199c4eda7d582372d9a2b1869"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:55ff089ed81ef00199c4eda7d582372d9a2b1869",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "55ff089ed81ef00199c4eda7d582372d9a2b1869"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:55ff089ed81ef00199c4eda7d582372d9a2b1869",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "55ff089ed81ef00199c4eda7d582372d9a2b1869"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:55ff089ed81ef00199c4eda7d582372d9a2b1869",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "55ff089ed81ef00199c4eda7d582372d9a2b1869"
       }
     },
     {
@@ -591548,6 +591664,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:a63ad7bfd2f6b04feec4db6e8d903df295b2b5b0",
+      "to": "Artifact:tools/crime-minigame-source-data.js",
+      "provenance": {
+        "commit": "a63ad7bfd2f6b04feec4db6e8d903df295b2b5b0"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:a65e78f184d28727cf59fcc927ed587517facb9e",
       "to": "Artifact:src/rules.js",
       "provenance": {
@@ -653272,6 +653396,14 @@
       "to": "Artifact:test/coordination-knowledge.js",
       "provenance": {
         "commit": "dec6e919081a4e15bdc5a25178cbc93ac333de1b"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:decfd9eb84d31ed0f1e4c188cf2da43de278966d",
+      "to": "Artifact:tools/enterprise-native-questing-inputs.js",
+      "provenance": {
+        "commit": "decfd9eb84d31ed0f1e4c188cf2da43de278966d"
       }
     },
     {
@@ -804207,6 +804339,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:126f315f27cde534ca11d192084f9616aedc2245",
+      "provenance": {
+        "commit": "126f315f27cde534ca11d192084f9616aedc2245"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:127190299aec0ef3cba7153a04313d89245bb808",
       "provenance": {
         "commit": "127190299aec0ef3cba7153a04313d89245bb808"
@@ -816778,6 +816918,14 @@
       "to": "Commit:55fbb2b6d3f8d5b1e8ce131b63f8fd6b63d0eae4",
       "provenance": {
         "commit": "55fbb2b6d3f8d5b1e8ce131b63f8fd6b63d0eae4"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:55ff089ed81ef00199c4eda7d582372d9a2b1869",
+      "provenance": {
+        "commit": "55ff089ed81ef00199c4eda7d582372d9a2b1869"
       }
     },
     {
@@ -832039,6 +832187,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:a63ad7bfd2f6b04feec4db6e8d903df295b2b5b0",
+      "provenance": {
+        "commit": "a63ad7bfd2f6b04feec4db6e8d903df295b2b5b0"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:a64d87737fc4b170f1cd60e3e89682d2574ce0e2",
       "provenance": {
         "commit": "a64d87737fc4b170f1cd60e3e89682d2574ce0e2"
@@ -841978,6 +842134,14 @@
       "to": "Commit:dec6e919081a4e15bdc5a25178cbc93ac333de1b",
       "provenance": {
         "commit": "dec6e919081a4e15bdc5a25178cbc93ac333de1b"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:decfd9eb84d31ed0f1e4c188cf2da43de278966d",
+      "provenance": {
+        "commit": "decfd9eb84d31ed0f1e4c188cf2da43de278966d"
       }
     },
     {
@@ -922800,7 +922964,7 @@
       "to": "Artifact:tools/crime-minigame-client.js",
       "provenance": {
         "file": "tools/crime-minigame-source-data.js",
-        "line": 1958
+        "line": 1979
       }
     },
     {
@@ -922809,7 +922973,7 @@
       "to": "Artifact:tools/crime-minigame-client.js",
       "provenance": {
         "file": "tools/crime-minigame-source-data.js",
-        "line": 1989
+        "line": 2010
       }
     },
     {
