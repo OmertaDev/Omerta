@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "82abadca663af37bd8631b7236a8594b283880cb",
+  "sourceRevision": "7d1f6f423532aec2dc617c10954ab8521a7f174f",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 19379,
-    "edges": 77064,
+    "nodes": 19381,
+    "edges": 77071,
     "byNodeType": {
       "Artifact": 7914,
       "Command": 326,
-      "Commit": 5889,
+      "Commit": 5891,
       "Contract": 156,
       "Document": 978,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 6133,
-      "CHANGED": 30160,
+      "CHANGED": 30165,
       "CONTAINS": 7935,
       "DECLARES": 326,
       "DEFINED_IN": 1823,
       "DEPENDS_ON": 69,
       "EXECUTES": 1284,
       "HANDLED_BY": 956,
-      "HAS_COMMIT": 5889,
+      "HAS_COMMIT": 5891,
       "IMPLEMENTS": 124,
       "IMPORTS": 9491,
       "INHERITS": 47,
@@ -174724,20 +174724,20 @@
       "path": "tools/enterprise-native-questing-inputs.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 499000,
-      "lines": 13293,
-      "version": "f9cbe8a5f7af065c",
+      "bytes": 501335,
+      "lines": 13356,
+      "version": "b96b1f34334677aa",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-questing-inputs.js",
           "line": 1,
-          "version": "f9cbe8a5f7af065c"
+          "version": "b96b1f34334677aa"
         }
       ],
-      "lastChangedAt": "2026-11-15T19:03:13.000Z",
+      "lastChangedAt": "2026-11-16T00:18:56.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "47c6ac8717c11170e3421f600aca2d98588df892"
+      "lastChangedCommit": "7d1f6f423532aec2dc617c10954ab8521a7f174f"
     },
     {
       "key": "Artifact:tools/enterprise-native-questing-seal.js",
@@ -230857,6 +230857,22 @@
       ]
     },
     {
+      "key": "Commit:77b2cf83d07786f3fac5b300df7c648301393878",
+      "type": "Commit",
+      "id": "77b2cf83d07786f3fac5b300df7c648301393878",
+      "label": "chore(knowledge): refresh verified mandatory crime release",
+      "title": "chore(knowledge): refresh verified mandatory crime release",
+      "date": "2026-11-16T00:12:10.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/77b2cf83d07786f3fac5b300df7c648301393878",
+      "provenance": [
+        {
+          "commit": "77b2cf83d07786f3fac5b300df7c648301393878",
+          "url": "https://github.com/OmertaDev/Omerta/commit/77b2cf83d07786f3fac5b300df7c648301393878"
+        }
+      ]
+    },
+    {
       "key": "Commit:77b40fc664a75d7f502beb871788a8d371f6f021",
       "type": "Commit",
       "id": "77b40fc664a75d7f502beb871788a8d371f6f021",
@@ -232917,6 +232933,22 @@
         {
           "commit": "7d1de997963893e552c3ddfe8a780a2c7fbad7dd",
           "url": "https://github.com/OmertaDev/Omerta/commit/7d1de997963893e552c3ddfe8a780a2c7fbad7dd"
+        }
+      ]
+    },
+    {
+      "key": "Commit:7d1f6f423532aec2dc617c10954ab8521a7f174f",
+      "type": "Commit",
+      "id": "7d1f6f423532aec2dc617c10954ab8521a7f174f",
+      "label": "Refresh actual native import closure for required crime gameplay",
+      "title": "Refresh actual native import closure for required crime gameplay",
+      "date": "2026-11-16T00:18:56.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/7d1f6f423532aec2dc617c10954ab8521a7f174f",
+      "provenance": [
+        {
+          "commit": "7d1f6f423532aec2dc617c10954ab8521a7f174f",
+          "url": "https://github.com/OmertaDev/Omerta/commit/7d1f6f423532aec2dc617c10954ab8521a7f174f"
         }
       ]
     },
@@ -310270,6 +310302,9 @@
           "commit": "772a7b495bc337a1892ad45e9466f6499aa5bc5b"
         },
         {
+          "commit": "77b2cf83d07786f3fac5b300df7c648301393878"
+        },
+        {
           "commit": "783c934d03291be250a58cf785f48b838a94615b"
         },
         {
@@ -313231,6 +313266,9 @@
           "commit": "772a7b495bc337a1892ad45e9466f6499aa5bc5b"
         },
         {
+          "commit": "77b2cf83d07786f3fac5b300df7c648301393878"
+        },
+        {
           "commit": "783c934d03291be250a58cf785f48b838a94615b"
         },
         {
@@ -316190,6 +316228,9 @@
         },
         {
           "commit": "772a7b495bc337a1892ad45e9466f6499aa5bc5b"
+        },
+        {
+          "commit": "77b2cf83d07786f3fac5b300df7c648301393878"
         },
         {
           "commit": "783c934d03291be250a58cf785f48b838a94615b"
@@ -319940,6 +319981,9 @@
         },
         {
           "commit": "772a7b495bc337a1892ad45e9466f6499aa5bc5b"
+        },
+        {
+          "commit": "77b2cf83d07786f3fac5b300df7c648301393878"
         },
         {
           "commit": "783c934d03291be250a58cf785f48b838a94615b"
@@ -336823,7 +336867,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "82abadca663af37bd8631b7236a8594b283880cb",
+      "revision": "7d1f6f423532aec2dc617c10954ab8521a7f174f",
       "currentBranch": "codex/mandatory-crime-minigame-20261115",
       "defaultBranch": "main",
       "visibility": "public",
@@ -550732,6 +550776,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:77b2cf83d07786f3fac5b300df7c648301393878",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "77b2cf83d07786f3fac5b300df7c648301393878"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:77b2cf83d07786f3fac5b300df7c648301393878",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "77b2cf83d07786f3fac5b300df7c648301393878"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:77b2cf83d07786f3fac5b300df7c648301393878",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "77b2cf83d07786f3fac5b300df7c648301393878"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:77b2cf83d07786f3fac5b300df7c648301393878",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "77b2cf83d07786f3fac5b300df7c648301393878"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:77b40fc664a75d7f502beb871788a8d371f6f021",
       "to": "Artifact:test/rc1-family-world-adapter.js",
       "provenance": {
@@ -554928,6 +555004,14 @@
       "to": "Artifact:tools/playthrough.js",
       "provenance": {
         "commit": "7d1de997963893e552c3ddfe8a780a2c7fbad7dd"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:7d1f6f423532aec2dc617c10954ab8521a7f174f",
+      "to": "Artifact:tools/enterprise-native-questing-inputs.js",
+      "provenance": {
+        "commit": "7d1f6f423532aec2dc617c10954ab8521a7f174f"
       }
     },
     {
@@ -822351,6 +822435,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:77b2cf83d07786f3fac5b300df7c648301393878",
+      "provenance": {
+        "commit": "77b2cf83d07786f3fac5b300df7c648301393878"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:77b40fc664a75d7f502beb871788a8d371f6f021",
       "provenance": {
         "commit": "77b40fc664a75d7f502beb871788a8d371f6f021"
@@ -823378,6 +823470,14 @@
       "to": "Commit:7d1de997963893e552c3ddfe8a780a2c7fbad7dd",
       "provenance": {
         "commit": "7d1de997963893e552c3ddfe8a780a2c7fbad7dd"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:7d1f6f423532aec2dc617c10954ab8521a7f174f",
+      "provenance": {
+        "commit": "7d1f6f423532aec2dc617c10954ab8521a7f174f"
       }
     },
     {
