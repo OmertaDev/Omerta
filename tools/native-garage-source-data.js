@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const NATIVE_GARAGE_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_NATIVE_GARAGE_SOURCE_COMPARISON_ONLY",
-  "revision": "81781129e3c6846308f0c3be0a046cb7ead77005",
-  "tree": "0bb669c234a2d22d92bfca0ea7508aa06955f179",
+  "revision": "6353509cfe3483222dfcb31655ec64cb8709445e",
+  "tree": "eb9df78db4f6e48e792fbc8ec56decdb44f45759",
   "predecessor": "9cf7ced8beedd0950018a14bbab71b08b71a3d5b",
   "predecessorTree": "9477c277cca6b47b3a3ce20901e85a451243642f",
   "files": {
@@ -31,6 +31,27 @@ export const NATIVE_GARAGE_SOURCE = freeze({
           "at": 11801,
           "current": "      - name: install chromium for the client harness\n        run: npx playwright-core install --with-deps chromium\n\n      - name: Native garage wallet flow and confirmed projections in the browser\n        run: node test/nativegarage-browser.js\n\n      - name: Invite gate and Crew invitation controls in the browser\n        run: npm run test:invites:browser\n\n",
           "baseline": "      - name: install chromium for the client harness\n        run: npx playwright-core install --with-deps chromium\n\n      - name: Invite gate and Crew invitation controls in the browser\n        run: npm run test:invites:browser\n\n"
+        }
+      ]
+    },
+    "SPEC.md": {
+      "current": {
+        "mode": "100644",
+        "blob": "86184c3ba45961335860cb48f1d72af4eb700104",
+        "sha256": "dcef3785fc2c66ab127f45e049d28dda655ed5c91932c6bf4a326fa3c1f37a63",
+        "bytes": 57473
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "8fcbab71090af1e1f63f16ad4e281483feb1d9a4",
+        "sha256": "64ba76682f7338d063fb31e860e0ac3da17ce60408098e21465ed89654cac979",
+        "bytes": 57415
+      },
+      "inverses": [
+        {
+          "at": 318,
+          "current": "\nCounts were measured for the combined release source on 2026-11-07, before generated release records; they do not identify a deployed revision.\n\nFile counts include the combined playtest fixes, quest-quality additions and task puzzles. Backend, test and markdown inventory rows were refreshed on 2026-11-15 for the closed native garage interface and exact source-comparison proofs; other rows retain their earlier dated snapshots.\n\n| | |\n|---|---|\n| Backend modules | **623** files, **142959** lines (recursive source inventory) |\n| Test suites | **1053** files, **221128** lines (recursive source inventory; this row refreshed 2026-11-15) |\n| HTTP routes | **1401** registrations (**1401** unique; 1277 under `/v1`) |\n| Database tables | **586** (`schema.sql`, 9848 lines) |\n| Client | **14683** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n| Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |\n| Smart contracts | **41** top-level Solidity files, **11590** lines, **1125** declared top-level Foundry test functions; the release gate re-measures the passing suite |\n| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |\n| Design + audit docs | **993** markdown files, **158914** lines — dated security evidence is indexed in `docs/AUDITS.md` |\n| Ledger invariants | **133** checks — **127** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |\n\nRoughly **369,000 lines** of backend code, tests, schema and top-level contracts.\n",
+          "baseline": "\nCounts were measured for the combined release source on 2026-11-07, before generated release records; they do not identify a deployed revision.\n\nFile counts include the combined playtest fixes, quest-quality additions and task puzzles as of 2026-11-10. Backend, test and schema line totals were refreshed for task puzzles; other line totals retain the 2026-11-07 snapshot.\n\n| | |\n|---|---|\n| Backend modules | **622** files, **142384** lines (recursive source inventory) |\n| Test suites | **1048** files, **220052** lines (recursive source inventory; this row refreshed 2026-11-15) |\n| HTTP routes | **1401** registrations (**1401** unique; 1277 under `/v1`) |\n| Database tables | **586** (`schema.sql`, 9848 lines) |\n| Client | **14683** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |\n| Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |\n| Smart contracts | **41** top-level Solidity files, **11590** lines, **1125** declared top-level Foundry test functions; the release gate re-measures the passing suite |\n| Harnesses | `tools/sim.js` (economy), `tools/playthrough.js` (player experience), `tools/pgcheck.js` (real Postgres), `tools/loadtest.js` (concurrency), `tools/chaos.js` (interruption), `tools/mobile.js` (the screens, at phone size), `tools/scale.js` (market liquidity at population scale), `tools/keeper-dials.js` (sizing the stock keeper's price-continuity wall), `tools/pgquery.js` (every SQL string parses on real Postgres), `tools/concurrency.js` (lost-update correctness on real Postgres), `tools/arena.js` (a population of EV-optimizing strategies against the live economy), `tools/arena-sweep.js` (N runs × `--reps` replicates per arena arm, read as a distribution — disjoint ranges only) |\n| Design + audit docs | **991** markdown files, **158775** lines — dated security evidence is indexed in `docs/AUDITS.md` |\n| Ledger invariants | **133** checks — **127** named escrow/identity/custody/definition-registry checks + **6** per-currency conservation, **drift-0** |\n\nRoughly **369,000 lines** of backend code, tests, schema and top-level contracts.\n"
         }
       ]
     },
@@ -1218,11 +1239,11 @@ export const NATIVE_GARAGE_SOURCE = freeze({
     },
     "tools/native-garage-source-transfer.js": {
       "mode": "100644",
-      "blob": "e4abba7069afdecab4de966fa68ce646990de533",
-      "sha256": "c5815534583faf30315197293302f1f195b7935eadaada5d0191488c0ba0c3dc",
-      "bytes": 13393,
+      "blob": "b68856bf9a9efb21732ea106e5913f2ada3ee818",
+      "sha256": "4507880a49488f5db43de6d0a9be359fc7e12fdc6a70653adb48536d09ff7ef8",
+      "bytes": 13406,
       "text": true
     }
   }
 });
-export const NATIVE_GARAGE_SOURCE_SHA256 = '8b4ff4c497b951b56abcfb774e405c6af19cd1de180c82633d823f7ec3d8ee00';
+export const NATIVE_GARAGE_SOURCE_SHA256 = 'b6a83415dc032d5df6e1988d5f8d8c605a66c66a3c86e12c8665ed547a97d19a';
