@@ -71,6 +71,8 @@ jobs:
 
       - name: Native garage RPC facade and wallet transaction controller
         run: |
+          node test/native-garage-source-transfer.js
+          node test/native-garage-enterprise-source.js
           node test/nativegarage.js
           node test/nativegarage-client.js
 
