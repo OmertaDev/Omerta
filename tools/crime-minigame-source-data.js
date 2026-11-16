@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const CRIME_MINIGAME_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_CRIME_MINIGAME_SOURCE_COMPARISON_ONLY",
-  "revision": "e09695cacf7acea3e2e527c0d8c7ef975c455f65",
-  "tree": "bec0ff7ca90ab924fbc04100dc2b05f31c7e5f31",
+  "revision": "a03b46f5b7363837a0f61394b7d0bff48641bf17",
+  "tree": "d54fac2d9d0143385e6e98708eeb88f27c854ed9",
   "predecessor": "8672b0147daced1d957ef772c9bb3fc07b327f81",
   "predecessorTree": "f0eabc99bc07a4a65d6bb2c527cdd84e102f5398",
   "files": {
@@ -2441,6 +2441,42 @@ export const CRIME_MINIGAME_SOURCE = freeze({
         }
       ]
     },
+    "test/nativegarage-browser.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "b1a5480e084b9c93fb10bfcec5fcc0a9dd2cb5ae",
+        "bytes": 21945,
+        "sha256": "4daa7dee8d4a5ade0cefa526d0917849d5a6f1ae3595aabca93c5f0a42e20788"
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "66b07e5090e99167096f676cfa06d27000e1eabe",
+        "bytes": 21857,
+        "sha256": "bf8e5903fa71810c344b843e0ee5578bab0adafccd78a571f7cf0379fb584b7b"
+      },
+      "inverses": [
+        {
+          "at": 10564,
+          "current": "  const submittedStored = page => page.waitForFunction(expectedHash => Object.keys(sessionStorage).some(key => {\n    if (!key.startsWith('omerta:native-garage:v1:')) return false;\n    try { const record = JSON.parse(sessionStorage.getItem(key)); return record.stage === 'submitted' && record.hash === expectedHash; }\n    catch { return false; }\n  }), hash);\n",
+          "baseline": ""
+        },
+        {
+          "at": 16790,
+          "current": "  await submittedStored(salvage.page);\n",
+          "baseline": "  await salvage.page.waitForFunction(() => Object.keys(sessionStorage).some(key => key.startsWith('omerta:native-garage:v1:')));\n"
+        },
+        {
+          "at": 18298,
+          "current": "  await submittedStored(approval.page);\n",
+          "baseline": "  await approval.page.waitForFunction(() => Object.keys(sessionStorage).some(key => key.startsWith('omerta:native-garage:v1:')));\n"
+        },
+        {
+          "at": 19015,
+          "current": "  await submittedStored(recovery.page);\n",
+          "baseline": "  await recovery.page.waitForFunction(() => Object.keys(sessionStorage).some(key => key.startsWith('omerta:native-garage:v1:')));\n"
+        }
+      ]
+    },
     "test/noir-shell-browser.js": {
       "current": {
         "mode": "100644",
@@ -2766,9 +2802,9 @@ export const CRIME_MINIGAME_SOURCE = freeze({
     "test/ux-shell-browser.js": {
       "current": {
         "mode": "100644",
-        "blob": "ef1d7a8b6125914fb09087252c43ccf787227316",
-        "bytes": 20459,
-        "sha256": "4e1c70bbb574446a987c65ae917a5fa508ce19a5f75e98d86c3742877d86344a"
+        "blob": "81e3d4980ebd23c121090f250b3e2effb82b64ea",
+        "bytes": 21428,
+        "sha256": "b25b37b511920cc737fabf37a3ab92ad1fe9a134451e7dcbeec03e001633ecd4"
       },
       "baseline": {
         "mode": "100644",
@@ -2783,9 +2819,44 @@ export const CRIME_MINIGAME_SOURCE = freeze({
           "baseline": ""
         },
         {
-          "at": 19280,
-          "current": "  await solveCrimeMinigame(page);\n",
-          "baseline": ""
+          "at": 4260,
+          "current": "        return { text: button.textContent, approach: JSON.parse(button.dataset.body).approach, ...rect,\n",
+          "baseline": "        return { text: button.textContent, ...rect,\n"
+        },
+        {
+          "at": 4607,
+          "current": "  assert.equal(geometry.buttons.length, 3, `${label}: all three crime approaches remain available`);\n  assert.deepEqual(new Set(geometry.buttons.map(button => button.approach)), new Set(['quiet', 'standard', 'loud']),\n    `${label}: each crime approach has one reachable control`);\n",
+          "baseline": "  assert.equal(geometry.buttons.length, 4, `${label}: all three approaches and optional preparation remain available`);\n"
+        },
+        {
+          "at": 16023,
+          "current": "      await page.locator('#ux-action-pocket [data-do^=\"POST /v1/crimes/\"][data-body*=standard]:enabled').waitFor();\n",
+          "baseline": "      await page.locator('#ux-action-pocket [data-task-crime]').waitFor();\n"
+        },
+        {
+          "at": 17047,
+          "current": "      const action = page.locator('#ux-action-pocket [data-do^=\"POST /v1/crimes/\"][data-body*=standard]:enabled');\n      await action.focus();\n      assert.equal(await action.evaluate(element => element === document.activeElement), true, `${label}: keyboard focus reaches the crime`);\n",
+          "baseline": "      const prepare = page.locator('#ux-action-pocket [data-task-crime]');\n      await prepare.focus();\n      assert.equal(await prepare.evaluate(element => element === document.activeElement), true, `${label}: keyboard focus reaches preparation`);\n"
+        },
+        {
+          "at": 17374,
+          "current": "      const minigame = page.getByRole('dialog', { name: 'Crack the lock' });\n      await minigame.getByRole('button', { name: 'Enter sequence' }).waitFor();\n      assert.equal(await minigame.getByText('REQUIRED · STREET JOB', { exact: true }).isVisible(), true,\n        `${label}: the crime opens its required minigame`);\n      assert.equal(await minigame.locator('[data-crime-pad]').count(), 4, `${label}: all four lock pins are available`);\n      assert.equal(crimeRequests.length, 0, 'A crime cannot submit before the required minigame ends');\n",
+          "baseline": "      const puzzle = page.getByRole('dialog', { name: /Task puzzle/ });\n      await puzzle.getByRole('button', { name: 'Solve and attempt crime' }).waitFor();\n"
+        },
+        {
+          "at": 17964,
+          "current": "      await minigame.waitFor({ state: 'detached' });\n      assert.equal(await action.evaluate(element => element === document.activeElement), true, `${label}: cancellation restores crime focus`);\n      await reachableCrimePocket(page, `${label} after minigame cancellation`);\n      assert.equal(crimeRequests.length, 0, 'Cancelling the required minigame never attempts the crime');\n",
+          "baseline": "      await puzzle.waitFor({ state: 'detached' });\n      assert.equal(await prepare.evaluate(element => element === document.activeElement), true, `${label}: closing restores preparation focus`);\n      await reachableCrimePocket(page, `${label} after puzzle dismissal`);\n      assert.equal(crimeRequests.length, 0, 'Opening and closing optional preparation never attempts the crime');\n"
+        },
+        {
+          "at": 19572,
+          "current": "  assert.equal(await primary.evaluate(element => element === document.activeElement), true, 'The ordinary crime remains keyboard reachable after repeated minigame cancellation and navigation');\n",
+          "baseline": "  assert.equal(await primary.evaluate(element => element === document.activeElement), true, 'The ordinary crime remains keyboard reachable after repeated preparation and navigation');\n"
+        },
+        {
+          "at": 19966,
+          "current": "  await solveCrimeMinigame(page);\n  const completedAttempt = await ordinaryAttempt;\n  assert.equal(completedAttempt.status(), 200, 'Keyboard activation reaches the real ordinary crime endpoint');\n  const receipt = await completedAttempt.json();\n  assert.equal(receipt.minigame.completed, true, 'The actual crime requires a completed lock');\n  assert.equal(receipt.minigame.mistakes, 0);\n  assert.equal(receipt.minigame.multiplier, 1);\n",
+          "baseline": "  assert.equal((await ordinaryAttempt).status(), 200, 'Keyboard activation reaches the real ordinary crime endpoint');\n"
         }
       ]
     },
@@ -3257,9 +3328,9 @@ export const CRIME_MINIGAME_SOURCE = freeze({
   "additions": {
     "public/ux-crime-minigame.css": {
       "mode": "100644",
-      "blob": "10356210e87f95679e0208cda98b8d147a999ee6",
-      "bytes": 3426,
-      "sha256": "62e48060a7f0388161b2961a4420d85d88fb92bab3a7db863df3672eefb5a11f"
+      "blob": "f8881422b4c18aadcfc95c40b901be10adf26de1",
+      "bytes": 4819,
+      "sha256": "f7c1731e5fd612b93f903886693c041232b3707428cbba33fafe75c8ad8dfc4c"
     },
     "public/ux-crime-minigame.js": {
       "mode": "100644",
@@ -3317,4 +3388,4 @@ export const CRIME_MINIGAME_SOURCE = freeze({
     }
   }
 });
-export const CRIME_MINIGAME_SOURCE_SHA256 = '8e722185b1d44aa0dddeb84a4a0c2945324fc4015cd718b748421d9c1e729b2e';
+export const CRIME_MINIGAME_SOURCE_SHA256 = 'c661c26f3e9d0917ff3f0abe7b0ba8110c8b919462032084cdcf7d5d5b830e34';
