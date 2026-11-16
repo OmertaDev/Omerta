@@ -3,10 +3,10 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const CRIME_MINIGAME_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_CRIME_MINIGAME_SOURCE_COMPARISON_ONLY",
-  "revision": "126f315f27cde534ca11d192084f9616aedc2245",
-  "tree": "ebda38c9340e28497cc82fa6c92ea776351b09f0",
-  "predecessor": "9cf7ced8beedd0950018a14bbab71b08b71a3d5b",
-  "predecessorTree": "9477c277cca6b47b3a3ce20901e85a451243642f",
+  "revision": "13284d8195f57b4e624a391f040862cdb720e3f5",
+  "tree": "e058424e3f20a76ae43d63eb5e1910a839df36e4",
+  "predecessor": "8672b0147daced1d957ef772c9bb3fc07b327f81",
+  "predecessorTree": "f0eabc99bc07a4a65d6bb2c527cdd84e102f5398",
   "files": {
     "AGENTS.md": {
       "current": {
@@ -78,26 +78,36 @@ export const CRIME_MINIGAME_SOURCE = freeze({
     "SPEC.md": {
       "current": {
         "mode": "100644",
-        "blob": "91413927c5fe7ba9e52afb493fab44e94caae3b4",
-        "bytes": 57365,
-        "sha256": "773fac29fc8b82b902e6e0a88f7968ecbc21c7f7112d83a5b8605499b6d6e0f5"
+        "blob": "0a1765593ed2d21fa798ef9a26d89ecfb12b3d28",
+        "bytes": 57451,
+        "sha256": "c4de8e57284e42fb05a5ddf4a085ca2280e756db22f9207e03f90cf2499bca94"
       },
       "baseline": {
         "mode": "100644",
-        "blob": "8fcbab71090af1e1f63f16ad4e281483feb1d9a4",
-        "bytes": 57415,
-        "sha256": "64ba76682f7338d063fb31e860e0ac3da17ce60408098e21465ed89654cac979"
+        "blob": "eeaad0a71e1534b7f6fecb2269a7beca060509f0",
+        "bytes": 57552,
+        "sha256": "dd934511625c501a238575141ea27916ccb7718eb6dcfac28639d494bf3fa64a"
       },
       "inverses": [
         {
-          "at": 464,
-          "current": "File counts include the required crime minigame as of 2026-11-15. Backend and test line totals were refreshed for this change; other line totals retain their recorded snapshots.\n",
-          "baseline": "File counts include the combined playtest fixes, quest-quality additions and task puzzles as of 2026-11-10. Backend, test and schema line totals were refreshed for task puzzles; other line totals retain the 2026-11-07 snapshot.\n"
+          "at": 124,
+          "current": "The census below records dated source inventory snapshots. Availability and activation are documented separately in the deployment guides.\n",
+          "baseline": "The census below records the combined release source inventory measured on 2026-11-07. Availability and activation are documented separately in the deployment guides.\n"
         },
         {
-          "at": 659,
-          "current": "| Backend modules | **623** files, **142551** lines (recursive source inventory) |\n| Test suites | **1052** files, **220452** lines (recursive source inventory; this row refreshed 2026-11-15) |\n| HTTP routes | **1408** registrations (**1408** unique; 1278 under `/v1`) |\n",
-          "baseline": "| Backend modules | **622** files, **142384** lines (recursive source inventory) |\n| Test suites | **1048** files, **220052** lines (recursive source inventory; this row refreshed 2026-11-15) |\n| HTTP routes | **1401** registrations (**1401** unique; 1277 under `/v1`) |\n"
+          "at": 291,
+          "current": "File counts and backend/test line totals were measured from the combined merge source on 2026-11-16. Other line totals retain their recorded snapshots; no count identifies a deployed revision.\n",
+          "baseline": "Counts were measured for the combined release source on 2026-11-07, before generated release records; they do not identify a deployed revision.\n"
+        },
+        {
+          "at": 485,
+          "current": "The combined inventory includes the required crime minigame, closed native garage interface, quest-quality additions and task puzzles. The route row retains the required-minigame snapshot pending the combined route check.\n",
+          "baseline": "File counts include the combined playtest fixes, quest-quality additions and task puzzles. Backend and markdown inventory rows were refreshed on 2026-11-15 for the closed native garage interface and exact source-comparison proofs; the test row was refreshed on 2026-11-16 for the finite generated-artifact controls. Other rows retain their earlier dated snapshots.\n"
+        },
+        {
+          "at": 724,
+          "current": "| Backend modules | **624** files, **143061** lines (recursive source inventory) |\n| Test suites | **1057** files, **221795** lines (recursive source inventory; this row refreshed 2026-11-16) |\n| HTTP routes | **1415** registrations (**1415** unique; 1282 under `/v1`; measured 2026-11-16) |\n",
+          "baseline": "| Backend modules | **623** files, **142959** lines (recursive source inventory) |\n| Test suites | **1053** files, **221139** lines (recursive source inventory; this row refreshed 2026-11-16) |\n| HTTP routes | **1401** registrations (**1401** unique; 1277 under `/v1`) |\n"
         }
       ]
     },
@@ -134,6 +144,1128 @@ export const CRIME_MINIGAME_SOURCE = freeze({
           "at": 3859,
           "current": "For a crime, first read `GET /v1/crimes/:id/challenge?approach=standard` (or the\nchosen `quiet`/`loud` approach). Repeat the issued signals, recording every press\nincluding mistakes, then send `{approach,minigame:{token,moves}}` to the existing\ncrime endpoint. The server grades the press history and refuses missing,\nincomplete, expired or reused challenges. Agent Act crime execution requires the\nsame `minigame` field. Legacy `puzzle:{id,answer}` crime preparation remains\nreadable through the API and cannot replace the required lock.\n\n",
           "baseline": ""
+        }
+      ]
+    },
+    "docs/quest-quality-workgraph.json": {
+      "current": {
+        "mode": "100644",
+        "blob": "008136abede8ddec04b335e2114ed5b24b361777",
+        "bytes": 965388,
+        "sha256": "0292db8a98a168d43ff0f4fdeab1bda5929eaadae3264267ff41cde0bdb042d6"
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "0450afd87dc3092591808f0f60108e8e7422697a",
+        "bytes": 869196,
+        "sha256": "8a251038354c0852e7046c4fffb883057726e9723459aa23295fe1c3238b5c5f"
+      },
+      "inverses": [
+        {
+          "at": 1993,
+          "current": "        \"quality-mwj5b59g-quest-quality-content\",\n        \"quality-mwj5bcjj-quest-quality-rules\"\n",
+          "baseline": "        \"quality-mwio4w9o-quest-quality-content\",\n        \"quality-mwio543p-quest-quality-rules\"\n"
+        },
+        {
+          "at": 2618,
+          "current": "        \"quality-mwj5b59g-quest-quality-content\",\n        \"quality-mwj5bd9k-quest-quality-studio\"\n",
+          "baseline": "        \"quality-mwio4w9o-quest-quality-content\",\n        \"quality-mwio54tx-quest-quality-studio\"\n"
+        },
+        {
+          "at": 3430,
+          "current": "        \"quality-mwj5b59g-quest-quality-content\",\n        \"quality-mwj5beig-quest-quality-runtime\",\n        \"quality-mwj5bij3-quest-quality-api\",\n        \"quality-mwj5bm5g-quest-quality-browser\",\n        \"quality-mwj5c6sl-quest-quality-postgres\",\n        \"quality-mwj5cgcs-quest-quality-stateful\"\n",
+          "baseline": "        \"quality-mwio4w9o-quest-quality-content\",\n        \"quality-mwio56a9-quest-quality-runtime\",\n        \"quality-mwio5b0q-quest-quality-api\",\n        \"quality-mwio5f4i-quest-quality-browser\",\n        \"quality-mwio7bhm-quest-quality-postgres\",\n        \"quality-mwio5z0w-quest-quality-stateful\"\n"
+        },
+        {
+          "at": 4482,
+          "current": "        \"quality-mwj5b59g-quest-quality-content\",\n        \"quality-mwj5bcjj-quest-quality-rules\",\n        \"quality-mwj5beig-quest-quality-runtime\",\n        \"quality-mwj5bij3-quest-quality-api\",\n        \"quality-mwj5bm5g-quest-quality-browser\"\n",
+          "baseline": "        \"quality-mwio4w9o-quest-quality-content\",\n        \"quality-mwio543p-quest-quality-rules\",\n        \"quality-mwio56a9-quest-quality-runtime\",\n        \"quality-mwio5b0q-quest-quality-api\",\n        \"quality-mwio5f4i-quest-quality-browser\"\n"
+        },
+        {
+          "at": 5299,
+          "current": "        \"quality-mwj5b59g-quest-quality-content\",\n        \"quality-mwj5beig-quest-quality-runtime\"\n",
+          "baseline": "        \"quality-mwio4w9o-quest-quality-content\",\n        \"quality-mwio56a9-quest-quality-runtime\"\n"
+        },
+        {
+          "at": 5973,
+          "current": "        \"quality-mwj5b59g-quest-quality-content\",\n        \"quality-mwj5bcjj-quest-quality-rules\",\n        \"quality-mwj5bd9k-quest-quality-studio\"\n",
+          "baseline": "        \"quality-mwio4w9o-quest-quality-content\",\n        \"quality-mwio543p-quest-quality-rules\",\n        \"quality-mwio54tx-quest-quality-studio\"\n"
+        },
+        {
+          "at": 6683,
+          "current": "        \"quality-mwj5b59g-quest-quality-content\",\n        \"quality-mwj5bcjj-quest-quality-rules\",\n        \"quality-mwj5bd9k-quest-quality-studio\"\n",
+          "baseline": "        \"quality-mwio4w9o-quest-quality-content\",\n        \"quality-mwio543p-quest-quality-rules\",\n        \"quality-mwio54tx-quest-quality-studio\"\n"
+        },
+        {
+          "at": 7380,
+          "current": "        \"quality-mwj5b59g-quest-quality-content\",\n        \"quality-mwj5bcjj-quest-quality-rules\"\n",
+          "baseline": "        \"quality-mwio4w9o-quest-quality-content\",\n        \"quality-mwio543p-quest-quality-rules\"\n"
+        },
+        {
+          "at": 8109,
+          "current": "        \"quality-mwj5b59g-quest-quality-content\",\n        \"quality-mwj5beig-quest-quality-runtime\",\n        \"quality-mwj5bm5g-quest-quality-browser\",\n        \"quality-mwj5cgcs-quest-quality-stateful\"\n",
+          "baseline": "        \"quality-mwio4w9o-quest-quality-content\",\n        \"quality-mwio56a9-quest-quality-runtime\",\n        \"quality-mwio5f4i-quest-quality-browser\",\n        \"quality-mwio5z0w-quest-quality-stateful\"\n"
+        },
+        {
+          "at": 8870,
+          "current": "        \"quality-mwj5b59g-quest-quality-content\",\n        \"quality-mwj5bcjj-quest-quality-rules\",\n        \"quality-mwj5bd9k-quest-quality-studio\"\n",
+          "baseline": "        \"quality-mwio4w9o-quest-quality-content\",\n        \"quality-mwio543p-quest-quality-rules\",\n        \"quality-mwio54tx-quest-quality-studio\"\n"
+        },
+        {
+          "at": 9557,
+          "current": "        \"quality-mwj5b59g-quest-quality-content\"\n",
+          "baseline": "        \"quality-mwio4w9o-quest-quality-content\"\n"
+        },
+        {
+          "at": 10145,
+          "current": "        \"quality-mwj5b59g-quest-quality-content\"\n",
+          "baseline": "        \"quality-mwio4w9o-quest-quality-content\"\n"
+        },
+        {
+          "at": 10836,
+          "current": "        \"quality-mwj5b59g-quest-quality-content\",\n        \"quality-mwj5bcjj-quest-quality-rules\"\n",
+          "baseline": "        \"quality-mwio4w9o-quest-quality-content\",\n        \"quality-mwio543p-quest-quality-rules\"\n"
+        },
+        {
+          "at": 11400,
+          "current": "        \"quality-mwj5b59g-quest-quality-content\"\n",
+          "baseline": "        \"quality-mwio4w9o-quest-quality-content\"\n"
+        },
+        {
+          "at": 11987,
+          "current": "        \"quality-mwj5b59g-quest-quality-content\",\n        \"quality-mwj5bd9k-quest-quality-studio\"\n",
+          "baseline": "        \"quality-mwio4w9o-quest-quality-content\",\n        \"quality-mwio54tx-quest-quality-studio\"\n"
+        },
+        {
+          "at": 12708,
+          "current": "        \"quality-mwj5b59g-quest-quality-content\",\n        \"quality-mwj5bcjj-quest-quality-rules\",\n        \"quality-mwj5bd9k-quest-quality-studio\"\n",
+          "baseline": "        \"quality-mwio4w9o-quest-quality-content\",\n        \"quality-mwio543p-quest-quality-rules\",\n        \"quality-mwio54tx-quest-quality-studio\"\n"
+        },
+        {
+          "at": 13347,
+          "current": "        \"quality-mwj5b59g-quest-quality-content\",\n        \"quality-mwj5bd9k-quest-quality-studio\"\n",
+          "baseline": "        \"quality-mwio4w9o-quest-quality-content\",\n        \"quality-mwio54tx-quest-quality-studio\"\n"
+        },
+        {
+          "at": 13908,
+          "current": "        \"quality-mwj5b59g-quest-quality-content\"\n",
+          "baseline": "        \"quality-mwio4w9o-quest-quality-content\"\n"
+        },
+        {
+          "at": 14415,
+          "current": "        \"quality-mwj5b59g-quest-quality-content\"\n",
+          "baseline": "        \"quality-mwio4w9o-quest-quality-content\"\n"
+        },
+        {
+          "at": 14999,
+          "current": "        \"quality-mwj5b59g-quest-quality-content\",\n        \"quality-mwj5bd9k-quest-quality-studio\"\n",
+          "baseline": "        \"quality-mwio4w9o-quest-quality-content\",\n        \"quality-mwio54tx-quest-quality-studio\"\n"
+        },
+        {
+          "at": 15606,
+          "current": "        \"quality-mwj5b59g-quest-quality-content\"\n",
+          "baseline": "        \"quality-mwio4w9o-quest-quality-content\"\n"
+        },
+        {
+          "at": 16116,
+          "current": "        \"quality-mwj5b59g-quest-quality-content\"\n",
+          "baseline": "        \"quality-mwio4w9o-quest-quality-content\"\n"
+        },
+        {
+          "at": 16746,
+          "current": "        \"quality-mwj5b59g-quest-quality-content\",\n        \"quality-mwj5bcjj-quest-quality-rules\",\n        \"quality-mwj5bd9k-quest-quality-studio\"\n",
+          "baseline": "        \"quality-mwio4w9o-quest-quality-content\",\n        \"quality-mwio543p-quest-quality-rules\",\n        \"quality-mwio54tx-quest-quality-studio\"\n"
+        },
+        {
+          "at": 17362,
+          "current": "        \"quality-mwj5b59g-quest-quality-content\"\n",
+          "baseline": "        \"quality-mwio4w9o-quest-quality-content\"\n"
+        },
+        {
+          "at": 18032,
+          "current": "        \"quality-mwj5b59g-quest-quality-content\",\n        \"quality-mwj5chfh-quest-quality-social\"\n",
+          "baseline": "        \"quality-mwio4w9o-quest-quality-content\",\n        \"quality-mwio60ey-quest-quality-social\"\n"
+        },
+        {
+          "at": 18591,
+          "current": "        \"quality-mwj5b59g-quest-quality-content\"\n",
+          "baseline": "        \"quality-mwio4w9o-quest-quality-content\"\n"
+        },
+        {
+          "at": 19130,
+          "current": "        \"quality-mwj5b59g-quest-quality-content\"\n",
+          "baseline": "        \"quality-mwio4w9o-quest-quality-content\"\n"
+        },
+        {
+          "at": 19895,
+          "current": "        \"quality-mwj5b59g-quest-quality-content\",\n        \"quality-mwj5bij3-quest-quality-api\",\n        \"quality-mwj5chfh-quest-quality-social\",\n        \"quality-mwj5bm5g-quest-quality-browser\",\n        \"quality-mwj5cgcs-quest-quality-stateful\"\n",
+          "baseline": "        \"quality-mwio4w9o-quest-quality-content\",\n        \"quality-mwio5b0q-quest-quality-api\",\n        \"quality-mwio60ey-quest-quality-social\",\n        \"quality-mwio5f4i-quest-quality-browser\",\n        \"quality-mwio5z0w-quest-quality-stateful\"\n"
+        },
+        {
+          "at": 20629,
+          "current": "        \"quality-mwj5b59g-quest-quality-content\"\n",
+          "baseline": "        \"quality-mwio4w9o-quest-quality-content\"\n"
+        },
+        {
+          "at": 21122,
+          "current": "        \"quality-mwj5b59g-quest-quality-content\"\n",
+          "baseline": "        \"quality-mwio4w9o-quest-quality-content\"\n"
+        },
+        {
+          "at": 21683,
+          "current": "        \"quality-mwj5clhn-quest-quality-spoilers\",\n        \"quality-mwj5bm5g-quest-quality-browser\"\n",
+          "baseline": "        \"quality-mwio65ko-quest-quality-spoilers\",\n        \"quality-mwio5f4i-quest-quality-browser\"\n"
+        },
+        {
+          "at": 22442,
+          "current": "        \"quality-mwj5b59g-quest-quality-content\",\n        \"quality-mwj5beig-quest-quality-runtime\",\n        \"quality-mwj5bm5g-quest-quality-browser\"\n",
+          "baseline": "        \"quality-mwio4w9o-quest-quality-content\",\n        \"quality-mwio56a9-quest-quality-runtime\",\n        \"quality-mwio5f4i-quest-quality-browser\"\n"
+        },
+        {
+          "at": 23198,
+          "current": "        \"quality-mwj5beig-quest-quality-runtime\",\n        \"quality-mwj5clhn-quest-quality-spoilers\",\n        \"quality-mwj5bm5g-quest-quality-browser\"\n",
+          "baseline": "        \"quality-mwio56a9-quest-quality-runtime\",\n        \"quality-mwio65ko-quest-quality-spoilers\",\n        \"quality-mwio5f4i-quest-quality-browser\"\n"
+        },
+        {
+          "at": 23883,
+          "current": "        \"quality-mwj5beig-quest-quality-runtime\",\n        \"quality-mwj5bm5g-quest-quality-browser\"\n",
+          "baseline": "        \"quality-mwio56a9-quest-quality-runtime\",\n        \"quality-mwio5f4i-quest-quality-browser\"\n"
+        },
+        {
+          "at": 24609,
+          "current": "        \"quality-mwj5beig-quest-quality-runtime\",\n        \"quality-mwj5bij3-quest-quality-api\",\n        \"quality-mwj5bm5g-quest-quality-browser\",\n        \"quality-mwj5cgcs-quest-quality-stateful\"\n",
+          "baseline": "        \"quality-mwio56a9-quest-quality-runtime\",\n        \"quality-mwio5b0q-quest-quality-api\",\n        \"quality-mwio5f4i-quest-quality-browser\",\n        \"quality-mwio5z0w-quest-quality-stateful\"\n"
+        },
+        {
+          "at": 25367,
+          "current": "        \"quality-mwj5b59g-quest-quality-content\",\n        \"quality-mwj5bcjj-quest-quality-rules\",\n        \"quality-mwj5bm5g-quest-quality-browser\"\n",
+          "baseline": "        \"quality-mwio4w9o-quest-quality-content\",\n        \"quality-mwio543p-quest-quality-rules\",\n        \"quality-mwio5f4i-quest-quality-browser\"\n"
+        },
+        {
+          "at": 26196,
+          "current": "        \"quality-mwj5beig-quest-quality-runtime\",\n        \"quality-mwj5chfh-quest-quality-social\",\n        \"quality-mwj5bm5g-quest-quality-browser\",\n        \"quality-mwj5c6sl-quest-quality-postgres\",\n        \"quality-mwj5cgcs-quest-quality-stateful\"\n",
+          "baseline": "        \"quality-mwio56a9-quest-quality-runtime\",\n        \"quality-mwio60ey-quest-quality-social\",\n        \"quality-mwio5f4i-quest-quality-browser\",\n        \"quality-mwio7bhm-quest-quality-postgres\",\n        \"quality-mwio5z0w-quest-quality-stateful\"\n"
+        },
+        {
+          "at": 27300,
+          "current": "        \"quality-mwj5b59g-quest-quality-content\",\n        \"quality-mwj5bcjj-quest-quality-rules\",\n        \"quality-mwj5bij3-quest-quality-api\",\n        \"quality-mwj5chfh-quest-quality-social\",\n        \"quality-mwj5bm5g-quest-quality-browser\",\n        \"quality-mwj5c6sl-quest-quality-postgres\",\n        \"quality-mwj5cgcs-quest-quality-stateful\"\n",
+          "baseline": "        \"quality-mwio4w9o-quest-quality-content\",\n        \"quality-mwio543p-quest-quality-rules\",\n        \"quality-mwio5b0q-quest-quality-api\",\n        \"quality-mwio60ey-quest-quality-social\",\n        \"quality-mwio5f4i-quest-quality-browser\",\n        \"quality-mwio7bhm-quest-quality-postgres\",\n        \"quality-mwio5z0w-quest-quality-stateful\"\n"
+        },
+        {
+          "at": 28391,
+          "current": "        \"quality-mwj5b59g-quest-quality-content\",\n        \"quality-mwj5bcjj-quest-quality-rules\",\n        \"quality-mwj5chfh-quest-quality-social\",\n        \"quality-mwj5bm5g-quest-quality-browser\",\n        \"quality-mwj5c6sl-quest-quality-postgres\"\n",
+          "baseline": "        \"quality-mwio4w9o-quest-quality-content\",\n        \"quality-mwio543p-quest-quality-rules\",\n        \"quality-mwio60ey-quest-quality-social\",\n        \"quality-mwio5f4i-quest-quality-browser\",\n        \"quality-mwio7bhm-quest-quality-postgres\"\n"
+        },
+        {
+          "at": 29472,
+          "current": "        \"quality-mwj5beig-quest-quality-runtime\",\n        \"quality-mwj5bij3-quest-quality-api\",\n        \"quality-mwj5chfh-quest-quality-social\",\n        \"quality-mwj5clhn-quest-quality-spoilers\",\n        \"quality-mwj5bm5g-quest-quality-browser\",\n        \"quality-mwj5c6sl-quest-quality-postgres\",\n        \"quality-mwj5cgcs-quest-quality-stateful\"\n",
+          "baseline": "        \"quality-mwio56a9-quest-quality-runtime\",\n        \"quality-mwio5b0q-quest-quality-api\",\n        \"quality-mwio60ey-quest-quality-social\",\n        \"quality-mwio65ko-quest-quality-spoilers\",\n        \"quality-mwio5f4i-quest-quality-browser\",\n        \"quality-mwio7bhm-quest-quality-postgres\",\n        \"quality-mwio5z0w-quest-quality-stateful\"\n"
+        },
+        {
+          "at": 30515,
+          "current": "        \"quality-mwj5b59g-quest-quality-content\",\n        \"quality-mwj5bcjj-quest-quality-rules\",\n        \"quality-mwj5bd9k-quest-quality-studio\"\n",
+          "baseline": "        \"quality-mwio4w9o-quest-quality-content\",\n        \"quality-mwio543p-quest-quality-rules\",\n        \"quality-mwio54tx-quest-quality-studio\"\n"
+        },
+        {
+          "at": 31199,
+          "current": "        \"quality-mwj5bcjj-quest-quality-rules\",\n        \"quality-mwj5bd9k-quest-quality-studio\"\n",
+          "baseline": "        \"quality-mwio543p-quest-quality-rules\",\n        \"quality-mwio54tx-quest-quality-studio\"\n"
+        },
+        {
+          "at": 31759,
+          "current": "        \"quality-mwj5bd9k-quest-quality-studio\"\n",
+          "baseline": "        \"quality-mwio54tx-quest-quality-studio\"\n"
+        },
+        {
+          "at": 32358,
+          "current": "        \"quality-mwj5bcjj-quest-quality-rules\",\n        \"quality-mwj5bd9k-quest-quality-studio\"\n",
+          "baseline": "        \"quality-mwio543p-quest-quality-rules\",\n        \"quality-mwio54tx-quest-quality-studio\"\n"
+        },
+        {
+          "at": 32951,
+          "current": "        \"quality-mwj5bd9k-quest-quality-studio\"\n",
+          "baseline": "        \"quality-mwio54tx-quest-quality-studio\"\n"
+        },
+        {
+          "at": 33788,
+          "current": "        \"quality-mwj5beig-quest-quality-runtime\",\n        \"quality-mwj5bij3-quest-quality-api\",\n        \"quality-mwj5bm5g-quest-quality-browser\",\n        \"quality-mwj5cosz-quest-quality-study\",\n        \"quality-mwj5cgcs-quest-quality-stateful\"\n",
+          "baseline": "        \"quality-mwio56a9-quest-quality-runtime\",\n        \"quality-mwio5b0q-quest-quality-api\",\n        \"quality-mwio5f4i-quest-quality-browser\",\n        \"quality-mwio69bj-quest-quality-study\",\n        \"quality-mwio5z0w-quest-quality-stateful\"\n"
+        },
+        {
+          "at": 34642,
+          "current": "        \"quality-mwj5b59g-quest-quality-content\",\n        \"quality-mwj5bd9k-quest-quality-studio\"\n",
+          "baseline": "        \"quality-mwio4w9o-quest-quality-content\",\n        \"quality-mwio54tx-quest-quality-studio\"\n"
+        },
+        {
+          "at": 35345,
+          "current": "        \"quality-mwj5bcjj-quest-quality-rules\",\n        \"quality-mwj5clhn-quest-quality-spoilers\",\n        \"quality-mwj5bd9k-quest-quality-studio\"\n",
+          "baseline": "        \"quality-mwio543p-quest-quality-rules\",\n        \"quality-mwio65ko-quest-quality-spoilers\",\n        \"quality-mwio54tx-quest-quality-studio\"\n"
+        },
+        {
+          "at": 36065,
+          "current": "        \"quality-mwj5bcjj-quest-quality-rules\",\n        \"quality-mwj5bd9k-quest-quality-studio\"\n",
+          "baseline": "        \"quality-mwio543p-quest-quality-rules\",\n        \"quality-mwio54tx-quest-quality-studio\"\n"
+        },
+        {
+          "at": 36973,
+          "current": "        \"quality-mwj5beig-quest-quality-runtime\",\n        \"quality-mwj5bij3-quest-quality-api\",\n        \"quality-mwj5bm5g-quest-quality-browser\",\n        \"quality-mwj5cosz-quest-quality-study\",\n        \"quality-mwj5cgcs-quest-quality-stateful\"\n",
+          "baseline": "        \"quality-mwio56a9-quest-quality-runtime\",\n        \"quality-mwio5b0q-quest-quality-api\",\n        \"quality-mwio5f4i-quest-quality-browser\",\n        \"quality-mwio69bj-quest-quality-study\",\n        \"quality-mwio5z0w-quest-quality-stateful\"\n"
+        },
+        {
+          "at": 819007,
+          "current": "      \"id\": \"quality-mwii10x4-quest-quality-content\",\n",
+          "baseline": "      \"id\": \"quality-mwio4w9o-quest-quality-content\",\n"
+        },
+        {
+          "at": 820504,
+          "current": "        \"package.json\": \"9e9b084efac7c9a0a24a839aceed84b23c1272ece8c93272a58642af93bbc454\",\n        \"public/index.html\": \"39b36896c4e6a64f2aa7163de4d3312824c9b5bd6b16c57f8a87959db89bc98e\",\n",
+          "baseline": "        \"package.json\": \"7cdd3916fb45488293efdc1a92e9634bb7157809c11ca50a34460acc650ef629\",\n        \"public/index.html\": \"fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba\",\n"
+        },
+        {
+          "at": 821005,
+          "current": "        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n",
+          "baseline": "        \"src/agentgateway.js\": \"8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f\",\n"
+        },
+        {
+          "at": 822054,
+          "current": "        \"src/server.js\": \"d72f0ef99769d2097fb60368ae96f4faaad0e6c2a92bc8ec67b82abf975eedd4\",\n",
+          "baseline": "        \"src/server.js\": \"f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5\",\n"
+        },
+        {
+          "at": 822937,
+          "current": "      \"startedAt\": \"2026-11-16T00:01:56.968Z\",\n      \"elapsedMs\": 9897,\n",
+          "baseline": "      \"startedAt\": \"2026-11-16T02:52:55.260Z\",\n      \"elapsedMs\": 9256,\n"
+        },
+        {
+          "at": 823030,
+          "current": "      \"log\": \"output/quest-quality-verification/quality-mwii10x4-quest-quality-content.log\",\n",
+          "baseline": "      \"log\": \"output/quest-quality-verification/quality-mwio4w9o-quest-quality-content.log\",\n"
+        },
+        {
+          "at": 823191,
+          "current": "      \"id\": \"quality-mwii19ji-quest-quality-rules\",\n",
+          "baseline": "      \"id\": \"quality-mwio543p-quest-quality-rules\",\n"
+        },
+        {
+          "at": 824684,
+          "current": "        \"package.json\": \"9e9b084efac7c9a0a24a839aceed84b23c1272ece8c93272a58642af93bbc454\",\n        \"public/index.html\": \"39b36896c4e6a64f2aa7163de4d3312824c9b5bd6b16c57f8a87959db89bc98e\",\n",
+          "baseline": "        \"package.json\": \"7cdd3916fb45488293efdc1a92e9634bb7157809c11ca50a34460acc650ef629\",\n        \"public/index.html\": \"fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba\",\n"
+        },
+        {
+          "at": 825185,
+          "current": "        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n",
+          "baseline": "        \"src/agentgateway.js\": \"8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f\",\n"
+        },
+        {
+          "at": 826234,
+          "current": "        \"src/server.js\": \"d72f0ef99769d2097fb60368ae96f4faaad0e6c2a92bc8ec67b82abf975eedd4\",\n",
+          "baseline": "        \"src/server.js\": \"f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5\",\n"
+        },
+        {
+          "at": 827117,
+          "current": "      \"startedAt\": \"2026-11-16T00:02:08.142Z\",\n      \"elapsedMs\": 157,\n",
+          "baseline": "      \"startedAt\": \"2026-11-16T02:53:05.413Z\",\n      \"elapsedMs\": 147,\n"
+        },
+        {
+          "at": 827209,
+          "current": "      \"log\": \"output/quest-quality-verification/quality-mwii19ji-quest-quality-rules.log\",\n",
+          "baseline": "      \"log\": \"output/quest-quality-verification/quality-mwio543p-quest-quality-rules.log\",\n"
+        },
+        {
+          "at": 827368,
+          "current": "      \"id\": \"quality-mwii1agt-quest-quality-studio\",\n",
+          "baseline": "      \"id\": \"quality-mwio54tx-quest-quality-studio\",\n"
+        },
+        {
+          "at": 828863,
+          "current": "        \"package.json\": \"9e9b084efac7c9a0a24a839aceed84b23c1272ece8c93272a58642af93bbc454\",\n        \"public/index.html\": \"39b36896c4e6a64f2aa7163de4d3312824c9b5bd6b16c57f8a87959db89bc98e\",\n",
+          "baseline": "        \"package.json\": \"7cdd3916fb45488293efdc1a92e9634bb7157809c11ca50a34460acc650ef629\",\n        \"public/index.html\": \"fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba\",\n"
+        },
+        {
+          "at": 829364,
+          "current": "        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n",
+          "baseline": "        \"src/agentgateway.js\": \"8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f\",\n"
+        },
+        {
+          "at": 830413,
+          "current": "        \"src/server.js\": \"d72f0ef99769d2097fb60368ae96f4faaad0e6c2a92bc8ec67b82abf975eedd4\",\n",
+          "baseline": "        \"src/server.js\": \"f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5\",\n"
+        },
+        {
+          "at": 831296,
+          "current": "      \"startedAt\": \"2026-11-16T00:02:09.341Z\",\n      \"elapsedMs\": 1290,\n",
+          "baseline": "      \"startedAt\": \"2026-11-16T02:53:06.357Z\",\n      \"elapsedMs\": 1312,\n"
+        },
+        {
+          "at": 831389,
+          "current": "      \"log\": \"output/quest-quality-verification/quality-mwii1agt-quest-quality-studio.log\",\n",
+          "baseline": "      \"log\": \"output/quest-quality-verification/quality-mwio54tx-quest-quality-studio.log\",\n"
+        },
+        {
+          "at": 831549,
+          "current": "      \"id\": \"quality-mwii1c3t-quest-quality-runtime\",\n",
+          "baseline": "      \"id\": \"quality-mwio56a9-quest-quality-runtime\",\n"
+        },
+        {
+          "at": 833046,
+          "current": "        \"package.json\": \"9e9b084efac7c9a0a24a839aceed84b23c1272ece8c93272a58642af93bbc454\",\n        \"public/index.html\": \"39b36896c4e6a64f2aa7163de4d3312824c9b5bd6b16c57f8a87959db89bc98e\",\n",
+          "baseline": "        \"package.json\": \"7cdd3916fb45488293efdc1a92e9634bb7157809c11ca50a34460acc650ef629\",\n        \"public/index.html\": \"fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba\",\n"
+        },
+        {
+          "at": 833547,
+          "current": "        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n",
+          "baseline": "        \"src/agentgateway.js\": \"8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f\",\n"
+        },
+        {
+          "at": 834596,
+          "current": "        \"src/server.js\": \"d72f0ef99769d2097fb60368ae96f4faaad0e6c2a92bc8ec67b82abf975eedd4\",\n",
+          "baseline": "        \"src/server.js\": \"f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5\",\n"
+        },
+        {
+          "at": 835479,
+          "current": "      \"startedAt\": \"2026-11-16T00:02:11.465Z\",\n      \"elapsedMs\": 6024,\n",
+          "baseline": "      \"startedAt\": \"2026-11-16T02:53:08.241Z\",\n      \"elapsedMs\": 5667,\n"
+        },
+        {
+          "at": 835572,
+          "current": "      \"log\": \"output/quest-quality-verification/quality-mwii1c3t-quest-quality-runtime.log\",\n",
+          "baseline": "      \"log\": \"output/quest-quality-verification/quality-mwio56a9-quest-quality-runtime.log\",\n"
+        },
+        {
+          "at": 835733,
+          "current": "      \"id\": \"quality-mwii1h7m-quest-quality-api\",\n",
+          "baseline": "      \"id\": \"quality-mwio5b0q-quest-quality-api\",\n"
+        },
+        {
+          "at": 837222,
+          "current": "        \"package.json\": \"9e9b084efac7c9a0a24a839aceed84b23c1272ece8c93272a58642af93bbc454\",\n        \"public/index.html\": \"39b36896c4e6a64f2aa7163de4d3312824c9b5bd6b16c57f8a87959db89bc98e\",\n",
+          "baseline": "        \"package.json\": \"7cdd3916fb45488293efdc1a92e9634bb7157809c11ca50a34460acc650ef629\",\n        \"public/index.html\": \"fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba\",\n"
+        },
+        {
+          "at": 837723,
+          "current": "        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n",
+          "baseline": "        \"src/agentgateway.js\": \"8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f\",\n"
+        },
+        {
+          "at": 838772,
+          "current": "        \"src/server.js\": \"d72f0ef99769d2097fb60368ae96f4faaad0e6c2a92bc8ec67b82abf975eedd4\",\n",
+          "baseline": "        \"src/server.js\": \"f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5\",\n"
+        },
+        {
+          "at": 839655,
+          "current": "      \"startedAt\": \"2026-11-16T00:02:18.082Z\",\n      \"elapsedMs\": 5092,\n",
+          "baseline": "      \"startedAt\": \"2026-11-16T02:53:14.378Z\",\n      \"elapsedMs\": 4949,\n"
+        },
+        {
+          "at": 839748,
+          "current": "      \"log\": \"output/quest-quality-verification/quality-mwii1h7m-quest-quality-api.log\",\n",
+          "baseline": "      \"log\": \"output/quest-quality-verification/quality-mwio5b0q-quest-quality-api.log\",\n"
+        },
+        {
+          "at": 839905,
+          "current": "      \"id\": \"quality-mwii1lpp-quest-quality-browser\",\n",
+          "baseline": "      \"id\": \"quality-mwio5f4i-quest-quality-browser\",\n"
+        },
+        {
+          "at": 841402,
+          "current": "        \"package.json\": \"9e9b084efac7c9a0a24a839aceed84b23c1272ece8c93272a58642af93bbc454\",\n        \"public/index.html\": \"39b36896c4e6a64f2aa7163de4d3312824c9b5bd6b16c57f8a87959db89bc98e\",\n",
+          "baseline": "        \"package.json\": \"7cdd3916fb45488293efdc1a92e9634bb7157809c11ca50a34460acc650ef629\",\n        \"public/index.html\": \"fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba\",\n"
+        },
+        {
+          "at": 841903,
+          "current": "        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n",
+          "baseline": "        \"src/agentgateway.js\": \"8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f\",\n"
+        },
+        {
+          "at": 842952,
+          "current": "        \"src/server.js\": \"d72f0ef99769d2097fb60368ae96f4faaad0e6c2a92bc8ec67b82abf975eedd4\",\n",
+          "baseline": "        \"src/server.js\": \"f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5\",\n"
+        },
+        {
+          "at": 843835,
+          "current": "      \"startedAt\": \"2026-11-16T00:02:23.917Z\",\n      \"elapsedMs\": 30912,\n",
+          "baseline": "      \"startedAt\": \"2026-11-16T02:53:19.698Z\",\n      \"elapsedMs\": 23567,\n"
+        },
+        {
+          "at": 843929,
+          "current": "      \"log\": \"output/quest-quality-verification/quality-mwii1lpp-quest-quality-browser.log\",\n",
+          "baseline": "      \"log\": \"output/quest-quality-verification/quality-mwio5f4i-quest-quality-browser.log\",\n"
+        },
+        {
+          "at": 844090,
+          "current": "      \"id\": \"quality-mwii29xy-quest-quality-postgres\",\n",
+          "baseline": "      \"id\": \"quality-mwio5xjr-quest-quality-postgres\",\n"
+        },
+        {
+          "at": 845589,
+          "current": "        \"package.json\": \"9e9b084efac7c9a0a24a839aceed84b23c1272ece8c93272a58642af93bbc454\",\n        \"public/index.html\": \"39b36896c4e6a64f2aa7163de4d3312824c9b5bd6b16c57f8a87959db89bc98e\",\n",
+          "baseline": "        \"package.json\": \"7cdd3916fb45488293efdc1a92e9634bb7157809c11ca50a34460acc650ef629\",\n        \"public/index.html\": \"fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba\",\n"
+        },
+        {
+          "at": 846090,
+          "current": "        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n",
+          "baseline": "        \"src/agentgateway.js\": \"8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f\",\n"
+        },
+        {
+          "at": 847139,
+          "current": "        \"src/server.js\": \"d72f0ef99769d2097fb60368ae96f4faaad0e6c2a92bc8ec67b82abf975eedd4\",\n",
+          "baseline": "        \"src/server.js\": \"f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5\",\n"
+        },
+        {
+          "at": 848022,
+          "current": "      \"startedAt\": \"2026-11-16T00:02:55.318Z\",\n      \"elapsedMs\": 11067,\n",
+          "baseline": "      \"startedAt\": \"2026-11-16T02:53:43.575Z\",\n      \"elapsedMs\": 1607,\n"
+        },
+        {
+          "at": 848116,
+          "current": "      \"log\": \"output/quest-quality-verification/quality-mwii29xy-quest-quality-postgres.log\",\n",
+          "baseline": "      \"log\": \"output/quest-quality-verification/quality-mwio5xjr-quest-quality-postgres.log\",\n"
+        },
+        {
+          "at": 848278,
+          "current": "      \"id\": \"quality-mwii2iui-quest-quality-stateful\",\n",
+          "baseline": "      \"id\": \"quality-mwio5z0w-quest-quality-stateful\",\n"
+        },
+        {
+          "at": 849777,
+          "current": "        \"package.json\": \"9e9b084efac7c9a0a24a839aceed84b23c1272ece8c93272a58642af93bbc454\",\n        \"public/index.html\": \"39b36896c4e6a64f2aa7163de4d3312824c9b5bd6b16c57f8a87959db89bc98e\",\n",
+          "baseline": "        \"package.json\": \"7cdd3916fb45488293efdc1a92e9634bb7157809c11ca50a34460acc650ef629\",\n        \"public/index.html\": \"fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba\",\n"
+        },
+        {
+          "at": 850278,
+          "current": "        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n",
+          "baseline": "        \"src/agentgateway.js\": \"8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f\",\n"
+        },
+        {
+          "at": 851327,
+          "current": "        \"src/server.js\": \"d72f0ef99769d2097fb60368ae96f4faaad0e6c2a92bc8ec67b82abf975eedd4\",\n",
+          "baseline": "        \"src/server.js\": \"f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5\",\n"
+        },
+        {
+          "at": 852210,
+          "current": "      \"startedAt\": \"2026-11-16T00:03:06.858Z\",\n      \"elapsedMs\": 2338,\n",
+          "baseline": "      \"startedAt\": \"2026-11-16T02:53:45.488Z\",\n      \"elapsedMs\": 1558,\n"
+        },
+        {
+          "at": 852303,
+          "current": "      \"log\": \"output/quest-quality-verification/quality-mwii2iui-quest-quality-stateful.log\",\n",
+          "baseline": "      \"log\": \"output/quest-quality-verification/quality-mwio5z0w-quest-quality-stateful.log\",\n"
+        },
+        {
+          "at": 852465,
+          "current": "      \"id\": \"quality-mwii2kwt-quest-quality-social\",\n",
+          "baseline": "      \"id\": \"quality-mwio60ey-quest-quality-social\",\n"
+        },
+        {
+          "at": 852660,
+          "current": "      \"sourceHashes\": {\n        \"content/packs/quest-quality-favors/pack.json\": \"c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71\",\n        \"content/packs/quest-quality-field-notes/pack.json\": \"c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a\",\n        \"content/packs/quest-quality-last-ferry/pack.json\": \"ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881\",\n        \"content/packs/quest-quality-night-edition/pack.json\": \"1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1\",\n        \"content/packs/quest-quality-open-office/pack.json\": \"97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff\",\n        \"content/packs/quest-quality-payday/pack.json\": \"855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed\",\n        \"content/packs/quest-quality-shared-meaning/pack.json\": \"cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072\",\n        \"content/packs/quest-quality-small-fire/pack.json\": \"64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7\",\n        \"content/packs/quest-quality-truce/pack.json\": \"2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08\",\n        \"content/packs/quest-three-witnesses-v2/pack.json\": \"294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423\",\n        \"package.json\": \"9e9b084efac7c9a0a24a839aceed84b23c1272ece8c93272a58642af93bbc454\",\n        \"public/index.html\": \"39b36896c4e6a64f2aa7163de4d3312824c9b5bd6b16c57f8a87959db89bc98e\",\n        \"public/ux-quest-quality.css\": \"8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f\",\n        \"public/ux-quest-quality.js\": \"e34b8b84be83f0c1d2af9149cba227225a830f371ee9e11f95b6b4f3c05c58f2\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quality-runtime.js\": \"609bab529eae343b33a2873a9da34668d63c3ee2f91bbcca77f85bcdb43e5d4e\",\n        \"src/content/quality.js\": \"94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4\",\n        \"src/content/quest-quality-packs.js\": \"fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/quest-quality-contracts.js\": \"b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/server.js\": \"d72f0ef99769d2097fb60368ae96f4faaad0e6c2a92bc8ec67b82abf975eedd4\",\n        \"test/lib/quest-quality-fixture.js\": \"316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b\",\n        \"test/quest-quality-content.js\": \"0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266\",\n        \"tools/quest-quality-studio.js\": \"997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52\",\n        \"tools/quest-quality-study.js\": \"856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01\",\n        \"tools/quest-quality-workgraph.js\": \"c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\"\n      },\n      \"sourceStable\": true,\n      \"startedAt\": \"2026-11-16T00:03:09.533Z\",\n      \"elapsedMs\": 8350,\n      \"exitCode\": 0,\n      \"log\": \"output/quest-quality-verification/quality-mwii2kwt-quest-quality-social.log\",\n      \"evidenceType\": \"automated_implementation_check\"\n    },\n    {\n      \"id\": \"quality-mwii2rk1-quest-quality-spoilers\",\n      \"evaluator\": \"test/quest-quality-spoilers.js\",\n      \"evaluatorHash\": \"55fc0fc6512934fccfdf3628b5f178b95fe27722753aba704b1acc515d8876e4\",\n      \"sourceHashes\": {\n        \"content/packs/quest-quality-favors/pack.json\": \"c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71\",\n        \"content/packs/quest-quality-field-notes/pack.json\": \"c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a\",\n        \"content/packs/quest-quality-last-ferry/pack.json\": \"ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881\",\n        \"content/packs/quest-quality-night-edition/pack.json\": \"1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1\",\n        \"content/packs/quest-quality-open-office/pack.json\": \"97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff\",\n        \"content/packs/quest-quality-payday/pack.json\": \"855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed\",\n        \"content/packs/quest-quality-shared-meaning/pack.json\": \"cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072\",\n        \"content/packs/quest-quality-small-fire/pack.json\": \"64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7\",\n        \"content/packs/quest-quality-truce/pack.json\": \"2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08\",\n        \"content/packs/quest-three-witnesses-v2/pack.json\": \"294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423\",\n        \"package.json\": \"9e9b084efac7c9a0a24a839aceed84b23c1272ece8c93272a58642af93bbc454\",\n        \"public/index.html\": \"39b36896c4e6a64f2aa7163de4d3312824c9b5bd6b16c57f8a87959db89bc98e\",\n        \"public/ux-quest-quality.css\": \"8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f\",\n        \"public/ux-quest-quality.js\": \"e34b8b84be83f0c1d2af9149cba227225a830f371ee9e11f95b6b4f3c05c58f2\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quality-runtime.js\": \"609bab529eae343b33a2873a9da34668d63c3ee2f91bbcca77f85bcdb43e5d4e\",\n        \"src/content/quality.js\": \"94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4\",\n        \"src/content/quest-quality-packs.js\": \"fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/quest-quality-contracts.js\": \"b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/server.js\": \"d72f0ef99769d2097fb60368ae96f4faaad0e6c2a92bc8ec67b82abf975eedd4\",\n        \"test/lib/quest-quality-fixture.js\": \"316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b\",\n        \"test/quest-quality-content.js\": \"0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266\",\n        \"tools/quest-quality-studio.js\": \"997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52\",\n        \"tools/quest-quality-study.js\": \"856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01\",\n        \"tools/quest-quality-workgraph.js\": \"c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\"\n      },\n      \"sourceStable\": true,\n      \"startedAt\": \"2026-11-16T00:03:18.145Z\",\n      \"elapsedMs\": 6884,\n      \"exitCode\": 0,\n      \"log\": \"output/quest-quality-verification/quality-mwii2rk1-quest-quality-spoilers.log\",\n      \"evidenceType\": \"automated_implementation_check\"\n    },\n    {\n      \"id\": \"quality-mwii2x0y-quest-quality-study\",\n      \"evaluator\": \"test/quest-quality-study.js\",\n      \"evaluatorHash\": \"6043fb8143c39ce3b1d418265670565faae908006e07d7760c0cef5f2c5a896b\",\n      \"sourceHashes\": {\n        \"content/packs/quest-quality-favors/pack.json\": \"c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71\",\n        \"content/packs/quest-quality-field-notes/pack.json\": \"c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a\",\n        \"content/packs/quest-quality-last-ferry/pack.json\": \"ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881\",\n        \"content/packs/quest-quality-night-edition/pack.json\": \"1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1\",\n        \"content/packs/quest-quality-open-office/pack.json\": \"97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff\",\n        \"content/packs/quest-quality-payday/pack.json\": \"855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed\",\n        \"content/packs/quest-quality-shared-meaning/pack.json\": \"cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072\",\n        \"content/packs/quest-quality-small-fire/pack.json\": \"64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7\",\n        \"content/packs/quest-quality-truce/pack.json\": \"2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08\",\n        \"content/packs/quest-three-witnesses-v2/pack.json\": \"294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423\",\n        \"package.json\": \"9e9b084efac7c9a0a24a839aceed84b23c1272ece8c93272a58642af93bbc454\",\n        \"public/index.html\": \"39b36896c4e6a64f2aa7163de4d3312824c9b5bd6b16c57f8a87959db89bc98e\",\n        \"public/ux-quest-quality.css\": \"8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f\",\n        \"public/ux-quest-quality.js\": \"e34b8b84be83f0c1d2af9149cba227225a830f371ee9e11f95b6b4f3c05c58f2\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quality-runtime.js\": \"609bab529eae343b33a2873a9da34668d63c3ee2f91bbcca77f85bcdb43e5d4e\",\n        \"src/content/quality.js\": \"94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4\",\n        \"src/content/quest-quality-packs.js\": \"fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/quest-quality-contracts.js\": \"b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/server.js\": \"d72f0ef99769d2097fb60368ae96f4faaad0e6c2a92bc8ec67b82abf975eedd4\",\n        \"test/lib/quest-quality-fixture.js\": \"316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b\",\n        \"test/quest-quality-content.js\": \"0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266\",\n        \"tools/quest-quality-studio.js\": \"997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52\",\n        \"tools/quest-quality-study.js\": \"856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01\",\n        \"tools/quest-quality-workgraph.js\": \"c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\"\n      },\n      \"sourceStable\": true,\n      \"startedAt\": \"2026-11-16T00:03:25.234Z\",\n      \"elapsedMs\": 284,\n      \"exitCode\": 0,\n      \"log\": \"output/quest-quality-verification/quality-mwii2x0y-quest-quality-study.log\",\n      \"evidenceType\": \"automated_implementation_check\"\n    },\n    {\n      \"id\": \"quality-mwii3zu5-quest-quality-postgres\",\n      \"evaluator\": \"test/quest-quality-postgres.js\",\n      \"evaluatorHash\": \"f8b535feb91fc5ad23b2b61c56432eca948c5c3eb4e9a5b6962eea9abd905e7a\",\n      \"sourceHashes\": {\n        \"content/packs/quest-quality-favors/pack.json\": \"c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71\",\n        \"content/packs/quest-quality-field-notes/pack.json\": \"c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a\",\n        \"content/packs/quest-quality-last-ferry/pack.json\": \"ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881\",\n        \"content/packs/quest-quality-night-edition/pack.json\": \"1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1\",\n        \"content/packs/quest-quality-open-office/pack.json\": \"97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff\",\n        \"content/packs/quest-quality-payday/pack.json\": \"855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed\",\n        \"content/packs/quest-quality-shared-meaning/pack.json\": \"cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072\",\n        \"content/packs/quest-quality-small-fire/pack.json\": \"64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7\",\n        \"content/packs/quest-quality-truce/pack.json\": \"2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08\",\n        \"content/packs/quest-three-witnesses-v2/pack.json\": \"294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423\",\n        \"package.json\": \"9e9b084efac7c9a0a24a839aceed84b23c1272ece8c93272a58642af93bbc454\",\n        \"public/index.html\": \"39b36896c4e6a64f2aa7163de4d3312824c9b5bd6b16c57f8a87959db89bc98e\",\n        \"public/ux-quest-quality.css\": \"8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f\",\n        \"public/ux-quest-quality.js\": \"e34b8b84be83f0c1d2af9149cba227225a830f371ee9e11f95b6b4f3c05c58f2\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quality-runtime.js\": \"609bab529eae343b33a2873a9da34668d63c3ee2f91bbcca77f85bcdb43e5d4e\",\n        \"src/content/quality.js\": \"94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4\",\n        \"src/content/quest-quality-packs.js\": \"fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/quest-quality-contracts.js\": \"b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/server.js\": \"d72f0ef99769d2097fb60368ae96f4faaad0e6c2a92bc8ec67b82abf975eedd4\",\n        \"test/lib/quest-quality-fixture.js\": \"316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b\",\n        \"test/quest-quality-content.js\": \"0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266\",\n        \"tools/quest-quality-studio.js\": \"997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52\",\n        \"tools/quest-quality-study.js\": \"856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01\",\n        \"tools/quest-quality-workgraph.js\": \"c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\"\n      },\n      \"sourceStable\": true,\n      \"startedAt\": \"2026-11-16T00:04:15.533Z\",\n      \"elapsedMs\": 21860,\n      \"exitCode\": 0,\n      \"log\": \"output/quest-quality-verification/quality-mwii3zu5-quest-quality-postgres.log\",\n      \"evidenceType\": \"automated_implementation_check\"\n    },\n    {\n      \"id\": \"quality-mwio4w9o-quest-quality-content\",\n      \"evaluator\": \"test/quest-quality-content.js\",\n      \"evaluatorHash\": \"0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266\",\n",
+          "baseline": ""
+        },
+        {
+          "at": 873128,
+          "current": "      \"startedAt\": \"2026-11-16T02:52:55.260Z\",\n      \"elapsedMs\": 9256,\n",
+          "baseline": "      \"startedAt\": \"2026-11-16T02:53:47.290Z\",\n      \"elapsedMs\": 6510,\n"
+        },
+        {
+          "at": 873221,
+          "current": "      \"log\": \"output/quest-quality-verification/quality-mwio4w9o-quest-quality-content.log\",\n",
+          "baseline": "      \"log\": \"output/quest-quality-verification/quality-mwio60ey-quest-quality-social.log\",\n"
+        },
+        {
+          "at": 873382,
+          "current": "      \"id\": \"quality-mwio543p-quest-quality-rules\",\n      \"evaluator\": \"test/quest-quality-rules.js\",\n      \"evaluatorHash\": \"a826d549449bfff306a42553d5c218412d0b903d7acc0756791787cb19211b08\",\n",
+          "baseline": "      \"id\": \"quality-mwio65ko-quest-quality-spoilers\",\n      \"evaluator\": \"test/quest-quality-spoilers.js\",\n      \"evaluatorHash\": \"55fc0fc6512934fccfdf3628b5f178b95fe27722753aba704b1acc515d8876e4\",\n"
+        },
+        {
+          "at": 877308,
+          "current": "      \"startedAt\": \"2026-11-16T02:53:05.413Z\",\n      \"elapsedMs\": 147,\n",
+          "baseline": "      \"startedAt\": \"2026-11-16T02:53:53.976Z\",\n      \"elapsedMs\": 4707,\n"
+        },
+        {
+          "at": 877400,
+          "current": "      \"log\": \"output/quest-quality-verification/quality-mwio543p-quest-quality-rules.log\",\n",
+          "baseline": "      \"log\": \"output/quest-quality-verification/quality-mwio65ko-quest-quality-spoilers.log\",\n"
+        },
+        {
+          "at": 877559,
+          "current": "      \"id\": \"quality-mwio54tx-quest-quality-studio\",\n      \"evaluator\": \"test/quest-quality-studio.js\",\n      \"evaluatorHash\": \"7312af34a011503deb2cd3a36ea4f9b667ddc9cc57c6de7e2ef384121ff944f6\",\n",
+          "baseline": "      \"id\": \"quality-mwio69bj-quest-quality-study\",\n      \"evaluator\": \"test/quest-quality-study.js\",\n      \"evaluatorHash\": \"6043fb8143c39ce3b1d418265670565faae908006e07d7760c0cef5f2c5a896b\",\n"
+        },
+        {
+          "at": 881487,
+          "current": "      \"startedAt\": \"2026-11-16T02:53:06.357Z\",\n      \"elapsedMs\": 1312,\n",
+          "baseline": "      \"startedAt\": \"2026-11-16T02:53:58.831Z\",\n      \"elapsedMs\": 222,\n"
+        },
+        {
+          "at": 881580,
+          "current": "      \"log\": \"output/quest-quality-verification/quality-mwio54tx-quest-quality-studio.log\",\n",
+          "baseline": "      \"log\": \"output/quest-quality-verification/quality-mwio69bj-quest-quality-study.log\",\n"
+        },
+        {
+          "at": 881740,
+          "current": "      \"id\": \"quality-mwio56a9-quest-quality-runtime\",\n      \"evaluator\": \"test/quest-quality-runtime.js\",\n      \"evaluatorHash\": \"3f227f0b0b8158b97d6e1790fcab5f5cdb788320446bcf0ecc378513a903e6a6\",\n",
+          "baseline": "      \"id\": \"quality-mwio7bhm-quest-quality-postgres\",\n      \"evaluator\": \"test/quest-quality-postgres.js\",\n      \"evaluatorHash\": \"f8b535feb91fc5ad23b2b61c56432eca948c5c3eb4e9a5b6962eea9abd905e7a\",\n"
+        },
+        {
+          "at": 885670,
+          "current": "      \"startedAt\": \"2026-11-16T02:53:08.241Z\",\n      \"elapsedMs\": 5667,\n      \"exitCode\": 0,\n      \"log\": \"output/quest-quality-verification/quality-mwio56a9-quest-quality-runtime.log\",\n      \"evidenceType\": \"automated_implementation_check\"\n    },\n    {\n      \"id\": \"quality-mwio5b0q-quest-quality-api\",\n      \"evaluator\": \"test/quest-quality-api.js\",\n      \"evaluatorHash\": \"eb06739d7e08a8124b9a91371de7ea2b314339dd20f5a3451138efc08441bd8e\",\n      \"sourceHashes\": {\n        \"content/packs/quest-quality-favors/pack.json\": \"c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71\",\n        \"content/packs/quest-quality-field-notes/pack.json\": \"c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a\",\n        \"content/packs/quest-quality-last-ferry/pack.json\": \"ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881\",\n        \"content/packs/quest-quality-night-edition/pack.json\": \"1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1\",\n        \"content/packs/quest-quality-open-office/pack.json\": \"97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff\",\n        \"content/packs/quest-quality-payday/pack.json\": \"855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed\",\n        \"content/packs/quest-quality-shared-meaning/pack.json\": \"cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072\",\n        \"content/packs/quest-quality-small-fire/pack.json\": \"64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7\",\n        \"content/packs/quest-quality-truce/pack.json\": \"2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08\",\n        \"content/packs/quest-three-witnesses-v2/pack.json\": \"294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423\",\n        \"package.json\": \"7cdd3916fb45488293efdc1a92e9634bb7157809c11ca50a34460acc650ef629\",\n        \"public/index.html\": \"fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba\",\n        \"public/ux-quest-quality.css\": \"8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f\",\n        \"public/ux-quest-quality.js\": \"e34b8b84be83f0c1d2af9149cba227225a830f371ee9e11f95b6b4f3c05c58f2\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"src/agentgateway.js\": \"8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quality-runtime.js\": \"609bab529eae343b33a2873a9da34668d63c3ee2f91bbcca77f85bcdb43e5d4e\",\n        \"src/content/quality.js\": \"94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4\",\n        \"src/content/quest-quality-packs.js\": \"fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/quest-quality-contracts.js\": \"b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/server.js\": \"f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5\",\n        \"test/lib/quest-quality-fixture.js\": \"316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b\",\n        \"test/quest-quality-content.js\": \"0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266\",\n        \"tools/quest-quality-studio.js\": \"997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52\",\n        \"tools/quest-quality-study.js\": \"856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01\",\n        \"tools/quest-quality-workgraph.js\": \"c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\"\n      },\n      \"sourceStable\": true,\n      \"startedAt\": \"2026-11-16T02:53:14.378Z\",\n      \"elapsedMs\": 4949,\n      \"exitCode\": 0,\n      \"log\": \"output/quest-quality-verification/quality-mwio5b0q-quest-quality-api.log\",\n      \"evidenceType\": \"automated_implementation_check\"\n    },\n    {\n      \"id\": \"quality-mwio5f4i-quest-quality-browser\",\n      \"evaluator\": \"test/quest-quality-browser.js\",\n      \"evaluatorHash\": \"0c51ee92b5ed3e722813498a7f5657fcb6fc4fffb2cabadc2f122035c78184f7\",\n      \"sourceHashes\": {\n        \"content/packs/quest-quality-favors/pack.json\": \"c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71\",\n        \"content/packs/quest-quality-field-notes/pack.json\": \"c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a\",\n        \"content/packs/quest-quality-last-ferry/pack.json\": \"ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881\",\n        \"content/packs/quest-quality-night-edition/pack.json\": \"1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1\",\n        \"content/packs/quest-quality-open-office/pack.json\": \"97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff\",\n        \"content/packs/quest-quality-payday/pack.json\": \"855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed\",\n        \"content/packs/quest-quality-shared-meaning/pack.json\": \"cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072\",\n        \"content/packs/quest-quality-small-fire/pack.json\": \"64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7\",\n        \"content/packs/quest-quality-truce/pack.json\": \"2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08\",\n        \"content/packs/quest-three-witnesses-v2/pack.json\": \"294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423\",\n        \"package.json\": \"7cdd3916fb45488293efdc1a92e9634bb7157809c11ca50a34460acc650ef629\",\n        \"public/index.html\": \"fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba\",\n        \"public/ux-quest-quality.css\": \"8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f\",\n        \"public/ux-quest-quality.js\": \"e34b8b84be83f0c1d2af9149cba227225a830f371ee9e11f95b6b4f3c05c58f2\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"src/agentgateway.js\": \"8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quality-runtime.js\": \"609bab529eae343b33a2873a9da34668d63c3ee2f91bbcca77f85bcdb43e5d4e\",\n        \"src/content/quality.js\": \"94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4\",\n        \"src/content/quest-quality-packs.js\": \"fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/quest-quality-contracts.js\": \"b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/server.js\": \"f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5\",\n        \"test/lib/quest-quality-fixture.js\": \"316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b\",\n        \"test/quest-quality-content.js\": \"0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266\",\n        \"tools/quest-quality-studio.js\": \"997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52\",\n        \"tools/quest-quality-study.js\": \"856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01\",\n        \"tools/quest-quality-workgraph.js\": \"c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\"\n      },\n      \"sourceStable\": true,\n      \"startedAt\": \"2026-11-16T02:53:19.698Z\",\n      \"elapsedMs\": 23567,\n      \"exitCode\": 0,\n      \"log\": \"output/quest-quality-verification/quality-mwio5f4i-quest-quality-browser.log\",\n      \"evidenceType\": \"automated_implementation_check\"\n    },\n    {\n      \"id\": \"quality-mwio5xjr-quest-quality-postgres\",\n      \"evaluator\": \"test/quest-quality-postgres.js\",\n      \"evaluatorHash\": \"f8b535feb91fc5ad23b2b61c56432eca948c5c3eb4e9a5b6962eea9abd905e7a\",\n      \"sourceHashes\": {\n        \"content/packs/quest-quality-favors/pack.json\": \"c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71\",\n        \"content/packs/quest-quality-field-notes/pack.json\": \"c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a\",\n        \"content/packs/quest-quality-last-ferry/pack.json\": \"ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881\",\n        \"content/packs/quest-quality-night-edition/pack.json\": \"1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1\",\n        \"content/packs/quest-quality-open-office/pack.json\": \"97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff\",\n        \"content/packs/quest-quality-payday/pack.json\": \"855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed\",\n        \"content/packs/quest-quality-shared-meaning/pack.json\": \"cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072\",\n        \"content/packs/quest-quality-small-fire/pack.json\": \"64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7\",\n        \"content/packs/quest-quality-truce/pack.json\": \"2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08\",\n        \"content/packs/quest-three-witnesses-v2/pack.json\": \"294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423\",\n        \"package.json\": \"7cdd3916fb45488293efdc1a92e9634bb7157809c11ca50a34460acc650ef629\",\n        \"public/index.html\": \"fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba\",\n        \"public/ux-quest-quality.css\": \"8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f\",\n        \"public/ux-quest-quality.js\": \"e34b8b84be83f0c1d2af9149cba227225a830f371ee9e11f95b6b4f3c05c58f2\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"src/agentgateway.js\": \"8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quality-runtime.js\": \"609bab529eae343b33a2873a9da34668d63c3ee2f91bbcca77f85bcdb43e5d4e\",\n        \"src/content/quality.js\": \"94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4\",\n        \"src/content/quest-quality-packs.js\": \"fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/quest-quality-contracts.js\": \"b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/server.js\": \"f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5\",\n        \"test/lib/quest-quality-fixture.js\": \"316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b\",\n        \"test/quest-quality-content.js\": \"0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266\",\n        \"tools/quest-quality-studio.js\": \"997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52\",\n        \"tools/quest-quality-study.js\": \"856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01\",\n        \"tools/quest-quality-workgraph.js\": \"c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\"\n      },\n      \"sourceStable\": true,\n      \"startedAt\": \"2026-11-16T02:53:43.575Z\",\n      \"elapsedMs\": 1607,\n      \"exitCode\": 1,\n      \"log\": \"output/quest-quality-verification/quality-mwio5xjr-quest-quality-postgres.log\",\n      \"evidenceType\": \"automated_implementation_check\"\n    },\n    {\n      \"id\": \"quality-mwio5z0w-quest-quality-stateful\",\n      \"evaluator\": \"test/quest-quality-stateful.js\",\n      \"evaluatorHash\": \"25b514da3ba7440638639362b814c4145ade0f5050b0297a4c6b39d3bc3e51df\",\n      \"sourceHashes\": {\n        \"content/packs/quest-quality-favors/pack.json\": \"c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71\",\n        \"content/packs/quest-quality-field-notes/pack.json\": \"c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a\",\n        \"content/packs/quest-quality-last-ferry/pack.json\": \"ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881\",\n        \"content/packs/quest-quality-night-edition/pack.json\": \"1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1\",\n        \"content/packs/quest-quality-open-office/pack.json\": \"97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff\",\n        \"content/packs/quest-quality-payday/pack.json\": \"855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed\",\n        \"content/packs/quest-quality-shared-meaning/pack.json\": \"cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072\",\n        \"content/packs/quest-quality-small-fire/pack.json\": \"64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7\",\n        \"content/packs/quest-quality-truce/pack.json\": \"2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08\",\n        \"content/packs/quest-three-witnesses-v2/pack.json\": \"294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423\",\n        \"package.json\": \"7cdd3916fb45488293efdc1a92e9634bb7157809c11ca50a34460acc650ef629\",\n        \"public/index.html\": \"fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba\",\n        \"public/ux-quest-quality.css\": \"8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f\",\n        \"public/ux-quest-quality.js\": \"e34b8b84be83f0c1d2af9149cba227225a830f371ee9e11f95b6b4f3c05c58f2\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"src/agentgateway.js\": \"8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quality-runtime.js\": \"609bab529eae343b33a2873a9da34668d63c3ee2f91bbcca77f85bcdb43e5d4e\",\n        \"src/content/quality.js\": \"94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4\",\n        \"src/content/quest-quality-packs.js\": \"fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/quest-quality-contracts.js\": \"b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/server.js\": \"f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5\",\n        \"test/lib/quest-quality-fixture.js\": \"316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b\",\n        \"test/quest-quality-content.js\": \"0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266\",\n        \"tools/quest-quality-studio.js\": \"997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52\",\n        \"tools/quest-quality-study.js\": \"856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01\",\n        \"tools/quest-quality-workgraph.js\": \"c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\"\n      },\n      \"sourceStable\": true,\n      \"startedAt\": \"2026-11-16T02:53:45.488Z\",\n      \"elapsedMs\": 1558,\n      \"exitCode\": 0,\n      \"log\": \"output/quest-quality-verification/quality-mwio5z0w-quest-quality-stateful.log\",\n      \"evidenceType\": \"automated_implementation_check\"\n    },\n    {\n      \"id\": \"quality-mwio60ey-quest-quality-social\",\n      \"evaluator\": \"test/quest-quality-social.js\",\n      \"evaluatorHash\": \"a4dfce14e220a79d78651ea113c33efbfb4361906882ab2ffe20079c730964a6\",\n      \"sourceHashes\": {\n        \"content/packs/quest-quality-favors/pack.json\": \"c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71\",\n        \"content/packs/quest-quality-field-notes/pack.json\": \"c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a\",\n        \"content/packs/quest-quality-last-ferry/pack.json\": \"ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881\",\n        \"content/packs/quest-quality-night-edition/pack.json\": \"1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1\",\n        \"content/packs/quest-quality-open-office/pack.json\": \"97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff\",\n        \"content/packs/quest-quality-payday/pack.json\": \"855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed\",\n        \"content/packs/quest-quality-shared-meaning/pack.json\": \"cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072\",\n        \"content/packs/quest-quality-small-fire/pack.json\": \"64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7\",\n        \"content/packs/quest-quality-truce/pack.json\": \"2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08\",\n        \"content/packs/quest-three-witnesses-v2/pack.json\": \"294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423\",\n        \"package.json\": \"7cdd3916fb45488293efdc1a92e9634bb7157809c11ca50a34460acc650ef629\",\n        \"public/index.html\": \"fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba\",\n        \"public/ux-quest-quality.css\": \"8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f\",\n        \"public/ux-quest-quality.js\": \"e34b8b84be83f0c1d2af9149cba227225a830f371ee9e11f95b6b4f3c05c58f2\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"src/agentgateway.js\": \"8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quality-runtime.js\": \"609bab529eae343b33a2873a9da34668d63c3ee2f91bbcca77f85bcdb43e5d4e\",\n        \"src/content/quality.js\": \"94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4\",\n        \"src/content/quest-quality-packs.js\": \"fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/quest-quality-contracts.js\": \"b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/server.js\": \"f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5\",\n        \"test/lib/quest-quality-fixture.js\": \"316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b\",\n        \"test/quest-quality-content.js\": \"0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266\",\n        \"tools/quest-quality-studio.js\": \"997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52\",\n        \"tools/quest-quality-study.js\": \"856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01\",\n        \"tools/quest-quality-workgraph.js\": \"c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\"\n      },\n      \"sourceStable\": true,\n      \"startedAt\": \"2026-11-16T02:53:47.290Z\",\n      \"elapsedMs\": 6510,\n      \"exitCode\": 0,\n      \"log\": \"output/quest-quality-verification/quality-mwio60ey-quest-quality-social.log\",\n      \"evidenceType\": \"automated_implementation_check\"\n    },\n    {\n      \"id\": \"quality-mwio65ko-quest-quality-spoilers\",\n      \"evaluator\": \"test/quest-quality-spoilers.js\",\n      \"evaluatorHash\": \"55fc0fc6512934fccfdf3628b5f178b95fe27722753aba704b1acc515d8876e4\",\n      \"sourceHashes\": {\n        \"content/packs/quest-quality-favors/pack.json\": \"c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71\",\n        \"content/packs/quest-quality-field-notes/pack.json\": \"c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a\",\n        \"content/packs/quest-quality-last-ferry/pack.json\": \"ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881\",\n        \"content/packs/quest-quality-night-edition/pack.json\": \"1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1\",\n        \"content/packs/quest-quality-open-office/pack.json\": \"97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff\",\n        \"content/packs/quest-quality-payday/pack.json\": \"855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed\",\n        \"content/packs/quest-quality-shared-meaning/pack.json\": \"cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072\",\n        \"content/packs/quest-quality-small-fire/pack.json\": \"64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7\",\n        \"content/packs/quest-quality-truce/pack.json\": \"2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08\",\n        \"content/packs/quest-three-witnesses-v2/pack.json\": \"294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423\",\n        \"package.json\": \"7cdd3916fb45488293efdc1a92e9634bb7157809c11ca50a34460acc650ef629\",\n        \"public/index.html\": \"fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba\",\n        \"public/ux-quest-quality.css\": \"8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f\",\n        \"public/ux-quest-quality.js\": \"e34b8b84be83f0c1d2af9149cba227225a830f371ee9e11f95b6b4f3c05c58f2\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"src/agentgateway.js\": \"8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quality-runtime.js\": \"609bab529eae343b33a2873a9da34668d63c3ee2f91bbcca77f85bcdb43e5d4e\",\n        \"src/content/quality.js\": \"94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4\",\n        \"src/content/quest-quality-packs.js\": \"fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/quest-quality-contracts.js\": \"b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/server.js\": \"f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5\",\n        \"test/lib/quest-quality-fixture.js\": \"316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b\",\n        \"test/quest-quality-content.js\": \"0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266\",\n        \"tools/quest-quality-studio.js\": \"997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52\",\n        \"tools/quest-quality-study.js\": \"856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01\",\n        \"tools/quest-quality-workgraph.js\": \"c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\"\n      },\n      \"sourceStable\": true,\n      \"startedAt\": \"2026-11-16T02:53:53.976Z\",\n      \"elapsedMs\": 4707,\n      \"exitCode\": 0,\n      \"log\": \"output/quest-quality-verification/quality-mwio65ko-quest-quality-spoilers.log\",\n      \"evidenceType\": \"automated_implementation_check\"\n    },\n    {\n      \"id\": \"quality-mwio69bj-quest-quality-study\",\n      \"evaluator\": \"test/quest-quality-study.js\",\n      \"evaluatorHash\": \"6043fb8143c39ce3b1d418265670565faae908006e07d7760c0cef5f2c5a896b\",\n      \"sourceHashes\": {\n        \"content/packs/quest-quality-favors/pack.json\": \"c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71\",\n        \"content/packs/quest-quality-field-notes/pack.json\": \"c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a\",\n        \"content/packs/quest-quality-last-ferry/pack.json\": \"ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881\",\n        \"content/packs/quest-quality-night-edition/pack.json\": \"1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1\",\n        \"content/packs/quest-quality-open-office/pack.json\": \"97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff\",\n        \"content/packs/quest-quality-payday/pack.json\": \"855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed\",\n        \"content/packs/quest-quality-shared-meaning/pack.json\": \"cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072\",\n        \"content/packs/quest-quality-small-fire/pack.json\": \"64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7\",\n        \"content/packs/quest-quality-truce/pack.json\": \"2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08\",\n        \"content/packs/quest-three-witnesses-v2/pack.json\": \"294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423\",\n        \"package.json\": \"7cdd3916fb45488293efdc1a92e9634bb7157809c11ca50a34460acc650ef629\",\n        \"public/index.html\": \"fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba\",\n        \"public/ux-quest-quality.css\": \"8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f\",\n        \"public/ux-quest-quality.js\": \"e34b8b84be83f0c1d2af9149cba227225a830f371ee9e11f95b6b4f3c05c58f2\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"src/agentgateway.js\": \"8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quality-runtime.js\": \"609bab529eae343b33a2873a9da34668d63c3ee2f91bbcca77f85bcdb43e5d4e\",\n        \"src/content/quality.js\": \"94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4\",\n        \"src/content/quest-quality-packs.js\": \"fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/quest-quality-contracts.js\": \"b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/server.js\": \"f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5\",\n        \"test/lib/quest-quality-fixture.js\": \"316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b\",\n        \"test/quest-quality-content.js\": \"0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266\",\n        \"tools/quest-quality-studio.js\": \"997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52\",\n        \"tools/quest-quality-study.js\": \"856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01\",\n        \"tools/quest-quality-workgraph.js\": \"c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\"\n      },\n      \"sourceStable\": true,\n      \"startedAt\": \"2026-11-16T02:53:58.831Z\",\n      \"elapsedMs\": 222,\n      \"exitCode\": 0,\n      \"log\": \"output/quest-quality-verification/quality-mwio69bj-quest-quality-study.log\",\n      \"evidenceType\": \"automated_implementation_check\"\n    },\n    {\n      \"id\": \"quality-mwio7bhm-quest-quality-postgres\",\n      \"evaluator\": \"test/quest-quality-postgres.js\",\n      \"evaluatorHash\": \"f8b535feb91fc5ad23b2b61c56432eca948c5c3eb4e9a5b6962eea9abd905e7a\",\n      \"sourceHashes\": {\n        \"content/packs/quest-quality-favors/pack.json\": \"c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71\",\n        \"content/packs/quest-quality-field-notes/pack.json\": \"c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a\",\n        \"content/packs/quest-quality-last-ferry/pack.json\": \"ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881\",\n        \"content/packs/quest-quality-night-edition/pack.json\": \"1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1\",\n        \"content/packs/quest-quality-open-office/pack.json\": \"97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff\",\n        \"content/packs/quest-quality-payday/pack.json\": \"855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed\",\n        \"content/packs/quest-quality-shared-meaning/pack.json\": \"cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072\",\n        \"content/packs/quest-quality-small-fire/pack.json\": \"64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7\",\n        \"content/packs/quest-quality-truce/pack.json\": \"2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08\",\n        \"content/packs/quest-three-witnesses-v2/pack.json\": \"294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423\",\n        \"package.json\": \"7cdd3916fb45488293efdc1a92e9634bb7157809c11ca50a34460acc650ef629\",\n        \"public/index.html\": \"fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba\",\n        \"public/ux-quest-quality.css\": \"8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f\",\n        \"public/ux-quest-quality.js\": \"e34b8b84be83f0c1d2af9149cba227225a830f371ee9e11f95b6b4f3c05c58f2\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"src/agentgateway.js\": \"8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quality-runtime.js\": \"609bab529eae343b33a2873a9da34668d63c3ee2f91bbcca77f85bcdb43e5d4e\",\n        \"src/content/quality.js\": \"94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4\",\n        \"src/content/quest-quality-packs.js\": \"fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/quest-quality-contracts.js\": \"b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/server.js\": \"f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5\",\n        \"test/lib/quest-quality-fixture.js\": \"316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b\",\n        \"test/quest-quality-content.js\": \"0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266\",\n        \"tools/quest-quality-studio.js\": \"997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52\",\n        \"tools/quest-quality-study.js\": \"856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01\",\n        \"tools/quest-quality-workgraph.js\": \"c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\"\n      },\n      \"sourceStable\": true,\n      \"startedAt\": \"2026-11-16T02:54:48.298Z\",\n",
+          "baseline": "      \"startedAt\": \"2026-11-16T02:54:48.298Z\",\n"
+        },
+        {
+          "at": 919226,
+          "current": "      \"log\": \"output/quest-quality-verification/quality-mwio7bhm-quest-quality-postgres.log\",\n      \"evidenceType\": \"automated_implementation_check\"\n    },\n    {\n      \"id\": \"quality-mwj5b59g-quest-quality-content\",\n      \"evaluator\": \"test/quest-quality-content.js\",\n      \"evaluatorHash\": \"0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266\",\n      \"sourceHashes\": {\n        \"content/packs/quest-quality-favors/pack.json\": \"c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71\",\n        \"content/packs/quest-quality-field-notes/pack.json\": \"c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a\",\n        \"content/packs/quest-quality-last-ferry/pack.json\": \"ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881\",\n        \"content/packs/quest-quality-night-edition/pack.json\": \"1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1\",\n        \"content/packs/quest-quality-open-office/pack.json\": \"97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff\",\n        \"content/packs/quest-quality-payday/pack.json\": \"855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed\",\n        \"content/packs/quest-quality-shared-meaning/pack.json\": \"cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072\",\n        \"content/packs/quest-quality-small-fire/pack.json\": \"64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7\",\n        \"content/packs/quest-quality-truce/pack.json\": \"2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08\",\n        \"content/packs/quest-three-witnesses-v2/pack.json\": \"294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423\",\n        \"package.json\": \"9e9b084efac7c9a0a24a839aceed84b23c1272ece8c93272a58642af93bbc454\",\n        \"public/index.html\": \"4660d277bf20f3685b2d3ba1351b63ef076f12e18f12d1a0a58b85efc10ff131\",\n        \"public/ux-quest-quality.css\": \"8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f\",\n        \"public/ux-quest-quality.js\": \"e34b8b84be83f0c1d2af9149cba227225a830f371ee9e11f95b6b4f3c05c58f2\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quality-runtime.js\": \"609bab529eae343b33a2873a9da34668d63c3ee2f91bbcca77f85bcdb43e5d4e\",\n        \"src/content/quality.js\": \"94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4\",\n        \"src/content/quest-quality-packs.js\": \"fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/quest-quality-contracts.js\": \"b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/server.js\": \"481545e4198c40ceff2614b404a40db1c1079458cda1cec6f1cde92f4d7fb15d\",\n        \"test/lib/quest-quality-fixture.js\": \"316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b\",\n        \"test/quest-quality-content.js\": \"0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266\",\n        \"tools/quest-quality-studio.js\": \"997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52\",\n        \"tools/quest-quality-study.js\": \"856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01\",\n        \"tools/quest-quality-workgraph.js\": \"c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\"\n      },\n      \"sourceStable\": true,\n      \"startedAt\": \"2026-11-16T10:53:40.324Z\",\n      \"elapsedMs\": 8294,\n      \"exitCode\": 0,\n      \"log\": \"output/quest-quality-verification/quality-mwj5b59g-quest-quality-content.log\",\n      \"evidenceType\": \"automated_implementation_check\"\n    },\n    {\n      \"id\": \"quality-mwj5bcjj-quest-quality-rules\",\n      \"evaluator\": \"test/quest-quality-rules.js\",\n      \"evaluatorHash\": \"a826d549449bfff306a42553d5c218412d0b903d7acc0756791787cb19211b08\",\n      \"sourceHashes\": {\n        \"content/packs/quest-quality-favors/pack.json\": \"c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71\",\n        \"content/packs/quest-quality-field-notes/pack.json\": \"c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a\",\n        \"content/packs/quest-quality-last-ferry/pack.json\": \"ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881\",\n        \"content/packs/quest-quality-night-edition/pack.json\": \"1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1\",\n        \"content/packs/quest-quality-open-office/pack.json\": \"97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff\",\n        \"content/packs/quest-quality-payday/pack.json\": \"855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed\",\n        \"content/packs/quest-quality-shared-meaning/pack.json\": \"cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072\",\n        \"content/packs/quest-quality-small-fire/pack.json\": \"64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7\",\n        \"content/packs/quest-quality-truce/pack.json\": \"2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08\",\n        \"content/packs/quest-three-witnesses-v2/pack.json\": \"294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423\",\n        \"package.json\": \"9e9b084efac7c9a0a24a839aceed84b23c1272ece8c93272a58642af93bbc454\",\n        \"public/index.html\": \"4660d277bf20f3685b2d3ba1351b63ef076f12e18f12d1a0a58b85efc10ff131\",\n        \"public/ux-quest-quality.css\": \"8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f\",\n        \"public/ux-quest-quality.js\": \"e34b8b84be83f0c1d2af9149cba227225a830f371ee9e11f95b6b4f3c05c58f2\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quality-runtime.js\": \"609bab529eae343b33a2873a9da34668d63c3ee2f91bbcca77f85bcdb43e5d4e\",\n        \"src/content/quality.js\": \"94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4\",\n        \"src/content/quest-quality-packs.js\": \"fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/quest-quality-contracts.js\": \"b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/server.js\": \"481545e4198c40ceff2614b404a40db1c1079458cda1cec6f1cde92f4d7fb15d\",\n        \"test/lib/quest-quality-fixture.js\": \"316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b\",\n        \"test/quest-quality-content.js\": \"0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266\",\n        \"tools/quest-quality-studio.js\": \"997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52\",\n        \"tools/quest-quality-study.js\": \"856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01\",\n        \"tools/quest-quality-workgraph.js\": \"c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\"\n      },\n      \"sourceStable\": true,\n      \"startedAt\": \"2026-11-16T10:53:49.759Z\",\n      \"elapsedMs\": 117,\n      \"exitCode\": 0,\n      \"log\": \"output/quest-quality-verification/quality-mwj5bcjj-quest-quality-rules.log\",\n      \"evidenceType\": \"automated_implementation_check\"\n    },\n    {\n      \"id\": \"quality-mwj5bd9k-quest-quality-studio\",\n      \"evaluator\": \"test/quest-quality-studio.js\",\n      \"evaluatorHash\": \"7312af34a011503deb2cd3a36ea4f9b667ddc9cc57c6de7e2ef384121ff944f6\",\n      \"sourceHashes\": {\n        \"content/packs/quest-quality-favors/pack.json\": \"c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71\",\n        \"content/packs/quest-quality-field-notes/pack.json\": \"c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a\",\n        \"content/packs/quest-quality-last-ferry/pack.json\": \"ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881\",\n        \"content/packs/quest-quality-night-edition/pack.json\": \"1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1\",\n        \"content/packs/quest-quality-open-office/pack.json\": \"97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff\",\n        \"content/packs/quest-quality-payday/pack.json\": \"855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed\",\n        \"content/packs/quest-quality-shared-meaning/pack.json\": \"cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072\",\n        \"content/packs/quest-quality-small-fire/pack.json\": \"64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7\",\n        \"content/packs/quest-quality-truce/pack.json\": \"2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08\",\n        \"content/packs/quest-three-witnesses-v2/pack.json\": \"294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423\",\n        \"package.json\": \"9e9b084efac7c9a0a24a839aceed84b23c1272ece8c93272a58642af93bbc454\",\n        \"public/index.html\": \"4660d277bf20f3685b2d3ba1351b63ef076f12e18f12d1a0a58b85efc10ff131\",\n        \"public/ux-quest-quality.css\": \"8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f\",\n        \"public/ux-quest-quality.js\": \"e34b8b84be83f0c1d2af9149cba227225a830f371ee9e11f95b6b4f3c05c58f2\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quality-runtime.js\": \"609bab529eae343b33a2873a9da34668d63c3ee2f91bbcca77f85bcdb43e5d4e\",\n        \"src/content/quality.js\": \"94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4\",\n        \"src/content/quest-quality-packs.js\": \"fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/quest-quality-contracts.js\": \"b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/server.js\": \"481545e4198c40ceff2614b404a40db1c1079458cda1cec6f1cde92f4d7fb15d\",\n        \"test/lib/quest-quality-fixture.js\": \"316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b\",\n        \"test/quest-quality-content.js\": \"0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266\",\n        \"tools/quest-quality-studio.js\": \"997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52\",\n        \"tools/quest-quality-study.js\": \"856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01\",\n        \"tools/quest-quality-workgraph.js\": \"c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\"\n      },\n      \"sourceStable\": true,\n      \"startedAt\": \"2026-11-16T10:53:50.696Z\",\n      \"elapsedMs\": 901,\n      \"exitCode\": 0,\n      \"log\": \"output/quest-quality-verification/quality-mwj5bd9k-quest-quality-studio.log\",\n      \"evidenceType\": \"automated_implementation_check\"\n    },\n    {\n      \"id\": \"quality-mwj5beig-quest-quality-runtime\",\n      \"evaluator\": \"test/quest-quality-runtime.js\",\n      \"evaluatorHash\": \"3f227f0b0b8158b97d6e1790fcab5f5cdb788320446bcf0ecc378513a903e6a6\",\n      \"sourceHashes\": {\n        \"content/packs/quest-quality-favors/pack.json\": \"c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71\",\n        \"content/packs/quest-quality-field-notes/pack.json\": \"c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a\",\n        \"content/packs/quest-quality-last-ferry/pack.json\": \"ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881\",\n        \"content/packs/quest-quality-night-edition/pack.json\": \"1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1\",\n        \"content/packs/quest-quality-open-office/pack.json\": \"97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff\",\n        \"content/packs/quest-quality-payday/pack.json\": \"855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed\",\n        \"content/packs/quest-quality-shared-meaning/pack.json\": \"cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072\",\n        \"content/packs/quest-quality-small-fire/pack.json\": \"64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7\",\n        \"content/packs/quest-quality-truce/pack.json\": \"2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08\",\n        \"content/packs/quest-three-witnesses-v2/pack.json\": \"294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423\",\n        \"package.json\": \"9e9b084efac7c9a0a24a839aceed84b23c1272ece8c93272a58642af93bbc454\",\n        \"public/index.html\": \"4660d277bf20f3685b2d3ba1351b63ef076f12e18f12d1a0a58b85efc10ff131\",\n        \"public/ux-quest-quality.css\": \"8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f\",\n        \"public/ux-quest-quality.js\": \"e34b8b84be83f0c1d2af9149cba227225a830f371ee9e11f95b6b4f3c05c58f2\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quality-runtime.js\": \"609bab529eae343b33a2873a9da34668d63c3ee2f91bbcca77f85bcdb43e5d4e\",\n        \"src/content/quality.js\": \"94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4\",\n        \"src/content/quest-quality-packs.js\": \"fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/quest-quality-contracts.js\": \"b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/server.js\": \"481545e4198c40ceff2614b404a40db1c1079458cda1cec6f1cde92f4d7fb15d\",\n        \"test/lib/quest-quality-fixture.js\": \"316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b\",\n        \"test/quest-quality-content.js\": \"0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266\",\n        \"tools/quest-quality-studio.js\": \"997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52\",\n        \"tools/quest-quality-study.js\": \"856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01\",\n        \"tools/quest-quality-workgraph.js\": \"c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\"\n      },\n      \"sourceStable\": true,\n      \"startedAt\": \"2026-11-16T10:53:52.312Z\",\n      \"elapsedMs\": 4574,\n      \"exitCode\": 0,\n      \"log\": \"output/quest-quality-verification/quality-mwj5beig-quest-quality-runtime.log\",\n      \"evidenceType\": \"automated_implementation_check\"\n    },\n    {\n      \"id\": \"quality-mwj5bij3-quest-quality-api\",\n      \"evaluator\": \"test/quest-quality-api.js\",\n      \"evaluatorHash\": \"eb06739d7e08a8124b9a91371de7ea2b314339dd20f5a3451138efc08441bd8e\",\n      \"sourceHashes\": {\n        \"content/packs/quest-quality-favors/pack.json\": \"c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71\",\n        \"content/packs/quest-quality-field-notes/pack.json\": \"c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a\",\n        \"content/packs/quest-quality-last-ferry/pack.json\": \"ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881\",\n        \"content/packs/quest-quality-night-edition/pack.json\": \"1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1\",\n        \"content/packs/quest-quality-open-office/pack.json\": \"97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff\",\n        \"content/packs/quest-quality-payday/pack.json\": \"855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed\",\n        \"content/packs/quest-quality-shared-meaning/pack.json\": \"cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072\",\n        \"content/packs/quest-quality-small-fire/pack.json\": \"64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7\",\n        \"content/packs/quest-quality-truce/pack.json\": \"2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08\",\n        \"content/packs/quest-three-witnesses-v2/pack.json\": \"294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423\",\n        \"package.json\": \"9e9b084efac7c9a0a24a839aceed84b23c1272ece8c93272a58642af93bbc454\",\n        \"public/index.html\": \"4660d277bf20f3685b2d3ba1351b63ef076f12e18f12d1a0a58b85efc10ff131\",\n        \"public/ux-quest-quality.css\": \"8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f\",\n        \"public/ux-quest-quality.js\": \"e34b8b84be83f0c1d2af9149cba227225a830f371ee9e11f95b6b4f3c05c58f2\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quality-runtime.js\": \"609bab529eae343b33a2873a9da34668d63c3ee2f91bbcca77f85bcdb43e5d4e\",\n        \"src/content/quality.js\": \"94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4\",\n        \"src/content/quest-quality-packs.js\": \"fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/quest-quality-contracts.js\": \"b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/server.js\": \"481545e4198c40ceff2614b404a40db1c1079458cda1cec6f1cde92f4d7fb15d\",\n        \"test/lib/quest-quality-fixture.js\": \"316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b\",\n        \"test/quest-quality-content.js\": \"0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266\",\n        \"tools/quest-quality-studio.js\": \"997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52\",\n        \"tools/quest-quality-study.js\": \"856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01\",\n        \"tools/quest-quality-workgraph.js\": \"c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\"\n      },\n      \"sourceStable\": true,\n      \"startedAt\": \"2026-11-16T10:53:57.519Z\",\n      \"elapsedMs\": 4108,\n      \"exitCode\": 0,\n      \"log\": \"output/quest-quality-verification/quality-mwj5bij3-quest-quality-api.log\",\n      \"evidenceType\": \"automated_implementation_check\"\n    },\n    {\n      \"id\": \"quality-mwj5bm5g-quest-quality-browser\",\n      \"evaluator\": \"test/quest-quality-browser.js\",\n      \"evaluatorHash\": \"0c51ee92b5ed3e722813498a7f5657fcb6fc4fffb2cabadc2f122035c78184f7\",\n      \"sourceHashes\": {\n        \"content/packs/quest-quality-favors/pack.json\": \"c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71\",\n        \"content/packs/quest-quality-field-notes/pack.json\": \"c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a\",\n        \"content/packs/quest-quality-last-ferry/pack.json\": \"ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881\",\n        \"content/packs/quest-quality-night-edition/pack.json\": \"1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1\",\n        \"content/packs/quest-quality-open-office/pack.json\": \"97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff\",\n        \"content/packs/quest-quality-payday/pack.json\": \"855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed\",\n        \"content/packs/quest-quality-shared-meaning/pack.json\": \"cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072\",\n        \"content/packs/quest-quality-small-fire/pack.json\": \"64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7\",\n        \"content/packs/quest-quality-truce/pack.json\": \"2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08\",\n        \"content/packs/quest-three-witnesses-v2/pack.json\": \"294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423\",\n        \"package.json\": \"9e9b084efac7c9a0a24a839aceed84b23c1272ece8c93272a58642af93bbc454\",\n        \"public/index.html\": \"4660d277bf20f3685b2d3ba1351b63ef076f12e18f12d1a0a58b85efc10ff131\",\n        \"public/ux-quest-quality.css\": \"8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f\",\n        \"public/ux-quest-quality.js\": \"e34b8b84be83f0c1d2af9149cba227225a830f371ee9e11f95b6b4f3c05c58f2\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quality-runtime.js\": \"609bab529eae343b33a2873a9da34668d63c3ee2f91bbcca77f85bcdb43e5d4e\",\n        \"src/content/quality.js\": \"94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4\",\n        \"src/content/quest-quality-packs.js\": \"fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/quest-quality-contracts.js\": \"b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/server.js\": \"481545e4198c40ceff2614b404a40db1c1079458cda1cec6f1cde92f4d7fb15d\",\n        \"test/lib/quest-quality-fixture.js\": \"316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b\",\n        \"test/quest-quality-content.js\": \"0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266\",\n        \"tools/quest-quality-studio.js\": \"997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52\",\n        \"tools/quest-quality-study.js\": \"856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01\",\n        \"tools/quest-quality-workgraph.js\": \"c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\"\n      },\n      \"sourceStable\": true,\n      \"startedAt\": \"2026-11-16T10:54:02.212Z\",\n      \"elapsedMs\": 26297,\n      \"exitCode\": 0,\n      \"log\": \"output/quest-quality-verification/quality-mwj5bm5g-quest-quality-browser.log\",\n      \"evidenceType\": \"automated_implementation_check\"\n    },\n    {\n      \"id\": \"quality-mwj5c6sl-quest-quality-postgres\",\n      \"evaluator\": \"test/quest-quality-postgres.js\",\n      \"evaluatorHash\": \"f8b535feb91fc5ad23b2b61c56432eca948c5c3eb4e9a5b6962eea9abd905e7a\",\n      \"sourceHashes\": {\n        \"content/packs/quest-quality-favors/pack.json\": \"c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71\",\n        \"content/packs/quest-quality-field-notes/pack.json\": \"c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a\",\n        \"content/packs/quest-quality-last-ferry/pack.json\": \"ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881\",\n        \"content/packs/quest-quality-night-edition/pack.json\": \"1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1\",\n        \"content/packs/quest-quality-open-office/pack.json\": \"97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff\",\n        \"content/packs/quest-quality-payday/pack.json\": \"855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed\",\n        \"content/packs/quest-quality-shared-meaning/pack.json\": \"cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072\",\n        \"content/packs/quest-quality-small-fire/pack.json\": \"64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7\",\n        \"content/packs/quest-quality-truce/pack.json\": \"2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08\",\n        \"content/packs/quest-three-witnesses-v2/pack.json\": \"294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423\",\n        \"package.json\": \"9e9b084efac7c9a0a24a839aceed84b23c1272ece8c93272a58642af93bbc454\",\n        \"public/index.html\": \"4660d277bf20f3685b2d3ba1351b63ef076f12e18f12d1a0a58b85efc10ff131\",\n        \"public/ux-quest-quality.css\": \"8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f\",\n        \"public/ux-quest-quality.js\": \"e34b8b84be83f0c1d2af9149cba227225a830f371ee9e11f95b6b4f3c05c58f2\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quality-runtime.js\": \"609bab529eae343b33a2873a9da34668d63c3ee2f91bbcca77f85bcdb43e5d4e\",\n        \"src/content/quality.js\": \"94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4\",\n        \"src/content/quest-quality-packs.js\": \"fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/quest-quality-contracts.js\": \"b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/server.js\": \"481545e4198c40ceff2614b404a40db1c1079458cda1cec6f1cde92f4d7fb15d\",\n        \"test/lib/quest-quality-fixture.js\": \"316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b\",\n        \"test/quest-quality-content.js\": \"0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266\",\n        \"tools/quest-quality-studio.js\": \"997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52\",\n        \"tools/quest-quality-study.js\": \"856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01\",\n        \"tools/quest-quality-workgraph.js\": \"c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\"\n      },\n      \"sourceStable\": true,\n      \"startedAt\": \"2026-11-16T10:54:28.965Z\",\n      \"elapsedMs\": 11701,\n      \"exitCode\": 0,\n      \"log\": \"output/quest-quality-verification/quality-mwj5c6sl-quest-quality-postgres.log\",\n      \"evidenceType\": \"automated_implementation_check\"\n    },\n    {\n      \"id\": \"quality-mwj5cgcs-quest-quality-stateful\",\n      \"evaluator\": \"test/quest-quality-stateful.js\",\n      \"evaluatorHash\": \"25b514da3ba7440638639362b814c4145ade0f5050b0297a4c6b39d3bc3e51df\",\n      \"sourceHashes\": {\n        \"content/packs/quest-quality-favors/pack.json\": \"c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71\",\n        \"content/packs/quest-quality-field-notes/pack.json\": \"c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a\",\n        \"content/packs/quest-quality-last-ferry/pack.json\": \"ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881\",\n        \"content/packs/quest-quality-night-edition/pack.json\": \"1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1\",\n        \"content/packs/quest-quality-open-office/pack.json\": \"97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff\",\n        \"content/packs/quest-quality-payday/pack.json\": \"855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed\",\n        \"content/packs/quest-quality-shared-meaning/pack.json\": \"cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072\",\n        \"content/packs/quest-quality-small-fire/pack.json\": \"64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7\",\n        \"content/packs/quest-quality-truce/pack.json\": \"2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08\",\n        \"content/packs/quest-three-witnesses-v2/pack.json\": \"294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423\",\n        \"package.json\": \"9e9b084efac7c9a0a24a839aceed84b23c1272ece8c93272a58642af93bbc454\",\n        \"public/index.html\": \"4660d277bf20f3685b2d3ba1351b63ef076f12e18f12d1a0a58b85efc10ff131\",\n        \"public/ux-quest-quality.css\": \"8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f\",\n        \"public/ux-quest-quality.js\": \"e34b8b84be83f0c1d2af9149cba227225a830f371ee9e11f95b6b4f3c05c58f2\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quality-runtime.js\": \"609bab529eae343b33a2873a9da34668d63c3ee2f91bbcca77f85bcdb43e5d4e\",\n        \"src/content/quality.js\": \"94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4\",\n        \"src/content/quest-quality-packs.js\": \"fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/quest-quality-contracts.js\": \"b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/server.js\": \"481545e4198c40ceff2614b404a40db1c1079458cda1cec6f1cde92f4d7fb15d\",\n        \"test/lib/quest-quality-fixture.js\": \"316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b\",\n        \"test/quest-quality-content.js\": \"0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266\",\n        \"tools/quest-quality-studio.js\": \"997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52\",\n        \"tools/quest-quality-study.js\": \"856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01\",\n        \"tools/quest-quality-workgraph.js\": \"c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\"\n      },\n      \"sourceStable\": true,\n      \"startedAt\": \"2026-11-16T10:54:41.356Z\",\n      \"elapsedMs\": 992,\n      \"exitCode\": 0,\n      \"log\": \"output/quest-quality-verification/quality-mwj5cgcs-quest-quality-stateful.log\",\n      \"evidenceType\": \"automated_implementation_check\"\n    },\n    {\n      \"id\": \"quality-mwj5chfh-quest-quality-social\",\n      \"evaluator\": \"test/quest-quality-social.js\",\n      \"evaluatorHash\": \"a4dfce14e220a79d78651ea113c33efbfb4361906882ab2ffe20079c730964a6\",\n      \"sourceHashes\": {\n        \"content/packs/quest-quality-favors/pack.json\": \"c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71\",\n        \"content/packs/quest-quality-field-notes/pack.json\": \"c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a\",\n        \"content/packs/quest-quality-last-ferry/pack.json\": \"ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881\",\n        \"content/packs/quest-quality-night-edition/pack.json\": \"1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1\",\n        \"content/packs/quest-quality-open-office/pack.json\": \"97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff\",\n        \"content/packs/quest-quality-payday/pack.json\": \"855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed\",\n        \"content/packs/quest-quality-shared-meaning/pack.json\": \"cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072\",\n        \"content/packs/quest-quality-small-fire/pack.json\": \"64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7\",\n        \"content/packs/quest-quality-truce/pack.json\": \"2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08\",\n        \"content/packs/quest-three-witnesses-v2/pack.json\": \"294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423\",\n        \"package.json\": \"9e9b084efac7c9a0a24a839aceed84b23c1272ece8c93272a58642af93bbc454\",\n        \"public/index.html\": \"4660d277bf20f3685b2d3ba1351b63ef076f12e18f12d1a0a58b85efc10ff131\",\n        \"public/ux-quest-quality.css\": \"8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f\",\n        \"public/ux-quest-quality.js\": \"e34b8b84be83f0c1d2af9149cba227225a830f371ee9e11f95b6b4f3c05c58f2\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quality-runtime.js\": \"609bab529eae343b33a2873a9da34668d63c3ee2f91bbcca77f85bcdb43e5d4e\",\n        \"src/content/quality.js\": \"94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4\",\n        \"src/content/quest-quality-packs.js\": \"fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/quest-quality-contracts.js\": \"b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/server.js\": \"481545e4198c40ceff2614b404a40db1c1079458cda1cec6f1cde92f4d7fb15d\",\n        \"test/lib/quest-quality-fixture.js\": \"316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b\",\n        \"test/quest-quality-content.js\": \"0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266\",\n        \"tools/quest-quality-studio.js\": \"997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52\",\n        \"tools/quest-quality-study.js\": \"856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01\",\n        \"tools/quest-quality-workgraph.js\": \"c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\"\n      },\n      \"sourceStable\": true,\n      \"startedAt\": \"2026-11-16T10:54:42.749Z\",\n      \"elapsedMs\": 4908,\n      \"exitCode\": 0,\n      \"log\": \"output/quest-quality-verification/quality-mwj5chfh-quest-quality-social.log\",\n      \"evidenceType\": \"automated_implementation_check\"\n    },\n    {\n      \"id\": \"quality-mwj5clhn-quest-quality-spoilers\",\n      \"evaluator\": \"test/quest-quality-spoilers.js\",\n      \"evaluatorHash\": \"55fc0fc6512934fccfdf3628b5f178b95fe27722753aba704b1acc515d8876e4\",\n      \"sourceHashes\": {\n        \"content/packs/quest-quality-favors/pack.json\": \"c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71\",\n        \"content/packs/quest-quality-field-notes/pack.json\": \"c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a\",\n        \"content/packs/quest-quality-last-ferry/pack.json\": \"ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881\",\n        \"content/packs/quest-quality-night-edition/pack.json\": \"1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1\",\n        \"content/packs/quest-quality-open-office/pack.json\": \"97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff\",\n        \"content/packs/quest-quality-payday/pack.json\": \"855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed\",\n        \"content/packs/quest-quality-shared-meaning/pack.json\": \"cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072\",\n        \"content/packs/quest-quality-small-fire/pack.json\": \"64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7\",\n        \"content/packs/quest-quality-truce/pack.json\": \"2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08\",\n        \"content/packs/quest-three-witnesses-v2/pack.json\": \"294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423\",\n        \"package.json\": \"9e9b084efac7c9a0a24a839aceed84b23c1272ece8c93272a58642af93bbc454\",\n        \"public/index.html\": \"4660d277bf20f3685b2d3ba1351b63ef076f12e18f12d1a0a58b85efc10ff131\",\n        \"public/ux-quest-quality.css\": \"8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f\",\n        \"public/ux-quest-quality.js\": \"e34b8b84be83f0c1d2af9149cba227225a830f371ee9e11f95b6b4f3c05c58f2\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quality-runtime.js\": \"609bab529eae343b33a2873a9da34668d63c3ee2f91bbcca77f85bcdb43e5d4e\",\n        \"src/content/quality.js\": \"94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4\",\n        \"src/content/quest-quality-packs.js\": \"fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/quest-quality-contracts.js\": \"b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/server.js\": \"481545e4198c40ceff2614b404a40db1c1079458cda1cec6f1cde92f4d7fb15d\",\n        \"test/lib/quest-quality-fixture.js\": \"316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b\",\n        \"test/quest-quality-content.js\": \"0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266\",\n        \"tools/quest-quality-studio.js\": \"997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52\",\n        \"tools/quest-quality-study.js\": \"856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01\",\n        \"tools/quest-quality-workgraph.js\": \"c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\"\n      },\n      \"sourceStable\": true,\n      \"startedAt\": \"2026-11-16T10:54:48.011Z\",\n      \"elapsedMs\": 3964,\n      \"exitCode\": 0,\n      \"log\": \"output/quest-quality-verification/quality-mwj5clhn-quest-quality-spoilers.log\",\n      \"evidenceType\": \"automated_implementation_check\"\n    },\n    {\n      \"id\": \"quality-mwj5cosz-quest-quality-study\",\n      \"evaluator\": \"test/quest-quality-study.js\",\n      \"evaluatorHash\": \"6043fb8143c39ce3b1d418265670565faae908006e07d7760c0cef5f2c5a896b\",\n      \"sourceHashes\": {\n        \"content/packs/quest-quality-favors/pack.json\": \"c827712dddc0470741b9c84d764ac95dbe22223767b36e501ab11a207cf80c71\",\n        \"content/packs/quest-quality-field-notes/pack.json\": \"c4b34bcaa557f6cf47b2cb6fd0256665256fa5aa71f89beaa36951f155763e5a\",\n        \"content/packs/quest-quality-last-ferry/pack.json\": \"ca48e286aa7e47bbb2552fb3e7bbb503026796006fba310d9fc67857e702b881\",\n        \"content/packs/quest-quality-night-edition/pack.json\": \"1d99b3a7369260b7e0303681628ed588b4e9f8faf654df722950b0526233c1c1\",\n        \"content/packs/quest-quality-open-office/pack.json\": \"97121605779dd3060510833f035b66a8cecec6b3c46be9f681edd3844b5506ff\",\n        \"content/packs/quest-quality-payday/pack.json\": \"855e6fd2f74784ed9f02ccb5a62ed13b3cb381e5d199c66b12ffdf668d7055ed\",\n        \"content/packs/quest-quality-shared-meaning/pack.json\": \"cfdc64e1ed5bce634eb10db8dbd5db95af35b016c89a13128e882ba2f9c1e072\",\n        \"content/packs/quest-quality-small-fire/pack.json\": \"64d240fe1aa97e6868a0190eac3130716eae8607c9b3881719b46a32d9b800d7\",\n        \"content/packs/quest-quality-truce/pack.json\": \"2bf1e67fe40d07e70bf2e51181fd870da979340a65d8ecb2e6f9a246d6bbfc08\",\n        \"content/packs/quest-three-witnesses-v2/pack.json\": \"294a307015a074ebd6340b1acd346fc798bcdc02ba13792506f077cc0f2c2423\",\n        \"package.json\": \"9e9b084efac7c9a0a24a839aceed84b23c1272ece8c93272a58642af93bbc454\",\n        \"public/index.html\": \"4660d277bf20f3685b2d3ba1351b63ef076f12e18f12d1a0a58b85efc10ff131\",\n        \"public/ux-quest-quality.css\": \"8b695b3d42e9f43586b0f82c0fcf713168c5e61834facc758ec6fff2f80e941f\",\n        \"public/ux-quest-quality.js\": \"e34b8b84be83f0c1d2af9149cba227225a830f371ee9e11f95b6b4f3c05c58f2\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quality-runtime.js\": \"609bab529eae343b33a2873a9da34668d63c3ee2f91bbcca77f85bcdb43e5d4e\",\n        \"src/content/quality.js\": \"94a0a31a4df250d4ed1d69a35f212414aaa1fe4603bee86e6b584d332ecd08a4\",\n        \"src/content/quest-quality-packs.js\": \"fcdbbd2a6269b445c8a4ded1624cd91482b5d454371e3b3a169ca1babcb0bae9\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/quest-quality-contracts.js\": \"b611d8dd4f174b8f5bb08ecf91a14d1c3833099052c518059d7a631dd3415395\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/server.js\": \"481545e4198c40ceff2614b404a40db1c1079458cda1cec6f1cde92f4d7fb15d\",\n        \"test/lib/quest-quality-fixture.js\": \"316f3bf09ce3788fc6997f7dc766af3b1cd057b058143f315106a37053c6a50b\",\n        \"test/quest-quality-content.js\": \"0ea2d6179a005d153c0e1c8f1c813c750c9525aa51fe9befefe14e48959dc266\",\n        \"tools/quest-quality-studio.js\": \"997b7cc34cec5c18875f3166b013c14f595a24549e79a9a57552a035a602aa52\",\n        \"tools/quest-quality-study.js\": \"856b8459dc9f38ca6ea7a131374897ea5c9b4d25922535515b5dc5822c17ce01\",\n        \"tools/quest-quality-workgraph.js\": \"c1228a648475f7caef08b98cc16488d5979a8a4db0666250feaac573c6bffd11\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\"\n      },\n      \"sourceStable\": true,\n      \"startedAt\": \"2026-11-16T10:54:52.307Z\",\n      \"elapsedMs\": 192,\n      \"exitCode\": 0,\n      \"log\": \"output/quest-quality-verification/quality-mwj5cosz-quest-quality-study.log\",\n",
+          "baseline": "      \"log\": \"output/quest-quality-verification/quality-mwio7bhm-quest-quality-postgres.log\",\n"
+        }
+      ]
+    },
+    "docs/questing-workgraph.json": {
+      "current": {
+        "mode": "100644",
+        "blob": "e8261e7359e1b1553db17cb880c704997af34347",
+        "bytes": 1872814,
+        "sha256": "b7434bda1f0a8a33dd8d431e67bce575f0688010a427811f28d0e1ffe520f63a"
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "412c4ef9da38443ced0031b99617f4bfc19c9f8e",
+        "bytes": 1763017,
+        "sha256": "a96e1918dcd16bb49b3e534a2898ae8a48e67c23c04770ed5aad9b70115523a0"
+      },
+      "inverses": [
+        {
+          "at": 1085,
+          "current": "        \"quest-mwj58ul7-quest-saga\"\n",
+          "baseline": "        \"quest-mwio0geb-quest-saga\"\n"
+        },
+        {
+          "at": 1903,
+          "current": "        \"quest-mwj58ul7-quest-saga\"\n",
+          "baseline": "        \"quest-mwio0geb-quest-saga\"\n"
+        },
+        {
+          "at": 2683,
+          "current": "        \"quest-mwj58ul7-quest-saga\"\n",
+          "baseline": "        \"quest-mwio0geb-quest-saga\"\n"
+        },
+        {
+          "at": 3491,
+          "current": "        \"quest-mwj58ul7-quest-saga\"\n",
+          "baseline": "        \"quest-mwio0geb-quest-saga\"\n"
+        },
+        {
+          "at": 4275,
+          "current": "        \"quest-mwj58ul7-quest-saga\"\n",
+          "baseline": "        \"quest-mwio0geb-quest-saga\"\n"
+        },
+        {
+          "at": 5078,
+          "current": "        \"quest-mwj58ul7-quest-saga\"\n",
+          "baseline": "        \"quest-mwio0geb-quest-saga\"\n"
+        },
+        {
+          "at": 5899,
+          "current": "        \"quest-mwj58ul7-quest-saga\",\n        \"quest-mwj59c71-content-narrative-security\"\n",
+          "baseline": "        \"quest-mwio0geb-quest-saga\",\n        \"quest-mwio0oxq-content-narrative-security\"\n"
+        },
+        {
+          "at": 6734,
+          "current": "        \"quest-mwj58ul7-quest-saga\"\n",
+          "baseline": "        \"quest-mwio0geb-quest-saga\"\n"
+        },
+        {
+          "at": 7503,
+          "current": "        \"quest-mwj58ul7-quest-saga\"\n",
+          "baseline": "        \"quest-mwio0geb-quest-saga\"\n"
+        },
+        {
+          "at": 8288,
+          "current": "        \"quest-mwj58ul7-quest-saga\"\n",
+          "baseline": "        \"quest-mwio0geb-quest-saga\"\n"
+        },
+        {
+          "at": 9049,
+          "current": "        \"quest-mwj58ul7-quest-saga\"\n",
+          "baseline": "        \"quest-mwio0geb-quest-saga\"\n"
+        },
+        {
+          "at": 9871,
+          "current": "        \"quest-mwj58ul7-quest-saga\",\n        \"quest-mwj59c71-content-narrative-security\"\n",
+          "baseline": "        \"quest-mwio0geb-quest-saga\",\n        \"quest-mwio0oxq-content-narrative-security\"\n"
+        },
+        {
+          "at": 10699,
+          "current": "        \"quest-mwj58ul7-quest-saga\"\n",
+          "baseline": "        \"quest-mwio0geb-quest-saga\"\n"
+        },
+        {
+          "at": 11481,
+          "current": "        \"quest-mwj58ul7-quest-saga\"\n",
+          "baseline": "        \"quest-mwio0geb-quest-saga\"\n"
+        },
+        {
+          "at": 12279,
+          "current": "        \"quest-mwj59e2m-quest-specialist\"\n",
+          "baseline": "        \"quest-mwio0r1g-quest-specialist\"\n"
+        },
+        {
+          "at": 13073,
+          "current": "        \"quest-mwj58ul7-quest-saga\"\n",
+          "baseline": "        \"quest-mwio0geb-quest-saga\"\n"
+        },
+        {
+          "at": 13859,
+          "current": "        \"quest-mwj58ul7-quest-saga\"\n",
+          "baseline": "        \"quest-mwio0geb-quest-saga\"\n"
+        },
+        {
+          "at": 14568,
+          "current": "        \"quest-mwj59qnd-clue-puzzles\",\n        \"quest-mwj59vzo-clue-puzzles-browser\"\n",
+          "baseline": "        \"quest-mwio0zat-clue-puzzles\",\n        \"quest-mwio15gv-clue-puzzles-browser\"\n"
+        },
+        {
+          "at": 15394,
+          "current": "        \"quest-mwj58ul7-quest-saga\",\n        \"quest-mwj5a7tt-content-narrative\"\n",
+          "baseline": "        \"quest-mwio0geb-quest-saga\",\n        \"quest-mwio1e4y-content-narrative\"\n"
+        },
+        {
+          "at": 16280,
+          "current": "        \"quest-mwj58ul7-quest-saga\",\n        \"quest-mwj5a7tt-content-narrative\",\n        \"quest-mwj59c71-content-narrative-security\"\n",
+          "baseline": "        \"quest-mwio0geb-quest-saga\",\n        \"quest-mwio1e4y-content-narrative\",\n        \"quest-mwio0oxq-content-narrative-security\"\n"
+        },
+        {
+          "at": 17218,
+          "current": "        \"quest-mwj58ul7-quest-saga\"\n",
+          "baseline": "        \"quest-mwio0geb-quest-saga\"\n"
+        },
+        {
+          "at": 18069,
+          "current": "        \"quest-mwj58ul7-quest-saga\",\n        \"quest-mwj5ac01-quest-experience-browser\"\n",
+          "baseline": "        \"quest-mwio0geb-quest-saga\",\n        \"quest-mwio1jak-quest-experience-browser\"\n"
+        },
+        {
+          "at": 18910,
+          "current": "        \"quest-mwj58ul7-quest-saga\"\n",
+          "baseline": "        \"quest-mwio0geb-quest-saga\"\n"
+        },
+        {
+          "at": 19750,
+          "current": "        \"quest-mwj58ul7-quest-saga\",\n        \"quest-mwj5a7tt-content-narrative\"\n",
+          "baseline": "        \"quest-mwio0geb-quest-saga\",\n        \"quest-mwio1e4y-content-narrative\"\n"
+        },
+        {
+          "at": 20664,
+          "current": "        \"quest-mwj58ul7-quest-saga\",\n        \"quest-mwj5ac01-quest-experience-browser\"\n",
+          "baseline": "        \"quest-mwio0geb-quest-saga\",\n        \"quest-mwio1jak-quest-experience-browser\"\n"
+        },
+        {
+          "at": 21476,
+          "current": "        \"quest-mwj58ul7-quest-saga\",\n        \"quest-mwj5ac01-quest-experience-browser\"\n",
+          "baseline": "        \"quest-mwio0geb-quest-saga\",\n        \"quest-mwio1jak-quest-experience-browser\"\n"
+        },
+        {
+          "at": 22391,
+          "current": "        \"quest-mwj58ul7-quest-saga\",\n        \"quest-mwj5a7tt-content-narrative\",\n        \"quest-mwj59c71-content-narrative-security\"\n",
+          "baseline": "        \"quest-mwio0geb-quest-saga\",\n        \"quest-mwio1e4y-content-narrative\",\n        \"quest-mwio0oxq-content-narrative-security\"\n"
+        },
+        {
+          "at": 23211,
+          "current": "        \"quest-mwj58ul7-quest-saga\",\n        \"quest-mwj5ac01-quest-experience-browser\"\n",
+          "baseline": "        \"quest-mwio0geb-quest-saga\",\n        \"quest-mwio1jak-quest-experience-browser\"\n"
+        },
+        {
+          "at": 24004,
+          "current": "        \"quest-mwj5a7tt-content-narrative\",\n        \"quest-mwj5ac01-quest-experience-browser\"\n",
+          "baseline": "        \"quest-mwio1e4y-content-narrative\",\n        \"quest-mwio1jak-quest-experience-browser\"\n"
+        },
+        {
+          "at": 24805,
+          "current": "        \"quest-mwj58ul7-quest-saga\",\n        \"quest-mwj5ac01-quest-experience-browser\"\n",
+          "baseline": "        \"quest-mwio0geb-quest-saga\",\n        \"quest-mwio1jak-quest-experience-browser\"\n"
+        },
+        {
+          "at": 25588,
+          "current": "        \"quest-mwj5ascx-content-api\",\n        \"quest-mwj5ac01-quest-experience-browser\"\n",
+          "baseline": "        \"quest-mwio20ph-content-api\",\n        \"quest-mwio1jak-quest-experience-browser\"\n"
+        },
+        {
+          "at": 26548,
+          "current": "        \"quest-mwj5aty9-quest-saga-social\",\n        \"quest-mwj5ayf2-content-casework\",\n        \"quest-mwj5ac01-quest-experience-browser\",\n        \"quest-mwj59c71-content-narrative-security\"\n",
+          "baseline": "        \"quest-mwio22ow-quest-saga-social\",\n        \"quest-mwio27wm-content-casework\",\n        \"quest-mwio1jak-quest-experience-browser\",\n        \"quest-mwio0oxq-content-narrative-security\"\n"
+        },
+        {
+          "at": 27653,
+          "current": "        \"quest-mwj5aty9-quest-saga-social\",\n        \"quest-mwj5ayf2-content-casework\",\n        \"quest-mwj5ac01-quest-experience-browser\",\n        \"quest-mwj59c71-content-narrative-security\"\n",
+          "baseline": "        \"quest-mwio22ow-quest-saga-social\",\n        \"quest-mwio27wm-content-casework\",\n        \"quest-mwio1jak-quest-experience-browser\",\n        \"quest-mwio0oxq-content-narrative-security\"\n"
+        },
+        {
+          "at": 28749,
+          "current": "        \"quest-mwj5aty9-quest-saga-social\",\n        \"quest-mwj5ayf2-content-casework\",\n        \"quest-mwj5ac01-quest-experience-browser\",\n        \"quest-mwj59c71-content-narrative-security\"\n",
+          "baseline": "        \"quest-mwio22ow-quest-saga-social\",\n        \"quest-mwio27wm-content-casework\",\n        \"quest-mwio1jak-quest-experience-browser\",\n        \"quest-mwio0oxq-content-narrative-security\"\n"
+        },
+        {
+          "at": 29857,
+          "current": "        \"quest-mwj5aty9-quest-saga-social\",\n        \"quest-mwj5ayf2-content-casework\",\n        \"quest-mwj5ac01-quest-experience-browser\",\n        \"quest-mwj59c71-content-narrative-security\"\n",
+          "baseline": "        \"quest-mwio22ow-quest-saga-social\",\n        \"quest-mwio27wm-content-casework\",\n        \"quest-mwio1jak-quest-experience-browser\",\n        \"quest-mwio0oxq-content-narrative-security\"\n"
+        },
+        {
+          "at": 30805,
+          "current": "        \"quest-mwj58ul7-quest-saga\"\n",
+          "baseline": "        \"quest-mwio0geb-quest-saga\"\n"
+        },
+        {
+          "at": 31621,
+          "current": "        \"quest-mwj58ul7-quest-saga\"\n",
+          "baseline": "        \"quest-mwio0geb-quest-saga\"\n"
+        },
+        {
+          "at": 32410,
+          "current": "        \"quest-mwj58ul7-quest-saga\"\n",
+          "baseline": "        \"quest-mwio0geb-quest-saga\"\n"
+        },
+        {
+          "at": 33212,
+          "current": "        \"quest-mwj58ul7-quest-saga\"\n",
+          "baseline": "        \"quest-mwio0geb-quest-saga\"\n"
+        },
+        {
+          "at": 33955,
+          "current": "        \"quest-mwj5b23s-quest-workshop\",\n        \"quest-mwj5ac01-quest-experience-browser\"\n",
+          "baseline": "        \"quest-mwio2c3c-quest-workshop\",\n        \"quest-mwio1jak-quest-experience-browser\"\n"
+        },
+        {
+          "at": 1702613,
+          "current": "      \"id\": \"quest-mwihzh9f-quest-saga\",\n",
+          "baseline": "      \"id\": \"quest-mwio0geb-quest-saga\",\n"
+        },
+        {
+          "at": 1702739,
+          "current": "      \"startedAt\": \"2026-11-16T00:00:44.835Z\",\n      \"elapsedMs\": 9867,\n      \"exitCode\": 0,\n      \"baselineRevision\": \"17fdf85fdd21fd3767463df8ba47614f7d1f6432\",\n      \"evaluatorHash\": \"f1435602f0c038970f07ebfc6092b1461c83ec19752994a8c38cc499111178bc\",\n      \"sourceHashes\": {\n        \"content/packs/quest-archive-service/pack.json\": \"9ae8e2dff659efc6e387c04757291ef2dc979921c447fd4bb528bd99779b2b0e\",\n        \"content/packs/quest-early-obituary/pack.json\": \"300ea3d0019ca7b11055132be598515932a2f0236d52cf68ba629a0625bf16ba\",\n        \"content/packs/quest-family-dinner/pack.json\": \"1ea3be2ad823d1a7fcb7a5960607661d0ba4c696d3d47112602168f9c59a65f1\",\n        \"content/packs/quest-inherited-file/pack.json\": \"a4399ed7f5aa3c4a32469d69824d021b592f29a1ae93f17ce3c9213db371f34f\",\n        \"content/packs/quest-missing-name/pack.json\": \"529ef9964b07312f3298a068baf00724a1b7106a50b192acbdc401e90dc45f42\",\n        \"content/packs/quest-morning-after/pack.json\": \"ebfa0ad0cbb4a2e77791777ab307ff5c075c52de08ee40ac8afa4b224d3c68ac\",\n        \"content/packs/quest-quiet-wedding/pack.json\": \"623bbea98c196b252cb584f608067cce236d257fc640b78535c0761c3d265c9f\",\n        \"content/packs/quest-rival-accord/pack.json\": \"1a7df139c0f74af1e940dba4aedcd50c4230c5c3ea349fd606828a199ce993ed\",\n        \"content/packs/quest-sixth-envelope/pack.json\": \"ef8ee9c8a02d4d38092773e92cb9dade6ec1fbc4cfaedf57683d912d250f3226\",\n        \"content/packs/quest-three-witnesses/pack.json\": \"51d148474967f738490e8410850b7175171e1a1ffab05a6ee736dd837a69554a\",\n        \"public/index.html\": \"39b36896c4e6a64f2aa7163de4d3312824c9b5bd6b16c57f8a87959db89bc98e\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\",\n        \"public/ux-clues.css\": \"c3d8290e9d11794e25b8d5b76365bd633a12032a2d03271fba30cc374a74c326\",\n        \"public/ux-clues.js\": \"9a492a6e54a45697978e6177e6c3f52083c51cf413a95b616b7e62c7b33bbe4d\",\n        \"public/ux-navigation.css\": \"712ebf19faf5303e45d82c55cfc9cda4b3d4156fc0ab759a115a849dbe2efbd6\",\n        \"public/ux-navigation.js\": \"1295c1e3bed266ec992726815fe3eae194535cb428904e7b1b993ad2b6af3293\",\n        \"public/ux-quests.css\": \"c65e7e95c966f14dd4996b8cbe99643874ab325d45c23d728216118afa27191f\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"schema.sql\": \"b5c66d128de9b730bac19b135a8d13791f3bc70ba4a27818abec7de5141564de\",\n        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"src/clue-puzzles.js\": \"ee6cf76f6fab981356fd0c6068369218cd6fe1b9f8f968018e69bf4a146dd305\",\n        \"src/clues.js\": \"9d058e4a81268dfdfeb9295545fc72475b993caddc3ee6781f300103de0aee74\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quest-saga.js\": \"ecb7538abeee98a9a25ff42f69d1818a4485974b1fe072375dcdf0820e42f51f\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/explore.js\": \"d0d87a39f7a12dccf98c97662bd69d68e0643894c5ed59b345f8c5790097ca88\",\n        \"src/game.js\": \"1ee4df5e9fe5209f3239d854fa0a4c587c36e24ffe634ae569abb7af06be60f8\",\n        \"src/gateway/context.js\": \"7516534f6b3e426efe6c92136aa1bc9d599925fce15a89f4ce57cace35be466f\",\n        \"src/quest-workshop-schema.js\": \"9bbf299a7ac7573c8d0770c140dd7841b2996c54a983278b71dbc768e381c70c\",\n        \"src/quest-workshop.js\": \"1a1549f014e735a2d94befc2c628ff34d5fdb7070bebd2bc0dca9bca3c261083\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/questing.js\": \"11bf4829e5546042190e1da0c7134331de89a409df2c92da6d812ffbd30413f6\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/routes/quest-workshop.js\": \"63f2afc0242759cbb288e144d2126268b2fc042f1dfecb1d1ebb7eb587e0081b\",\n        \"src/routes/questing.js\": \"27beabb502911baad8f7c3ddae6e4ded3ab9bbcb1ac1edfaa7f78dbb94974b82\",\n        \"src/server.js\": \"d72f0ef99769d2097fb60368ae96f4faaad0e6c2a92bc8ec67b82abf975eedd4\",\n        \"src/ux-workspace.js\": \"df2b039a96df5399fab6c1b3ffda9f6e4cc53c9e84f989da21610558c02b0870\",\n        \"tools/questing-content.js\": \"d08dd7fe90d5921f8bc731c218d18a44b5674b85ec944da60096e5a86fbab92f\",\n        \"tools/questing-workgraph.js\": \"bf0869441eb7a3f375773af0d051914d11dc4a68632423ffb1e296e32de50a8a\"\n      },\n      \"sourceStable\": true,\n      \"outputPath\": \"output/questing-verification/quest-mwihzh9f-quest-saga.log\",\n      \"outputHash\": \"a6c577d2a2c66cca20b50b7cf4dae92c9efe2af0b8f02fb7f57fb00d5b797900\"\n    },\n    {\n      \"id\": \"quest-mwihzpos-content-narrative-security\",\n      \"evaluator\": \"test/content-narrative-security.js\",\n      \"command\": \"node test/content-narrative-security.js\",\n      \"startedAt\": \"2026-11-16T00:00:55.756Z\",\n      \"elapsedMs\": 1899,\n      \"exitCode\": 0,\n      \"baselineRevision\": \"17fdf85fdd21fd3767463df8ba47614f7d1f6432\",\n      \"evaluatorHash\": \"715f701a4b3054c445722fe71e1e9dabc95931384b52fc06119d99d880a1d0cc\",\n      \"sourceHashes\": {\n        \"content/packs/quest-archive-service/pack.json\": \"9ae8e2dff659efc6e387c04757291ef2dc979921c447fd4bb528bd99779b2b0e\",\n        \"content/packs/quest-early-obituary/pack.json\": \"300ea3d0019ca7b11055132be598515932a2f0236d52cf68ba629a0625bf16ba\",\n        \"content/packs/quest-family-dinner/pack.json\": \"1ea3be2ad823d1a7fcb7a5960607661d0ba4c696d3d47112602168f9c59a65f1\",\n        \"content/packs/quest-inherited-file/pack.json\": \"a4399ed7f5aa3c4a32469d69824d021b592f29a1ae93f17ce3c9213db371f34f\",\n        \"content/packs/quest-missing-name/pack.json\": \"529ef9964b07312f3298a068baf00724a1b7106a50b192acbdc401e90dc45f42\",\n        \"content/packs/quest-morning-after/pack.json\": \"ebfa0ad0cbb4a2e77791777ab307ff5c075c52de08ee40ac8afa4b224d3c68ac\",\n        \"content/packs/quest-quiet-wedding/pack.json\": \"623bbea98c196b252cb584f608067cce236d257fc640b78535c0761c3d265c9f\",\n        \"content/packs/quest-rival-accord/pack.json\": \"1a7df139c0f74af1e940dba4aedcd50c4230c5c3ea349fd606828a199ce993ed\",\n        \"content/packs/quest-sixth-envelope/pack.json\": \"ef8ee9c8a02d4d38092773e92cb9dade6ec1fbc4cfaedf57683d912d250f3226\",\n        \"content/packs/quest-three-witnesses/pack.json\": \"51d148474967f738490e8410850b7175171e1a1ffab05a6ee736dd837a69554a\",\n        \"public/index.html\": \"39b36896c4e6a64f2aa7163de4d3312824c9b5bd6b16c57f8a87959db89bc98e\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\",\n        \"public/ux-clues.css\": \"c3d8290e9d11794e25b8d5b76365bd633a12032a2d03271fba30cc374a74c326\",\n        \"public/ux-clues.js\": \"9a492a6e54a45697978e6177e6c3f52083c51cf413a95b616b7e62c7b33bbe4d\",\n        \"public/ux-navigation.css\": \"712ebf19faf5303e45d82c55cfc9cda4b3d4156fc0ab759a115a849dbe2efbd6\",\n        \"public/ux-navigation.js\": \"1295c1e3bed266ec992726815fe3eae194535cb428904e7b1b993ad2b6af3293\",\n        \"public/ux-quests.css\": \"c65e7e95c966f14dd4996b8cbe99643874ab325d45c23d728216118afa27191f\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"schema.sql\": \"b5c66d128de9b730bac19b135a8d13791f3bc70ba4a27818abec7de5141564de\",\n        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"src/clue-puzzles.js\": \"ee6cf76f6fab981356fd0c6068369218cd6fe1b9f8f968018e69bf4a146dd305\",\n        \"src/clues.js\": \"9d058e4a81268dfdfeb9295545fc72475b993caddc3ee6781f300103de0aee74\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quest-saga.js\": \"ecb7538abeee98a9a25ff42f69d1818a4485974b1fe072375dcdf0820e42f51f\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/explore.js\": \"d0d87a39f7a12dccf98c97662bd69d68e0643894c5ed59b345f8c5790097ca88\",\n        \"src/game.js\": \"1ee4df5e9fe5209f3239d854fa0a4c587c36e24ffe634ae569abb7af06be60f8\",\n        \"src/gateway/context.js\": \"7516534f6b3e426efe6c92136aa1bc9d599925fce15a89f4ce57cace35be466f\",\n        \"src/quest-workshop-schema.js\": \"9bbf299a7ac7573c8d0770c140dd7841b2996c54a983278b71dbc768e381c70c\",\n        \"src/quest-workshop.js\": \"1a1549f014e735a2d94befc2c628ff34d5fdb7070bebd2bc0dca9bca3c261083\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/questing.js\": \"11bf4829e5546042190e1da0c7134331de89a409df2c92da6d812ffbd30413f6\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/routes/quest-workshop.js\": \"63f2afc0242759cbb288e144d2126268b2fc042f1dfecb1d1ebb7eb587e0081b\",\n        \"src/routes/questing.js\": \"27beabb502911baad8f7c3ddae6e4ded3ab9bbcb1ac1edfaa7f78dbb94974b82\",\n        \"src/server.js\": \"d72f0ef99769d2097fb60368ae96f4faaad0e6c2a92bc8ec67b82abf975eedd4\",\n        \"src/ux-workspace.js\": \"df2b039a96df5399fab6c1b3ffda9f6e4cc53c9e84f989da21610558c02b0870\",\n        \"tools/questing-content.js\": \"d08dd7fe90d5921f8bc731c218d18a44b5674b85ec944da60096e5a86fbab92f\",\n        \"tools/questing-workgraph.js\": \"bf0869441eb7a3f375773af0d051914d11dc4a68632423ffb1e296e32de50a8a\"\n      },\n      \"sourceStable\": true,\n      \"outputPath\": \"output/questing-verification/quest-mwihzpos-content-narrative-security.log\",\n      \"outputHash\": \"bcb7d6c22007d7102728153116b5907914daaa83da0de40e56c0634b65777a18\"\n    },\n    {\n      \"id\": \"quest-mwihzrwp-quest-specialist\",\n      \"evaluator\": \"test/quest-specialist.js\",\n      \"command\": \"node test/quest-specialist.js\",\n      \"startedAt\": \"2026-11-16T00:00:58.633Z\",\n      \"elapsedMs\": 8787,\n      \"exitCode\": 0,\n      \"baselineRevision\": \"17fdf85fdd21fd3767463df8ba47614f7d1f6432\",\n      \"evaluatorHash\": \"44235e062bc9c16ba65a2dabb8914cdbecc2ce09da62662364762bfd6e03c186\",\n      \"sourceHashes\": {\n        \"content/packs/quest-archive-service/pack.json\": \"9ae8e2dff659efc6e387c04757291ef2dc979921c447fd4bb528bd99779b2b0e\",\n        \"content/packs/quest-early-obituary/pack.json\": \"300ea3d0019ca7b11055132be598515932a2f0236d52cf68ba629a0625bf16ba\",\n        \"content/packs/quest-family-dinner/pack.json\": \"1ea3be2ad823d1a7fcb7a5960607661d0ba4c696d3d47112602168f9c59a65f1\",\n        \"content/packs/quest-inherited-file/pack.json\": \"a4399ed7f5aa3c4a32469d69824d021b592f29a1ae93f17ce3c9213db371f34f\",\n        \"content/packs/quest-missing-name/pack.json\": \"529ef9964b07312f3298a068baf00724a1b7106a50b192acbdc401e90dc45f42\",\n        \"content/packs/quest-morning-after/pack.json\": \"ebfa0ad0cbb4a2e77791777ab307ff5c075c52de08ee40ac8afa4b224d3c68ac\",\n        \"content/packs/quest-quiet-wedding/pack.json\": \"623bbea98c196b252cb584f608067cce236d257fc640b78535c0761c3d265c9f\",\n        \"content/packs/quest-rival-accord/pack.json\": \"1a7df139c0f74af1e940dba4aedcd50c4230c5c3ea349fd606828a199ce993ed\",\n        \"content/packs/quest-sixth-envelope/pack.json\": \"ef8ee9c8a02d4d38092773e92cb9dade6ec1fbc4cfaedf57683d912d250f3226\",\n        \"content/packs/quest-three-witnesses/pack.json\": \"51d148474967f738490e8410850b7175171e1a1ffab05a6ee736dd837a69554a\",\n        \"public/index.html\": \"39b36896c4e6a64f2aa7163de4d3312824c9b5bd6b16c57f8a87959db89bc98e\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\",\n        \"public/ux-clues.css\": \"c3d8290e9d11794e25b8d5b76365bd633a12032a2d03271fba30cc374a74c326\",\n        \"public/ux-clues.js\": \"9a492a6e54a45697978e6177e6c3f52083c51cf413a95b616b7e62c7b33bbe4d\",\n        \"public/ux-navigation.css\": \"712ebf19faf5303e45d82c55cfc9cda4b3d4156fc0ab759a115a849dbe2efbd6\",\n        \"public/ux-navigation.js\": \"1295c1e3bed266ec992726815fe3eae194535cb428904e7b1b993ad2b6af3293\",\n        \"public/ux-quests.css\": \"c65e7e95c966f14dd4996b8cbe99643874ab325d45c23d728216118afa27191f\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"schema.sql\": \"b5c66d128de9b730bac19b135a8d13791f3bc70ba4a27818abec7de5141564de\",\n        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"src/clue-puzzles.js\": \"ee6cf76f6fab981356fd0c6068369218cd6fe1b9f8f968018e69bf4a146dd305\",\n        \"src/clues.js\": \"9d058e4a81268dfdfeb9295545fc72475b993caddc3ee6781f300103de0aee74\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quest-saga.js\": \"ecb7538abeee98a9a25ff42f69d1818a4485974b1fe072375dcdf0820e42f51f\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/explore.js\": \"d0d87a39f7a12dccf98c97662bd69d68e0643894c5ed59b345f8c5790097ca88\",\n        \"src/game.js\": \"1ee4df5e9fe5209f3239d854fa0a4c587c36e24ffe634ae569abb7af06be60f8\",\n        \"src/gateway/context.js\": \"7516534f6b3e426efe6c92136aa1bc9d599925fce15a89f4ce57cace35be466f\",\n        \"src/quest-workshop-schema.js\": \"9bbf299a7ac7573c8d0770c140dd7841b2996c54a983278b71dbc768e381c70c\",\n        \"src/quest-workshop.js\": \"1a1549f014e735a2d94befc2c628ff34d5fdb7070bebd2bc0dca9bca3c261083\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/questing.js\": \"11bf4829e5546042190e1da0c7134331de89a409df2c92da6d812ffbd30413f6\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/routes/quest-workshop.js\": \"63f2afc0242759cbb288e144d2126268b2fc042f1dfecb1d1ebb7eb587e0081b\",\n        \"src/routes/questing.js\": \"27beabb502911baad8f7c3ddae6e4ded3ab9bbcb1ac1edfaa7f78dbb94974b82\",\n        \"src/server.js\": \"d72f0ef99769d2097fb60368ae96f4faaad0e6c2a92bc8ec67b82abf975eedd4\",\n        \"src/ux-workspace.js\": \"df2b039a96df5399fab6c1b3ffda9f6e4cc53c9e84f989da21610558c02b0870\",\n        \"tools/questing-content.js\": \"d08dd7fe90d5921f8bc731c218d18a44b5674b85ec944da60096e5a86fbab92f\",\n        \"tools/questing-workgraph.js\": \"bf0869441eb7a3f375773af0d051914d11dc4a68632423ffb1e296e32de50a8a\"\n      },\n      \"sourceStable\": true,\n      \"outputPath\": \"output/questing-verification/quest-mwihzrwp-quest-specialist.log\",\n      \"outputHash\": \"e5d77e1bb22249a49c912341a5479a08ef2fed477a7d4018ad3368f4c9e9ae61\"\n    },\n    {\n      \"id\": \"quest-mwihzz6v-clue-puzzles\",\n      \"evaluator\": \"test/clue-puzzles.js\",\n      \"command\": \"node test/clue-puzzles.js\",\n      \"startedAt\": \"2026-11-16T00:01:08.071Z\",\n      \"elapsedMs\": 6966,\n      \"exitCode\": 0,\n      \"baselineRevision\": \"17fdf85fdd21fd3767463df8ba47614f7d1f6432\",\n      \"evaluatorHash\": \"3013dcf1ebf08a5d7429777b81f82b2986f013f76817837ae54eee6d1f08bd46\",\n      \"sourceHashes\": {\n        \"content/packs/quest-archive-service/pack.json\": \"9ae8e2dff659efc6e387c04757291ef2dc979921c447fd4bb528bd99779b2b0e\",\n        \"content/packs/quest-early-obituary/pack.json\": \"300ea3d0019ca7b11055132be598515932a2f0236d52cf68ba629a0625bf16ba\",\n        \"content/packs/quest-family-dinner/pack.json\": \"1ea3be2ad823d1a7fcb7a5960607661d0ba4c696d3d47112602168f9c59a65f1\",\n        \"content/packs/quest-inherited-file/pack.json\": \"a4399ed7f5aa3c4a32469d69824d021b592f29a1ae93f17ce3c9213db371f34f\",\n        \"content/packs/quest-missing-name/pack.json\": \"529ef9964b07312f3298a068baf00724a1b7106a50b192acbdc401e90dc45f42\",\n        \"content/packs/quest-morning-after/pack.json\": \"ebfa0ad0cbb4a2e77791777ab307ff5c075c52de08ee40ac8afa4b224d3c68ac\",\n        \"content/packs/quest-quiet-wedding/pack.json\": \"623bbea98c196b252cb584f608067cce236d257fc640b78535c0761c3d265c9f\",\n        \"content/packs/quest-rival-accord/pack.json\": \"1a7df139c0f74af1e940dba4aedcd50c4230c5c3ea349fd606828a199ce993ed\",\n        \"content/packs/quest-sixth-envelope/pack.json\": \"ef8ee9c8a02d4d38092773e92cb9dade6ec1fbc4cfaedf57683d912d250f3226\",\n        \"content/packs/quest-three-witnesses/pack.json\": \"51d148474967f738490e8410850b7175171e1a1ffab05a6ee736dd837a69554a\",\n        \"public/index.html\": \"39b36896c4e6a64f2aa7163de4d3312824c9b5bd6b16c57f8a87959db89bc98e\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\",\n        \"public/ux-clues.css\": \"c3d8290e9d11794e25b8d5b76365bd633a12032a2d03271fba30cc374a74c326\",\n        \"public/ux-clues.js\": \"9a492a6e54a45697978e6177e6c3f52083c51cf413a95b616b7e62c7b33bbe4d\",\n        \"public/ux-navigation.css\": \"712ebf19faf5303e45d82c55cfc9cda4b3d4156fc0ab759a115a849dbe2efbd6\",\n        \"public/ux-navigation.js\": \"1295c1e3bed266ec992726815fe3eae194535cb428904e7b1b993ad2b6af3293\",\n        \"public/ux-quests.css\": \"c65e7e95c966f14dd4996b8cbe99643874ab325d45c23d728216118afa27191f\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"schema.sql\": \"b5c66d128de9b730bac19b135a8d13791f3bc70ba4a27818abec7de5141564de\",\n        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"src/clue-puzzles.js\": \"ee6cf76f6fab981356fd0c6068369218cd6fe1b9f8f968018e69bf4a146dd305\",\n        \"src/clues.js\": \"9d058e4a81268dfdfeb9295545fc72475b993caddc3ee6781f300103de0aee74\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quest-saga.js\": \"ecb7538abeee98a9a25ff42f69d1818a4485974b1fe072375dcdf0820e42f51f\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/explore.js\": \"d0d87a39f7a12dccf98c97662bd69d68e0643894c5ed59b345f8c5790097ca88\",\n        \"src/game.js\": \"1ee4df5e9fe5209f3239d854fa0a4c587c36e24ffe634ae569abb7af06be60f8\",\n        \"src/gateway/context.js\": \"7516534f6b3e426efe6c92136aa1bc9d599925fce15a89f4ce57cace35be466f\",\n        \"src/quest-workshop-schema.js\": \"9bbf299a7ac7573c8d0770c140dd7841b2996c54a983278b71dbc768e381c70c\",\n        \"src/quest-workshop.js\": \"1a1549f014e735a2d94befc2c628ff34d5fdb7070bebd2bc0dca9bca3c261083\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/questing.js\": \"11bf4829e5546042190e1da0c7134331de89a409df2c92da6d812ffbd30413f6\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/routes/quest-workshop.js\": \"63f2afc0242759cbb288e144d2126268b2fc042f1dfecb1d1ebb7eb587e0081b\",\n        \"src/routes/questing.js\": \"27beabb502911baad8f7c3ddae6e4ded3ab9bbcb1ac1edfaa7f78dbb94974b82\",\n        \"src/server.js\": \"d72f0ef99769d2097fb60368ae96f4faaad0e6c2a92bc8ec67b82abf975eedd4\",\n        \"src/ux-workspace.js\": \"df2b039a96df5399fab6c1b3ffda9f6e4cc53c9e84f989da21610558c02b0870\",\n        \"tools/questing-content.js\": \"d08dd7fe90d5921f8bc731c218d18a44b5674b85ec944da60096e5a86fbab92f\",\n        \"tools/questing-workgraph.js\": \"bf0869441eb7a3f375773af0d051914d11dc4a68632423ffb1e296e32de50a8a\"\n      },\n      \"sourceStable\": true,\n      \"outputPath\": \"output/questing-verification/quest-mwihzz6v-clue-puzzles.log\",\n      \"outputHash\": \"f6360ef1255d7037a40128d4a3ea637de81d2b9b13e344f2c87ea6cd959ce4dd\"\n    },\n    {\n      \"id\": \"quest-mwii051d-clue-puzzles-browser\",\n      \"evaluator\": \"test/clue-puzzles-browser.js\",\n      \"command\": \"node test/clue-puzzles-browser.js\",\n      \"startedAt\": \"2026-11-16T00:01:15.649Z\",\n      \"elapsedMs\": 10302,\n      \"exitCode\": 0,\n      \"baselineRevision\": \"17fdf85fdd21fd3767463df8ba47614f7d1f6432\",\n      \"evaluatorHash\": \"4947877d555ac655b1b9c485c3299a386964a735af147100fdb650cd0b200783\",\n      \"sourceHashes\": {\n        \"content/packs/quest-archive-service/pack.json\": \"9ae8e2dff659efc6e387c04757291ef2dc979921c447fd4bb528bd99779b2b0e\",\n        \"content/packs/quest-early-obituary/pack.json\": \"300ea3d0019ca7b11055132be598515932a2f0236d52cf68ba629a0625bf16ba\",\n        \"content/packs/quest-family-dinner/pack.json\": \"1ea3be2ad823d1a7fcb7a5960607661d0ba4c696d3d47112602168f9c59a65f1\",\n        \"content/packs/quest-inherited-file/pack.json\": \"a4399ed7f5aa3c4a32469d69824d021b592f29a1ae93f17ce3c9213db371f34f\",\n        \"content/packs/quest-missing-name/pack.json\": \"529ef9964b07312f3298a068baf00724a1b7106a50b192acbdc401e90dc45f42\",\n        \"content/packs/quest-morning-after/pack.json\": \"ebfa0ad0cbb4a2e77791777ab307ff5c075c52de08ee40ac8afa4b224d3c68ac\",\n        \"content/packs/quest-quiet-wedding/pack.json\": \"623bbea98c196b252cb584f608067cce236d257fc640b78535c0761c3d265c9f\",\n        \"content/packs/quest-rival-accord/pack.json\": \"1a7df139c0f74af1e940dba4aedcd50c4230c5c3ea349fd606828a199ce993ed\",\n        \"content/packs/quest-sixth-envelope/pack.json\": \"ef8ee9c8a02d4d38092773e92cb9dade6ec1fbc4cfaedf57683d912d250f3226\",\n        \"content/packs/quest-three-witnesses/pack.json\": \"51d148474967f738490e8410850b7175171e1a1ffab05a6ee736dd837a69554a\",\n        \"public/index.html\": \"39b36896c4e6a64f2aa7163de4d3312824c9b5bd6b16c57f8a87959db89bc98e\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\",\n        \"public/ux-clues.css\": \"c3d8290e9d11794e25b8d5b76365bd633a12032a2d03271fba30cc374a74c326\",\n        \"public/ux-clues.js\": \"9a492a6e54a45697978e6177e6c3f52083c51cf413a95b616b7e62c7b33bbe4d\",\n        \"public/ux-navigation.css\": \"712ebf19faf5303e45d82c55cfc9cda4b3d4156fc0ab759a115a849dbe2efbd6\",\n        \"public/ux-navigation.js\": \"1295c1e3bed266ec992726815fe3eae194535cb428904e7b1b993ad2b6af3293\",\n        \"public/ux-quests.css\": \"c65e7e95c966f14dd4996b8cbe99643874ab325d45c23d728216118afa27191f\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"schema.sql\": \"b5c66d128de9b730bac19b135a8d13791f3bc70ba4a27818abec7de5141564de\",\n        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"src/clue-puzzles.js\": \"ee6cf76f6fab981356fd0c6068369218cd6fe1b9f8f968018e69bf4a146dd305\",\n        \"src/clues.js\": \"9d058e4a81268dfdfeb9295545fc72475b993caddc3ee6781f300103de0aee74\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quest-saga.js\": \"ecb7538abeee98a9a25ff42f69d1818a4485974b1fe072375dcdf0820e42f51f\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/explore.js\": \"d0d87a39f7a12dccf98c97662bd69d68e0643894c5ed59b345f8c5790097ca88\",\n        \"src/game.js\": \"1ee4df5e9fe5209f3239d854fa0a4c587c36e24ffe634ae569abb7af06be60f8\",\n        \"src/gateway/context.js\": \"7516534f6b3e426efe6c92136aa1bc9d599925fce15a89f4ce57cace35be466f\",\n        \"src/quest-workshop-schema.js\": \"9bbf299a7ac7573c8d0770c140dd7841b2996c54a983278b71dbc768e381c70c\",\n        \"src/quest-workshop.js\": \"1a1549f014e735a2d94befc2c628ff34d5fdb7070bebd2bc0dca9bca3c261083\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/questing.js\": \"11bf4829e5546042190e1da0c7134331de89a409df2c92da6d812ffbd30413f6\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/routes/quest-workshop.js\": \"63f2afc0242759cbb288e144d2126268b2fc042f1dfecb1d1ebb7eb587e0081b\",\n        \"src/routes/questing.js\": \"27beabb502911baad8f7c3ddae6e4ded3ab9bbcb1ac1edfaa7f78dbb94974b82\",\n        \"src/server.js\": \"d72f0ef99769d2097fb60368ae96f4faaad0e6c2a92bc8ec67b82abf975eedd4\",\n        \"src/ux-workspace.js\": \"df2b039a96df5399fab6c1b3ffda9f6e4cc53c9e84f989da21610558c02b0870\",\n        \"tools/questing-content.js\": \"d08dd7fe90d5921f8bc731c218d18a44b5674b85ec944da60096e5a86fbab92f\",\n        \"tools/questing-workgraph.js\": \"bf0869441eb7a3f375773af0d051914d11dc4a68632423ffb1e296e32de50a8a\"\n      },\n      \"sourceStable\": true,\n      \"outputPath\": \"output/questing-verification/quest-mwii051d-clue-puzzles-browser.log\",\n      \"outputHash\": \"ee6645fb15ada6ede837b8ae915ec628d2c25606c95e1f638f98f468371ad78f\"\n    },\n    {\n      \"id\": \"quest-mwii0dgu-content-narrative\",\n      \"evaluator\": \"test/content-narrative.js\",\n      \"command\": \"node test/content-narrative.js\",\n      \"startedAt\": \"2026-11-16T00:01:26.574Z\",\n      \"elapsedMs\": 5291,\n      \"exitCode\": 0,\n      \"baselineRevision\": \"17fdf85fdd21fd3767463df8ba47614f7d1f6432\",\n      \"evaluatorHash\": \"aead14e68b9161af4d0e2ffffcde716c739981c0a64273a4bfa625e602685189\",\n      \"sourceHashes\": {\n        \"content/packs/quest-archive-service/pack.json\": \"9ae8e2dff659efc6e387c04757291ef2dc979921c447fd4bb528bd99779b2b0e\",\n        \"content/packs/quest-early-obituary/pack.json\": \"300ea3d0019ca7b11055132be598515932a2f0236d52cf68ba629a0625bf16ba\",\n        \"content/packs/quest-family-dinner/pack.json\": \"1ea3be2ad823d1a7fcb7a5960607661d0ba4c696d3d47112602168f9c59a65f1\",\n        \"content/packs/quest-inherited-file/pack.json\": \"a4399ed7f5aa3c4a32469d69824d021b592f29a1ae93f17ce3c9213db371f34f\",\n        \"content/packs/quest-missing-name/pack.json\": \"529ef9964b07312f3298a068baf00724a1b7106a50b192acbdc401e90dc45f42\",\n        \"content/packs/quest-morning-after/pack.json\": \"ebfa0ad0cbb4a2e77791777ab307ff5c075c52de08ee40ac8afa4b224d3c68ac\",\n        \"content/packs/quest-quiet-wedding/pack.json\": \"623bbea98c196b252cb584f608067cce236d257fc640b78535c0761c3d265c9f\",\n        \"content/packs/quest-rival-accord/pack.json\": \"1a7df139c0f74af1e940dba4aedcd50c4230c5c3ea349fd606828a199ce993ed\",\n        \"content/packs/quest-sixth-envelope/pack.json\": \"ef8ee9c8a02d4d38092773e92cb9dade6ec1fbc4cfaedf57683d912d250f3226\",\n        \"content/packs/quest-three-witnesses/pack.json\": \"51d148474967f738490e8410850b7175171e1a1ffab05a6ee736dd837a69554a\",\n        \"public/index.html\": \"39b36896c4e6a64f2aa7163de4d3312824c9b5bd6b16c57f8a87959db89bc98e\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\",\n        \"public/ux-clues.css\": \"c3d8290e9d11794e25b8d5b76365bd633a12032a2d03271fba30cc374a74c326\",\n        \"public/ux-clues.js\": \"9a492a6e54a45697978e6177e6c3f52083c51cf413a95b616b7e62c7b33bbe4d\",\n        \"public/ux-navigation.css\": \"712ebf19faf5303e45d82c55cfc9cda4b3d4156fc0ab759a115a849dbe2efbd6\",\n        \"public/ux-navigation.js\": \"1295c1e3bed266ec992726815fe3eae194535cb428904e7b1b993ad2b6af3293\",\n        \"public/ux-quests.css\": \"c65e7e95c966f14dd4996b8cbe99643874ab325d45c23d728216118afa27191f\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"schema.sql\": \"b5c66d128de9b730bac19b135a8d13791f3bc70ba4a27818abec7de5141564de\",\n        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"src/clue-puzzles.js\": \"ee6cf76f6fab981356fd0c6068369218cd6fe1b9f8f968018e69bf4a146dd305\",\n        \"src/clues.js\": \"9d058e4a81268dfdfeb9295545fc72475b993caddc3ee6781f300103de0aee74\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quest-saga.js\": \"ecb7538abeee98a9a25ff42f69d1818a4485974b1fe072375dcdf0820e42f51f\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/explore.js\": \"d0d87a39f7a12dccf98c97662bd69d68e0643894c5ed59b345f8c5790097ca88\",\n        \"src/game.js\": \"1ee4df5e9fe5209f3239d854fa0a4c587c36e24ffe634ae569abb7af06be60f8\",\n        \"src/gateway/context.js\": \"7516534f6b3e426efe6c92136aa1bc9d599925fce15a89f4ce57cace35be466f\",\n        \"src/quest-workshop-schema.js\": \"9bbf299a7ac7573c8d0770c140dd7841b2996c54a983278b71dbc768e381c70c\",\n        \"src/quest-workshop.js\": \"1a1549f014e735a2d94befc2c628ff34d5fdb7070bebd2bc0dca9bca3c261083\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/questing.js\": \"11bf4829e5546042190e1da0c7134331de89a409df2c92da6d812ffbd30413f6\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/routes/quest-workshop.js\": \"63f2afc0242759cbb288e144d2126268b2fc042f1dfecb1d1ebb7eb587e0081b\",\n        \"src/routes/questing.js\": \"27beabb502911baad8f7c3ddae6e4ded3ab9bbcb1ac1edfaa7f78dbb94974b82\",\n        \"src/server.js\": \"d72f0ef99769d2097fb60368ae96f4faaad0e6c2a92bc8ec67b82abf975eedd4\",\n        \"src/ux-workspace.js\": \"df2b039a96df5399fab6c1b3ffda9f6e4cc53c9e84f989da21610558c02b0870\",\n        \"tools/questing-content.js\": \"d08dd7fe90d5921f8bc731c218d18a44b5674b85ec944da60096e5a86fbab92f\",\n        \"tools/questing-workgraph.js\": \"bf0869441eb7a3f375773af0d051914d11dc4a68632423ffb1e296e32de50a8a\"\n      },\n      \"sourceStable\": true,\n      \"outputPath\": \"output/questing-verification/quest-mwii0dgu-content-narrative.log\",\n      \"outputHash\": \"98e7883e95c0a31d4472bd460a28fa5b912a87eacece3a7942ebf52b5ec9d1ae\"\n    },\n    {\n      \"id\": \"quest-mwii0hye-quest-experience-browser\",\n      \"evaluator\": \"test/quest-experience-browser.js\",\n      \"command\": \"node test/quest-experience-browser.js\",\n      \"startedAt\": \"2026-11-16T00:01:32.390Z\",\n      \"elapsedMs\": 20486,\n      \"exitCode\": 0,\n      \"baselineRevision\": \"17fdf85fdd21fd3767463df8ba47614f7d1f6432\",\n      \"evaluatorHash\": \"0cee33effbeb473a18960e4c5dcc72b896748fa6695968605de3453d5525f7cc\",\n      \"sourceHashes\": {\n        \"content/packs/quest-archive-service/pack.json\": \"9ae8e2dff659efc6e387c04757291ef2dc979921c447fd4bb528bd99779b2b0e\",\n        \"content/packs/quest-early-obituary/pack.json\": \"300ea3d0019ca7b11055132be598515932a2f0236d52cf68ba629a0625bf16ba\",\n        \"content/packs/quest-family-dinner/pack.json\": \"1ea3be2ad823d1a7fcb7a5960607661d0ba4c696d3d47112602168f9c59a65f1\",\n        \"content/packs/quest-inherited-file/pack.json\": \"a4399ed7f5aa3c4a32469d69824d021b592f29a1ae93f17ce3c9213db371f34f\",\n        \"content/packs/quest-missing-name/pack.json\": \"529ef9964b07312f3298a068baf00724a1b7106a50b192acbdc401e90dc45f42\",\n        \"content/packs/quest-morning-after/pack.json\": \"ebfa0ad0cbb4a2e77791777ab307ff5c075c52de08ee40ac8afa4b224d3c68ac\",\n        \"content/packs/quest-quiet-wedding/pack.json\": \"623bbea98c196b252cb584f608067cce236d257fc640b78535c0761c3d265c9f\",\n        \"content/packs/quest-rival-accord/pack.json\": \"1a7df139c0f74af1e940dba4aedcd50c4230c5c3ea349fd606828a199ce993ed\",\n        \"content/packs/quest-sixth-envelope/pack.json\": \"ef8ee9c8a02d4d38092773e92cb9dade6ec1fbc4cfaedf57683d912d250f3226\",\n        \"content/packs/quest-three-witnesses/pack.json\": \"51d148474967f738490e8410850b7175171e1a1ffab05a6ee736dd837a69554a\",\n        \"public/index.html\": \"39b36896c4e6a64f2aa7163de4d3312824c9b5bd6b16c57f8a87959db89bc98e\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\",\n        \"public/ux-clues.css\": \"c3d8290e9d11794e25b8d5b76365bd633a12032a2d03271fba30cc374a74c326\",\n        \"public/ux-clues.js\": \"9a492a6e54a45697978e6177e6c3f52083c51cf413a95b616b7e62c7b33bbe4d\",\n        \"public/ux-navigation.css\": \"712ebf19faf5303e45d82c55cfc9cda4b3d4156fc0ab759a115a849dbe2efbd6\",\n        \"public/ux-navigation.js\": \"1295c1e3bed266ec992726815fe3eae194535cb428904e7b1b993ad2b6af3293\",\n        \"public/ux-quests.css\": \"c65e7e95c966f14dd4996b8cbe99643874ab325d45c23d728216118afa27191f\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"schema.sql\": \"b5c66d128de9b730bac19b135a8d13791f3bc70ba4a27818abec7de5141564de\",\n        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"src/clue-puzzles.js\": \"ee6cf76f6fab981356fd0c6068369218cd6fe1b9f8f968018e69bf4a146dd305\",\n        \"src/clues.js\": \"9d058e4a81268dfdfeb9295545fc72475b993caddc3ee6781f300103de0aee74\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quest-saga.js\": \"ecb7538abeee98a9a25ff42f69d1818a4485974b1fe072375dcdf0820e42f51f\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/explore.js\": \"d0d87a39f7a12dccf98c97662bd69d68e0643894c5ed59b345f8c5790097ca88\",\n        \"src/game.js\": \"1ee4df5e9fe5209f3239d854fa0a4c587c36e24ffe634ae569abb7af06be60f8\",\n        \"src/gateway/context.js\": \"7516534f6b3e426efe6c92136aa1bc9d599925fce15a89f4ce57cace35be466f\",\n        \"src/quest-workshop-schema.js\": \"9bbf299a7ac7573c8d0770c140dd7841b2996c54a983278b71dbc768e381c70c\",\n        \"src/quest-workshop.js\": \"1a1549f014e735a2d94befc2c628ff34d5fdb7070bebd2bc0dca9bca3c261083\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/questing.js\": \"11bf4829e5546042190e1da0c7134331de89a409df2c92da6d812ffbd30413f6\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/routes/quest-workshop.js\": \"63f2afc0242759cbb288e144d2126268b2fc042f1dfecb1d1ebb7eb587e0081b\",\n        \"src/routes/questing.js\": \"27beabb502911baad8f7c3ddae6e4ded3ab9bbcb1ac1edfaa7f78dbb94974b82\",\n        \"src/server.js\": \"d72f0ef99769d2097fb60368ae96f4faaad0e6c2a92bc8ec67b82abf975eedd4\",\n        \"src/ux-workspace.js\": \"df2b039a96df5399fab6c1b3ffda9f6e4cc53c9e84f989da21610558c02b0870\",\n        \"tools/questing-content.js\": \"d08dd7fe90d5921f8bc731c218d18a44b5674b85ec944da60096e5a86fbab92f\",\n        \"tools/questing-workgraph.js\": \"bf0869441eb7a3f375773af0d051914d11dc4a68632423ffb1e296e32de50a8a\"\n      },\n      \"sourceStable\": true,\n      \"outputPath\": \"output/questing-verification/quest-mwii0hye-quest-experience-browser.log\",\n      \"outputHash\": \"d1dc95cece4eea36f1ce2d8eb252e5e660f3bc2fd236a4aefacc57a3c49371b4\"\n    },\n    {\n      \"id\": \"quest-mwii0xz6-content-api\",\n      \"evaluator\": \"test/content-api.js\",\n      \"command\": \"node test/content-api.js\",\n      \"startedAt\": \"2026-11-16T00:01:53.154Z\",\n      \"elapsedMs\": 2098,\n      \"exitCode\": 0,\n      \"baselineRevision\": \"17fdf85fdd21fd3767463df8ba47614f7d1f6432\",\n      \"evaluatorHash\": \"af8662191fd428d95072e82de96ab6d12fedda3d1207d040665cb32244dc33cb\",\n      \"sourceHashes\": {\n        \"content/packs/quest-archive-service/pack.json\": \"9ae8e2dff659efc6e387c04757291ef2dc979921c447fd4bb528bd99779b2b0e\",\n        \"content/packs/quest-early-obituary/pack.json\": \"300ea3d0019ca7b11055132be598515932a2f0236d52cf68ba629a0625bf16ba\",\n        \"content/packs/quest-family-dinner/pack.json\": \"1ea3be2ad823d1a7fcb7a5960607661d0ba4c696d3d47112602168f9c59a65f1\",\n        \"content/packs/quest-inherited-file/pack.json\": \"a4399ed7f5aa3c4a32469d69824d021b592f29a1ae93f17ce3c9213db371f34f\",\n        \"content/packs/quest-missing-name/pack.json\": \"529ef9964b07312f3298a068baf00724a1b7106a50b192acbdc401e90dc45f42\",\n        \"content/packs/quest-morning-after/pack.json\": \"ebfa0ad0cbb4a2e77791777ab307ff5c075c52de08ee40ac8afa4b224d3c68ac\",\n        \"content/packs/quest-quiet-wedding/pack.json\": \"623bbea98c196b252cb584f608067cce236d257fc640b78535c0761c3d265c9f\",\n        \"content/packs/quest-rival-accord/pack.json\": \"1a7df139c0f74af1e940dba4aedcd50c4230c5c3ea349fd606828a199ce993ed\",\n        \"content/packs/quest-sixth-envelope/pack.json\": \"ef8ee9c8a02d4d38092773e92cb9dade6ec1fbc4cfaedf57683d912d250f3226\",\n        \"content/packs/quest-three-witnesses/pack.json\": \"51d148474967f738490e8410850b7175171e1a1ffab05a6ee736dd837a69554a\",\n        \"public/index.html\": \"39b36896c4e6a64f2aa7163de4d3312824c9b5bd6b16c57f8a87959db89bc98e\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\",\n        \"public/ux-clues.css\": \"c3d8290e9d11794e25b8d5b76365bd633a12032a2d03271fba30cc374a74c326\",\n        \"public/ux-clues.js\": \"9a492a6e54a45697978e6177e6c3f52083c51cf413a95b616b7e62c7b33bbe4d\",\n        \"public/ux-navigation.css\": \"712ebf19faf5303e45d82c55cfc9cda4b3d4156fc0ab759a115a849dbe2efbd6\",\n        \"public/ux-navigation.js\": \"1295c1e3bed266ec992726815fe3eae194535cb428904e7b1b993ad2b6af3293\",\n        \"public/ux-quests.css\": \"c65e7e95c966f14dd4996b8cbe99643874ab325d45c23d728216118afa27191f\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"schema.sql\": \"b5c66d128de9b730bac19b135a8d13791f3bc70ba4a27818abec7de5141564de\",\n        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"src/clue-puzzles.js\": \"ee6cf76f6fab981356fd0c6068369218cd6fe1b9f8f968018e69bf4a146dd305\",\n        \"src/clues.js\": \"9d058e4a81268dfdfeb9295545fc72475b993caddc3ee6781f300103de0aee74\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quest-saga.js\": \"ecb7538abeee98a9a25ff42f69d1818a4485974b1fe072375dcdf0820e42f51f\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/explore.js\": \"d0d87a39f7a12dccf98c97662bd69d68e0643894c5ed59b345f8c5790097ca88\",\n        \"src/game.js\": \"1ee4df5e9fe5209f3239d854fa0a4c587c36e24ffe634ae569abb7af06be60f8\",\n        \"src/gateway/context.js\": \"7516534f6b3e426efe6c92136aa1bc9d599925fce15a89f4ce57cace35be466f\",\n        \"src/quest-workshop-schema.js\": \"9bbf299a7ac7573c8d0770c140dd7841b2996c54a983278b71dbc768e381c70c\",\n        \"src/quest-workshop.js\": \"1a1549f014e735a2d94befc2c628ff34d5fdb7070bebd2bc0dca9bca3c261083\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/questing.js\": \"11bf4829e5546042190e1da0c7134331de89a409df2c92da6d812ffbd30413f6\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/routes/quest-workshop.js\": \"63f2afc0242759cbb288e144d2126268b2fc042f1dfecb1d1ebb7eb587e0081b\",\n        \"src/routes/questing.js\": \"27beabb502911baad8f7c3ddae6e4ded3ab9bbcb1ac1edfaa7f78dbb94974b82\",\n        \"src/server.js\": \"d72f0ef99769d2097fb60368ae96f4faaad0e6c2a92bc8ec67b82abf975eedd4\",\n        \"src/ux-workspace.js\": \"df2b039a96df5399fab6c1b3ffda9f6e4cc53c9e84f989da21610558c02b0870\",\n        \"tools/questing-content.js\": \"d08dd7fe90d5921f8bc731c218d18a44b5674b85ec944da60096e5a86fbab92f\",\n        \"tools/questing-workgraph.js\": \"bf0869441eb7a3f375773af0d051914d11dc4a68632423ffb1e296e32de50a8a\"\n      },\n      \"sourceStable\": true,\n      \"outputPath\": \"output/questing-verification/quest-mwii0xz6-content-api.log\",\n      \"outputHash\": \"457b58424f973c221ec169c5f9332abbfe73a7d3845035dbce8de5f7c12c7ab6\"\n    },\n    {\n      \"id\": \"quest-mwii0zs4-quest-saga-social\",\n      \"evaluator\": \"test/quest-saga-social.js\",\n      \"command\": \"node test/quest-saga-social.js\",\n      \"startedAt\": \"2026-11-16T00:01:55.492Z\",\n      \"elapsedMs\": 6421,\n      \"exitCode\": 0,\n      \"baselineRevision\": \"17fdf85fdd21fd3767463df8ba47614f7d1f6432\",\n      \"evaluatorHash\": \"c4a1e687277ca63c16e76c037d35cb2310bbc01e8efc3b153abf7fab6e596528\",\n      \"sourceHashes\": {\n        \"content/packs/quest-archive-service/pack.json\": \"9ae8e2dff659efc6e387c04757291ef2dc979921c447fd4bb528bd99779b2b0e\",\n        \"content/packs/quest-early-obituary/pack.json\": \"300ea3d0019ca7b11055132be598515932a2f0236d52cf68ba629a0625bf16ba\",\n        \"content/packs/quest-family-dinner/pack.json\": \"1ea3be2ad823d1a7fcb7a5960607661d0ba4c696d3d47112602168f9c59a65f1\",\n        \"content/packs/quest-inherited-file/pack.json\": \"a4399ed7f5aa3c4a32469d69824d021b592f29a1ae93f17ce3c9213db371f34f\",\n        \"content/packs/quest-missing-name/pack.json\": \"529ef9964b07312f3298a068baf00724a1b7106a50b192acbdc401e90dc45f42\",\n        \"content/packs/quest-morning-after/pack.json\": \"ebfa0ad0cbb4a2e77791777ab307ff5c075c52de08ee40ac8afa4b224d3c68ac\",\n        \"content/packs/quest-quiet-wedding/pack.json\": \"623bbea98c196b252cb584f608067cce236d257fc640b78535c0761c3d265c9f\",\n        \"content/packs/quest-rival-accord/pack.json\": \"1a7df139c0f74af1e940dba4aedcd50c4230c5c3ea349fd606828a199ce993ed\",\n        \"content/packs/quest-sixth-envelope/pack.json\": \"ef8ee9c8a02d4d38092773e92cb9dade6ec1fbc4cfaedf57683d912d250f3226\",\n        \"content/packs/quest-three-witnesses/pack.json\": \"51d148474967f738490e8410850b7175171e1a1ffab05a6ee736dd837a69554a\",\n        \"public/index.html\": \"39b36896c4e6a64f2aa7163de4d3312824c9b5bd6b16c57f8a87959db89bc98e\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\",\n        \"public/ux-clues.css\": \"c3d8290e9d11794e25b8d5b76365bd633a12032a2d03271fba30cc374a74c326\",\n        \"public/ux-clues.js\": \"9a492a6e54a45697978e6177e6c3f52083c51cf413a95b616b7e62c7b33bbe4d\",\n        \"public/ux-navigation.css\": \"712ebf19faf5303e45d82c55cfc9cda4b3d4156fc0ab759a115a849dbe2efbd6\",\n        \"public/ux-navigation.js\": \"1295c1e3bed266ec992726815fe3eae194535cb428904e7b1b993ad2b6af3293\",\n        \"public/ux-quests.css\": \"c65e7e95c966f14dd4996b8cbe99643874ab325d45c23d728216118afa27191f\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"schema.sql\": \"b5c66d128de9b730bac19b135a8d13791f3bc70ba4a27818abec7de5141564de\",\n        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"src/clue-puzzles.js\": \"ee6cf76f6fab981356fd0c6068369218cd6fe1b9f8f968018e69bf4a146dd305\",\n        \"src/clues.js\": \"9d058e4a81268dfdfeb9295545fc72475b993caddc3ee6781f300103de0aee74\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quest-saga.js\": \"ecb7538abeee98a9a25ff42f69d1818a4485974b1fe072375dcdf0820e42f51f\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/explore.js\": \"d0d87a39f7a12dccf98c97662bd69d68e0643894c5ed59b345f8c5790097ca88\",\n        \"src/game.js\": \"1ee4df5e9fe5209f3239d854fa0a4c587c36e24ffe634ae569abb7af06be60f8\",\n        \"src/gateway/context.js\": \"7516534f6b3e426efe6c92136aa1bc9d599925fce15a89f4ce57cace35be466f\",\n        \"src/quest-workshop-schema.js\": \"9bbf299a7ac7573c8d0770c140dd7841b2996c54a983278b71dbc768e381c70c\",\n        \"src/quest-workshop.js\": \"1a1549f014e735a2d94befc2c628ff34d5fdb7070bebd2bc0dca9bca3c261083\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/questing.js\": \"11bf4829e5546042190e1da0c7134331de89a409df2c92da6d812ffbd30413f6\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/routes/quest-workshop.js\": \"63f2afc0242759cbb288e144d2126268b2fc042f1dfecb1d1ebb7eb587e0081b\",\n        \"src/routes/questing.js\": \"27beabb502911baad8f7c3ddae6e4ded3ab9bbcb1ac1edfaa7f78dbb94974b82\",\n        \"src/server.js\": \"d72f0ef99769d2097fb60368ae96f4faaad0e6c2a92bc8ec67b82abf975eedd4\",\n        \"src/ux-workspace.js\": \"df2b039a96df5399fab6c1b3ffda9f6e4cc53c9e84f989da21610558c02b0870\",\n        \"tools/questing-content.js\": \"d08dd7fe90d5921f8bc731c218d18a44b5674b85ec944da60096e5a86fbab92f\",\n        \"tools/questing-workgraph.js\": \"bf0869441eb7a3f375773af0d051914d11dc4a68632423ffb1e296e32de50a8a\"\n      },\n      \"sourceStable\": true,\n      \"outputPath\": \"output/questing-verification/quest-mwii0zs4-quest-saga-social.log\",\n      \"outputHash\": \"048940451241d943b0eee2a9c69e23e27e1d88dd5029a42e9d447da390bf7db6\"\n    },\n    {\n      \"id\": \"quest-mwii14w7-content-casework\",\n      \"evaluator\": \"test/content-casework.js\",\n      \"command\": \"node test/content-casework.js\",\n      \"startedAt\": \"2026-11-16T00:02:02.119Z\",\n      \"elapsedMs\": 5766,\n      \"exitCode\": 0,\n      \"baselineRevision\": \"17fdf85fdd21fd3767463df8ba47614f7d1f6432\",\n      \"evaluatorHash\": \"a210eef7652bb668f2c03f69162e43e4f9a3a030f5fe67411751b90cafbb1f20\",\n      \"sourceHashes\": {\n        \"content/packs/quest-archive-service/pack.json\": \"9ae8e2dff659efc6e387c04757291ef2dc979921c447fd4bb528bd99779b2b0e\",\n        \"content/packs/quest-early-obituary/pack.json\": \"300ea3d0019ca7b11055132be598515932a2f0236d52cf68ba629a0625bf16ba\",\n        \"content/packs/quest-family-dinner/pack.json\": \"1ea3be2ad823d1a7fcb7a5960607661d0ba4c696d3d47112602168f9c59a65f1\",\n        \"content/packs/quest-inherited-file/pack.json\": \"a4399ed7f5aa3c4a32469d69824d021b592f29a1ae93f17ce3c9213db371f34f\",\n        \"content/packs/quest-missing-name/pack.json\": \"529ef9964b07312f3298a068baf00724a1b7106a50b192acbdc401e90dc45f42\",\n        \"content/packs/quest-morning-after/pack.json\": \"ebfa0ad0cbb4a2e77791777ab307ff5c075c52de08ee40ac8afa4b224d3c68ac\",\n        \"content/packs/quest-quiet-wedding/pack.json\": \"623bbea98c196b252cb584f608067cce236d257fc640b78535c0761c3d265c9f\",\n        \"content/packs/quest-rival-accord/pack.json\": \"1a7df139c0f74af1e940dba4aedcd50c4230c5c3ea349fd606828a199ce993ed\",\n        \"content/packs/quest-sixth-envelope/pack.json\": \"ef8ee9c8a02d4d38092773e92cb9dade6ec1fbc4cfaedf57683d912d250f3226\",\n        \"content/packs/quest-three-witnesses/pack.json\": \"51d148474967f738490e8410850b7175171e1a1ffab05a6ee736dd837a69554a\",\n        \"public/index.html\": \"39b36896c4e6a64f2aa7163de4d3312824c9b5bd6b16c57f8a87959db89bc98e\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\",\n        \"public/ux-clues.css\": \"c3d8290e9d11794e25b8d5b76365bd633a12032a2d03271fba30cc374a74c326\",\n        \"public/ux-clues.js\": \"9a492a6e54a45697978e6177e6c3f52083c51cf413a95b616b7e62c7b33bbe4d\",\n        \"public/ux-navigation.css\": \"712ebf19faf5303e45d82c55cfc9cda4b3d4156fc0ab759a115a849dbe2efbd6\",\n        \"public/ux-navigation.js\": \"1295c1e3bed266ec992726815fe3eae194535cb428904e7b1b993ad2b6af3293\",\n        \"public/ux-quests.css\": \"c65e7e95c966f14dd4996b8cbe99643874ab325d45c23d728216118afa27191f\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"schema.sql\": \"b5c66d128de9b730bac19b135a8d13791f3bc70ba4a27818abec7de5141564de\",\n        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"src/clue-puzzles.js\": \"ee6cf76f6fab981356fd0c6068369218cd6fe1b9f8f968018e69bf4a146dd305\",\n        \"src/clues.js\": \"9d058e4a81268dfdfeb9295545fc72475b993caddc3ee6781f300103de0aee74\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quest-saga.js\": \"ecb7538abeee98a9a25ff42f69d1818a4485974b1fe072375dcdf0820e42f51f\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/explore.js\": \"d0d87a39f7a12dccf98c97662bd69d68e0643894c5ed59b345f8c5790097ca88\",\n        \"src/game.js\": \"1ee4df5e9fe5209f3239d854fa0a4c587c36e24ffe634ae569abb7af06be60f8\",\n        \"src/gateway/context.js\": \"7516534f6b3e426efe6c92136aa1bc9d599925fce15a89f4ce57cace35be466f\",\n        \"src/quest-workshop-schema.js\": \"9bbf299a7ac7573c8d0770c140dd7841b2996c54a983278b71dbc768e381c70c\",\n        \"src/quest-workshop.js\": \"1a1549f014e735a2d94befc2c628ff34d5fdb7070bebd2bc0dca9bca3c261083\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/questing.js\": \"11bf4829e5546042190e1da0c7134331de89a409df2c92da6d812ffbd30413f6\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/routes/quest-workshop.js\": \"63f2afc0242759cbb288e144d2126268b2fc042f1dfecb1d1ebb7eb587e0081b\",\n        \"src/routes/questing.js\": \"27beabb502911baad8f7c3ddae6e4ded3ab9bbcb1ac1edfaa7f78dbb94974b82\",\n        \"src/server.js\": \"d72f0ef99769d2097fb60368ae96f4faaad0e6c2a92bc8ec67b82abf975eedd4\",\n        \"src/ux-workspace.js\": \"df2b039a96df5399fab6c1b3ffda9f6e4cc53c9e84f989da21610558c02b0870\",\n        \"tools/questing-content.js\": \"d08dd7fe90d5921f8bc731c218d18a44b5674b85ec944da60096e5a86fbab92f\",\n        \"tools/questing-workgraph.js\": \"bf0869441eb7a3f375773af0d051914d11dc4a68632423ffb1e296e32de50a8a\"\n      },\n      \"sourceStable\": true,\n      \"outputPath\": \"output/questing-verification/quest-mwii14w7-content-casework.log\",\n      \"outputHash\": \"27fc07288a559721e307f6dc1716811772844df47988c7668cf547af68fdd12e\"\n    },\n    {\n      \"id\": \"quest-mwii19g1-quest-workshop\",\n      \"evaluator\": \"test/quest-workshop.js\",\n      \"command\": \"node test/quest-workshop.js\",\n      \"startedAt\": \"2026-11-16T00:02:08.017Z\",\n      \"elapsedMs\": 5039,\n      \"exitCode\": 0,\n      \"baselineRevision\": \"17fdf85fdd21fd3767463df8ba47614f7d1f6432\",\n      \"evaluatorHash\": \"831a1962ea90477ba7cc2b80147d36c0e57e5cb6c3b50900a4682e284e19c956\",\n      \"sourceHashes\": {\n        \"content/packs/quest-archive-service/pack.json\": \"9ae8e2dff659efc6e387c04757291ef2dc979921c447fd4bb528bd99779b2b0e\",\n        \"content/packs/quest-early-obituary/pack.json\": \"300ea3d0019ca7b11055132be598515932a2f0236d52cf68ba629a0625bf16ba\",\n        \"content/packs/quest-family-dinner/pack.json\": \"1ea3be2ad823d1a7fcb7a5960607661d0ba4c696d3d47112602168f9c59a65f1\",\n        \"content/packs/quest-inherited-file/pack.json\": \"a4399ed7f5aa3c4a32469d69824d021b592f29a1ae93f17ce3c9213db371f34f\",\n        \"content/packs/quest-missing-name/pack.json\": \"529ef9964b07312f3298a068baf00724a1b7106a50b192acbdc401e90dc45f42\",\n        \"content/packs/quest-morning-after/pack.json\": \"ebfa0ad0cbb4a2e77791777ab307ff5c075c52de08ee40ac8afa4b224d3c68ac\",\n        \"content/packs/quest-quiet-wedding/pack.json\": \"623bbea98c196b252cb584f608067cce236d257fc640b78535c0761c3d265c9f\",\n        \"content/packs/quest-rival-accord/pack.json\": \"1a7df139c0f74af1e940dba4aedcd50c4230c5c3ea349fd606828a199ce993ed\",\n        \"content/packs/quest-sixth-envelope/pack.json\": \"ef8ee9c8a02d4d38092773e92cb9dade6ec1fbc4cfaedf57683d912d250f3226\",\n        \"content/packs/quest-three-witnesses/pack.json\": \"51d148474967f738490e8410850b7175171e1a1ffab05a6ee736dd837a69554a\",\n        \"public/index.html\": \"39b36896c4e6a64f2aa7163de4d3312824c9b5bd6b16c57f8a87959db89bc98e\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\",\n        \"public/ux-clues.css\": \"c3d8290e9d11794e25b8d5b76365bd633a12032a2d03271fba30cc374a74c326\",\n        \"public/ux-clues.js\": \"9a492a6e54a45697978e6177e6c3f52083c51cf413a95b616b7e62c7b33bbe4d\",\n        \"public/ux-navigation.css\": \"712ebf19faf5303e45d82c55cfc9cda4b3d4156fc0ab759a115a849dbe2efbd6\",\n        \"public/ux-navigation.js\": \"1295c1e3bed266ec992726815fe3eae194535cb428904e7b1b993ad2b6af3293\",\n        \"public/ux-quests.css\": \"c65e7e95c966f14dd4996b8cbe99643874ab325d45c23d728216118afa27191f\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"schema.sql\": \"b5c66d128de9b730bac19b135a8d13791f3bc70ba4a27818abec7de5141564de\",\n        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"src/clue-puzzles.js\": \"ee6cf76f6fab981356fd0c6068369218cd6fe1b9f8f968018e69bf4a146dd305\",\n        \"src/clues.js\": \"9d058e4a81268dfdfeb9295545fc72475b993caddc3ee6781f300103de0aee74\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quest-saga.js\": \"ecb7538abeee98a9a25ff42f69d1818a4485974b1fe072375dcdf0820e42f51f\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/explore.js\": \"d0d87a39f7a12dccf98c97662bd69d68e0643894c5ed59b345f8c5790097ca88\",\n        \"src/game.js\": \"1ee4df5e9fe5209f3239d854fa0a4c587c36e24ffe634ae569abb7af06be60f8\",\n        \"src/gateway/context.js\": \"7516534f6b3e426efe6c92136aa1bc9d599925fce15a89f4ce57cace35be466f\",\n        \"src/quest-workshop-schema.js\": \"9bbf299a7ac7573c8d0770c140dd7841b2996c54a983278b71dbc768e381c70c\",\n        \"src/quest-workshop.js\": \"1a1549f014e735a2d94befc2c628ff34d5fdb7070bebd2bc0dca9bca3c261083\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/questing.js\": \"11bf4829e5546042190e1da0c7134331de89a409df2c92da6d812ffbd30413f6\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/routes/quest-workshop.js\": \"63f2afc0242759cbb288e144d2126268b2fc042f1dfecb1d1ebb7eb587e0081b\",\n        \"src/routes/questing.js\": \"27beabb502911baad8f7c3ddae6e4ded3ab9bbcb1ac1edfaa7f78dbb94974b82\",\n        \"src/server.js\": \"d72f0ef99769d2097fb60368ae96f4faaad0e6c2a92bc8ec67b82abf975eedd4\",\n        \"src/ux-workspace.js\": \"df2b039a96df5399fab6c1b3ffda9f6e4cc53c9e84f989da21610558c02b0870\",\n        \"tools/questing-content.js\": \"d08dd7fe90d5921f8bc731c218d18a44b5674b85ec944da60096e5a86fbab92f\",\n        \"tools/questing-workgraph.js\": \"bf0869441eb7a3f375773af0d051914d11dc4a68632423ffb1e296e32de50a8a\"\n      },\n      \"sourceStable\": true,\n      \"outputPath\": \"output/questing-verification/quest-mwii19g1-quest-workshop.log\",\n      \"outputHash\": \"07c3916bfa192238372f0e2be79bd41151aa515f4391289a9a0f31e7bd5559f4\"\n    },\n    {\n      \"id\": \"quest-mwio0geb-quest-saga\",\n      \"evaluator\": \"test/quest-saga.js\",\n      \"command\": \"node test/quest-saga.js\",\n      \"startedAt\": \"2026-11-16T02:49:28.067Z\",\n      \"elapsedMs\": 10179,\n      \"exitCode\": 0,\n      \"baselineRevision\": \"17fdf85fdd21fd3767463df8ba47614f7d1f6432\",\n      \"evaluatorHash\": \"f1435602f0c038970f07ebfc6092b1461c83ec19752994a8c38cc499111178bc\",\n      \"sourceHashes\": {\n        \"content/packs/quest-archive-service/pack.json\": \"9ae8e2dff659efc6e387c04757291ef2dc979921c447fd4bb528bd99779b2b0e\",\n        \"content/packs/quest-early-obituary/pack.json\": \"300ea3d0019ca7b11055132be598515932a2f0236d52cf68ba629a0625bf16ba\",\n        \"content/packs/quest-family-dinner/pack.json\": \"1ea3be2ad823d1a7fcb7a5960607661d0ba4c696d3d47112602168f9c59a65f1\",\n        \"content/packs/quest-inherited-file/pack.json\": \"a4399ed7f5aa3c4a32469d69824d021b592f29a1ae93f17ce3c9213db371f34f\",\n        \"content/packs/quest-missing-name/pack.json\": \"529ef9964b07312f3298a068baf00724a1b7106a50b192acbdc401e90dc45f42\",\n        \"content/packs/quest-morning-after/pack.json\": \"ebfa0ad0cbb4a2e77791777ab307ff5c075c52de08ee40ac8afa4b224d3c68ac\",\n        \"content/packs/quest-quiet-wedding/pack.json\": \"623bbea98c196b252cb584f608067cce236d257fc640b78535c0761c3d265c9f\",\n        \"content/packs/quest-rival-accord/pack.json\": \"1a7df139c0f74af1e940dba4aedcd50c4230c5c3ea349fd606828a199ce993ed\",\n        \"content/packs/quest-sixth-envelope/pack.json\": \"ef8ee9c8a02d4d38092773e92cb9dade6ec1fbc4cfaedf57683d912d250f3226\",\n        \"content/packs/quest-three-witnesses/pack.json\": \"51d148474967f738490e8410850b7175171e1a1ffab05a6ee736dd837a69554a\",\n        \"public/index.html\": \"fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\",\n        \"public/ux-clues.css\": \"c3d8290e9d11794e25b8d5b76365bd633a12032a2d03271fba30cc374a74c326\",\n        \"public/ux-clues.js\": \"9a492a6e54a45697978e6177e6c3f52083c51cf413a95b616b7e62c7b33bbe4d\",\n        \"public/ux-navigation.css\": \"712ebf19faf5303e45d82c55cfc9cda4b3d4156fc0ab759a115a849dbe2efbd6\",\n        \"public/ux-navigation.js\": \"baf682a3ec4de922bc446b1e94eaed9a66f8f10ac5fc49645bbcb88cbb354b40\",\n        \"public/ux-quests.css\": \"c65e7e95c966f14dd4996b8cbe99643874ab325d45c23d728216118afa27191f\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"schema.sql\": \"b5c66d128de9b730bac19b135a8d13791f3bc70ba4a27818abec7de5141564de\",\n        \"src/agentgateway.js\": \"8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"src/clue-puzzles.js\": \"ee6cf76f6fab981356fd0c6068369218cd6fe1b9f8f968018e69bf4a146dd305\",\n        \"src/clues.js\": \"9d058e4a81268dfdfeb9295545fc72475b993caddc3ee6781f300103de0aee74\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quest-saga.js\": \"ecb7538abeee98a9a25ff42f69d1818a4485974b1fe072375dcdf0820e42f51f\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/explore.js\": \"d0d87a39f7a12dccf98c97662bd69d68e0643894c5ed59b345f8c5790097ca88\",\n        \"src/game.js\": \"8587a22f47ba3b5dfb1c5b99e0e968cf6e18d9f30fe4989cc79fd7e6b1a2d533\",\n        \"src/gateway/context.js\": \"7516534f6b3e426efe6c92136aa1bc9d599925fce15a89f4ce57cace35be466f\",\n        \"src/quest-workshop-schema.js\": \"9bbf299a7ac7573c8d0770c140dd7841b2996c54a983278b71dbc768e381c70c\",\n        \"src/quest-workshop.js\": \"1a1549f014e735a2d94befc2c628ff34d5fdb7070bebd2bc0dca9bca3c261083\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/questing.js\": \"11bf4829e5546042190e1da0c7134331de89a409df2c92da6d812ffbd30413f6\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/routes/quest-workshop.js\": \"63f2afc0242759cbb288e144d2126268b2fc042f1dfecb1d1ebb7eb587e0081b\",\n        \"src/routes/questing.js\": \"27beabb502911baad8f7c3ddae6e4ded3ab9bbcb1ac1edfaa7f78dbb94974b82\",\n        \"src/server.js\": \"f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5\",\n        \"src/ux-workspace.js\": \"df2b039a96df5399fab6c1b3ffda9f6e4cc53c9e84f989da21610558c02b0870\",\n        \"tools/questing-content.js\": \"d08dd7fe90d5921f8bc731c218d18a44b5674b85ec944da60096e5a86fbab92f\",\n        \"tools/questing-workgraph.js\": \"bf0869441eb7a3f375773af0d051914d11dc4a68632423ffb1e296e32de50a8a\"\n      },\n      \"sourceStable\": true,\n      \"outputPath\": \"output/questing-verification/quest-mwio0geb-quest-saga.log\",\n      \"outputHash\": \"a6c577d2a2c66cca20b50b7cf4dae92c9efe2af0b8f02fb7f57fb00d5b797900\"\n    },\n    {\n      \"id\": \"quest-mwio0oxq-content-narrative-security\",\n      \"evaluator\": \"test/content-narrative-security.js\",\n      \"command\": \"node test/content-narrative-security.js\",\n      \"startedAt\": \"2026-11-16T02:49:39.134Z\",\n      \"elapsedMs\": 1992,\n      \"exitCode\": 0,\n      \"baselineRevision\": \"17fdf85fdd21fd3767463df8ba47614f7d1f6432\",\n      \"evaluatorHash\": \"715f701a4b3054c445722fe71e1e9dabc95931384b52fc06119d99d880a1d0cc\",\n      \"sourceHashes\": {\n        \"content/packs/quest-archive-service/pack.json\": \"9ae8e2dff659efc6e387c04757291ef2dc979921c447fd4bb528bd99779b2b0e\",\n        \"content/packs/quest-early-obituary/pack.json\": \"300ea3d0019ca7b11055132be598515932a2f0236d52cf68ba629a0625bf16ba\",\n        \"content/packs/quest-family-dinner/pack.json\": \"1ea3be2ad823d1a7fcb7a5960607661d0ba4c696d3d47112602168f9c59a65f1\",\n        \"content/packs/quest-inherited-file/pack.json\": \"a4399ed7f5aa3c4a32469d69824d021b592f29a1ae93f17ce3c9213db371f34f\",\n        \"content/packs/quest-missing-name/pack.json\": \"529ef9964b07312f3298a068baf00724a1b7106a50b192acbdc401e90dc45f42\",\n        \"content/packs/quest-morning-after/pack.json\": \"ebfa0ad0cbb4a2e77791777ab307ff5c075c52de08ee40ac8afa4b224d3c68ac\",\n        \"content/packs/quest-quiet-wedding/pack.json\": \"623bbea98c196b252cb584f608067cce236d257fc640b78535c0761c3d265c9f\",\n        \"content/packs/quest-rival-accord/pack.json\": \"1a7df139c0f74af1e940dba4aedcd50c4230c5c3ea349fd606828a199ce993ed\",\n        \"content/packs/quest-sixth-envelope/pack.json\": \"ef8ee9c8a02d4d38092773e92cb9dade6ec1fbc4cfaedf57683d912d250f3226\",\n        \"content/packs/quest-three-witnesses/pack.json\": \"51d148474967f738490e8410850b7175171e1a1ffab05a6ee736dd837a69554a\",\n        \"public/index.html\": \"fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\",\n        \"public/ux-clues.css\": \"c3d8290e9d11794e25b8d5b76365bd633a12032a2d03271fba30cc374a74c326\",\n        \"public/ux-clues.js\": \"9a492a6e54a45697978e6177e6c3f52083c51cf413a95b616b7e62c7b33bbe4d\",\n        \"public/ux-navigation.css\": \"712ebf19faf5303e45d82c55cfc9cda4b3d4156fc0ab759a115a849dbe2efbd6\",\n        \"public/ux-navigation.js\": \"baf682a3ec4de922bc446b1e94eaed9a66f8f10ac5fc49645bbcb88cbb354b40\",\n        \"public/ux-quests.css\": \"c65e7e95c966f14dd4996b8cbe99643874ab325d45c23d728216118afa27191f\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"schema.sql\": \"b5c66d128de9b730bac19b135a8d13791f3bc70ba4a27818abec7de5141564de\",\n        \"src/agentgateway.js\": \"8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"src/clue-puzzles.js\": \"ee6cf76f6fab981356fd0c6068369218cd6fe1b9f8f968018e69bf4a146dd305\",\n        \"src/clues.js\": \"9d058e4a81268dfdfeb9295545fc72475b993caddc3ee6781f300103de0aee74\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quest-saga.js\": \"ecb7538abeee98a9a25ff42f69d1818a4485974b1fe072375dcdf0820e42f51f\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/explore.js\": \"d0d87a39f7a12dccf98c97662bd69d68e0643894c5ed59b345f8c5790097ca88\",\n        \"src/game.js\": \"8587a22f47ba3b5dfb1c5b99e0e968cf6e18d9f30fe4989cc79fd7e6b1a2d533\",\n        \"src/gateway/context.js\": \"7516534f6b3e426efe6c92136aa1bc9d599925fce15a89f4ce57cace35be466f\",\n        \"src/quest-workshop-schema.js\": \"9bbf299a7ac7573c8d0770c140dd7841b2996c54a983278b71dbc768e381c70c\",\n        \"src/quest-workshop.js\": \"1a1549f014e735a2d94befc2c628ff34d5fdb7070bebd2bc0dca9bca3c261083\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/questing.js\": \"11bf4829e5546042190e1da0c7134331de89a409df2c92da6d812ffbd30413f6\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/routes/quest-workshop.js\": \"63f2afc0242759cbb288e144d2126268b2fc042f1dfecb1d1ebb7eb587e0081b\",\n        \"src/routes/questing.js\": \"27beabb502911baad8f7c3ddae6e4ded3ab9bbcb1ac1edfaa7f78dbb94974b82\",\n        \"src/server.js\": \"f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5\",\n        \"src/ux-workspace.js\": \"df2b039a96df5399fab6c1b3ffda9f6e4cc53c9e84f989da21610558c02b0870\",\n        \"tools/questing-content.js\": \"d08dd7fe90d5921f8bc731c218d18a44b5674b85ec944da60096e5a86fbab92f\",\n        \"tools/questing-workgraph.js\": \"bf0869441eb7a3f375773af0d051914d11dc4a68632423ffb1e296e32de50a8a\"\n      },\n      \"sourceStable\": true,\n      \"outputPath\": \"output/questing-verification/quest-mwio0oxq-content-narrative-security.log\",\n      \"outputHash\": \"bcb7d6c22007d7102728153116b5907914daaa83da0de40e56c0634b65777a18\"\n    },\n    {\n      \"id\": \"quest-mwio0r1g-quest-specialist\",\n      \"evaluator\": \"test/quest-specialist.js\",\n      \"command\": \"node test/quest-specialist.js\",\n      \"startedAt\": \"2026-11-16T02:49:41.860Z\",\n      \"elapsedMs\": 10050,\n      \"exitCode\": 0,\n      \"baselineRevision\": \"17fdf85fdd21fd3767463df8ba47614f7d1f6432\",\n      \"evaluatorHash\": \"44235e062bc9c16ba65a2dabb8914cdbecc2ce09da62662364762bfd6e03c186\",\n      \"sourceHashes\": {\n        \"content/packs/quest-archive-service/pack.json\": \"9ae8e2dff659efc6e387c04757291ef2dc979921c447fd4bb528bd99779b2b0e\",\n        \"content/packs/quest-early-obituary/pack.json\": \"300ea3d0019ca7b11055132be598515932a2f0236d52cf68ba629a0625bf16ba\",\n        \"content/packs/quest-family-dinner/pack.json\": \"1ea3be2ad823d1a7fcb7a5960607661d0ba4c696d3d47112602168f9c59a65f1\",\n        \"content/packs/quest-inherited-file/pack.json\": \"a4399ed7f5aa3c4a32469d69824d021b592f29a1ae93f17ce3c9213db371f34f\",\n        \"content/packs/quest-missing-name/pack.json\": \"529ef9964b07312f3298a068baf00724a1b7106a50b192acbdc401e90dc45f42\",\n        \"content/packs/quest-morning-after/pack.json\": \"ebfa0ad0cbb4a2e77791777ab307ff5c075c52de08ee40ac8afa4b224d3c68ac\",\n        \"content/packs/quest-quiet-wedding/pack.json\": \"623bbea98c196b252cb584f608067cce236d257fc640b78535c0761c3d265c9f\",\n        \"content/packs/quest-rival-accord/pack.json\": \"1a7df139c0f74af1e940dba4aedcd50c4230c5c3ea349fd606828a199ce993ed\",\n        \"content/packs/quest-sixth-envelope/pack.json\": \"ef8ee9c8a02d4d38092773e92cb9dade6ec1fbc4cfaedf57683d912d250f3226\",\n        \"content/packs/quest-three-witnesses/pack.json\": \"51d148474967f738490e8410850b7175171e1a1ffab05a6ee736dd837a69554a\",\n        \"public/index.html\": \"fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\",\n        \"public/ux-clues.css\": \"c3d8290e9d11794e25b8d5b76365bd633a12032a2d03271fba30cc374a74c326\",\n        \"public/ux-clues.js\": \"9a492a6e54a45697978e6177e6c3f52083c51cf413a95b616b7e62c7b33bbe4d\",\n        \"public/ux-navigation.css\": \"712ebf19faf5303e45d82c55cfc9cda4b3d4156fc0ab759a115a849dbe2efbd6\",\n        \"public/ux-navigation.js\": \"baf682a3ec4de922bc446b1e94eaed9a66f8f10ac5fc49645bbcb88cbb354b40\",\n        \"public/ux-quests.css\": \"c65e7e95c966f14dd4996b8cbe99643874ab325d45c23d728216118afa27191f\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"schema.sql\": \"b5c66d128de9b730bac19b135a8d13791f3bc70ba4a27818abec7de5141564de\",\n        \"src/agentgateway.js\": \"8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"src/clue-puzzles.js\": \"ee6cf76f6fab981356fd0c6068369218cd6fe1b9f8f968018e69bf4a146dd305\",\n        \"src/clues.js\": \"9d058e4a81268dfdfeb9295545fc72475b993caddc3ee6781f300103de0aee74\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quest-saga.js\": \"ecb7538abeee98a9a25ff42f69d1818a4485974b1fe072375dcdf0820e42f51f\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/explore.js\": \"d0d87a39f7a12dccf98c97662bd69d68e0643894c5ed59b345f8c5790097ca88\",\n        \"src/game.js\": \"8587a22f47ba3b5dfb1c5b99e0e968cf6e18d9f30fe4989cc79fd7e6b1a2d533\",\n        \"src/gateway/context.js\": \"7516534f6b3e426efe6c92136aa1bc9d599925fce15a89f4ce57cace35be466f\",\n        \"src/quest-workshop-schema.js\": \"9bbf299a7ac7573c8d0770c140dd7841b2996c54a983278b71dbc768e381c70c\",\n        \"src/quest-workshop.js\": \"1a1549f014e735a2d94befc2c628ff34d5fdb7070bebd2bc0dca9bca3c261083\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/questing.js\": \"11bf4829e5546042190e1da0c7134331de89a409df2c92da6d812ffbd30413f6\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/routes/quest-workshop.js\": \"63f2afc0242759cbb288e144d2126268b2fc042f1dfecb1d1ebb7eb587e0081b\",\n        \"src/routes/questing.js\": \"27beabb502911baad8f7c3ddae6e4ded3ab9bbcb1ac1edfaa7f78dbb94974b82\",\n        \"src/server.js\": \"f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5\",\n        \"src/ux-workspace.js\": \"df2b039a96df5399fab6c1b3ffda9f6e4cc53c9e84f989da21610558c02b0870\",\n        \"tools/questing-content.js\": \"d08dd7fe90d5921f8bc731c218d18a44b5674b85ec944da60096e5a86fbab92f\",\n        \"tools/questing-workgraph.js\": \"bf0869441eb7a3f375773af0d051914d11dc4a68632423ffb1e296e32de50a8a\"\n      },\n      \"sourceStable\": true,\n      \"outputPath\": \"output/questing-verification/quest-mwio0r1g-quest-specialist.log\",\n      \"outputHash\": \"e5d77e1bb22249a49c912341a5479a08ef2fed477a7d4018ad3368f4c9e9ae61\"\n    },\n    {\n      \"id\": \"quest-mwio0zat-clue-puzzles\",\n      \"evaluator\": \"test/clue-puzzles.js\",\n      \"command\": \"node test/clue-puzzles.js\",\n      \"startedAt\": \"2026-11-16T02:49:52.565Z\",\n      \"elapsedMs\": 7359,\n      \"exitCode\": 0,\n      \"baselineRevision\": \"17fdf85fdd21fd3767463df8ba47614f7d1f6432\",\n      \"evaluatorHash\": \"96cb003785242c0bc75f85d66c291af72fcf84fa08eb1738c3351ef07ff28b31\",\n      \"sourceHashes\": {\n        \"content/packs/quest-archive-service/pack.json\": \"9ae8e2dff659efc6e387c04757291ef2dc979921c447fd4bb528bd99779b2b0e\",\n        \"content/packs/quest-early-obituary/pack.json\": \"300ea3d0019ca7b11055132be598515932a2f0236d52cf68ba629a0625bf16ba\",\n        \"content/packs/quest-family-dinner/pack.json\": \"1ea3be2ad823d1a7fcb7a5960607661d0ba4c696d3d47112602168f9c59a65f1\",\n        \"content/packs/quest-inherited-file/pack.json\": \"a4399ed7f5aa3c4a32469d69824d021b592f29a1ae93f17ce3c9213db371f34f\",\n        \"content/packs/quest-missing-name/pack.json\": \"529ef9964b07312f3298a068baf00724a1b7106a50b192acbdc401e90dc45f42\",\n        \"content/packs/quest-morning-after/pack.json\": \"ebfa0ad0cbb4a2e77791777ab307ff5c075c52de08ee40ac8afa4b224d3c68ac\",\n        \"content/packs/quest-quiet-wedding/pack.json\": \"623bbea98c196b252cb584f608067cce236d257fc640b78535c0761c3d265c9f\",\n        \"content/packs/quest-rival-accord/pack.json\": \"1a7df139c0f74af1e940dba4aedcd50c4230c5c3ea349fd606828a199ce993ed\",\n        \"content/packs/quest-sixth-envelope/pack.json\": \"ef8ee9c8a02d4d38092773e92cb9dade6ec1fbc4cfaedf57683d912d250f3226\",\n        \"content/packs/quest-three-witnesses/pack.json\": \"51d148474967f738490e8410850b7175171e1a1ffab05a6ee736dd837a69554a\",\n        \"public/index.html\": \"fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\",\n        \"public/ux-clues.css\": \"c3d8290e9d11794e25b8d5b76365bd633a12032a2d03271fba30cc374a74c326\",\n        \"public/ux-clues.js\": \"9a492a6e54a45697978e6177e6c3f52083c51cf413a95b616b7e62c7b33bbe4d\",\n        \"public/ux-navigation.css\": \"712ebf19faf5303e45d82c55cfc9cda4b3d4156fc0ab759a115a849dbe2efbd6\",\n        \"public/ux-navigation.js\": \"baf682a3ec4de922bc446b1e94eaed9a66f8f10ac5fc49645bbcb88cbb354b40\",\n        \"public/ux-quests.css\": \"c65e7e95c966f14dd4996b8cbe99643874ab325d45c23d728216118afa27191f\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"schema.sql\": \"b5c66d128de9b730bac19b135a8d13791f3bc70ba4a27818abec7de5141564de\",\n        \"src/agentgateway.js\": \"8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"src/clue-puzzles.js\": \"ee6cf76f6fab981356fd0c6068369218cd6fe1b9f8f968018e69bf4a146dd305\",\n        \"src/clues.js\": \"9d058e4a81268dfdfeb9295545fc72475b993caddc3ee6781f300103de0aee74\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quest-saga.js\": \"ecb7538abeee98a9a25ff42f69d1818a4485974b1fe072375dcdf0820e42f51f\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/explore.js\": \"d0d87a39f7a12dccf98c97662bd69d68e0643894c5ed59b345f8c5790097ca88\",\n        \"src/game.js\": \"8587a22f47ba3b5dfb1c5b99e0e968cf6e18d9f30fe4989cc79fd7e6b1a2d533\",\n        \"src/gateway/context.js\": \"7516534f6b3e426efe6c92136aa1bc9d599925fce15a89f4ce57cace35be466f\",\n        \"src/quest-workshop-schema.js\": \"9bbf299a7ac7573c8d0770c140dd7841b2996c54a983278b71dbc768e381c70c\",\n        \"src/quest-workshop.js\": \"1a1549f014e735a2d94befc2c628ff34d5fdb7070bebd2bc0dca9bca3c261083\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/questing.js\": \"11bf4829e5546042190e1da0c7134331de89a409df2c92da6d812ffbd30413f6\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/routes/quest-workshop.js\": \"63f2afc0242759cbb288e144d2126268b2fc042f1dfecb1d1ebb7eb587e0081b\",\n        \"src/routes/questing.js\": \"27beabb502911baad8f7c3ddae6e4ded3ab9bbcb1ac1edfaa7f78dbb94974b82\",\n        \"src/server.js\": \"f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5\",\n        \"src/ux-workspace.js\": \"df2b039a96df5399fab6c1b3ffda9f6e4cc53c9e84f989da21610558c02b0870\",\n        \"tools/questing-content.js\": \"d08dd7fe90d5921f8bc731c218d18a44b5674b85ec944da60096e5a86fbab92f\",\n        \"tools/questing-workgraph.js\": \"bf0869441eb7a3f375773af0d051914d11dc4a68632423ffb1e296e32de50a8a\"\n      },\n      \"sourceStable\": true,\n      \"outputPath\": \"output/questing-verification/quest-mwio0zat-clue-puzzles.log\",\n      \"outputHash\": \"f6360ef1255d7037a40128d4a3ea637de81d2b9b13e344f2c87ea6cd959ce4dd\"\n    },\n    {\n      \"id\": \"quest-mwio15gv-clue-puzzles-browser\",\n      \"evaluator\": \"test/clue-puzzles-browser.js\",\n      \"command\": \"node test/clue-puzzles-browser.js\",\n      \"startedAt\": \"2026-11-16T02:50:00.559Z\",\n      \"elapsedMs\": 10506,\n      \"exitCode\": 0,\n      \"baselineRevision\": \"17fdf85fdd21fd3767463df8ba47614f7d1f6432\",\n      \"evaluatorHash\": \"4947877d555ac655b1b9c485c3299a386964a735af147100fdb650cd0b200783\",\n      \"sourceHashes\": {\n        \"content/packs/quest-archive-service/pack.json\": \"9ae8e2dff659efc6e387c04757291ef2dc979921c447fd4bb528bd99779b2b0e\",\n        \"content/packs/quest-early-obituary/pack.json\": \"300ea3d0019ca7b11055132be598515932a2f0236d52cf68ba629a0625bf16ba\",\n        \"content/packs/quest-family-dinner/pack.json\": \"1ea3be2ad823d1a7fcb7a5960607661d0ba4c696d3d47112602168f9c59a65f1\",\n        \"content/packs/quest-inherited-file/pack.json\": \"a4399ed7f5aa3c4a32469d69824d021b592f29a1ae93f17ce3c9213db371f34f\",\n        \"content/packs/quest-missing-name/pack.json\": \"529ef9964b07312f3298a068baf00724a1b7106a50b192acbdc401e90dc45f42\",\n        \"content/packs/quest-morning-after/pack.json\": \"ebfa0ad0cbb4a2e77791777ab307ff5c075c52de08ee40ac8afa4b224d3c68ac\",\n        \"content/packs/quest-quiet-wedding/pack.json\": \"623bbea98c196b252cb584f608067cce236d257fc640b78535c0761c3d265c9f\",\n        \"content/packs/quest-rival-accord/pack.json\": \"1a7df139c0f74af1e940dba4aedcd50c4230c5c3ea349fd606828a199ce993ed\",\n        \"content/packs/quest-sixth-envelope/pack.json\": \"ef8ee9c8a02d4d38092773e92cb9dade6ec1fbc4cfaedf57683d912d250f3226\",\n        \"content/packs/quest-three-witnesses/pack.json\": \"51d148474967f738490e8410850b7175171e1a1ffab05a6ee736dd837a69554a\",\n        \"public/index.html\": \"fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\",\n        \"public/ux-clues.css\": \"c3d8290e9d11794e25b8d5b76365bd633a12032a2d03271fba30cc374a74c326\",\n        \"public/ux-clues.js\": \"9a492a6e54a45697978e6177e6c3f52083c51cf413a95b616b7e62c7b33bbe4d\",\n        \"public/ux-navigation.css\": \"712ebf19faf5303e45d82c55cfc9cda4b3d4156fc0ab759a115a849dbe2efbd6\",\n        \"public/ux-navigation.js\": \"baf682a3ec4de922bc446b1e94eaed9a66f8f10ac5fc49645bbcb88cbb354b40\",\n        \"public/ux-quests.css\": \"c65e7e95c966f14dd4996b8cbe99643874ab325d45c23d728216118afa27191f\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"schema.sql\": \"b5c66d128de9b730bac19b135a8d13791f3bc70ba4a27818abec7de5141564de\",\n        \"src/agentgateway.js\": \"8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"src/clue-puzzles.js\": \"ee6cf76f6fab981356fd0c6068369218cd6fe1b9f8f968018e69bf4a146dd305\",\n        \"src/clues.js\": \"9d058e4a81268dfdfeb9295545fc72475b993caddc3ee6781f300103de0aee74\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quest-saga.js\": \"ecb7538abeee98a9a25ff42f69d1818a4485974b1fe072375dcdf0820e42f51f\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/explore.js\": \"d0d87a39f7a12dccf98c97662bd69d68e0643894c5ed59b345f8c5790097ca88\",\n        \"src/game.js\": \"8587a22f47ba3b5dfb1c5b99e0e968cf6e18d9f30fe4989cc79fd7e6b1a2d533\",\n        \"src/gateway/context.js\": \"7516534f6b3e426efe6c92136aa1bc9d599925fce15a89f4ce57cace35be466f\",\n        \"src/quest-workshop-schema.js\": \"9bbf299a7ac7573c8d0770c140dd7841b2996c54a983278b71dbc768e381c70c\",\n        \"src/quest-workshop.js\": \"1a1549f014e735a2d94befc2c628ff34d5fdb7070bebd2bc0dca9bca3c261083\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/questing.js\": \"11bf4829e5546042190e1da0c7134331de89a409df2c92da6d812ffbd30413f6\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/routes/quest-workshop.js\": \"63f2afc0242759cbb288e144d2126268b2fc042f1dfecb1d1ebb7eb587e0081b\",\n        \"src/routes/questing.js\": \"27beabb502911baad8f7c3ddae6e4ded3ab9bbcb1ac1edfaa7f78dbb94974b82\",\n        \"src/server.js\": \"f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5\",\n        \"src/ux-workspace.js\": \"df2b039a96df5399fab6c1b3ffda9f6e4cc53c9e84f989da21610558c02b0870\",\n        \"tools/questing-content.js\": \"d08dd7fe90d5921f8bc731c218d18a44b5674b85ec944da60096e5a86fbab92f\",\n        \"tools/questing-workgraph.js\": \"bf0869441eb7a3f375773af0d051914d11dc4a68632423ffb1e296e32de50a8a\"\n      },\n      \"sourceStable\": true,\n      \"outputPath\": \"output/questing-verification/quest-mwio15gv-clue-puzzles-browser.log\",\n      \"outputHash\": \"918f897657778d42f1fe8b1a872f04f2e3f11465b9a9a51a5be17ad49d8e604f\"\n    },\n    {\n      \"id\": \"quest-mwio1e4y-content-narrative\",\n      \"evaluator\": \"test/content-narrative.js\",\n      \"command\": \"node test/content-narrative.js\",\n      \"startedAt\": \"2026-11-16T02:50:11.794Z\",\n      \"elapsedMs\": 6143,\n      \"exitCode\": 0,\n      \"baselineRevision\": \"17fdf85fdd21fd3767463df8ba47614f7d1f6432\",\n      \"evaluatorHash\": \"aead14e68b9161af4d0e2ffffcde716c739981c0a64273a4bfa625e602685189\",\n      \"sourceHashes\": {\n        \"content/packs/quest-archive-service/pack.json\": \"9ae8e2dff659efc6e387c04757291ef2dc979921c447fd4bb528bd99779b2b0e\",\n        \"content/packs/quest-early-obituary/pack.json\": \"300ea3d0019ca7b11055132be598515932a2f0236d52cf68ba629a0625bf16ba\",\n        \"content/packs/quest-family-dinner/pack.json\": \"1ea3be2ad823d1a7fcb7a5960607661d0ba4c696d3d47112602168f9c59a65f1\",\n        \"content/packs/quest-inherited-file/pack.json\": \"a4399ed7f5aa3c4a32469d69824d021b592f29a1ae93f17ce3c9213db371f34f\",\n        \"content/packs/quest-missing-name/pack.json\": \"529ef9964b07312f3298a068baf00724a1b7106a50b192acbdc401e90dc45f42\",\n        \"content/packs/quest-morning-after/pack.json\": \"ebfa0ad0cbb4a2e77791777ab307ff5c075c52de08ee40ac8afa4b224d3c68ac\",\n        \"content/packs/quest-quiet-wedding/pack.json\": \"623bbea98c196b252cb584f608067cce236d257fc640b78535c0761c3d265c9f\",\n        \"content/packs/quest-rival-accord/pack.json\": \"1a7df139c0f74af1e940dba4aedcd50c4230c5c3ea349fd606828a199ce993ed\",\n        \"content/packs/quest-sixth-envelope/pack.json\": \"ef8ee9c8a02d4d38092773e92cb9dade6ec1fbc4cfaedf57683d912d250f3226\",\n        \"content/packs/quest-three-witnesses/pack.json\": \"51d148474967f738490e8410850b7175171e1a1ffab05a6ee736dd837a69554a\",\n        \"public/index.html\": \"fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\",\n        \"public/ux-clues.css\": \"c3d8290e9d11794e25b8d5b76365bd633a12032a2d03271fba30cc374a74c326\",\n        \"public/ux-clues.js\": \"9a492a6e54a45697978e6177e6c3f52083c51cf413a95b616b7e62c7b33bbe4d\",\n        \"public/ux-navigation.css\": \"712ebf19faf5303e45d82c55cfc9cda4b3d4156fc0ab759a115a849dbe2efbd6\",\n        \"public/ux-navigation.js\": \"baf682a3ec4de922bc446b1e94eaed9a66f8f10ac5fc49645bbcb88cbb354b40\",\n        \"public/ux-quests.css\": \"c65e7e95c966f14dd4996b8cbe99643874ab325d45c23d728216118afa27191f\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"schema.sql\": \"b5c66d128de9b730bac19b135a8d13791f3bc70ba4a27818abec7de5141564de\",\n        \"src/agentgateway.js\": \"8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"src/clue-puzzles.js\": \"ee6cf76f6fab981356fd0c6068369218cd6fe1b9f8f968018e69bf4a146dd305\",\n        \"src/clues.js\": \"9d058e4a81268dfdfeb9295545fc72475b993caddc3ee6781f300103de0aee74\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quest-saga.js\": \"ecb7538abeee98a9a25ff42f69d1818a4485974b1fe072375dcdf0820e42f51f\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/explore.js\": \"d0d87a39f7a12dccf98c97662bd69d68e0643894c5ed59b345f8c5790097ca88\",\n        \"src/game.js\": \"8587a22f47ba3b5dfb1c5b99e0e968cf6e18d9f30fe4989cc79fd7e6b1a2d533\",\n        \"src/gateway/context.js\": \"7516534f6b3e426efe6c92136aa1bc9d599925fce15a89f4ce57cace35be466f\",\n        \"src/quest-workshop-schema.js\": \"9bbf299a7ac7573c8d0770c140dd7841b2996c54a983278b71dbc768e381c70c\",\n        \"src/quest-workshop.js\": \"1a1549f014e735a2d94befc2c628ff34d5fdb7070bebd2bc0dca9bca3c261083\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/questing.js\": \"11bf4829e5546042190e1da0c7134331de89a409df2c92da6d812ffbd30413f6\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/routes/quest-workshop.js\": \"63f2afc0242759cbb288e144d2126268b2fc042f1dfecb1d1ebb7eb587e0081b\",\n        \"src/routes/questing.js\": \"27beabb502911baad8f7c3ddae6e4ded3ab9bbcb1ac1edfaa7f78dbb94974b82\",\n        \"src/server.js\": \"f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5\",\n        \"src/ux-workspace.js\": \"df2b039a96df5399fab6c1b3ffda9f6e4cc53c9e84f989da21610558c02b0870\",\n        \"tools/questing-content.js\": \"d08dd7fe90d5921f8bc731c218d18a44b5674b85ec944da60096e5a86fbab92f\",\n        \"tools/questing-workgraph.js\": \"bf0869441eb7a3f375773af0d051914d11dc4a68632423ffb1e296e32de50a8a\"\n      },\n      \"sourceStable\": true,\n      \"outputPath\": \"output/questing-verification/quest-mwio1e4y-content-narrative.log\",\n      \"outputHash\": \"98e7883e95c0a31d4472bd460a28fa5b912a87eacece3a7942ebf52b5ec9d1ae\"\n    },\n    {\n      \"id\": \"quest-mwio1jak-quest-experience-browser\",\n      \"evaluator\": \"test/quest-experience-browser.js\",\n      \"command\": \"node test/quest-experience-browser.js\",\n      \"startedAt\": \"2026-11-16T02:50:18.476Z\",\n      \"elapsedMs\": 22249,\n      \"exitCode\": 0,\n      \"baselineRevision\": \"17fdf85fdd21fd3767463df8ba47614f7d1f6432\",\n      \"evaluatorHash\": \"0cee33effbeb473a18960e4c5dcc72b896748fa6695968605de3453d5525f7cc\",\n      \"sourceHashes\": {\n        \"content/packs/quest-archive-service/pack.json\": \"9ae8e2dff659efc6e387c04757291ef2dc979921c447fd4bb528bd99779b2b0e\",\n        \"content/packs/quest-early-obituary/pack.json\": \"300ea3d0019ca7b11055132be598515932a2f0236d52cf68ba629a0625bf16ba\",\n        \"content/packs/quest-family-dinner/pack.json\": \"1ea3be2ad823d1a7fcb7a5960607661d0ba4c696d3d47112602168f9c59a65f1\",\n        \"content/packs/quest-inherited-file/pack.json\": \"a4399ed7f5aa3c4a32469d69824d021b592f29a1ae93f17ce3c9213db371f34f\",\n        \"content/packs/quest-missing-name/pack.json\": \"529ef9964b07312f3298a068baf00724a1b7106a50b192acbdc401e90dc45f42\",\n        \"content/packs/quest-morning-after/pack.json\": \"ebfa0ad0cbb4a2e77791777ab307ff5c075c52de08ee40ac8afa4b224d3c68ac\",\n        \"content/packs/quest-quiet-wedding/pack.json\": \"623bbea98c196b252cb584f608067cce236d257fc640b78535c0761c3d265c9f\",\n        \"content/packs/quest-rival-accord/pack.json\": \"1a7df139c0f74af1e940dba4aedcd50c4230c5c3ea349fd606828a199ce993ed\",\n        \"content/packs/quest-sixth-envelope/pack.json\": \"ef8ee9c8a02d4d38092773e92cb9dade6ec1fbc4cfaedf57683d912d250f3226\",\n        \"content/packs/quest-three-witnesses/pack.json\": \"51d148474967f738490e8410850b7175171e1a1ffab05a6ee736dd837a69554a\",\n        \"public/index.html\": \"fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\",\n        \"public/ux-clues.css\": \"c3d8290e9d11794e25b8d5b76365bd633a12032a2d03271fba30cc374a74c326\",\n        \"public/ux-clues.js\": \"9a492a6e54a45697978e6177e6c3f52083c51cf413a95b616b7e62c7b33bbe4d\",\n        \"public/ux-navigation.css\": \"712ebf19faf5303e45d82c55cfc9cda4b3d4156fc0ab759a115a849dbe2efbd6\",\n        \"public/ux-navigation.js\": \"baf682a3ec4de922bc446b1e94eaed9a66f8f10ac5fc49645bbcb88cbb354b40\",\n        \"public/ux-quests.css\": \"c65e7e95c966f14dd4996b8cbe99643874ab325d45c23d728216118afa27191f\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"schema.sql\": \"b5c66d128de9b730bac19b135a8d13791f3bc70ba4a27818abec7de5141564de\",\n        \"src/agentgateway.js\": \"8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"src/clue-puzzles.js\": \"ee6cf76f6fab981356fd0c6068369218cd6fe1b9f8f968018e69bf4a146dd305\",\n        \"src/clues.js\": \"9d058e4a81268dfdfeb9295545fc72475b993caddc3ee6781f300103de0aee74\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quest-saga.js\": \"ecb7538abeee98a9a25ff42f69d1818a4485974b1fe072375dcdf0820e42f51f\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/explore.js\": \"d0d87a39f7a12dccf98c97662bd69d68e0643894c5ed59b345f8c5790097ca88\",\n        \"src/game.js\": \"8587a22f47ba3b5dfb1c5b99e0e968cf6e18d9f30fe4989cc79fd7e6b1a2d533\",\n        \"src/gateway/context.js\": \"7516534f6b3e426efe6c92136aa1bc9d599925fce15a89f4ce57cace35be466f\",\n        \"src/quest-workshop-schema.js\": \"9bbf299a7ac7573c8d0770c140dd7841b2996c54a983278b71dbc768e381c70c\",\n        \"src/quest-workshop.js\": \"1a1549f014e735a2d94befc2c628ff34d5fdb7070bebd2bc0dca9bca3c261083\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/questing.js\": \"11bf4829e5546042190e1da0c7134331de89a409df2c92da6d812ffbd30413f6\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/routes/quest-workshop.js\": \"63f2afc0242759cbb288e144d2126268b2fc042f1dfecb1d1ebb7eb587e0081b\",\n        \"src/routes/questing.js\": \"27beabb502911baad8f7c3ddae6e4ded3ab9bbcb1ac1edfaa7f78dbb94974b82\",\n        \"src/server.js\": \"f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5\",\n        \"src/ux-workspace.js\": \"df2b039a96df5399fab6c1b3ffda9f6e4cc53c9e84f989da21610558c02b0870\",\n        \"tools/questing-content.js\": \"d08dd7fe90d5921f8bc731c218d18a44b5674b85ec944da60096e5a86fbab92f\",\n        \"tools/questing-workgraph.js\": \"bf0869441eb7a3f375773af0d051914d11dc4a68632423ffb1e296e32de50a8a\"\n      },\n      \"sourceStable\": true,\n      \"outputPath\": \"output/questing-verification/quest-mwio1jak-quest-experience-browser.log\",\n      \"outputHash\": \"758f3f87491bf8c6c61b438b27b06c7c035e74c03e75c1aed7ea4356e04761ec\"\n    },\n    {\n      \"id\": \"quest-mwio20ph-content-api\",\n      \"evaluator\": \"test/content-api.js\",\n      \"command\": \"node test/content-api.js\",\n      \"startedAt\": \"2026-11-16T02:50:41.045Z\",\n      \"elapsedMs\": 2304,\n      \"exitCode\": 0,\n      \"baselineRevision\": \"17fdf85fdd21fd3767463df8ba47614f7d1f6432\",\n      \"evaluatorHash\": \"af8662191fd428d95072e82de96ab6d12fedda3d1207d040665cb32244dc33cb\",\n      \"sourceHashes\": {\n        \"content/packs/quest-archive-service/pack.json\": \"9ae8e2dff659efc6e387c04757291ef2dc979921c447fd4bb528bd99779b2b0e\",\n        \"content/packs/quest-early-obituary/pack.json\": \"300ea3d0019ca7b11055132be598515932a2f0236d52cf68ba629a0625bf16ba\",\n        \"content/packs/quest-family-dinner/pack.json\": \"1ea3be2ad823d1a7fcb7a5960607661d0ba4c696d3d47112602168f9c59a65f1\",\n        \"content/packs/quest-inherited-file/pack.json\": \"a4399ed7f5aa3c4a32469d69824d021b592f29a1ae93f17ce3c9213db371f34f\",\n        \"content/packs/quest-missing-name/pack.json\": \"529ef9964b07312f3298a068baf00724a1b7106a50b192acbdc401e90dc45f42\",\n        \"content/packs/quest-morning-after/pack.json\": \"ebfa0ad0cbb4a2e77791777ab307ff5c075c52de08ee40ac8afa4b224d3c68ac\",\n        \"content/packs/quest-quiet-wedding/pack.json\": \"623bbea98c196b252cb584f608067cce236d257fc640b78535c0761c3d265c9f\",\n        \"content/packs/quest-rival-accord/pack.json\": \"1a7df139c0f74af1e940dba4aedcd50c4230c5c3ea349fd606828a199ce993ed\",\n        \"content/packs/quest-sixth-envelope/pack.json\": \"ef8ee9c8a02d4d38092773e92cb9dade6ec1fbc4cfaedf57683d912d250f3226\",\n        \"content/packs/quest-three-witnesses/pack.json\": \"51d148474967f738490e8410850b7175171e1a1ffab05a6ee736dd837a69554a\",\n        \"public/index.html\": \"fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\",\n        \"public/ux-clues.css\": \"c3d8290e9d11794e25b8d5b76365bd633a12032a2d03271fba30cc374a74c326\",\n        \"public/ux-clues.js\": \"9a492a6e54a45697978e6177e6c3f52083c51cf413a95b616b7e62c7b33bbe4d\",\n        \"public/ux-navigation.css\": \"712ebf19faf5303e45d82c55cfc9cda4b3d4156fc0ab759a115a849dbe2efbd6\",\n        \"public/ux-navigation.js\": \"baf682a3ec4de922bc446b1e94eaed9a66f8f10ac5fc49645bbcb88cbb354b40\",\n        \"public/ux-quests.css\": \"c65e7e95c966f14dd4996b8cbe99643874ab325d45c23d728216118afa27191f\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"schema.sql\": \"b5c66d128de9b730bac19b135a8d13791f3bc70ba4a27818abec7de5141564de\",\n        \"src/agentgateway.js\": \"8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"src/clue-puzzles.js\": \"ee6cf76f6fab981356fd0c6068369218cd6fe1b9f8f968018e69bf4a146dd305\",\n        \"src/clues.js\": \"9d058e4a81268dfdfeb9295545fc72475b993caddc3ee6781f300103de0aee74\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quest-saga.js\": \"ecb7538abeee98a9a25ff42f69d1818a4485974b1fe072375dcdf0820e42f51f\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/explore.js\": \"d0d87a39f7a12dccf98c97662bd69d68e0643894c5ed59b345f8c5790097ca88\",\n        \"src/game.js\": \"8587a22f47ba3b5dfb1c5b99e0e968cf6e18d9f30fe4989cc79fd7e6b1a2d533\",\n        \"src/gateway/context.js\": \"7516534f6b3e426efe6c92136aa1bc9d599925fce15a89f4ce57cace35be466f\",\n        \"src/quest-workshop-schema.js\": \"9bbf299a7ac7573c8d0770c140dd7841b2996c54a983278b71dbc768e381c70c\",\n        \"src/quest-workshop.js\": \"1a1549f014e735a2d94befc2c628ff34d5fdb7070bebd2bc0dca9bca3c261083\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/questing.js\": \"11bf4829e5546042190e1da0c7134331de89a409df2c92da6d812ffbd30413f6\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/routes/quest-workshop.js\": \"63f2afc0242759cbb288e144d2126268b2fc042f1dfecb1d1ebb7eb587e0081b\",\n        \"src/routes/questing.js\": \"27beabb502911baad8f7c3ddae6e4ded3ab9bbcb1ac1edfaa7f78dbb94974b82\",\n        \"src/server.js\": \"f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5\",\n        \"src/ux-workspace.js\": \"df2b039a96df5399fab6c1b3ffda9f6e4cc53c9e84f989da21610558c02b0870\",\n        \"tools/questing-content.js\": \"d08dd7fe90d5921f8bc731c218d18a44b5674b85ec944da60096e5a86fbab92f\",\n        \"tools/questing-workgraph.js\": \"bf0869441eb7a3f375773af0d051914d11dc4a68632423ffb1e296e32de50a8a\"\n      },\n      \"sourceStable\": true,\n      \"outputPath\": \"output/questing-verification/quest-mwio20ph-content-api.log\",\n      \"outputHash\": \"457b58424f973c221ec169c5f9332abbfe73a7d3845035dbce8de5f7c12c7ab6\"\n    },\n    {\n      \"id\": \"quest-mwio22ow-quest-saga-social\",\n      \"evaluator\": \"test/quest-saga-social.js\",\n      \"command\": \"node test/quest-saga-social.js\",\n      \"startedAt\": \"2026-11-16T02:50:43.616Z\",\n      \"elapsedMs\": 6578,\n",
+          "baseline": "      \"startedAt\": \"2026-11-16T02:49:28.067Z\",\n      \"elapsedMs\": 10179,\n"
+        },
+        {
+          "at": 1797761,
+          "current": "      \"evaluatorHash\": \"c4a1e687277ca63c16e76c037d35cb2310bbc01e8efc3b153abf7fab6e596528\",\n",
+          "baseline": "      \"evaluatorHash\": \"f1435602f0c038970f07ebfc6092b1461c83ec19752994a8c38cc499111178bc\",\n"
+        },
+        {
+          "at": 1802254,
+          "current": "      \"outputPath\": \"output/questing-verification/quest-mwio22ow-quest-saga-social.log\",\n      \"outputHash\": \"048940451241d943b0eee2a9c69e23e27e1d88dd5029a42e9d447da390bf7db6\"\n",
+          "baseline": "      \"outputPath\": \"output/questing-verification/quest-mwio0geb-quest-saga.log\",\n      \"outputHash\": \"a6c577d2a2c66cca20b50b7cf4dae92c9efe2af0b8f02fb7f57fb00d5b797900\"\n"
+        },
+        {
+          "at": 1802443,
+          "current": "      \"id\": \"quest-mwio27wm-content-casework\",\n      \"evaluator\": \"test/content-casework.js\",\n      \"command\": \"node test/content-casework.js\",\n      \"startedAt\": \"2026-11-16T02:50:50.374Z\",\n      \"elapsedMs\": 5319,\n",
+          "baseline": "      \"id\": \"quest-mwio0oxq-content-narrative-security\",\n      \"evaluator\": \"test/content-narrative-security.js\",\n      \"command\": \"node test/content-narrative-security.js\",\n      \"startedAt\": \"2026-11-16T02:49:39.134Z\",\n      \"elapsedMs\": 1992,\n"
+        },
+        {
+          "at": 1802750,
+          "current": "      \"evaluatorHash\": \"a210eef7652bb668f2c03f69162e43e4f9a3a030f5fe67411751b90cafbb1f20\",\n",
+          "baseline": "      \"evaluatorHash\": \"715f701a4b3054c445722fe71e1e9dabc95931384b52fc06119d99d880a1d0cc\",\n"
+        },
+        {
+          "at": 1807243,
+          "current": "      \"outputPath\": \"output/questing-verification/quest-mwio27wm-content-casework.log\",\n      \"outputHash\": \"27fc07288a559721e307f6dc1716811772844df47988c7668cf547af68fdd12e\"\n",
+          "baseline": "      \"outputPath\": \"output/questing-verification/quest-mwio0oxq-content-narrative-security.log\",\n      \"outputHash\": \"bcb7d6c22007d7102728153116b5907914daaa83da0de40e56c0634b65777a18\"\n"
+        },
+        {
+          "at": 1807431,
+          "current": "      \"id\": \"quest-mwio2c3c-quest-workshop\",\n      \"evaluator\": \"test/quest-workshop.js\",\n      \"command\": \"node test/quest-workshop.js\",\n      \"startedAt\": \"2026-11-16T02:50:55.800Z\",\n      \"elapsedMs\": 4654,\n",
+          "baseline": "      \"id\": \"quest-mwio0r1g-quest-specialist\",\n      \"evaluator\": \"test/quest-specialist.js\",\n      \"command\": \"node test/quest-specialist.js\",\n      \"startedAt\": \"2026-11-16T02:49:41.860Z\",\n      \"elapsedMs\": 10050,\n"
+        },
+        {
+          "at": 1807732,
+          "current": "      \"evaluatorHash\": \"831a1962ea90477ba7cc2b80147d36c0e57e5cb6c3b50900a4682e284e19c956\",\n",
+          "baseline": "      \"evaluatorHash\": \"44235e062bc9c16ba65a2dabb8914cdbecc2ce09da62662364762bfd6e03c186\",\n"
+        },
+        {
+          "at": 1812225,
+          "current": "      \"outputPath\": \"output/questing-verification/quest-mwio2c3c-quest-workshop.log\",\n      \"outputHash\": \"07c3916bfa192238372f0e2be79bd41151aa515f4391289a9a0f31e7bd5559f4\"\n    },\n    {\n      \"id\": \"quest-mwj58ul7-quest-saga\",\n      \"evaluator\": \"test/quest-saga.js\",\n      \"command\": \"node test/quest-saga.js\",\n      \"startedAt\": \"2026-11-16T10:51:53.179Z\",\n      \"elapsedMs\": 21200,\n      \"exitCode\": 0,\n      \"baselineRevision\": \"17fdf85fdd21fd3767463df8ba47614f7d1f6432\",\n      \"evaluatorHash\": \"f1435602f0c038970f07ebfc6092b1461c83ec19752994a8c38cc499111178bc\",\n      \"sourceHashes\": {\n        \"content/packs/quest-archive-service/pack.json\": \"9ae8e2dff659efc6e387c04757291ef2dc979921c447fd4bb528bd99779b2b0e\",\n        \"content/packs/quest-early-obituary/pack.json\": \"300ea3d0019ca7b11055132be598515932a2f0236d52cf68ba629a0625bf16ba\",\n        \"content/packs/quest-family-dinner/pack.json\": \"1ea3be2ad823d1a7fcb7a5960607661d0ba4c696d3d47112602168f9c59a65f1\",\n        \"content/packs/quest-inherited-file/pack.json\": \"a4399ed7f5aa3c4a32469d69824d021b592f29a1ae93f17ce3c9213db371f34f\",\n        \"content/packs/quest-missing-name/pack.json\": \"529ef9964b07312f3298a068baf00724a1b7106a50b192acbdc401e90dc45f42\",\n        \"content/packs/quest-morning-after/pack.json\": \"ebfa0ad0cbb4a2e77791777ab307ff5c075c52de08ee40ac8afa4b224d3c68ac\",\n        \"content/packs/quest-quiet-wedding/pack.json\": \"623bbea98c196b252cb584f608067cce236d257fc640b78535c0761c3d265c9f\",\n        \"content/packs/quest-rival-accord/pack.json\": \"1a7df139c0f74af1e940dba4aedcd50c4230c5c3ea349fd606828a199ce993ed\",\n        \"content/packs/quest-sixth-envelope/pack.json\": \"ef8ee9c8a02d4d38092773e92cb9dade6ec1fbc4cfaedf57683d912d250f3226\",\n        \"content/packs/quest-three-witnesses/pack.json\": \"51d148474967f738490e8410850b7175171e1a1ffab05a6ee736dd837a69554a\",\n        \"public/index.html\": \"4660d277bf20f3685b2d3ba1351b63ef076f12e18f12d1a0a58b85efc10ff131\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\",\n        \"public/ux-clues.css\": \"c3d8290e9d11794e25b8d5b76365bd633a12032a2d03271fba30cc374a74c326\",\n        \"public/ux-clues.js\": \"9a492a6e54a45697978e6177e6c3f52083c51cf413a95b616b7e62c7b33bbe4d\",\n        \"public/ux-navigation.css\": \"712ebf19faf5303e45d82c55cfc9cda4b3d4156fc0ab759a115a849dbe2efbd6\",\n        \"public/ux-navigation.js\": \"baf682a3ec4de922bc446b1e94eaed9a66f8f10ac5fc49645bbcb88cbb354b40\",\n        \"public/ux-quests.css\": \"c65e7e95c966f14dd4996b8cbe99643874ab325d45c23d728216118afa27191f\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"schema.sql\": \"b5c66d128de9b730bac19b135a8d13791f3bc70ba4a27818abec7de5141564de\",\n        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"src/clue-puzzles.js\": \"ee6cf76f6fab981356fd0c6068369218cd6fe1b9f8f968018e69bf4a146dd305\",\n        \"src/clues.js\": \"9d058e4a81268dfdfeb9295545fc72475b993caddc3ee6781f300103de0aee74\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quest-saga.js\": \"ecb7538abeee98a9a25ff42f69d1818a4485974b1fe072375dcdf0820e42f51f\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/explore.js\": \"d0d87a39f7a12dccf98c97662bd69d68e0643894c5ed59b345f8c5790097ca88\",\n        \"src/game.js\": \"0fa11d22430186fcb3cccae0c92638c96faaf816faed7e5b62ab0c5e7bfe4731\",\n        \"src/gateway/context.js\": \"7516534f6b3e426efe6c92136aa1bc9d599925fce15a89f4ce57cace35be466f\",\n        \"src/quest-workshop-schema.js\": \"9bbf299a7ac7573c8d0770c140dd7841b2996c54a983278b71dbc768e381c70c\",\n        \"src/quest-workshop.js\": \"1a1549f014e735a2d94befc2c628ff34d5fdb7070bebd2bc0dca9bca3c261083\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/questing.js\": \"11bf4829e5546042190e1da0c7134331de89a409df2c92da6d812ffbd30413f6\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/routes/quest-workshop.js\": \"63f2afc0242759cbb288e144d2126268b2fc042f1dfecb1d1ebb7eb587e0081b\",\n        \"src/routes/questing.js\": \"27beabb502911baad8f7c3ddae6e4ded3ab9bbcb1ac1edfaa7f78dbb94974b82\",\n        \"src/server.js\": \"481545e4198c40ceff2614b404a40db1c1079458cda1cec6f1cde92f4d7fb15d\",\n        \"src/ux-workspace.js\": \"df2b039a96df5399fab6c1b3ffda9f6e4cc53c9e84f989da21610558c02b0870\",\n        \"tools/questing-content.js\": \"d08dd7fe90d5921f8bc731c218d18a44b5674b85ec944da60096e5a86fbab92f\",\n        \"tools/questing-workgraph.js\": \"bf0869441eb7a3f375773af0d051914d11dc4a68632423ffb1e296e32de50a8a\"\n      },\n      \"sourceStable\": true,\n      \"outputPath\": \"output/questing-verification/quest-mwj58ul7-quest-saga.log\",\n      \"outputHash\": \"a6c577d2a2c66cca20b50b7cf4dae92c9efe2af0b8f02fb7f57fb00d5b797900\"\n    },\n    {\n      \"id\": \"quest-mwj59c71-content-narrative-security\",\n      \"evaluator\": \"test/content-narrative-security.js\",\n      \"command\": \"node test/content-narrative-security.js\",\n      \"startedAt\": \"2026-11-16T10:52:15.997Z\",\n      \"elapsedMs\": 968,\n      \"exitCode\": 0,\n      \"baselineRevision\": \"17fdf85fdd21fd3767463df8ba47614f7d1f6432\",\n      \"evaluatorHash\": \"715f701a4b3054c445722fe71e1e9dabc95931384b52fc06119d99d880a1d0cc\",\n      \"sourceHashes\": {\n        \"content/packs/quest-archive-service/pack.json\": \"9ae8e2dff659efc6e387c04757291ef2dc979921c447fd4bb528bd99779b2b0e\",\n        \"content/packs/quest-early-obituary/pack.json\": \"300ea3d0019ca7b11055132be598515932a2f0236d52cf68ba629a0625bf16ba\",\n        \"content/packs/quest-family-dinner/pack.json\": \"1ea3be2ad823d1a7fcb7a5960607661d0ba4c696d3d47112602168f9c59a65f1\",\n        \"content/packs/quest-inherited-file/pack.json\": \"a4399ed7f5aa3c4a32469d69824d021b592f29a1ae93f17ce3c9213db371f34f\",\n        \"content/packs/quest-missing-name/pack.json\": \"529ef9964b07312f3298a068baf00724a1b7106a50b192acbdc401e90dc45f42\",\n        \"content/packs/quest-morning-after/pack.json\": \"ebfa0ad0cbb4a2e77791777ab307ff5c075c52de08ee40ac8afa4b224d3c68ac\",\n        \"content/packs/quest-quiet-wedding/pack.json\": \"623bbea98c196b252cb584f608067cce236d257fc640b78535c0761c3d265c9f\",\n        \"content/packs/quest-rival-accord/pack.json\": \"1a7df139c0f74af1e940dba4aedcd50c4230c5c3ea349fd606828a199ce993ed\",\n        \"content/packs/quest-sixth-envelope/pack.json\": \"ef8ee9c8a02d4d38092773e92cb9dade6ec1fbc4cfaedf57683d912d250f3226\",\n        \"content/packs/quest-three-witnesses/pack.json\": \"51d148474967f738490e8410850b7175171e1a1ffab05a6ee736dd837a69554a\",\n        \"public/index.html\": \"4660d277bf20f3685b2d3ba1351b63ef076f12e18f12d1a0a58b85efc10ff131\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\",\n        \"public/ux-clues.css\": \"c3d8290e9d11794e25b8d5b76365bd633a12032a2d03271fba30cc374a74c326\",\n        \"public/ux-clues.js\": \"9a492a6e54a45697978e6177e6c3f52083c51cf413a95b616b7e62c7b33bbe4d\",\n        \"public/ux-navigation.css\": \"712ebf19faf5303e45d82c55cfc9cda4b3d4156fc0ab759a115a849dbe2efbd6\",\n        \"public/ux-navigation.js\": \"baf682a3ec4de922bc446b1e94eaed9a66f8f10ac5fc49645bbcb88cbb354b40\",\n        \"public/ux-quests.css\": \"c65e7e95c966f14dd4996b8cbe99643874ab325d45c23d728216118afa27191f\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"schema.sql\": \"b5c66d128de9b730bac19b135a8d13791f3bc70ba4a27818abec7de5141564de\",\n        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"src/clue-puzzles.js\": \"ee6cf76f6fab981356fd0c6068369218cd6fe1b9f8f968018e69bf4a146dd305\",\n        \"src/clues.js\": \"9d058e4a81268dfdfeb9295545fc72475b993caddc3ee6781f300103de0aee74\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quest-saga.js\": \"ecb7538abeee98a9a25ff42f69d1818a4485974b1fe072375dcdf0820e42f51f\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/explore.js\": \"d0d87a39f7a12dccf98c97662bd69d68e0643894c5ed59b345f8c5790097ca88\",\n        \"src/game.js\": \"0fa11d22430186fcb3cccae0c92638c96faaf816faed7e5b62ab0c5e7bfe4731\",\n        \"src/gateway/context.js\": \"7516534f6b3e426efe6c92136aa1bc9d599925fce15a89f4ce57cace35be466f\",\n        \"src/quest-workshop-schema.js\": \"9bbf299a7ac7573c8d0770c140dd7841b2996c54a983278b71dbc768e381c70c\",\n        \"src/quest-workshop.js\": \"1a1549f014e735a2d94befc2c628ff34d5fdb7070bebd2bc0dca9bca3c261083\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/questing.js\": \"11bf4829e5546042190e1da0c7134331de89a409df2c92da6d812ffbd30413f6\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/routes/quest-workshop.js\": \"63f2afc0242759cbb288e144d2126268b2fc042f1dfecb1d1ebb7eb587e0081b\",\n        \"src/routes/questing.js\": \"27beabb502911baad8f7c3ddae6e4ded3ab9bbcb1ac1edfaa7f78dbb94974b82\",\n        \"src/server.js\": \"481545e4198c40ceff2614b404a40db1c1079458cda1cec6f1cde92f4d7fb15d\",\n        \"src/ux-workspace.js\": \"df2b039a96df5399fab6c1b3ffda9f6e4cc53c9e84f989da21610558c02b0870\",\n        \"tools/questing-content.js\": \"d08dd7fe90d5921f8bc731c218d18a44b5674b85ec944da60096e5a86fbab92f\",\n        \"tools/questing-workgraph.js\": \"bf0869441eb7a3f375773af0d051914d11dc4a68632423ffb1e296e32de50a8a\"\n      },\n      \"sourceStable\": true,\n      \"outputPath\": \"output/questing-verification/quest-mwj59c71-content-narrative-security.log\",\n      \"outputHash\": \"bcb7d6c22007d7102728153116b5907914daaa83da0de40e56c0634b65777a18\"\n    },\n    {\n      \"id\": \"quest-mwj59e2m-quest-specialist\",\n      \"evaluator\": \"test/quest-specialist.js\",\n      \"command\": \"node test/quest-specialist.js\",\n      \"startedAt\": \"2026-11-16T10:52:18.430Z\",\n      \"elapsedMs\": 15114,\n      \"exitCode\": 0,\n      \"baselineRevision\": \"17fdf85fdd21fd3767463df8ba47614f7d1f6432\",\n      \"evaluatorHash\": \"44235e062bc9c16ba65a2dabb8914cdbecc2ce09da62662364762bfd6e03c186\",\n      \"sourceHashes\": {\n        \"content/packs/quest-archive-service/pack.json\": \"9ae8e2dff659efc6e387c04757291ef2dc979921c447fd4bb528bd99779b2b0e\",\n        \"content/packs/quest-early-obituary/pack.json\": \"300ea3d0019ca7b11055132be598515932a2f0236d52cf68ba629a0625bf16ba\",\n        \"content/packs/quest-family-dinner/pack.json\": \"1ea3be2ad823d1a7fcb7a5960607661d0ba4c696d3d47112602168f9c59a65f1\",\n        \"content/packs/quest-inherited-file/pack.json\": \"a4399ed7f5aa3c4a32469d69824d021b592f29a1ae93f17ce3c9213db371f34f\",\n        \"content/packs/quest-missing-name/pack.json\": \"529ef9964b07312f3298a068baf00724a1b7106a50b192acbdc401e90dc45f42\",\n        \"content/packs/quest-morning-after/pack.json\": \"ebfa0ad0cbb4a2e77791777ab307ff5c075c52de08ee40ac8afa4b224d3c68ac\",\n        \"content/packs/quest-quiet-wedding/pack.json\": \"623bbea98c196b252cb584f608067cce236d257fc640b78535c0761c3d265c9f\",\n        \"content/packs/quest-rival-accord/pack.json\": \"1a7df139c0f74af1e940dba4aedcd50c4230c5c3ea349fd606828a199ce993ed\",\n        \"content/packs/quest-sixth-envelope/pack.json\": \"ef8ee9c8a02d4d38092773e92cb9dade6ec1fbc4cfaedf57683d912d250f3226\",\n        \"content/packs/quest-three-witnesses/pack.json\": \"51d148474967f738490e8410850b7175171e1a1ffab05a6ee736dd837a69554a\",\n        \"public/index.html\": \"4660d277bf20f3685b2d3ba1351b63ef076f12e18f12d1a0a58b85efc10ff131\",\n        \"public/landing-loader.js\": \"6bcc57c11389d69785c6e21f7f37aa2a8640b31cbd475b4f62d4891913f8000c\",\n        \"public/ux-clues.css\": \"c3d8290e9d11794e25b8d5b76365bd633a12032a2d03271fba30cc374a74c326\",\n        \"public/ux-clues.js\": \"9a492a6e54a45697978e6177e6c3f52083c51cf413a95b616b7e62c7b33bbe4d\",\n        \"public/ux-navigation.css\": \"712ebf19faf5303e45d82c55cfc9cda4b3d4156fc0ab759a115a849dbe2efbd6\",\n        \"public/ux-navigation.js\": \"baf682a3ec4de922bc446b1e94eaed9a66f8f10ac5fc49645bbcb88cbb354b40\",\n        \"public/ux-quests.css\": \"c65e7e95c966f14dd4996b8cbe99643874ab325d45c23d728216118afa27191f\",\n        \"public/ux-quests.js\": \"8997879a339d9123d7088f1166a2429d723782f732564942a03a0643aece5205\",\n        \"schema.sql\": \"b5c66d128de9b730bac19b135a8d13791f3bc70ba4a27818abec7de5141564de\",\n        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n        \"src/client-shell.js\": \"561ab86e4a826b6ef17b59049bd4139e2fc051fd519062abb21712c4902fbef4\",\n        \"src/clue-puzzles.js\": \"ee6cf76f6fab981356fd0c6068369218cd6fe1b9f8f968018e69bf4a146dd305\",\n        \"src/clues.js\": \"9d058e4a81268dfdfeb9295545fc72475b993caddc3ee6781f300103de0aee74\",\n        \"src/content/compiler.js\": \"20cd1a30a56389a653265c6ccac7871ca5bbb5a58cba5d312e93e96517a9d641\",\n        \"src/content/narrative.js\": \"96d4da7306be9f706887e3a0c95f3b899bf2ef6d4fc9c799e484e7bde15def41\",\n        \"src/content/quest-saga.js\": \"ecb7538abeee98a9a25ff42f69d1818a4485974b1fe072375dcdf0820e42f51f\",\n        \"src/content/runtime.js\": \"c1654cffc1dc95c7484cb3de77c3111f1d09c7c0be6e8f7b6a88e470c5814fd2\",\n        \"src/explore.js\": \"d0d87a39f7a12dccf98c97662bd69d68e0643894c5ed59b345f8c5790097ca88\",\n        \"src/game.js\": \"0fa11d22430186fcb3cccae0c92638c96faaf816faed7e5b62ab0c5e7bfe4731\",\n        \"src/gateway/context.js\": \"7516534f6b3e426efe6c92136aa1bc9d599925fce15a89f4ce57cace35be466f\",\n        \"src/quest-workshop-schema.js\": \"9bbf299a7ac7573c8d0770c140dd7841b2996c54a983278b71dbc768e381c70c\",\n        \"src/quest-workshop.js\": \"1a1549f014e735a2d94befc2c628ff34d5fdb7070bebd2bc0dca9bca3c261083\",\n        \"src/questing-contract.js\": \"15ee2dced0d0d0848aef0f6405439353aa4b9cd4c0eb4944a1c9b02fc6e35c71\",\n        \"src/questing.js\": \"11bf4829e5546042190e1da0c7134331de89a409df2c92da6d812ffbd30413f6\",\n        \"src/routes/content.js\": \"12744e0cd1a16f3bdea4c9775df7f80766a62949ae943d56d397adea29c3871e\",\n        \"src/routes/quest-workshop.js\": \"63f2afc0242759cbb288e144d2126268b2fc042f1dfecb1d1ebb7eb587e0081b\",\n        \"src/routes/questing.js\": \"27beabb502911baad8f7c3ddae6e4ded3ab9bbcb1ac1edfaa7f78dbb94974b82\",\n        \"src/server.js\": \"481545e4198c40ceff2614b404a40db1c1079458cda1cec6f1cde92f4d7fb15d\",\n        \"src/ux-workspace.js\": \"df2b039a96df5399fab6c1b3ffda9f6e4cc53c9e84f989da21610558c02b0870\",\n        \"tools/questing-content.js\": \"d08dd7fe90d5921f8bc731c218d18a44b5674b85ec944da60096e5a86fbab92f\",\n        \"tools/questing-workgraph.js\": \"bf0869441eb7a3f375773af0d051914d11dc4a68632423ffb1e296e32de50a8a\"\n      },\n      \"sourceStable\": true,\n      \"outputPath\": \"output/questing-verification/quest-mwj59e2m-quest-specialist.log\",\n",
+          "baseline": "      \"outputPath\": \"output/questing-verification/quest-mwio0r1g-quest-specialist.log\",\n"
+        },
+        {
+          "at": 1827392,
+          "current": "      \"id\": \"quest-mwj59qnd-clue-puzzles\",\n",
+          "baseline": "      \"id\": \"quest-mwio0zat-clue-puzzles\",\n"
+        },
+        {
+          "at": 1827524,
+          "current": "      \"startedAt\": \"2026-11-16T10:52:34.729Z\",\n      \"elapsedMs\": 5784,\n",
+          "baseline": "      \"startedAt\": \"2026-11-16T02:49:52.565Z\",\n      \"elapsedMs\": 7359,\n"
+        },
+        {
+          "at": 1827687,
+          "current": "      \"evaluatorHash\": \"3013dcf1ebf08a5d7429777b81f82b2986f013f76817837ae54eee6d1f08bd46\",\n",
+          "baseline": "      \"evaluatorHash\": \"96cb003785242c0bc75f85d66c291af72fcf84fa08eb1738c3351ef07ff28b31\",\n"
+        },
+        {
+          "at": 1829037,
+          "current": "        \"public/index.html\": \"4660d277bf20f3685b2d3ba1351b63ef076f12e18f12d1a0a58b85efc10ff131\",\n",
+          "baseline": "        \"public/index.html\": \"fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba\",\n"
+        },
+        {
+          "at": 1829931,
+          "current": "        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n",
+          "baseline": "        \"src/agentgateway.js\": \"8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f\",\n"
+        },
+        {
+          "at": 1830828,
+          "current": "        \"src/game.js\": \"0fa11d22430186fcb3cccae0c92638c96faaf816faed7e5b62ab0c5e7bfe4731\",\n",
+          "baseline": "        \"src/game.js\": \"8587a22f47ba3b5dfb1c5b99e0e968cf6e18d9f30fe4989cc79fd7e6b1a2d533\",\n"
+        },
+        {
+          "at": 1831740,
+          "current": "        \"src/server.js\": \"481545e4198c40ceff2614b404a40db1c1079458cda1cec6f1cde92f4d7fb15d\",\n",
+          "baseline": "        \"src/server.js\": \"f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5\",\n"
+        },
+        {
+          "at": 1832180,
+          "current": "      \"outputPath\": \"output/questing-verification/quest-mwj59qnd-clue-puzzles.log\",\n",
+          "baseline": "      \"outputPath\": \"output/questing-verification/quest-mwio0zat-clue-puzzles.log\",\n"
+        },
+        {
+          "at": 1832364,
+          "current": "      \"id\": \"quest-mwj59vzo-clue-puzzles-browser\",\n",
+          "baseline": "      \"id\": \"quest-mwio15gv-clue-puzzles-browser\",\n"
+        },
+        {
+          "at": 1832520,
+          "current": "      \"startedAt\": \"2026-11-16T10:52:41.652Z\",\n      \"elapsedMs\": 14198,\n",
+          "baseline": "      \"startedAt\": \"2026-11-16T02:50:00.559Z\",\n      \"elapsedMs\": 10506,\n"
+        },
+        {
+          "at": 1834034,
+          "current": "        \"public/index.html\": \"4660d277bf20f3685b2d3ba1351b63ef076f12e18f12d1a0a58b85efc10ff131\",\n",
+          "baseline": "        \"public/index.html\": \"fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba\",\n"
+        },
+        {
+          "at": 1834928,
+          "current": "        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n",
+          "baseline": "        \"src/agentgateway.js\": \"8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f\",\n"
+        },
+        {
+          "at": 1835825,
+          "current": "        \"src/game.js\": \"0fa11d22430186fcb3cccae0c92638c96faaf816faed7e5b62ab0c5e7bfe4731\",\n",
+          "baseline": "        \"src/game.js\": \"8587a22f47ba3b5dfb1c5b99e0e968cf6e18d9f30fe4989cc79fd7e6b1a2d533\",\n"
+        },
+        {
+          "at": 1836737,
+          "current": "        \"src/server.js\": \"481545e4198c40ceff2614b404a40db1c1079458cda1cec6f1cde92f4d7fb15d\",\n",
+          "baseline": "        \"src/server.js\": \"f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5\",\n"
+        },
+        {
+          "at": 1837177,
+          "current": "      \"outputPath\": \"output/questing-verification/quest-mwj59vzo-clue-puzzles-browser.log\",\n      \"outputHash\": \"d00ac0bac439d3fd7026b62db2dc7e1746dc1ceb375e2710a4a8b8f849cf165c\"\n",
+          "baseline": "      \"outputPath\": \"output/questing-verification/quest-mwio15gv-clue-puzzles-browser.log\",\n      \"outputHash\": \"918f897657778d42f1fe8b1a872f04f2e3f11465b9a9a51a5be17ad49d8e604f\"\n"
+        },
+        {
+          "at": 1837369,
+          "current": "      \"id\": \"quest-mwj5a7tt-content-narrative\",\n",
+          "baseline": "      \"id\": \"quest-mwio1e4y-content-narrative\",\n"
+        },
+        {
+          "at": 1837516,
+          "current": "      \"startedAt\": \"2026-11-16T10:52:56.993Z\",\n      \"elapsedMs\": 4366,\n",
+          "baseline": "      \"startedAt\": \"2026-11-16T02:50:11.794Z\",\n      \"elapsedMs\": 6143,\n"
+        },
+        {
+          "at": 1839029,
+          "current": "        \"public/index.html\": \"4660d277bf20f3685b2d3ba1351b63ef076f12e18f12d1a0a58b85efc10ff131\",\n",
+          "baseline": "        \"public/index.html\": \"fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba\",\n"
+        },
+        {
+          "at": 1839923,
+          "current": "        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n",
+          "baseline": "        \"src/agentgateway.js\": \"8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f\",\n"
+        },
+        {
+          "at": 1840820,
+          "current": "        \"src/game.js\": \"0fa11d22430186fcb3cccae0c92638c96faaf816faed7e5b62ab0c5e7bfe4731\",\n",
+          "baseline": "        \"src/game.js\": \"8587a22f47ba3b5dfb1c5b99e0e968cf6e18d9f30fe4989cc79fd7e6b1a2d533\",\n"
+        },
+        {
+          "at": 1841732,
+          "current": "        \"src/server.js\": \"481545e4198c40ceff2614b404a40db1c1079458cda1cec6f1cde92f4d7fb15d\",\n",
+          "baseline": "        \"src/server.js\": \"f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5\",\n"
+        },
+        {
+          "at": 1842172,
+          "current": "      \"outputPath\": \"output/questing-verification/quest-mwj5a7tt-content-narrative.log\",\n",
+          "baseline": "      \"outputPath\": \"output/questing-verification/quest-mwio1e4y-content-narrative.log\",\n"
+        },
+        {
+          "at": 1842361,
+          "current": "      \"id\": \"quest-mwj5ac01-quest-experience-browser\",\n",
+          "baseline": "      \"id\": \"quest-mwio1jak-quest-experience-browser\",\n"
+        },
+        {
+          "at": 1842529,
+          "current": "      \"startedAt\": \"2026-11-16T10:53:02.401Z\",\n      \"elapsedMs\": 20529,\n",
+          "baseline": "      \"startedAt\": \"2026-11-16T02:50:18.476Z\",\n      \"elapsedMs\": 22249,\n"
+        },
+        {
+          "at": 1844043,
+          "current": "        \"public/index.html\": \"4660d277bf20f3685b2d3ba1351b63ef076f12e18f12d1a0a58b85efc10ff131\",\n",
+          "baseline": "        \"public/index.html\": \"fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba\",\n"
+        },
+        {
+          "at": 1844937,
+          "current": "        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n",
+          "baseline": "        \"src/agentgateway.js\": \"8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f\",\n"
+        },
+        {
+          "at": 1845834,
+          "current": "        \"src/game.js\": \"0fa11d22430186fcb3cccae0c92638c96faaf816faed7e5b62ab0c5e7bfe4731\",\n",
+          "baseline": "        \"src/game.js\": \"8587a22f47ba3b5dfb1c5b99e0e968cf6e18d9f30fe4989cc79fd7e6b1a2d533\",\n"
+        },
+        {
+          "at": 1846746,
+          "current": "        \"src/server.js\": \"481545e4198c40ceff2614b404a40db1c1079458cda1cec6f1cde92f4d7fb15d\",\n",
+          "baseline": "        \"src/server.js\": \"f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5\",\n"
+        },
+        {
+          "at": 1847186,
+          "current": "      \"outputPath\": \"output/questing-verification/quest-mwj5ac01-quest-experience-browser.log\",\n      \"outputHash\": \"c4775a25332ba8c1e9f39fb3eabf2fd919e2660287643a952c607995edc80b39\"\n",
+          "baseline": "      \"outputPath\": \"output/questing-verification/quest-mwio1jak-quest-experience-browser.log\",\n      \"outputHash\": \"758f3f87491bf8c6c61b438b27b06c7c035e74c03e75c1aed7ea4356e04761ec\"\n"
+        },
+        {
+          "at": 1847382,
+          "current": "      \"id\": \"quest-mwj5ascx-content-api\",\n",
+          "baseline": "      \"id\": \"quest-mwio20ph-content-api\",\n"
+        },
+        {
+          "at": 1847511,
+          "current": "      \"startedAt\": \"2026-11-16T10:53:23.601Z\",\n      \"elapsedMs\": 1390,\n",
+          "baseline": "      \"startedAt\": \"2026-11-16T02:50:41.045Z\",\n      \"elapsedMs\": 2304,\n"
+        },
+        {
+          "at": 1849024,
+          "current": "        \"public/index.html\": \"4660d277bf20f3685b2d3ba1351b63ef076f12e18f12d1a0a58b85efc10ff131\",\n",
+          "baseline": "        \"public/index.html\": \"fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba\",\n"
+        },
+        {
+          "at": 1849918,
+          "current": "        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n",
+          "baseline": "        \"src/agentgateway.js\": \"8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f\",\n"
+        },
+        {
+          "at": 1850815,
+          "current": "        \"src/game.js\": \"0fa11d22430186fcb3cccae0c92638c96faaf816faed7e5b62ab0c5e7bfe4731\",\n",
+          "baseline": "        \"src/game.js\": \"8587a22f47ba3b5dfb1c5b99e0e968cf6e18d9f30fe4989cc79fd7e6b1a2d533\",\n"
+        },
+        {
+          "at": 1851727,
+          "current": "        \"src/server.js\": \"481545e4198c40ceff2614b404a40db1c1079458cda1cec6f1cde92f4d7fb15d\",\n",
+          "baseline": "        \"src/server.js\": \"f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5\",\n"
+        },
+        {
+          "at": 1852167,
+          "current": "      \"outputPath\": \"output/questing-verification/quest-mwj5ascx-content-api.log\",\n",
+          "baseline": "      \"outputPath\": \"output/questing-verification/quest-mwio20ph-content-api.log\",\n"
+        },
+        {
+          "at": 1852350,
+          "current": "      \"id\": \"quest-mwj5aty9-quest-saga-social\",\n",
+          "baseline": "      \"id\": \"quest-mwio22ow-quest-saga-social\",\n"
+        },
+        {
+          "at": 1852497,
+          "current": "      \"startedAt\": \"2026-11-16T10:53:25.665Z\",\n      \"elapsedMs\": 5282,\n",
+          "baseline": "      \"startedAt\": \"2026-11-16T02:50:43.616Z\",\n      \"elapsedMs\": 6578,\n"
+        },
+        {
+          "at": 1854010,
+          "current": "        \"public/index.html\": \"4660d277bf20f3685b2d3ba1351b63ef076f12e18f12d1a0a58b85efc10ff131\",\n",
+          "baseline": "        \"public/index.html\": \"fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba\",\n"
+        },
+        {
+          "at": 1854904,
+          "current": "        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n",
+          "baseline": "        \"src/agentgateway.js\": \"8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f\",\n"
+        },
+        {
+          "at": 1855801,
+          "current": "        \"src/game.js\": \"0fa11d22430186fcb3cccae0c92638c96faaf816faed7e5b62ab0c5e7bfe4731\",\n",
+          "baseline": "        \"src/game.js\": \"8587a22f47ba3b5dfb1c5b99e0e968cf6e18d9f30fe4989cc79fd7e6b1a2d533\",\n"
+        },
+        {
+          "at": 1856713,
+          "current": "        \"src/server.js\": \"481545e4198c40ceff2614b404a40db1c1079458cda1cec6f1cde92f4d7fb15d\",\n",
+          "baseline": "        \"src/server.js\": \"f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5\",\n"
+        },
+        {
+          "at": 1857153,
+          "current": "      \"outputPath\": \"output/questing-verification/quest-mwj5aty9-quest-saga-social.log\",\n",
+          "baseline": "      \"outputPath\": \"output/questing-verification/quest-mwio22ow-quest-saga-social.log\",\n"
+        },
+        {
+          "at": 1857342,
+          "current": "      \"id\": \"quest-mwj5ayf2-content-casework\",\n",
+          "baseline": "      \"id\": \"quest-mwio27wm-content-casework\",\n"
+        },
+        {
+          "at": 1857486,
+          "current": "      \"startedAt\": \"2026-11-16T10:53:31.454Z\",\n      \"elapsedMs\": 4330,\n",
+          "baseline": "      \"startedAt\": \"2026-11-16T02:50:50.374Z\",\n      \"elapsedMs\": 5319,\n"
+        },
+        {
+          "at": 1858999,
+          "current": "        \"public/index.html\": \"4660d277bf20f3685b2d3ba1351b63ef076f12e18f12d1a0a58b85efc10ff131\",\n",
+          "baseline": "        \"public/index.html\": \"fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba\",\n"
+        },
+        {
+          "at": 1859893,
+          "current": "        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n",
+          "baseline": "        \"src/agentgateway.js\": \"8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f\",\n"
+        },
+        {
+          "at": 1860790,
+          "current": "        \"src/game.js\": \"0fa11d22430186fcb3cccae0c92638c96faaf816faed7e5b62ab0c5e7bfe4731\",\n",
+          "baseline": "        \"src/game.js\": \"8587a22f47ba3b5dfb1c5b99e0e968cf6e18d9f30fe4989cc79fd7e6b1a2d533\",\n"
+        },
+        {
+          "at": 1861702,
+          "current": "        \"src/server.js\": \"481545e4198c40ceff2614b404a40db1c1079458cda1cec6f1cde92f4d7fb15d\",\n",
+          "baseline": "        \"src/server.js\": \"f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5\",\n"
+        },
+        {
+          "at": 1862142,
+          "current": "      \"outputPath\": \"output/questing-verification/quest-mwj5ayf2-content-casework.log\",\n",
+          "baseline": "      \"outputPath\": \"output/questing-verification/quest-mwio27wm-content-casework.log\",\n"
+        },
+        {
+          "at": 1862330,
+          "current": "      \"id\": \"quest-mwj5b23s-quest-workshop\",\n",
+          "baseline": "      \"id\": \"quest-mwio2c3c-quest-workshop\",\n"
+        },
+        {
+          "at": 1862468,
+          "current": "      \"startedAt\": \"2026-11-16T10:53:36.232Z\",\n      \"elapsedMs\": 3649,\n",
+          "baseline": "      \"startedAt\": \"2026-11-16T02:50:55.800Z\",\n      \"elapsedMs\": 4654,\n"
+        },
+        {
+          "at": 1863981,
+          "current": "        \"public/index.html\": \"4660d277bf20f3685b2d3ba1351b63ef076f12e18f12d1a0a58b85efc10ff131\",\n",
+          "baseline": "        \"public/index.html\": \"fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba\",\n"
+        },
+        {
+          "at": 1864875,
+          "current": "        \"src/agentgateway.js\": \"43ff02926ee5adb6bd7f2436bd8683b1abf82b7d52ad6c81c40d8c91e15f91ed\",\n",
+          "baseline": "        \"src/agentgateway.js\": \"8361354dc6d1ba5ab7da51ca50561a9c3d2e4e132856b767245f10383dee4b3f\",\n"
+        },
+        {
+          "at": 1865772,
+          "current": "        \"src/game.js\": \"0fa11d22430186fcb3cccae0c92638c96faaf816faed7e5b62ab0c5e7bfe4731\",\n",
+          "baseline": "        \"src/game.js\": \"8587a22f47ba3b5dfb1c5b99e0e968cf6e18d9f30fe4989cc79fd7e6b1a2d533\",\n"
+        },
+        {
+          "at": 1866684,
+          "current": "        \"src/server.js\": \"481545e4198c40ceff2614b404a40db1c1079458cda1cec6f1cde92f4d7fb15d\",\n",
+          "baseline": "        \"src/server.js\": \"f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5\",\n"
+        },
+        {
+          "at": 1867124,
+          "current": "      \"outputPath\": \"output/questing-verification/quest-mwj5b23s-quest-workshop.log\",\n",
+          "baseline": "      \"outputPath\": \"output/questing-verification/quest-mwio2c3c-quest-workshop.log\",\n"
         }
       ]
     },
@@ -202,64 +1334,64 @@ export const CRIME_MINIGAME_SOURCE = freeze({
     "public/index.html": {
       "current": {
         "mode": "100644",
-        "blob": "7966e0082ef1cdaf15efa0862b034246460a7122",
-        "bytes": 1402828,
-        "sha256": "39b36896c4e6a64f2aa7163de4d3312824c9b5bd6b16c57f8a87959db89bc98e"
+        "blob": "840c0d9d97b60d3677f52c3d9da83505499f03f6",
+        "bytes": 1406464,
+        "sha256": "4660d277bf20f3685b2d3ba1351b63ef076f12e18f12d1a0a58b85efc10ff131"
       },
       "baseline": {
         "mode": "100644",
-        "blob": "fe80e058bf517ca60ae0af3dee0d53630e994cd1",
-        "bytes": 1401349,
-        "sha256": "08c3ccd59f719b11f9609c463a9bb979a1c0678ec1ab3b63fc121e6a8c00d662"
+        "blob": "090fcf97c06430a16875bc5de8cdbf800584fcdb",
+        "bytes": 1404985,
+        "sha256": "fd77e400ea75e568e8e271b0f8dea2d207ded6e5bb8d0136a94b20b8207524ba"
       },
       "inverses": [
         {
-          "at": 105975,
+          "at": 106024,
           "current": "<link rel=\"stylesheet\" href=\"/ux-crime-minigame.css?v=20261115-1\">\n",
           "baseline": ""
         },
         {
-          "at": 157015,
+          "at": 157064,
           "current": "<script src=\"/ux-crime-minigame.js?v=20261115-1\"></script>\n",
           "baseline": ""
         },
         {
-          "at": 344331,
+          "at": 344380,
           "current": "    if (body.minigame?.kind === 'signal-lock')\n      bits.push(body.minigame.completed\n        ? `lock cracked · ${body.minigame.mistakes} alarm${body.minigame.mistakes === 1 ? '' : 's'} · ${Math.round((body.successChance || 0) * 100)}% final crime odds`\n        : 'three alarms · the lock failed and the crime was lost');\n",
           "baseline": ""
         },
         {
-          "at": 531092,
+          "at": 531141,
           "current": "  let crimeMinigamePending = false;\n  const crimeMinigameAttempts = new Map();\n",
           "baseline": ""
         },
         {
-          "at": 531228,
+          "at": 531277,
           "current": "    if (acting || crimeMinigamePending) { toast('easy — one move at a time', false); return { code: 429, body: {} }; }\n",
           "baseline": "    if (acting) { toast('easy — one move at a time', false); return { code: 429, body: {} }; }\n"
         },
         {
-          "at": 531752,
+          "at": 531801,
           "current": "    const crimeAttemptKey = `${actor}:${path}:${idempotencyKey}`;\n    if (method === 'POST' && /^\\/v1\\/crimes\\/[a-z0-9_-]+$/.test(path) && !body?.minigame && crimeMinigameAttempts.has(crimeAttemptKey))\n      body = { ...body, minigame: crimeMinigameAttempts.get(crimeAttemptKey) };\n    if (method === 'POST' && /^\\/v1\\/crimes\\/[a-z0-9_-]+$/.test(path) && !body?.minigame) {\n      if (typeof window.playOmertaCrimeMinigame !== 'function') {\n        toast('The crime minigame could not load. Refresh and try again.', true);\n        return { code: 503, body: { error: 'crime_minigame_unavailable' } };\n      }\n      const current = () => actorCurrent() && (!options.isCurrent || options.isCurrent());\n      if (!current() || (options.beforeDispatch && !options.beforeDispatch())) return { code: 0, body: {}, ignored: true };\n      crimeMinigamePending = true;\n      let minigame;\n      try {\n        minigame = await window.playOmertaCrimeMinigame({ path, approach: body?.approach || 'standard',\n          request: (m, p) => api(m, p, undefined, { isCurrent: current, beforeDispatch: current }),\n          label, returnFocus: trigger, isCurrent: current });\n      } finally { crimeMinigamePending = false; }\n      if (!minigame || !current()) return { code: 0, body: { cancelled: true } };\n      body = { ...body, minigame };\n      crimeMinigameAttempts.set(crimeAttemptKey, minigame);\n      if (crimeMinigameAttempts.size > 32) crimeMinigameAttempts.delete(crimeMinigameAttempts.keys().next().value);\n    }\n",
           "baseline": ""
         },
         {
-          "at": 814631,
+          "at": 815680,
           "current": "      <div class=\"d operation-choice-terms\">Required lock minigame: mistakes lower your crime odds; three alarms fail the job.</div>\n",
           "baseline": ""
         },
         {
-          "at": 815624,
+          "at": 816673,
           "current": "    return { terms, choices, blocked };\n",
           "baseline": "    const preparation = crime.puzzle ? `<button type=\"button\" class=\"act\" data-task-crime=\"${crime.id}\"${blocked ? ' disabled' : ''}>Prepare ${esc(crime.name)} (optional puzzle)</button>` : '';\n    return { terms, choices: choices + preparation, blocked };\n"
         },
         {
-          "at": 954356,
+          "at": 955405,
           "current": "        <div class=\"noir-job-eyebrow\">Street job · Level ${c.lvl} · Required lock minigame</div><span class=\"t\">${esc(c.name)}</span>\n",
           "baseline": "        <div class=\"noir-job-eyebrow\">Street job · Level ${c.lvl}</div><span class=\"t\">${esc(c.name)}</span>\n"
         },
         {
-          "at": 1336534,
+          "at": 1340161,
           "current": "",
           "baseline": "  document.addEventListener('click', event => {\n    const button = event.target?.closest?.('[data-task-crime]');\n    if (!button || button.disabled) return;\n    const crime = rules?.crimes?.find(c => c.id === button.dataset.taskCrime);\n    if (crime) openTaskPuzzle({ selector: { scope: 'crime', targetId: crime.id }, path: `/v1/crimes/${crime.id}`,\n      label: `Prepare ${crime.name}`, submitLabel: 'Solve and attempt crime', trigger: button, body: { approach: 'standard' }, approaches: rules?.crimeApproaches });\n  });\n\n"
         }
@@ -351,34 +1483,34 @@ export const CRIME_MINIGAME_SOURCE = freeze({
     "src/game.js": {
       "current": {
         "mode": "100644",
-        "blob": "92610bcb14f10e2fe0b673fc11240cae41eaf07b",
-        "bytes": 231945,
-        "sha256": "1ee4df5e9fe5209f3239d854fa0a4c587c36e24ffe634ae569abb7af06be60f8"
+        "blob": "442005a6881ffc329659f27afa5e5627e134fd78",
+        "bytes": 231969,
+        "sha256": "0fa11d22430186fcb3cccae0c92638c96faaf816faed7e5b62ab0c5e7bfe4731"
       },
       "baseline": {
         "mode": "100644",
-        "blob": "c833190107a3f378e3513718d92ea02dbc04b347",
-        "bytes": 231839,
-        "sha256": "f027bfa3c314c9d045a2446e9fef755fe8e4b67ac7ba49ceb0661302bac78654"
+        "blob": "959554f2d0ff7d2b795a3306556b7249105b996a",
+        "bytes": 231863,
+        "sha256": "8587a22f47ba3b5dfb1c5b99e0e968cf6e18d9f30fe4989cc79fd7e6b1a2d533"
       },
       "inverses": [
         {
-          "at": 175863,
+          "at": 175887,
           "current": "export async function doCrime(ch, crimeId, client, h, approach, puzzle, minigame = null) {\n",
           "baseline": "export async function doCrime(ch, crimeId, client, h, approach, puzzle) {\n"
         },
         {
-          "at": 178932,
+          "at": 178956,
           "current": "  // intended \"an unskilled crook fumbles the hard score\". Floor the chance at zero\n  // before applying minigame performance so the final probability stays valid.\n",
           "baseline": "  // intended \"an unskilled crook fumbles the hard score\"; the final chance is a probability, and\n  // Math.random() < (negative) is simply never true, so it needs no extra clamp.\n"
         },
         {
-          "at": 179204,
+          "at": 179228,
           "current": "  const chance = Math.max(0, Math.min(0.97, (c.base + statEdge\n    + gangLevel * 0.02 + (held.includes('brick') ? 0.02 : 0) + (rIdx >= 9 ? 0.02 : 0)) * ap.successMult)) * (minigame?.multiplier ?? 1);\n",
           "baseline": "  const chance = Math.min(0.97, (c.base + statEdge\n    + gangLevel * 0.02 + (held.includes('brick') ? 0.02 : 0) + (rIdx >= 9 ? 0.02 : 0)) * ap.successMult);\n"
         },
         {
-          "at": 189107,
+          "at": 189131,
           "current": "  return { ...outcome, ...(puzzleFeedback ? { puzzle: puzzleFeedback } : {}),\n    ...(minigame ? { minigame, successChance: chance } : {}) };\n",
           "baseline": "  return { ...outcome, ...(puzzleFeedback ? { puzzle: puzzleFeedback } : {}) };\n"
         }
@@ -387,15 +1519,15 @@ export const CRIME_MINIGAME_SOURCE = freeze({
     "src/server.js": {
       "current": {
         "mode": "100644",
-        "blob": "8cdaba2e08151ba01b537f2504a0332b7d322f93",
-        "bytes": 314319,
-        "sha256": "d72f0ef99769d2097fb60368ae96f4faaad0e6c2a92bc8ec67b82abf975eedd4"
+        "blob": "3267ca27efb276eb4d8077420a49c310a39942ae",
+        "bytes": 314911,
+        "sha256": "481545e4198c40ceff2614b404a40db1c1079458cda1cec6f1cde92f4d7fb15d"
       },
       "baseline": {
         "mode": "100644",
-        "blob": "c0b381e05fd9e6029394a8cdd7449c7d30e2a8ef",
-        "bytes": 313687,
-        "sha256": "248f866dd1269e350f92a5aeb2e5c7978741b9b42994f9e2b1a1268a37b7ffdc"
+        "blob": "e77f4de48b7ccb5b8f951363c02036003bcb9cd4",
+        "bytes": 314279,
+        "sha256": "f97f8c0cfcc764a22fff150a0653cd93f6d16b101e40cee04a766805b76e08e5"
       },
       "inverses": [
         {
@@ -404,72 +1536,72 @@ export const CRIME_MINIGAME_SOURCE = freeze({
           "baseline": ""
         },
         {
-          "at": 49660,
+          "at": 50177,
           "current": "    ...['feel', 'tools', 'identity', 'story', 'community', 'quests', 'clues', 'task-puzzles', 'crime-minigame'].flatMap(name => [[`ux-${name}.js`, 'application/javascript'], [`ux-${name}.css`, 'text/css']]),\n",
           "baseline": "    ...['feel', 'tools', 'identity', 'story', 'community', 'quests', 'clues', 'task-puzzles'].flatMap(name => [[`ux-${name}.js`, 'application/javascript'], [`ux-${name}.css`, 'text/css']]),\n"
         },
         {
-          "at": 132204,
+          "at": 132721,
           "current": "  app.get('/v1/crimes/:id/challenge', { preHandler: auth }, async (req) =>\n    G.readCharacter(pool, req.user.sub, (ch) => crimeChallenge(ch, req.params.id, req.query?.approach)));\n",
           "baseline": ""
         },
         {
-          "at": 132451,
+          "at": 132968,
           "current": "    G.withCharacter(pool, req.user.sub, (ch, client, h) => crimeWithDecisionContext(ch, req.params.id, client, h, req.body?.approach, req.body?.puzzle,\n      verifyCrimeMinigame(ch, req.params.id, req.body?.approach, req.body?.minigame))));\n",
           "baseline": "    G.withCharacter(pool, req.user.sub, (ch, client, h) => crimeWithDecisionContext(ch, req.params.id, client, h, req.body?.approach, req.body?.puzzle)));\n"
         },
         {
-          "at": 221809,
+          "at": 222401,
           "current": "  const performAgentAction = async (action, ch, client, h, lender = null, policy = null, minigame) => {\n",
           "baseline": "  const performAgentAction = async (action, ch, client, h, lender = null, policy = null) => {\n"
         },
         {
-          "at": 222043,
+          "at": 222635,
           "current": "      case 'crime': return crimeWithDecisionContext(ch, tail('/v1/crimes/'), client, h, action.body?.approach, action.body?.puzzle,\n        verifyCrimeMinigame(ch, tail('/v1/crimes/'), action.body?.approach, minigame));\n",
           "baseline": "      case 'crime': return G.doCrime(ch, tail('/v1/crimes/'), client, h, action.body?.approach, action.body?.puzzle);\n"
         },
         {
-          "at": 226142,
+          "at": 226734,
           "current": "  const executeAgentAction = async (client, ch, h, turnId, actionId, lender = null, decisionCallId = null, minigame) => {\n",
           "baseline": "  const executeAgentAction = async (client, ch, h, turnId, actionId, lender = null, decisionCallId = null) => {\n"
         },
         {
-          "at": 226591,
+          "at": 227183,
           "current": "    const result = await performAgentAction(action, ch, client, h, lender, current.policy, minigame);\n",
           "baseline": "    const result = await performAgentAction(action, ch, client, h, lender, current.policy);\n"
         },
         {
-          "at": 229624,
+          "at": 230216,
           "current": "          (ch, lender, client, h) => executeAgentAction(client, ch, h, turnId, actionId, lender, decisionCallId, req.body?.minigame), { meet: false });\n",
           "baseline": "          (ch, lender, client, h) => executeAgentAction(client, ch, h, turnId, actionId, lender, decisionCallId), { meet: false });\n"
         },
         {
-          "at": 229840,
+          "at": 230432,
           "current": "          (ch, client, h) => executeAgentAction(client, ch, h, turnId, actionId, null, decisionCallId, req.body?.minigame), agentActionLocks);\n",
           "baseline": "          (ch, client, h) => executeAgentAction(client, ch, h, turnId, actionId, null, decisionCallId), agentActionLocks);\n"
         },
         {
-          "at": 230310,
+          "at": 230902,
           "current": "            executeAgentAction(client, ch, h, turnId, actionId, owner, decisionCallId, req.body?.minigame));\n",
           "baseline": "            executeAgentAction(client, ch, h, turnId, actionId, owner, decisionCallId));\n"
         },
         {
-          "at": 230516,
+          "at": 231108,
           "current": "            executeAgentAction(client, ch, h, turnId, actionId, null, decisionCallId, req.body?.minigame), agentActionLocks);\n",
           "baseline": "            executeAgentAction(client, ch, h, turnId, actionId, null, decisionCallId), agentActionLocks);\n"
         },
         {
-          "at": 231012,
+          "at": 231604,
           "current": "            return executeAgentAction(client, ch, h, turnId, actionId, lender, decisionCallId, req.body?.minigame);\n",
           "baseline": "            return executeAgentAction(client, ch, h, turnId, actionId, lender, decisionCallId);\n"
         },
         {
-          "at": 231443,
+          "at": 232035,
           "current": "            return executeAgentAction(client, ch, h, turnId, actionId, null, decisionCallId, req.body?.minigame);\n",
           "baseline": "            return executeAgentAction(client, ch, h, turnId, actionId, null, decisionCallId);\n"
         },
         {
-          "at": 231700,
+          "at": 232292,
           "current": "          return executeAgentAction(client, ch, h, turnId, actionId, null, decisionCallId, req.body?.minigame);\n",
           "baseline": "          return executeAgentAction(client, ch, h, turnId, actionId, null, decisionCallId);\n"
         }
@@ -997,19 +2129,19 @@ export const CRIME_MINIGAME_SOURCE = freeze({
     "test/gates.js": {
       "current": {
         "mode": "100644",
-        "blob": "8009c375403bcbdce99a0c47cb3861e9837676a6",
-        "bytes": 509296,
-        "sha256": "d005accbb95eb56d3837c390ae81f83c2b8505db5738602da37d1465979822b1"
+        "blob": "429e154d0e9b1de88793ff958a0d535c2b89c5c1",
+        "bytes": 511590,
+        "sha256": "17d3d540991b68c6cf9302d69c17c409870461798051cca2f1939f302ef7bbe9"
       },
       "baseline": {
         "mode": "100644",
-        "blob": "5e8a574a5af9d8022b984cc4a248cdce21c42199",
-        "bytes": 509091,
-        "sha256": "1915d2d8afbc62a16d012827ee750f014e43ea08ebf3392b7b5982a6294739a2"
+        "blob": "70271681f96baf24dbbbe37d66287c262ad5ed83",
+        "bytes": 511385,
+        "sha256": "7efa56501608f71173a7a3ae54fd948850aaa981c7790835164b51b78ee0197f"
       },
       "inverses": [
         {
-          "at": 346824,
+          "at": 348976,
           "current": "    'test/crime-fixture.js': 'Import-only explicit crime challenge and browser-play helpers; mandatory minigame and gameplay suites exercise them while raw protocol tests retain missing-answer coverage.',\n",
           "baseline": ""
         }
@@ -1018,71 +2150,36 @@ export const CRIME_MINIGAME_SOURCE = freeze({
     "test/grand-strategy-source-transfer.js": {
       "current": {
         "mode": "100644",
-        "blob": "bbc5eeeabe6e17c4a31782d5530c57746ef9a6ff",
-        "bytes": 16423,
-        "sha256": "5e98f78f402eceacbab9daa4ce097d57277708ac1471886e904174388bf8c138"
+        "blob": "2dc535d071ef91d76102fa3621d939168967f872",
+        "bytes": 16020,
+        "sha256": "ffb2c1407de2e7d6579f5f893b1ca6e3fa4eb22fe2f447be31825f65d4d0c3f6"
       },
       "baseline": {
         "mode": "100644",
-        "blob": "041f7230763c34d61920f7f3906573c5166de303",
-        "bytes": 15675,
-        "sha256": "f165807e0061115875f89e33f4a99c2bb638e9106898f056537feebccd4f2340"
+        "blob": "1ea1ca6db425a398c252bcf4d3a61c18fd04442e",
+        "bytes": 15990,
+        "sha256": "7126a06aa14fbc1ef22982a98220b9fb9cbee077a413ec6efce022dca129e817"
       },
       "inverses": [
         {
-          "at": 425,
-          "current": "import { CRIME_MINIGAME_GENERATED_FILES, qualifyCrimeMinigameRelease, crimeMinigameActual,\n  crimeMinigameHistoricalInput, crimeMinigameHistoricalEntry } from '../tools/crime-minigame-source-compatibility.js';\n",
+          "at": 319,
+          "current": "import { crimeMinigameActual } from '../tools/crime-minigame-source-compatibility.js';\n",
           "baseline": ""
         },
         {
-          "at": 3042,
-          "current": "const successor = qualifyCrimeMinigameRelease();\nassert(postCandidate.every(file => excluded.has(file) || CRIME_MINIGAME_GENERATED_FILES.includes(file) || successor.files.includes(file)),\n  'Only the exact sealed minigame successor and fixed generated domains may follow the reviewed candidate');\n",
-          "baseline": "assert(postCandidate.every(file => excluded.has(file)), 'Only the fixed independently generated domains may follow the reviewed candidate');\n"
-        },
-        {
-          "at": 4369,
-          "current": "  assert.equal(crimeMinigameHistoricalEntry(file, heads.get(file), 'tree'), entry(file, pin, 'tree'), 'Whole genuine HEAD identity: ' + file);\n  assert.equal(crimeMinigameHistoricalEntry(file, indexes.get(file), 'index'), entry(file, pin, 'index'), 'Whole genuine stage-zero identity: ' + file);\n",
-          "baseline": "  assert.equal(heads.get(file), entry(file, pin, 'tree'), 'Whole genuine HEAD identity: ' + file);\n  assert.equal(indexes.get(file), entry(file, pin, 'index'), 'Whole genuine stage-zero identity: ' + file);\n"
-        },
-        {
-          "at": 4749,
-          "current": "  const physical = crimeMinigameHistoricalInput(file, fs.readFileSync(file));\n",
-          "baseline": "  const physical = fs.readFileSync(file);\n"
-        },
-        {
-          "at": 8050,
+          "at": 8022,
           "current": "const currentObserved = crimeMinigameActual(observedFile);\n",
-          "baseline": ""
+          "baseline": "const currentObserved = nativeGarageActual(observedFile);\n"
         },
         {
-          "at": 11346,
-          "current": "  fs.mkdirSync(path.join(temporary, 'public')); fs.writeFileSync(path.join(temporary, observedFile), currentObserved.physical);\n",
-          "baseline": "  fs.mkdirSync(path.join(temporary, 'public')); fs.writeFileSync(path.join(temporary, observedFile), observed.physical);\n"
+          "at": 12579,
+          "current": "  const currentRecordScript = ending => 'import { crimeMinigameActual } from '\n    + JSON.stringify(new URL('../tools/crime-minigame-source-compatibility.js', import.meta.url).href)\n",
+          "baseline": "  const currentRecordScript = ending => 'import { nativeGarageActual, nativeGarageHistoricalRecord } from '\n    + JSON.stringify(new URL('../tools/native-garage-source-transfer.js', import.meta.url).href)\n"
         },
         {
-          "at": 12878,
-          "current": "    + '; import { CRIME_MINIGAME_SOURCE } from ' + JSON.stringify(new URL('../tools/crime-minigame-source-compatibility.js', import.meta.url).href)\n",
-          "baseline": ""
-        },
-        {
-          "at": 13226,
-          "current": "    + '; const pin = CRIME_MINIGAME_SOURCE.files[file].current; const bytes = execFileSync(\"git\", [\"--no-replace-objects\", \"show\", \"HEAD:\" + file], { maxBuffer: 64 * 1024 * 1024, windowsHide: true });'\n",
-          "baseline": "    + '; const pin = source.files[file].current; const bytes = execFileSync(\"git\", [\"--no-replace-objects\", \"show\", \"HEAD:\" + file], { maxBuffer: 64 * 1024 * 1024, windowsHide: true });'\n"
-        },
-        {
-          "at": 14074,
-          "current": "  for (const physical of [currentObserved.committed, Buffer.from(currentObserved.committed.toString('utf8').replaceAll('\\n', '\\r\\n'))]) {\n",
-          "baseline": "  for (const physical of [observed.committed, Buffer.from(observed.committed.toString('utf8').replaceAll('\\n', '\\r\\n'))]) {\n"
-        },
-        {
-          "at": 14538,
-          "current": "  fs.writeFileSync(path.join(temporary, observedFile), currentObserved.physical);\n",
-          "baseline": "  fs.writeFileSync(path.join(temporary, observedFile), observed.physical);\n"
-        },
-        {
-          "at": 15166,
-          "current": "  fs.writeFileSync(path.join(temporary, observedFile), currentObserved.physical);\n",
-          "baseline": "  fs.writeFileSync(path.join(temporary, observedFile), observed.physical);\n"
+          "at": 13057,
+          "current": "    + '; const file = ' + JSON.stringify(observedFile) + '; const actual = crimeMinigameActual(file);'\n",
+          "baseline": "    + '; const file = ' + JSON.stringify(observedFile) + '; const actual = nativeGarageHistoricalRecord(file, nativeGarageActual(file));'\n"
         }
       ]
     },
@@ -1264,6 +2361,78 @@ export const CRIME_MINIGAME_SOURCE = freeze({
           "at": 12243,
           "current": "  await mcp.call('omerta_turn');\n  await mcp.call('omerta_act', { actionId: 'crew:open', operationId: 'turn-noncrime-1' });\n  assert.deepEqual(api.requests.filter(request => request.path === '/v1/agent/act').at(-1).body,\n    { turnId: 'turn_current', actionId: 'crew:open' }, 'noncrime actions continue to omit the minigame field');\n",
           "baseline": ""
+        }
+      ]
+    },
+    "test/native-garage-enterprise-source.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "2a5e29a8fe66934fa4d39e52b3bdb0634143e739",
+        "bytes": 4407,
+        "sha256": "3c579a38f6f7e9827582b63e8230126a0af95020358396ec919344a3649f13e2"
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "7b772874e0a56ca4f5c3864cb418ca3dfb6fb23c",
+        "bytes": 4431,
+        "sha256": "7306ea85dc794cd0a4bca5c8f74d4db7f21248a5065f56906bc76578b4517d60"
+      },
+      "inverses": [
+        {
+          "at": 955,
+          "current": "const changed = Object.entries(NATIVE_GARAGE_SOURCE.files).map(([file, row]) => ({ file, ...row.baseline }));\n",
+          "baseline": "const changed = declaration.files.filter(row => Object.hasOwn(NATIVE_GARAGE_SOURCE.files, row.file));\n"
+        },
+        {
+          "at": 3001,
+          "current": "const actual = [...new Set([...expectedNames, ...additions, NATIVE_GARAGE_SOURCE_METADATA])];\n",
+          "baseline": "const actual = [...expectedNames, ...additions.filter(file => !expectedNames.includes(file)), NATIVE_GARAGE_SOURCE_METADATA];\n"
+        }
+      ]
+    },
+    "test/native-garage-source-transfer.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "5d0566172c284902a3fcf76a37e88f1c14407249",
+        "bytes": 10153,
+        "sha256": "414985471b62eb3cc8ea5b3dc95bc09de7d7034eab7c487b56fb99d63c8027fb"
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "0dd5bd21d2694cd89afd14c65577229578c4f14b",
+        "bytes": 9802,
+        "sha256": "25e423b12d3f14520d64b53eb73f5ede80183ce0a0e11b786c0e103cd0ec8c88"
+      },
+      "inverses": [
+        {
+          "at": 284,
+          "current": "import { crimeMinigameActual } from '../tools/crime-minigame-source-compatibility.js';\n",
+          "baseline": ""
+        },
+        {
+          "at": 4710,
+          "current": "const currentObserved = crimeMinigameActual(observedFile);\n",
+          "baseline": ""
+        },
+        {
+          "at": 5268,
+          "current": "  + ' import {crimeMinigameHistoricalInput} from ' + JSON.stringify(new URL('../tools/crime-minigame-source-compatibility.js', import.meta.url).href) + ';'\n",
+          "baseline": ""
+        },
+        {
+          "at": 5819,
+          "current": "  + ' try {const actual=nativeGarageActual(file);assert(actual.physical.equals(crimeMinigameHistoricalInput(file,current)));assert.equal(calls,0);'\n",
+          "baseline": "  + ' try {const actual=nativeGarageActual(file);assert(actual.physical.equals(current));assert.equal(calls,0);'\n"
+        },
+        {
+          "at": 6825,
+          "current": "  fs.writeFileSync(target, currentObserved.physical);\n",
+          "baseline": "  fs.writeFileSync(target, observed.physical);\n"
+        },
+        {
+          "at": 7560,
+          "current": "  fs.writeFileSync(target, currentObserved.physical);\n",
+          "baseline": "  fs.writeFileSync(target, observed.physical);\n"
         }
       ]
     },
@@ -1774,54 +2943,50 @@ export const CRIME_MINIGAME_SOURCE = freeze({
         }
       ]
     },
-    "tools/grand-strategy-source-transfer.js": {
+    "tools/enterprise-native-questing.js": {
       "current": {
         "mode": "100644",
-        "blob": "604a64c119f8b1b414c91de8c1f1f7176af54a44",
-        "bytes": 16493,
-        "sha256": "2cd99ada525702f463c1796498e160e0913d441f95e9fd8b8b0f41c36701c7f2"
+        "blob": "ec7279f399c0e18ac28b333cacd5b119237198c2",
+        "bytes": 27973,
+        "sha256": "1dfd95a9148b8348495e69927667375da9e568964e827fdc1ea9a459bbe850d0"
       },
       "baseline": {
         "mode": "100644",
-        "blob": "fa3e2181dd25e67015363a007110018747a34568",
-        "bytes": 15556,
-        "sha256": "0a76d88ec53c23e48045a3702f647da8164d841e42a12f1236f66c1482ccf1dd"
+        "blob": "9c96e4e7edacd78cddf9c7f7b1c179e038f43185",
+        "bytes": 27732,
+        "sha256": "8c54c69eecd9ba81fef7a9d9d1402904d3067c14d59c85875de1e828775592f2"
       },
       "inverses": [
         {
-          "at": 337,
-          "current": "import { crimeMinigameHistoricalInput, crimeMinigameHistoricalEntry, crimeMinigameHistoricalRecord } from './crime-minigame-source-compatibility.js';\n\n// Actual-current checks must not consume a historical fixture's projected read.\nconst readActualPhysical = fs.readFileSync.bind(fs);\n",
+          "at": 15600,
+          "current": "  const declaredClosure = declaration.files.map(row => row.file);\n  const exactCurrentClosure = actualClosure.length === declaredClosure.length\n    && actualClosure.every((file, index) => file === declaredClosure[index]);\n  const historicalClosure = exactCurrentClosure ? actualClosure\n    : questingNativeClosure(file => nativeGarageEnterpriseHistoricalInput(file, read(file).canonical));\n  assertNativeGarageEnterpriseClosure(actualClosure, historicalClosure, declaredClosure);\n",
+          "baseline": "  const historicalClosure = questingNativeClosure(file => nativeGarageEnterpriseHistoricalInput(file, read(file).canonical));\n  assertNativeGarageEnterpriseClosure(actualClosure, historicalClosure, declaration.files.map(row => row.file));\n"
+        }
+      ]
+    },
+    "tools/grand-strategy-source-transfer.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "1d3c362fe5e21dde663b8bd476936d7069a01685",
+        "bytes": 16446,
+        "sha256": "cfe02ec6f62763980960b912ab6a422164e793d888e03c453fbeb2448a4937ef"
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "b335f3225ca9e30bdc9c3d9a6f25fc905d76c54e",
+        "bytes": 16304,
+        "sha256": "144d04856c3986eea90a9f5c3c5ceb43aef9a80c7ea83a7a22343adac3a0fb7c"
+      },
+      "inverses": [
+        {
+          "at": 479,
+          "current": "// Keep genuine physical admission independent of later historical read projections.\nconst readActualPhysical = fs.readFileSync.bind(fs);\n\n",
           "baseline": ""
         },
         {
-          "at": 10981,
-          "current": "  const rawHead = git('ls-tree', 'HEAD', '--', file).trim();\n  const rawIndex = git('ls-files', '--stage', '--', file).trim();\n  const stat = fs.lstatSync(file), rawPhysical = readActualPhysical(file);\n  const rawCommitted = execFileSync('git', ['--no-replace-objects', 'show', 'HEAD:' + file], {\n    windowsHide: true, maxBuffer: 64 * 1024 * 1024,\n  });\n  const headMatch = rawHead.match(/^(100644|100755) blob ([a-f0-9]{40})\\t/);\n  assert(headMatch, 'Regular genuine current Git source required');\n  const actual = crimeMinigameHistoricalRecord(file, { head: { mode: headMatch[1], blob: headMatch[2] },\n    index: rawIndex, committed: rawCommitted, physical: rawPhysical, regular: stat.isFile(), symbolic: stat.isSymbolicLink() });\n  const headEntry = entry(file, actual.head, 'tree'), { index, committed, physical } = actual;\n",
-          "baseline": "  const headEntry = git('ls-tree', 'HEAD', '--', file).trim();\n  const index = git('ls-files', '--stage', '--', file).trim();\n"
-        },
-        {
-          "at": 12025,
-          "current": "",
-          "baseline": "  const stat = fs.lstatSync(file), physical = fs.readFileSync(file);\n"
-        },
-        {
-          "at": 12121,
-          "current": "",
-          "baseline": "  const committed = execFileSync('git', ['--no-replace-objects', 'show', 'HEAD:' + file], {\n    windowsHide: true, maxBuffer: 64 * 1024 * 1024,\n  });\n"
-        },
-        {
-          "at": 14046,
-          "current": "  input = crimeMinigameHistoricalInput(file, input);\n",
-          "baseline": ""
-        },
-        {
-          "at": 14461,
-          "current": "  input = crimeMinigameHistoricalEntry(file, input, kind);\n",
-          "baseline": ""
-        },
-        {
-          "at": 14956,
-          "current": "  actual = crimeMinigameHistoricalRecord(file, actual);\n",
-          "baseline": ""
+          "at": 11294,
+          "current": "  try { physical = readActualPhysical(descriptor); } finally { fs.closeSync(descriptor); }\n",
+          "baseline": "  try { physical = fs.readFileSync(descriptor); } finally { fs.closeSync(descriptor); }\n"
         }
       ]
     },
@@ -1874,6 +3039,72 @@ export const CRIME_MINIGAME_SOURCE = freeze({
           "at": 26177,
           "current": "        await crime.tap();\n        await solveCrimeMinigame(page);\n        const response = await crimeResponse;\n",
           "baseline": "        const [, response] = await Promise.all([crime.tap(), crimeResponse]);\n"
+        }
+      ]
+    },
+    "tools/native-garage-source-transfer.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "25ac3e910e672cfb9d88cbd16fb93c7ee1202184",
+        "bytes": 14654,
+        "sha256": "10d488f480edfd0ed9ba990473e208cf8304847448cd8a9e1462932fe66c630c"
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "c9e269d7b6a08952e9e133357a5d13c5ac6c8368",
+        "bytes": 13474,
+        "sha256": "52cecfd128ae9cc4a930723465fee9e238a9df22da56d1ec3914ee18cfb0d1e9"
+      },
+      "inverses": [
+        {
+          "at": 355,
+          "current": "import { CRIME_MINIGAME_SOURCE, CRIME_MINIGAME_GENERATED_FILES, qualifyCrimeMinigameRelease,\n  crimeMinigameHistoricalInput, crimeMinigameHistoricalEntry, crimeMinigameHistoricalRecord } from './crime-minigame-source-compatibility.js';\n\n// Keep genuine physical admission independent of later historical read projections.\nconst readActualPhysical = fs.readFileSync.bind(fs);\n",
+          "baseline": ""
+        },
+        {
+          "at": 6705,
+          "current": "  const head = git('ls-tree', 'HEAD', '--', file).trim(), rawIndex = git('ls-files', '--stage', '--', file).trim();\n",
+          "baseline": "  const head = git('ls-tree', 'HEAD', '--', file).trim(), index = git('ls-files', '--stage', '--', file).trim();\n  assert.equal(head, entry(file, pin, 'tree'), 'Genuine current HEAD must equal reviewed native successor');\n  assert.equal(index, entry(file, pin, 'index'), 'Genuine stage-zero index must equal reviewed native successor');\n"
+        },
+        {
+          "at": 7100,
+          "current": "  let rawPhysical;\n  try { rawPhysical = readActualPhysical(descriptor); } finally { fs.closeSync(descriptor); }\n  const rawCommitted = execFileSync('git', ['--no-replace-objects', 'show', 'HEAD:' + file], {\n",
+          "baseline": "  let physical;\n  try { physical = fs.readFileSync(descriptor); } finally { fs.closeSync(descriptor); }\n  const committed = execFileSync('git', ['--no-replace-objects', 'show', 'HEAD:' + file], {\n"
+        },
+        {
+          "at": 7366,
+          "current": "  const match = head.match(/^(100644|100755) blob ([a-f0-9]{40})\\t/);\n  assert(match, 'Regular genuine current native source required');\n  const actual = crimeMinigameHistoricalRecord(file, { head: { mode: match[1], blob: match[2] },\n    index: rawIndex, committed: rawCommitted, physical: rawPhysical, regular: true, symbolic: false });\n  const { index, committed, physical } = actual;\n  assert.equal(entry(file, actual.head, 'tree'), entry(file, pin, 'tree'), 'Genuine current HEAD must equal reviewed native successor');\n  assert.equal(index, entry(file, pin, 'index'), 'Genuine stage-zero index must equal reviewed native successor');\n",
+          "baseline": ""
+        },
+        {
+          "at": 8474,
+          "current": "  return actual;\n",
+          "baseline": "  return { head: { mode: pin.mode, blob: pin.blob }, index, committed, physical,\n    regular: true, symbolic: false };\n"
+        },
+        {
+          "at": 9284,
+          "current": "  input = crimeMinigameHistoricalInput(file, input);\n",
+          "baseline": ""
+        },
+        {
+          "at": 9749,
+          "current": "  input = crimeMinigameHistoricalInput(file, input);\n",
+          "baseline": ""
+        },
+        {
+          "at": 10212,
+          "current": "  input = crimeMinigameHistoricalEntry(file, input, kind);\n",
+          "baseline": ""
+        },
+        {
+          "at": 10661,
+          "current": "  actual = crimeMinigameHistoricalRecord(file, actual);\n",
+          "baseline": ""
+        },
+        {
+          "at": 13545,
+          "current": "  const successor = new Set([...Object.keys(CRIME_MINIGAME_SOURCE.files), ...Object.keys(CRIME_MINIGAME_SOURCE.additions),\n    ...CRIME_MINIGAME_GENERATED_FILES]);\n  assert(after.every(file => excluded.has(file) || successor.has(file)), 'Only fixed independently generated domains or the exact sealed crime successor may follow the native source candidate');\n  qualifyCrimeMinigameRelease();\n",
+          "baseline": "  assert(after.every(file => excluded.has(file)), 'Only fixed independently generated domains may follow the native source candidate');\n"
         }
       ]
     },
@@ -2051,9 +3282,9 @@ export const CRIME_MINIGAME_SOURCE = freeze({
     },
     "test/crime-minigame-source-transfer.js": {
       "mode": "100644",
-      "blob": "18b4e38f2f25b85785280fbcb72e29ed5a0ee3b1",
-      "bytes": 9921,
-      "sha256": "fcd74cd43cef8ba85c1a96665a87a6fdc9e336b34214777551b1d0c6c40238ec"
+      "blob": "346942434315f4b096a171af5a70b452ee7f5f57",
+      "bytes": 10754,
+      "sha256": "f4cb006c8a728332b84716cf7dd37b5a20a982f62577a2a177b090bbde45cbb0"
     },
     "test/crime-minigame.js": {
       "mode": "100644",
@@ -2069,9 +3300,9 @@ export const CRIME_MINIGAME_SOURCE = freeze({
     },
     "tools/crime-minigame-source-compatibility.js": {
       "mode": "100644",
-      "blob": "a2cee69de2ea023736acf1ffd3ed441d3f30354d",
-      "bytes": 10171,
-      "sha256": "8efef1d7c115f8d2875648e61efdc2c1a34080c98451c2dae5ce422edff815e7"
+      "blob": "8da20d0ae4151ec497cb72d074c8c1197aac56e7",
+      "bytes": 10137,
+      "sha256": "66bb326130ac91b3e2681bfa1245ad69e0c2095d50cc15b74217ef839609904b"
     },
     "tools/seal-crime-minigame-source.js": {
       "mode": "100644",
@@ -2081,4 +3312,4 @@ export const CRIME_MINIGAME_SOURCE = freeze({
     }
   }
 });
-export const CRIME_MINIGAME_SOURCE_SHA256 = '6ec88bdfa33052ccc7163f35aa78a3248f79d88657afdd8d4efeaa2798e77f94';
+export const CRIME_MINIGAME_SOURCE_SHA256 = '222f6d6db35025118d4eb54bca7e44741386e5dd83ca6991cb0bc77bacd1965a';
