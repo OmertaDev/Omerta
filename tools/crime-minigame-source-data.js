@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const CRIME_MINIGAME_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_CRIME_MINIGAME_SOURCE_COMPARISON_ONLY",
-  "revision": "13284d8195f57b4e624a391f040862cdb720e3f5",
-  "tree": "e058424e3f20a76ae43d63eb5e1910a839df36e4",
+  "revision": "4a2659c264a8342ee967bfeaef967a9bebf16887",
+  "tree": "4b29e98e8a7161aa359a2dcc81913a0da86c45ea",
   "predecessor": "8672b0147daced1d957ef772c9bb3fc07b327f81",
   "predecessorTree": "f0eabc99bc07a4a65d6bb2c527cdd84e102f5398",
   "files": {
@@ -2393,9 +2393,9 @@ export const CRIME_MINIGAME_SOURCE = freeze({
     "test/native-garage-source-transfer.js": {
       "current": {
         "mode": "100644",
-        "blob": "5d0566172c284902a3fcf76a37e88f1c14407249",
-        "bytes": 10153,
-        "sha256": "414985471b62eb3cc8ea5b3dc95bc09de7d7034eab7c487b56fb99d63c8027fb"
+        "blob": "d3ccb791645784a1309d348b87fd2b6df7e3c638",
+        "bytes": 10306,
+        "sha256": "f0996dcde14aecbec07e9639d0dec7d337cbf6b096a639e241a8c1a7f6593280"
       },
       "baseline": {
         "mode": "100644",
@@ -2430,7 +2430,12 @@ export const CRIME_MINIGAME_SOURCE = freeze({
           "baseline": "  fs.writeFileSync(target, observed.physical);\n"
         },
         {
-          "at": 7560,
+          "at": 7170,
+          "current": "  const genuineLf = child(environment);\n  assert.equal(genuineLf.status, 0, genuineLf.stderr || genuineLf.stdout); positives++;\n  fs.writeFileSync(target, Buffer.from(currentObserved.committed.toString('utf8').replaceAll('\\n', '\\r\\n')));\n  const genuineCrlf = child(environment);\n  assert.equal(genuineCrlf.status, 0, genuineCrlf.stderr || genuineCrlf.stdout); positives++;\n",
+          "baseline": "  assert.equal(child(environment).status, 0); positives++;\n  fs.writeFileSync(target, Buffer.from(observed.committed.toString('utf8').replaceAll('\\n', '\\r\\n')));\n  assert.equal(child(environment).status, 0); positives++;\n"
+        },
+        {
+          "at": 7713,
           "current": "  fs.writeFileSync(target, currentObserved.physical);\n",
           "baseline": "  fs.writeFileSync(target, observed.physical);\n"
         }
@@ -3312,4 +3317,4 @@ export const CRIME_MINIGAME_SOURCE = freeze({
     }
   }
 });
-export const CRIME_MINIGAME_SOURCE_SHA256 = '222f6d6db35025118d4eb54bca7e44741386e5dd83ca6991cb0bc77bacd1965a';
+export const CRIME_MINIGAME_SOURCE_SHA256 = 'b81e6f7d80b5d5b013abdb2a68ec376c7d9bb5bb730ae83083fe76d634a2a730';
