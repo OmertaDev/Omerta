@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "a63fc883aab1f4a7df6c305b45325cfea7a164a6",
+  "sourceRevision": "b3b10552572506009997acd1687941b3c95a8959",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 19420,
-    "edges": 77087,
+    "nodes": 19422,
+    "edges": 77098,
     "byNodeType": {
       "Artifact": 7940,
       "Command": 324,
-      "Commit": 5901,
+      "Commit": 5903,
       "Contract": 156,
       "Document": 980,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 6136,
-      "CHANGED": 30161,
+      "CHANGED": 30170,
       "CONTAINS": 7961,
       "DECLARES": 324,
       "DEFINED_IN": 1822,
       "DEPENDS_ON": 69,
       "EXECUTES": 1281,
       "HANDLED_BY": 955,
-      "HAS_COMMIT": 5901,
+      "HAS_COMMIT": 5903,
       "IMPLEMENTS": 124,
       "IMPORTS": 9462,
       "INHERITS": 47,
@@ -251621,6 +251621,22 @@
       ]
     },
     {
+      "key": "Commit:ad5238f28aae113bb4e0442307ad309c520d05d4",
+      "type": "Commit",
+      "id": "ad5238f28aae113bb4e0442307ad309c520d05d4",
+      "label": "Refresh knowledge from clean sealed garage source",
+      "title": "Refresh knowledge from clean sealed garage source",
+      "date": "2026-11-16T07:51:36.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/ad5238f28aae113bb4e0442307ad309c520d05d4",
+      "provenance": [
+        {
+          "commit": "ad5238f28aae113bb4e0442307ad309c520d05d4",
+          "url": "https://github.com/OmertaDev/Omerta/commit/ad5238f28aae113bb4e0442307ad309c520d05d4"
+        }
+      ]
+    },
+    {
       "key": "Commit:ad6369d76087970206b2dcc54d5c498f529aaef6",
       "type": "Commit",
       "id": "ad6369d76087970206b2dcc54d5c498f529aaef6",
@@ -253777,6 +253793,22 @@
         {
           "commit": "b3a6a6212ce65a8e54fbc5d7e6c240764e97f801",
           "url": "https://github.com/OmertaDev/Omerta/commit/b3a6a6212ce65a8e54fbc5d7e6c240764e97f801"
+        }
+      ]
+    },
+    {
+      "key": "Commit:b3b10552572506009997acd1687941b3c95a8959",
+      "type": "Commit",
+      "id": "b3b10552572506009997acd1687941b3c95a8959",
+      "label": "Merge pull request #340 from OmertaDev/codex/native-garage-interface-and-sendready",
+      "title": "Merge pull request #340 from OmertaDev/codex/native-garage-interface-and-sendready",
+      "date": "2026-11-16T10:27:33.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/b3b10552572506009997acd1687941b3c95a8959",
+      "provenance": [
+        {
+          "commit": "b3b10552572506009997acd1687941b3c95a8959",
+          "url": "https://github.com/OmertaDev/Omerta/commit/b3b10552572506009997acd1687941b3c95a8959"
         }
       ]
     },
@@ -309314,6 +309346,9 @@
           "commit": "aceb2b2b8b6a6fce7edef22aaa315d2c71e709f5"
         },
         {
+          "commit": "ad5238f28aae113bb4e0442307ad309c520d05d4"
+        },
+        {
           "commit": "ada9bcd233a82d3a8cb1ffc959ebf3b88231871d"
         },
         {
@@ -311772,6 +311807,9 @@
         },
         {
           "commit": "ad19f033625e12a2952a2a3c654df206430c5447"
+        },
+        {
+          "commit": "ad5238f28aae113bb4e0442307ad309c520d05d4"
         },
         {
           "commit": "ad8acd73cf8c6fdd9b51e9b9ce2166d1fc40228d"
@@ -314732,6 +314770,9 @@
           "commit": "ad19f033625e12a2952a2a3c654df206430c5447"
         },
         {
+          "commit": "ad5238f28aae113bb4e0442307ad309c520d05d4"
+        },
+        {
           "commit": "ad8acd73cf8c6fdd9b51e9b9ce2166d1fc40228d"
         },
         {
@@ -317690,6 +317731,9 @@
           "commit": "ad19f033625e12a2952a2a3c654df206430c5447"
         },
         {
+          "commit": "ad5238f28aae113bb4e0442307ad309c520d05d4"
+        },
+        {
           "commit": "ad8acd73cf8c6fdd9b51e9b9ce2166d1fc40228d"
         },
         {
@@ -319119,6 +319163,9 @@
         },
         {
           "commit": "ab4ab2583c21ec6bdd9fddec90fc8cd3dd60904a"
+        },
+        {
+          "commit": "ad5238f28aae113bb4e0442307ad309c520d05d4"
         },
         {
           "commit": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a"
@@ -321434,6 +321481,9 @@
           "commit": "ad19f033625e12a2952a2a3c654df206430c5447"
         },
         {
+          "commit": "ad5238f28aae113bb4e0442307ad309c520d05d4"
+        },
+        {
           "commit": "ad8acd73cf8c6fdd9b51e9b9ce2166d1fc40228d"
         },
         {
@@ -323021,6 +323071,9 @@
           "commit": "aceb2b2b8b6a6fce7edef22aaa315d2c71e709f5"
         },
         {
+          "commit": "ad5238f28aae113bb4e0442307ad309c520d05d4"
+        },
+        {
           "commit": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a"
         },
         {
@@ -323696,6 +323749,9 @@
           "commit": "ab4ab2583c21ec6bdd9fddec90fc8cd3dd60904a"
         },
         {
+          "commit": "ad5238f28aae113bb4e0442307ad309c520d05d4"
+        },
+        {
           "commit": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a"
         },
         {
@@ -324213,6 +324269,9 @@
         },
         {
           "commit": "aab87060e775fb18ccf952c417b1583c40fca931"
+        },
+        {
+          "commit": "ad5238f28aae113bb4e0442307ad309c520d05d4"
         },
         {
           "commit": "aeae575a9a6a9c874840f0a4481d11cc303b9d0a"
@@ -337679,8 +337738,8 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "a63fc883aab1f4a7df6c305b45325cfea7a164a6",
-      "currentBranch": "codex/native-garage-interface-and-sendready",
+      "revision": "b3b10552572506009997acd1687941b3c95a8959",
+      "currentBranch": "main",
       "defaultBranch": "main",
       "visibility": "public",
       "worktreeDirty": false,
@@ -596750,6 +596809,78 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:ad5238f28aae113bb4e0442307ad309c520d05d4",
+      "to": "HistoricalArtifact:knowledge/generated/documents.md",
+      "provenance": {
+        "commit": "ad5238f28aae113bb4e0442307ad309c520d05d4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ad5238f28aae113bb4e0442307ad309c520d05d4",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "ad5238f28aae113bb4e0442307ad309c520d05d4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ad5238f28aae113bb4e0442307ad309c520d05d4",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "ad5238f28aae113bb4e0442307ad309c520d05d4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ad5238f28aae113bb4e0442307ad309c520d05d4",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "ad5238f28aae113bb4e0442307ad309c520d05d4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ad5238f28aae113bb4e0442307ad309c520d05d4",
+      "to": "HistoricalArtifact:knowledge/generated/graph.mmd",
+      "provenance": {
+        "commit": "ad5238f28aae113bb4e0442307ad309c520d05d4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ad5238f28aae113bb4e0442307ad309c520d05d4",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "ad5238f28aae113bb4e0442307ad309c520d05d4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ad5238f28aae113bb4e0442307ad309c520d05d4",
+      "to": "HistoricalArtifact:knowledge/generated/modules.md",
+      "provenance": {
+        "commit": "ad5238f28aae113bb4e0442307ad309c520d05d4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ad5238f28aae113bb4e0442307ad309c520d05d4",
+      "to": "HistoricalArtifact:knowledge/generated/routes.md",
+      "provenance": {
+        "commit": "ad5238f28aae113bb4e0442307ad309c520d05d4"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ad5238f28aae113bb4e0442307ad309c520d05d4",
+      "to": "HistoricalArtifact:knowledge/generated/schema.md",
+      "provenance": {
+        "commit": "ad5238f28aae113bb4e0442307ad309c520d05d4"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:ad6369d76087970206b2dcc54d5c498f529aaef6",
       "to": "Artifact:test/gameemployment-integration.js",
       "provenance": {
@@ -833499,6 +833630,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:ad5238f28aae113bb4e0442307ad309c520d05d4",
+      "provenance": {
+        "commit": "ad5238f28aae113bb4e0442307ad309c520d05d4"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:ad6369d76087970206b2dcc54d5c498f529aaef6",
       "provenance": {
         "commit": "ad6369d76087970206b2dcc54d5c498f529aaef6"
@@ -834574,6 +834713,14 @@
       "to": "Commit:b3a6a6212ce65a8e54fbc5d7e6c240764e97f801",
       "provenance": {
         "commit": "b3a6a6212ce65a8e54fbc5d7e6c240764e97f801"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:b3b10552572506009997acd1687941b3c95a8959",
+      "provenance": {
+        "commit": "b3b10552572506009997acd1687941b3c95a8959"
       }
     },
     {
