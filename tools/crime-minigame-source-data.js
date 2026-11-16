@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const CRIME_MINIGAME_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_CRIME_MINIGAME_SOURCE_COMPARISON_ONLY",
-  "revision": "22f69e4dc93f490de58a1cca8177fd86534b9d81",
-  "tree": "1e0cac0671e12466cf8a2861eb8ce10de6834740",
+  "revision": "9490821067ba703846c8ca7d25e4676cf1995d21",
+  "tree": "584fe2ca195c67e95f3f619502c240ede5aa35a8",
   "predecessor": "8672b0147daced1d957ef772c9bb3fc07b327f81",
   "predecessorTree": "f0eabc99bc07a4a65d6bb2c527cdd84e102f5398",
   "files": {
@@ -1324,9 +1324,9 @@ export const CRIME_MINIGAME_SOURCE = freeze({
     "package.json": {
       "current": {
         "mode": "100644",
-        "blob": "8ac7958703164e5f5b7d2c13816cdd50fcf08e01",
-        "bytes": 65055,
-        "sha256": "9e9b084efac7c9a0a24a839aceed84b23c1272ece8c93272a58642af93bbc454"
+        "blob": "ee24808b9b2a744f59e6e37d4b48b89d29047ae5",
+        "bytes": 65096,
+        "sha256": "1ea1d31154b26aacd772fa5b8c773bf9ff14d7007f52f19014f0bddcd0a33651"
       },
       "baseline": {
         "mode": "100644",
@@ -1346,7 +1346,12 @@ export const CRIME_MINIGAME_SOURCE = freeze({
           "baseline": "    \"test:release-source-transfer\": \"node test/economy-release-composition.js && node test/release-source-transfer.js\",\n"
         },
         {
-          "at": 64430,
+          "at": 60608,
+          "current": "    \"test:ux\": \"npm run test:ux:source && node test/ux-feedback.js && node test/circle-highlights.js && node test/ux-workspace.js && node test/ux-tactics.js && node test/ux-investigation-api.js && node test/ux-coordination.js && node test/ux-identity.js && node test/ux-story.js && node test/ux-community.js && node test/ux-tools.js && node test/ux-personal-control-host.js\",\n",
+          "baseline": "    \"test:ux\": \"npm run test:ux:source && node test/ux-feedback.js && node test/circle-highlights.js && node test/ux-workspace.js && node test/ux-tactics.js && node test/ux-investigation-api.js && node test/ux-coordination.js && node test/ux-identity.js && node test/ux-story.js && node test/ux-community.js && node test/ux-tools.js\",\n"
+        },
+        {
+          "at": 64471,
           "current": "    \"test:task-puzzles:browser\": \"node test/task-puzzles-browser.js && npm run test:crime-minigame:browser\"\n",
           "baseline": "    \"test:task-puzzles:browser\": \"node test/task-puzzles-browser.js\"\n"
         }
@@ -1418,6 +1423,27 @@ export const CRIME_MINIGAME_SOURCE = freeze({
         }
       ]
     },
+    "public/ux-feel.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "9d7294091ea756fdb4cdaf241febffa308403210",
+        "bytes": 25944,
+        "sha256": "6e5f83cf5d0ecbab9b39400c8568cd4f9c18e48f193fc8a0ae8dbcc3cddfc5ea"
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "36cadcdcb895b0c2c509043450cbda83b6b59ec5",
+        "bytes": 25896,
+        "sha256": "2d976d46caba82e4730debb7ad5a55c102202a7c3d2b2339310fee31e6c469d6"
+      },
+      "inverses": [
+        {
+          "at": 24331,
+          "current": "      const host = document.querySelector('#ux-workspace-toolbar .ux-workspace-controls') || document.getElementById('game-menu-content') || document.getElementById('top');\n",
+          "baseline": "      const host = document.querySelector('#ux-workspace-toolbar .ux-workspace-controls') || document.getElementById('top');\n"
+        }
+      ]
+    },
     "public/ux-tactics.js": {
       "current": {
         "mode": "100644",
@@ -1436,6 +1462,27 @@ export const CRIME_MINIGAME_SOURCE = freeze({
           "at": 16079,
           "current": "          <p class=\"ux-tactics-note\">${esc(found.actual[0]?.minigame?.note || '')} Rewards exist only after a successful, server-recorded action. Failed attempts can still spend nerve, add heat and start cooldowns.</p><button class=\"act\" type=\"button\" data-tactics-view=\"formula\">Explain these odds</button> <button class=\"act\" type=\"button\" data-tactics-open=\"streets\">Review the live job controls →</button>`}`;\n",
           "baseline": "          <p class=\"ux-tactics-note\">Rewards exist only after a successful, server-recorded action. Failed attempts can still spend nerve, add heat and start cooldowns.</p><button class=\"act\" type=\"button\" data-tactics-view=\"formula\">Explain these odds</button> <button class=\"act\" type=\"button\" data-tactics-open=\"streets\">Review the live job controls →</button>`}`;\n"
+        }
+      ]
+    },
+    "public/ux-tools.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "61d8cb2e140523e7c140409dbf699d7049d98691",
+        "bytes": 30625,
+        "sha256": "74257b1df90c1f419d776b14d5c6e02d1bfe7d1421c5be7abc0d4a90e37884d1"
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "6d1c80d99a4c9dcc690a8d55c25387130632ecc8",
+        "bytes": 30577,
+        "sha256": "093df46808351941ad18d5947de2d57e76b8f616d0353a15b7dbefa6cd35041e"
+      },
+      "inverses": [
+        {
+          "at": 29581,
+          "current": "      const host = document.querySelector('#ux-workspace-toolbar .ux-workspace-controls') || document.getElementById('game-menu-content') || document.getElementById('top');\n",
+          "baseline": "      const host = document.querySelector('#ux-workspace-toolbar .ux-workspace-controls') || document.getElementById('top');\n"
         }
       ]
     },
@@ -2799,6 +2846,27 @@ export const CRIME_MINIGAME_SOURCE = freeze({
         }
       ]
     },
+    "test/ux-feel-browser.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "ef603792ad25004f062393d5df05bfa9adc9a3d0",
+        "bytes": 7947,
+        "sha256": "2148d9417e1f169ab4359182c03c9ae15035c23c4ce205d6fb9601a737009d92"
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "c5eb508a978eff538c6832d15c64d2f015c54ef6",
+        "bytes": 7410,
+        "sha256": "92ad1bd954827b9043cb0bca34261e6a953b34e9b64fe2c748cabe873ac3796e"
+      },
+      "inverses": [
+        {
+          "at": 152,
+          "current": "  await page.evaluate(() => { const menu = document.createElement('div'); menu.id='game-menu-content'; document.getElementById('top').append(menu); feel.render(); tools.render(); });\n  for (const control of ['feel', 'tools']) {\n    assert.equal(await page.locator(`#game-menu-content [data-${control}-open]`).count(), 1, 'Personal controls remain in Menu until the workspace toolbar mounts.');\n    assert.equal(await page.locator(`#top > [data-${control}-open]`).count(), 0, 'Personal controls do not widen the mobile header row.');\n  }\n",
+          "baseline": ""
+        }
+      ]
+    },
     "test/ux-postgres-rls.js": {
       "current": {
         "mode": "100644",
@@ -3404,6 +3472,12 @@ export const CRIME_MINIGAME_SOURCE = freeze({
       "bytes": 10449,
       "sha256": "0c12adf8fdb67673e954b38478f5a069713a86f5d936f57df4624e5b64ffd62d"
     },
+    "test/ux-personal-control-host.js": {
+      "mode": "100644",
+      "blob": "a2fb98db38a43be2598ce5f41f7118f8825c5292",
+      "bytes": 2483,
+      "sha256": "29548a9930848ee4159d94c126f3063c031caa99ca46c80e0fb31467d3ad5173"
+    },
     "tools/crime-minigame-client.js": {
       "mode": "100644",
       "blob": "15652a33847158fc6aa1217b4d817fee56c61297",
@@ -3424,4 +3498,4 @@ export const CRIME_MINIGAME_SOURCE = freeze({
     }
   }
 });
-export const CRIME_MINIGAME_SOURCE_SHA256 = '6460ddb890fc8f420fa9edb4251f854ca2d116dbbfffe8026661fef68dd22e49';
+export const CRIME_MINIGAME_SOURCE_SHA256 = '1b2ed1d61c196e35e4a182d824cc350121813d3d6597ef7e9351fbac5348dce4';
