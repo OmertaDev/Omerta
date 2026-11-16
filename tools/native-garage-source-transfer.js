@@ -15,6 +15,8 @@ export const NATIVE_GARAGE_GENERATED_FILES = Object.freeze([
 ]);
 export const NATIVE_GARAGE_SCOPE = Object.freeze([
   ".github/workflows/ci.yml",
+  "docs/quest-quality-workgraph.json",
+  "docs/questing-workgraph.json",
   "docs/reviews/2026-11-15-native-garage-ui/LOCAL-REVIEW.md",
   "docs/reviews/2026-11-15-native-garage-ui/MANIFEST.json",
   "docs/reviews/2026-11-15-native-garage-ui/MANIFEST.sha256",
