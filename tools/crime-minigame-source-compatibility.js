@@ -5,6 +5,10 @@ import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { CRIME_MINIGAME_SOURCE as source, CRIME_MINIGAME_SOURCE_SHA256 } from './crime-minigame-source-data.js';
 
+// Historical fixtures project later reads. Actual-current admission must keep
+// reading the real file, with all HEAD/index/hash checks applied independently.
+const readActualPhysical = fs.readFileSync.bind(fs);
+
 export { source as CRIME_MINIGAME_SOURCE };
 export const CRIME_MINIGAME_PREDECESSOR = '9cf7ced8beedd0950018a14bbab71b08b71a3d5b';
 export const CRIME_MINIGAME_GENERATED_FILES = Object.freeze([
@@ -74,7 +78,7 @@ export function crimeMinigameActual(file) {
   const head = git('ls-tree', 'HEAD', '--', file).trim(), index = git('ls-files', '--stage', '--', file).trim();
   assert.equal(head, entry(file, pin, 'tree'), 'Genuine current HEAD must equal the reviewed minigame successor');
   assert.equal(index, entry(file, pin, 'index'), 'Genuine stage-zero index must equal the reviewed minigame successor');
-  const stat = fs.lstatSync(file), physical = fs.readFileSync(file);
+  const stat = fs.lstatSync(file), physical = readActualPhysical(file);
   assert(stat.isFile() && !stat.isSymbolicLink(), 'Regular physical reviewed source required');
   const committed = execFileSync('git', ['--no-replace-objects', 'show', 'HEAD:' + file], { windowsHide: true, maxBuffer: 64 * 1024 * 1024 });
   fingerprint(committed, pin);

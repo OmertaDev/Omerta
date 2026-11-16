@@ -6,6 +6,9 @@ import { execFileSync } from 'node:child_process';
 import { GRAND_STRATEGY_SOURCE, GRAND_STRATEGY_SOURCE_SHA256 } from './grand-strategy-source-data.js';
 import { crimeMinigameHistoricalInput, crimeMinigameHistoricalEntry, crimeMinigameHistoricalRecord } from './crime-minigame-source-compatibility.js';
 
+// Actual-current checks must not consume a historical fixture's projected read.
+const readActualPhysical = fs.readFileSync.bind(fs);
+
 export { GRAND_STRATEGY_SOURCE };
 export const GRAND_STRATEGY_PREDECESSOR = '7d52e1f08dc9540b182553b70dedfce4fecfac22';
 export const GRAND_STRATEGY_RELEASE_FILES = Object.freeze([
@@ -180,7 +183,7 @@ export function grandStrategyActual(file) {
   assert(pin, 'Only a finite reviewed successor domain');
   const rawHead = git('ls-tree', 'HEAD', '--', file).trim();
   const rawIndex = git('ls-files', '--stage', '--', file).trim();
-  const stat = fs.lstatSync(file), rawPhysical = fs.readFileSync(file);
+  const stat = fs.lstatSync(file), rawPhysical = readActualPhysical(file);
   const rawCommitted = execFileSync('git', ['--no-replace-objects', 'show', 'HEAD:' + file], {
     windowsHide: true, maxBuffer: 64 * 1024 * 1024,
   });

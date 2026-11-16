@@ -9,6 +9,7 @@ import { CRIME_MINIGAME_SOURCE as source, CRIME_MINIGAME_PREDECESSOR, CRIME_MINI
   qualifyCrimeMinigameRelease, crimeMinigameSourceDataBytes, crimeMinigameActual,
   qualifyCrimeMinigameSource, crimeMinigameHistoricalInput, crimeMinigameHistoricalEntry,
   crimeMinigameHistoricalRecord } from '../tools/crime-minigame-source-compatibility.js';
+import { grandStrategyActual } from '../tools/grand-strategy-source-transfer.js';
 
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], {
   encoding: 'utf8', windowsHide: true, maxBuffer: 64 * 1024 * 1024,
@@ -87,6 +88,29 @@ for (const file of ['__proto__', 'constructor', 'src/unreviewed-successor.js']) 
   const input = Buffer.from([0xff]); assert.throws(() => qualifyCrimeMinigameSource(file, input));
   assert.strictEqual(crimeMinigameHistoricalInput(file, input), input); refusals++;
 }
+// A cold historical fixture installs a projecting fs reader after importing
+// these qualifiers. Genuine current admission must never recurse into that view.
+const originalRead = fs.readFileSync, projectedFiles = ['src/game.js', 'src/server.js'];
+const projectByPath = new Map(projectedFiles.map((file) => [path.resolve(file), file]));
+let projectedReads = 0;
+try {
+  fs.readFileSync = (candidate, options) => {
+    const raw = originalRead(candidate, options), file = projectByPath.get(path.resolve(candidate));
+    if (!file) return raw;
+    projectedReads++;
+    return crimeMinigameHistoricalInput(file, raw);
+  };
+  for (const file of projectedFiles) {
+    const actual = crimeMinigameActual(file);
+    assert.equal(sha(actual.physical.toString('utf8').replaceAll('\r\n', '\n')), source.files[file].current.sha256);
+  }
+  assert.equal(sha(grandStrategyActual('src/server.js').committed), source.files['src/server.js'].baseline.sha256);
+  assert.equal(projectedReads, 0, 'Actual authority never re-enters a projected filesystem read');
+  for (const file of projectedFiles)
+    assert.equal(sha(fs.readFileSync(file).toString('utf8').replaceAll('\r\n', '\n')), source.files[file].baseline.sha256);
+  assert.equal(projectedReads, projectedFiles.length, 'Each explicit fixture read projects exactly once');
+  positives += projectedFiles.length * 2 + 1;
+} finally { fs.readFileSync = originalRead; }
 // Refusal controls use an isolated real index/worktree, leaving the caller untouched.
 const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'omerta-crime-source-'));
 try {
