@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "7d1f6f423532aec2dc617c10954ab8521a7f174f",
+  "sourceRevision": "8ffe454054051f96404d9ffe1b0c688ca3dc7e84",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 19381,
-    "edges": 77071,
+    "nodes": 19385,
+    "edges": 77085,
     "byNodeType": {
       "Artifact": 7914,
       "Command": 326,
-      "Commit": 5891,
+      "Commit": 5895,
       "Contract": 156,
       "Document": 978,
       "Domain": 13,
@@ -65,16 +65,16 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 6133,
-      "CHANGED": 30165,
+      "CHANGED": 30174,
       "CONTAINS": 7935,
       "DECLARES": 326,
       "DEFINED_IN": 1823,
       "DEPENDS_ON": 69,
       "EXECUTES": 1284,
       "HANDLED_BY": 956,
-      "HAS_COMMIT": 5891,
+      "HAS_COMMIT": 5895,
       "IMPLEMENTS": 124,
-      "IMPORTS": 9491,
+      "IMPORTS": 9492,
       "INHERITS": 47,
       "REFERENCES": 3981,
       "REPRESENTS": 2798,
@@ -152182,20 +152182,20 @@
       "path": "test/crime-minigame-source-transfer.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 8438,
-      "lines": 113,
-      "version": "732a0faba8176f09",
+      "bytes": 9921,
+      "lines": 137,
+      "version": "fcd74cd43cef8ba8",
       "text": true,
       "provenance": [
         {
           "file": "test/crime-minigame-source-transfer.js",
           "line": 1,
-          "version": "732a0faba8176f09"
+          "version": "fcd74cd43cef8ba8"
         }
       ],
-      "lastChangedAt": "2026-11-16T00:00:29.000Z",
+      "lastChangedAt": "2026-11-16T00:40:06.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "f69027d37c77f9952cdfaa0ab7993686bef23507"
+      "lastChangedCommit": "2fca87ce93c7999b86e1e83dbeeb2ccea39e35bd"
     },
     {
       "key": "Artifact:test/crime-minigame.js",
@@ -173738,20 +173738,20 @@
       "path": "tools/crime-minigame-source-compatibility.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 9954,
-      "lines": 143,
-      "version": "ec9c7d605f9796e0",
+      "bytes": 10171,
+      "lines": 147,
+      "version": "8efef1d7c115f8d2",
       "text": true,
       "provenance": [
         {
           "file": "tools/crime-minigame-source-compatibility.js",
           "line": 1,
-          "version": "ec9c7d605f9796e0"
+          "version": "8efef1d7c115f8d2"
         }
       ],
-      "lastChangedAt": "2026-11-16T00:00:29.000Z",
+      "lastChangedAt": "2026-11-16T00:40:06.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "f69027d37c77f9952cdfaa0ab7993686bef23507"
+      "lastChangedCommit": "2fca87ce93c7999b86e1e83dbeeb2ccea39e35bd"
     },
     {
       "key": "Artifact:tools/crime-minigame-source-data.js",
@@ -173761,20 +173761,20 @@
       "path": "tools/crime-minigame-source-data.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 110476,
+      "bytes": 110618,
       "lines": 1908,
-      "version": "769feeb9165f2b16",
+      "version": "9ab9307361463547",
       "text": true,
       "provenance": [
         {
           "file": "tools/crime-minigame-source-data.js",
           "line": 1,
-          "version": "769feeb9165f2b16"
+          "version": "9ab9307361463547"
         }
       ],
-      "lastChangedAt": "2026-11-16T00:00:58.000Z",
+      "lastChangedAt": "2026-11-16T00:40:34.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "d85fe266d24bac1f03f5ea4380e1b435abf50623"
+      "lastChangedCommit": "ed80bfafbaa9291daa0964bfcec51b7e33125286"
     },
     {
       "key": "Artifact:tools/current-economic-terms-source-data.js",
@@ -174726,18 +174726,18 @@
       "extension": ".js",
       "bytes": 501335,
       "lines": 13356,
-      "version": "b96b1f34334677aa",
+      "version": "ba3988e3671677d9",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-questing-inputs.js",
           "line": 1,
-          "version": "b96b1f34334677aa"
+          "version": "ba3988e3671677d9"
         }
       ],
-      "lastChangedAt": "2026-11-16T00:18:56.000Z",
+      "lastChangedAt": "2026-11-16T00:42:33.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "7d1f6f423532aec2dc617c10954ab8521a7f174f"
+      "lastChangedCommit": "8ffe454054051f96404d9ffe1b0c688ca3dc7e84"
     },
     {
       "key": "Artifact:tools/enterprise-native-questing-seal.js",
@@ -175954,20 +175954,20 @@
       "path": "tools/grand-strategy-source-transfer.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 16355,
-      "lines": 268,
-      "version": "625db0ad05ff4bcc",
+      "bytes": 16493,
+      "lines": 271,
+      "version": "2cd99ada525702f4",
       "text": true,
       "provenance": [
         {
           "file": "tools/grand-strategy-source-transfer.js",
           "line": 1,
-          "version": "625db0ad05ff4bcc"
+          "version": "2cd99ada525702f4"
         }
       ],
-      "lastChangedAt": "2026-11-15T23:41:04.000Z",
+      "lastChangedAt": "2026-11-16T00:40:06.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "4adbde51e7d4571f265ff6a0fc1aeebb27130aea"
+      "lastChangedCommit": "2fca87ce93c7999b86e1e83dbeeb2ccea39e35bd"
     },
     {
       "key": "Artifact:tools/graph.js",
@@ -203721,6 +203721,22 @@
       ]
     },
     {
+      "key": "Commit:2fca87ce93c7999b86e1e83dbeeb2ccea39e35bd",
+      "type": "Commit",
+      "id": "2fca87ce93c7999b86e1e83dbeeb2ccea39e35bd",
+      "label": "Keep genuine source authority independent of fixture projections",
+      "title": "Keep genuine source authority independent of fixture projections",
+      "date": "2026-11-16T00:40:06.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/2fca87ce93c7999b86e1e83dbeeb2ccea39e35bd",
+      "provenance": [
+        {
+          "commit": "2fca87ce93c7999b86e1e83dbeeb2ccea39e35bd",
+          "url": "https://github.com/OmertaDev/Omerta/commit/2fca87ce93c7999b86e1e83dbeeb2ccea39e35bd"
+        }
+      ]
+    },
+    {
       "key": "Commit:2fdbd3f4a1edc9ed9d558c079b28f941dd1cfd74",
       "type": "Commit",
       "id": "2fdbd3f4a1edc9ed9d558c079b28f941dd1cfd74",
@@ -212373,6 +212389,22 @@
         {
           "commit": "46494b6c68b384a9da37e78313bbaacb4c9ab709",
           "url": "https://github.com/OmertaDev/Omerta/commit/46494b6c68b384a9da37e78313bbaacb4c9ab709"
+        }
+      ]
+    },
+    {
+      "key": "Commit:464e6387236f62aa921e0c9ac039b6ff41ea55fc",
+      "type": "Commit",
+      "id": "464e6387236f62aa921e0c9ac039b6ff41ea55fc",
+      "label": "chore(knowledge): refresh current native input metadata",
+      "title": "chore(knowledge): refresh current native input metadata",
+      "date": "2026-11-16T00:25:39.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/464e6387236f62aa921e0c9ac039b6ff41ea55fc",
+      "provenance": [
+        {
+          "commit": "464e6387236f62aa921e0c9ac039b6ff41ea55fc",
+          "url": "https://github.com/OmertaDev/Omerta/commit/464e6387236f62aa921e0c9ac039b6ff41ea55fc"
         }
       ]
     },
@@ -239701,6 +239733,22 @@
         {
           "commit": "8ff1607799f714635140c3b58c531a1b2b5f35f3",
           "url": "https://github.com/OmertaDev/Omerta/commit/8ff1607799f714635140c3b58c531a1b2b5f35f3"
+        }
+      ]
+    },
+    {
+      "key": "Commit:8ffe454054051f96404d9ffe1b0c688ca3dc7e84",
+      "type": "Commit",
+      "id": "8ffe454054051f96404d9ffe1b0c688ca3dc7e84",
+      "label": "Refresh native input pins for historical physical reader fix",
+      "title": "Refresh native input pins for historical physical reader fix",
+      "date": "2026-11-16T00:42:33.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/8ffe454054051f96404d9ffe1b0c688ca3dc7e84",
+      "provenance": [
+        {
+          "commit": "8ffe454054051f96404d9ffe1b0c688ca3dc7e84",
+          "url": "https://github.com/OmertaDev/Omerta/commit/8ffe454054051f96404d9ffe1b0c688ca3dc7e84"
         }
       ]
     },
@@ -273481,6 +273529,22 @@
       ]
     },
     {
+      "key": "Commit:ed80bfafbaa9291daa0964bfcec51b7e33125286",
+      "type": "Commit",
+      "id": "ed80bfafbaa9291daa0964bfcec51b7e33125286",
+      "label": "Seal genuine filesystem reader correction",
+      "title": "Seal genuine filesystem reader correction",
+      "date": "2026-11-16T00:40:34.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/ed80bfafbaa9291daa0964bfcec51b7e33125286",
+      "provenance": [
+        {
+          "commit": "ed80bfafbaa9291daa0964bfcec51b7e33125286",
+          "url": "https://github.com/OmertaDev/Omerta/commit/ed80bfafbaa9291daa0964bfcec51b7e33125286"
+        }
+      ]
+    },
+    {
       "key": "Commit:ed8cdb192c5ad496aa6c56fd9b771edc0418808c",
       "type": "Commit",
       "id": "ed8cdb192c5ad496aa6c56fd9b771edc0418808c",
@@ -298977,7 +299041,7 @@
       "provenance": [
         {
           "file": "test/crime-minigame-source-transfer.js",
-          "line": 98
+          "line": 122
         },
         {
           "file": "test/grand-strategy-source-transfer.js",
@@ -309741,6 +309805,9 @@
           "commit": "46341d551fa5626c13d0662b6f93c06319b83555"
         },
         {
+          "commit": "464e6387236f62aa921e0c9ac039b6ff41ea55fc"
+        },
+        {
           "commit": "4661f2298ccc6f3524a451091c5085b89ec748fe"
         },
         {
@@ -312705,6 +312772,9 @@
           "commit": "46341d551fa5626c13d0662b6f93c06319b83555"
         },
         {
+          "commit": "464e6387236f62aa921e0c9ac039b6ff41ea55fc"
+        },
+        {
           "commit": "4661f2298ccc6f3524a451091c5085b89ec748fe"
         },
         {
@@ -315667,6 +315737,9 @@
         },
         {
           "commit": "46341d551fa5626c13d0662b6f93c06319b83555"
+        },
+        {
+          "commit": "464e6387236f62aa921e0c9ac039b6ff41ea55fc"
         },
         {
           "commit": "4661f2298ccc6f3524a451091c5085b89ec748fe"
@@ -319420,6 +319493,9 @@
         },
         {
           "commit": "46341d551fa5626c13d0662b6f93c06319b83555"
+        },
+        {
+          "commit": "464e6387236f62aa921e0c9ac039b6ff41ea55fc"
         },
         {
           "commit": "4661f2298ccc6f3524a451091c5085b89ec748fe"
@@ -336867,7 +336943,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "7d1f6f423532aec2dc617c10954ab8521a7f174f",
+      "revision": "8ffe454054051f96404d9ffe1b0c688ca3dc7e84",
       "currentBranch": "codex/mandatory-crime-minigame-20261115",
       "defaultBranch": "main",
       "visibility": "public",
@@ -378866,13 +378942,13 @@
       "type": "TestSuite",
       "id": "test/crime-minigame-source-transfer.js",
       "label": "test/crime-minigame-source-transfer.js",
-      "lines": 113,
-      "version": "732a0faba8176f09",
+      "lines": 137,
+      "version": "fcd74cd43cef8ba8",
       "provenance": [
         {
           "file": "test/crime-minigame-source-transfer.js",
           "line": 1,
-          "version": "732a0faba8176f09"
+          "version": "fcd74cd43cef8ba8"
         }
       ]
     },
@@ -484424,6 +484500,30 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:2fca87ce93c7999b86e1e83dbeeb2ccea39e35bd",
+      "to": "Artifact:test/crime-minigame-source-transfer.js",
+      "provenance": {
+        "commit": "2fca87ce93c7999b86e1e83dbeeb2ccea39e35bd"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2fca87ce93c7999b86e1e83dbeeb2ccea39e35bd",
+      "to": "Artifact:tools/crime-minigame-source-compatibility.js",
+      "provenance": {
+        "commit": "2fca87ce93c7999b86e1e83dbeeb2ccea39e35bd"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:2fca87ce93c7999b86e1e83dbeeb2ccea39e35bd",
+      "to": "Artifact:tools/grand-strategy-source-transfer.js",
+      "provenance": {
+        "commit": "2fca87ce93c7999b86e1e83dbeeb2ccea39e35bd"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:2fdbd3f4a1edc9ed9d558c079b28f941dd1cfd74",
       "to": "Artifact:.github/workflows/ci.yml",
       "provenance": {
@@ -506148,6 +506248,38 @@
       "to": "Artifact:tools/site-basics-source-data.js",
       "provenance": {
         "commit": "46494b6c68b384a9da37e78313bbaacb4c9ab709"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:464e6387236f62aa921e0c9ac039b6ff41ea55fc",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "464e6387236f62aa921e0c9ac039b6ff41ea55fc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:464e6387236f62aa921e0c9ac039b6ff41ea55fc",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "464e6387236f62aa921e0c9ac039b6ff41ea55fc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:464e6387236f62aa921e0c9ac039b6ff41ea55fc",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "464e6387236f62aa921e0c9ac039b6ff41ea55fc"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:464e6387236f62aa921e0c9ac039b6ff41ea55fc",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "464e6387236f62aa921e0c9ac039b6ff41ea55fc"
       }
     },
     {
@@ -569380,6 +569512,14 @@
       "to": "HistoricalArtifact:knowledge/generated/inventory.md",
       "provenance": {
         "commit": "8ff1607799f714635140c3b58c531a1b2b5f35f3"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:8ffe454054051f96404d9ffe1b0c688ca3dc7e84",
+      "to": "Artifact:tools/enterprise-native-questing-inputs.js",
+      "provenance": {
+        "commit": "8ffe454054051f96404d9ffe1b0c688ca3dc7e84"
       }
     },
     {
@@ -668492,6 +668632,14 @@
       "to": "Artifact:OMERTA_LAUNCH_STATUS.md",
       "provenance": {
         "commit": "ed78a315de2b0ea235082f73f644d49fe146f652"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ed80bfafbaa9291daa0964bfcec51b7e33125286",
+      "to": "Artifact:tools/crime-minigame-source-data.js",
+      "provenance": {
+        "commit": "ed80bfafbaa9291daa0964bfcec51b7e33125286"
       }
     },
     {
@@ -808867,6 +809015,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:2fca87ce93c7999b86e1e83dbeeb2ccea39e35bd",
+      "provenance": {
+        "commit": "2fca87ce93c7999b86e1e83dbeeb2ccea39e35bd"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:2fdbd3f4a1edc9ed9d558c079b28f941dd1cfd74",
       "provenance": {
         "commit": "2fdbd3f4a1edc9ed9d558c079b28f941dd1cfd74"
@@ -813190,6 +813346,14 @@
       "to": "Commit:46494b6c68b384a9da37e78313bbaacb4c9ab709",
       "provenance": {
         "commit": "46494b6c68b384a9da37e78313bbaacb4c9ab709"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:464e6387236f62aa921e0c9ac039b6ff41ea55fc",
+      "provenance": {
+        "commit": "464e6387236f62aa921e0c9ac039b6ff41ea55fc"
       }
     },
     {
@@ -826854,6 +827018,14 @@
       "to": "Commit:8ff1607799f714635140c3b58c531a1b2b5f35f3",
       "provenance": {
         "commit": "8ff1607799f714635140c3b58c531a1b2b5f35f3"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:8ffe454054051f96404d9ffe1b0c688ca3dc7e84",
+      "provenance": {
+        "commit": "8ffe454054051f96404d9ffe1b0c688ca3dc7e84"
       }
     },
     {
@@ -843742,6 +843914,14 @@
       "to": "Commit:ed78a315de2b0ea235082f73f644d49fe146f652",
       "provenance": {
         "commit": "ed78a315de2b0ea235082f73f644d49fe146f652"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:ed80bfafbaa9291daa0964bfcec51b7e33125286",
+      "provenance": {
+        "commit": "ed80bfafbaa9291daa0964bfcec51b7e33125286"
       }
     },
     {
@@ -880729,10 +880909,19 @@
     {
       "type": "IMPORTS",
       "from": "Artifact:test/crime-minigame-source-transfer.js",
+      "to": "Artifact:tools/grand-strategy-source-transfer.js",
+      "provenance": {
+        "file": "test/crime-minigame-source-transfer.js",
+        "line": 12
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:test/crime-minigame-source-transfer.js",
       "to": "ExternalDependency: + JSON.stringify(new URL(",
       "provenance": {
         "file": "test/crime-minigame-source-transfer.js",
-        "line": 98
+        "line": 122
       }
     },
     {
