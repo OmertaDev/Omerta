@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const CRIME_MINIGAME_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_CRIME_MINIGAME_SOURCE_COMPARISON_ONLY",
-  "revision": "fea0ad4b00fb36ad9a7db1f0a838f3e7656e39e0",
-  "tree": "b92a6f0dcabff8fd666c4216ba35eef6262a0187",
+  "revision": "8b205f333c7cf8ca275b2b0e21b9c85620e4e86c",
+  "tree": "542d1484affd112f04cc0ca613a271f756650a35",
   "predecessor": "9cf7ced8beedd0950018a14bbab71b08b71a3d5b",
   "predecessorTree": "9477c277cca6b47b3a3ce20901e85a451243642f",
   "files": {
@@ -586,9 +586,9 @@ export const CRIME_MINIGAME_SOURCE = freeze({
     "test/agent-alpha.js": {
       "current": {
         "mode": "100644",
-        "blob": "25cedaf4337d4960e7753714589e21b0f60ff44e",
-        "bytes": 117655,
-        "sha256": "3dc7fe94479ce90984944da40136e6a3c093d1686ea1553762e1e451042c7ab3"
+        "blob": "06a8bb7e9cc5f7227b6d28166e2143770015ff39",
+        "bytes": 120987,
+        "sha256": "aeb475d58f4ccfb0013e4b5613469ee6ac271e66a260448ca26dc343963a5431"
       },
       "baseline": {
         "mode": "100644",
@@ -599,13 +599,60 @@ export const CRIME_MINIGAME_SOURCE = freeze({
       "inverses": [
         {
           "at": 109407,
-          "current": "async function crimeMinigameApi({ dropFirst = false, staleFirst = false,\n  challengePath = '/v1/crimes/pick/challenge?approach=standard' } = {}) {\n  const app = Fastify({ logger: false }), receipts = new Map();\n  const state = { turnCalls: 0, challengeCalls: 0, actBodies: [], actKeys: [], mutations: 0 };\n  const rounds = [[0, 1, 2], [3, 0, 1, 2], [1, 2, 3, 0, 1]];\n  app.get('/v1/session', async () => ({ authed: true, hasCharacter: true, agent: true,\n    character: { id: 'crime-agent', name: 'Alpha Machine', generation: 1 } }));\n  app.get('/v1/agent/turn', async () => {\n    state.turnCalls++;\n    return { turnId: `crime-turn-${state.turnCalls}`, recommendedActionId: 'crime:pick:standard', policy: POLICY,\n      actions: [{ id: 'crime:pick:standard', kind: 'crime', method: 'POST', path: '/v1/crimes/pick',\n        body: { approach: 'standard', prompt: 'do not persist authored bodies' }, executable: true,\n        minigame: { required: true, kind: 'signal-lock', challengePath } }] };\n  });\n  app.get('/v1/crimes/pick/challenge', async () => {\n    state.challengeCalls++;\n    return { minigame: { kind: 'signal-lock', token: `signal-token-secret-${state.challengeCalls}`,\n      rounds, maxMistakes: 3, expiresAt: new Date(Date.now() + 300000).toISOString() } };\n  });\n  app.post('/v1/agent/act', async (req, reply) => {\n    state.actBodies.push(req.body); state.actKeys.push(req.headers['idempotency-key']);\n    if (!req.body.minigame) return reply.code(400).send({ error: 'crime_minigame_required' });\n    if (staleFirst && state.actBodies.length === 1) return reply.code(400).send({ error: 'stale_crime_minigame' });\n    assert.deepEqual(req.body.minigame.moves, rounds.flat(), 'the runner submits the complete public signal');\n    const key = req.headers['idempotency-key'];\n    if (!receipts.has(key)) {\n      state.mutations++;\n      receipts.set(key, { result: { ok: true }, turn: { turnId: 'idle', recommendedActionId: null, policy: POLICY, actions: [] } });\n    }\n    if (dropFirst && state.actBodies.length === 1) { reply.hijack(); reply.raw.destroy(); return; }\n    return receipts.get(key);\n  });\n  await app.listen({ port: 0, host: '127.0.0.1' });\n  return { baseUrl: `http://127.0.0.1:${app.server.address().port}`, state, rounds, close: () => app.close() };\n}\n\nasync function crimeMinigameRecoveryTest() {\n  const api = await crimeMinigameApi({ dropFirst: true });\n  await withReadySession(api, 'omerta-agent-alpha-crime-', async ({ sessionFile, reportFile }) => {\n    const inspectFetch = async (url, options) => {\n      if (new URL(url).pathname === '/v1/agent/act') {\n        const pending = JSON.parse(await readFile(sessionFile, 'utf8')).pending;\n        const body = JSON.parse(options.body);\n        assert.deepEqual(pending.minigame, body.minigame, 'the exact minigame is durable before every POST');\n        assert.deepEqual(Object.keys(pending).sort(), ['actionId', 'minigame', 'operationId', 'startedAt', 'turnId']);\n      }\n      return fetch(url, options);\n    };\n    await assert.rejects(runAgentAlpha({ baseUrl: api.baseUrl, sessionFile, reportFile, maxActions: 1,\n      fetchImpl: inspectFetch }), /fetch|socket|other side|terminated/i);\n    const pending = JSON.parse(await readFile(sessionFile, 'utf8')).pending;\n    assert.deepEqual(pending.minigame, { token: 'signal-token-secret-1', moves: api.rounds.flat() });\n    const resumed = await runAgentAlpha({ baseUrl: api.baseUrl, sessionFile, reportFile, maxActions: 1,\n      fetchImpl: inspectFetch });\n    assert.equal(resumed.actions, 1);\n    assert.equal(api.state.challengeCalls, 1, 'an ambiguous replay never fetches or substitutes another challenge');\n    assert.equal(api.state.turnCalls, 1, 'pending recovery uses its original turn');\n    assert.deepEqual(api.state.actBodies[0], api.state.actBodies[1]);\n    assert.equal(api.state.actKeys[0], api.state.actKeys[1]);\n    assert.equal(api.state.mutations, 1, 'the replay confirms exactly one committed crime');\n    assert.equal(JSON.parse(await readFile(sessionFile, 'utf8')).pending, null);\n    const report = await readFile(reportFile, 'utf8');\n    assert(!report.includes('signal-token-secret') && !report.includes('do not persist authored bodies'),\n      'minigame credentials and authored action bodies stay out of reports');\n  });\n}\n\nasync function crimeMinigameStaleTest() {\n  for (const legacy of [false, true]) {\n    const api = await crimeMinigameApi({ staleFirst: !legacy });\n    await withReadySession(api, 'omerta-agent-alpha-crime-stale-', async ({ sessionFile, reportFile }) => {\n      if (legacy) await writePrivateSession(sessionFile, JSON.stringify(sessionFor(api.baseUrl, {\n        pending: { operationId: 'old-crime-attempt', turnId: 'old-turn', actionId: 'crime:pick:standard', startedAt: new Date().toISOString() },\n      })));\n      const summary = await runAgentAlpha({ baseUrl: api.baseUrl, sessionFile, reportFile, maxActions: 2 });\n      assert.equal(summary.actions, 1, 'a definitive minigame refusal refreshes authority within the attempt budget');\n      assert.equal(api.state.mutations, 1);\n      assert.notEqual(api.state.actKeys[0], api.state.actKeys[1], 'a replacement challenge starts a new logical attempt');\n      assert.equal(api.state.challengeCalls, legacy ? 1 : 2);\n      assert.equal(JSON.parse(await readFile(sessionFile, 'utf8')).pending, null);\n      const report = await readFile(reportFile, 'utf8');\n      assert(report.includes(legacy ? 'crime_minigame_required' : 'stale_crime_minigame'));\n    });\n  }\n}\n\nasync function crimeMinigameOriginTest() {\n  const api = await crimeMinigameApi({ challengePath: '//attacker.invalid/collect' });\n  await withReadySession(api, 'omerta-agent-alpha-crime-origin-', async ({ sessionFile, reportFile }) => {\n    await assert.rejects(runAgentAlpha({ baseUrl: api.baseUrl, sessionFile, reportFile, maxActions: 1 }),\n      /unsupported crime minigame/);\n    assert.equal(api.state.challengeCalls, 0);\n    assert.equal(api.state.actBodies.length, 0, 'an invalid challenge path cannot cause a mutation');\n    assert.equal(JSON.parse(await readFile(sessionFile, 'utf8')).pending, null);\n  });\n}\n\nif (process.argv.includes('--crime-minigame')) {\n  await crimeMinigameRecoveryTest();\n  await crimeMinigameStaleTest();\n  await crimeMinigameOriginTest();\n} else if (process.argv.includes('--decision-recovery')) {\n",
+          "current": "async function crimeMinigameApi({ dropFirst = false, staleFirst = false,\n  challengePath = '/v1/crimes/pick/challenge?approach=standard', reviseTurn } = {}) {\n  const app = Fastify({ logger: false }), receipts = new Map();\n  const state = { turnCalls: 0, challengeCalls: 0, actBodies: [], actKeys: [], mutations: 0 };\n  const rounds = [[0, 1, 2], [3, 0, 1, 2], [1, 2, 3, 0, 1]];\n  app.get('/v1/session', async () => ({ authed: true, hasCharacter: true, agent: true,\n    character: { id: 'crime-agent', name: 'Alpha Machine', generation: 1 } }));\n  app.get('/v1/agent/turn', async () => {\n    state.turnCalls++;\n    const turn = { turnId: `crime-turn-${state.turnCalls}`, recommendedActionId: 'crime:pick:standard', policy: POLICY,\n      state: { identity: { id: 'crime-agent', generation: 1, level: 1 } },\n      actions: [{ id: 'crime:pick:standard', kind: 'crime', method: 'POST', path: '/v1/crimes/pick',\n        body: { approach: 'standard', prompt: 'do not persist authored bodies' }, executable: true,\n        minigame: { required: true, kind: 'signal-lock', challengePath } }] };\n    if (reviseTurn) reviseTurn(turn, state.turnCalls);\n    return turn;\n  });\n  app.get('/v1/crimes/pick/challenge', async () => {\n    state.challengeCalls++;\n    return { minigame: { kind: 'signal-lock', token: `signal-token-secret-${state.challengeCalls}`,\n      rounds, maxMistakes: 3, expiresAt: new Date(Date.now() + 300000).toISOString() } };\n  });\n  app.post('/v1/agent/act', async (req, reply) => {\n    state.actBodies.push(req.body); state.actKeys.push(req.headers['idempotency-key']);\n    if (!req.body.minigame) return reply.code(400).send({ error: 'crime_minigame_required' });\n    if (staleFirst && state.actBodies.length === 1) return reply.code(400).send({ error: 'stale_crime_minigame' });\n    assert.deepEqual(req.body.minigame.moves, rounds.flat(), 'the runner submits the complete public signal');\n    const key = req.headers['idempotency-key'];\n    if (!receipts.has(key)) {\n      state.mutations++;\n      receipts.set(key, { result: { ok: true }, turn: { turnId: 'idle', recommendedActionId: null, policy: POLICY, actions: [] } });\n    }\n    if (dropFirst && state.actBodies.length === 1) { reply.hijack(); reply.raw.destroy(); return; }\n    return receipts.get(key);\n  });\n  await app.listen({ port: 0, host: '127.0.0.1' });\n  return { baseUrl: `http://127.0.0.1:${app.server.address().port}`, state, rounds, close: () => app.close() };\n}\n\nasync function crimeMinigameRecoveryTest() {\n  const api = await crimeMinigameApi({ dropFirst: true });\n  await withReadySession(api, 'omerta-agent-alpha-crime-', async ({ sessionFile, reportFile }) => {\n    const inspectFetch = async (url, options) => {\n      if (new URL(url).pathname === '/v1/agent/act') {\n        const pending = JSON.parse(await readFile(sessionFile, 'utf8')).pending;\n        const body = JSON.parse(options.body);\n        assert.deepEqual(pending.minigame, body.minigame, 'the exact minigame is durable before every POST');\n        assert.deepEqual(Object.keys(pending).sort(), ['actionId', 'minigame', 'operationId', 'startedAt', 'turnId']);\n      }\n      return fetch(url, options);\n    };\n    await assert.rejects(runAgentAlpha({ baseUrl: api.baseUrl, sessionFile, reportFile, maxActions: 1,\n      fetchImpl: inspectFetch }), /fetch|socket|other side|terminated/i);\n    const pending = JSON.parse(await readFile(sessionFile, 'utf8')).pending;\n    assert.deepEqual(pending.minigame, { token: 'signal-token-secret-1', moves: api.rounds.flat() });\n    const resumed = await runAgentAlpha({ baseUrl: api.baseUrl, sessionFile, reportFile, maxActions: 1,\n      fetchImpl: inspectFetch });\n    assert.equal(resumed.actions, 1);\n    assert.equal(api.state.challengeCalls, 1, 'an ambiguous replay never fetches or substitutes another challenge');\n    assert.equal(api.state.turnCalls, 2, 'pending recovery uses the final observed turn without another observation');\n    assert.deepEqual(api.state.actBodies[0], api.state.actBodies[1]);\n    assert.equal(api.state.actKeys[0], api.state.actKeys[1]);\n    assert.equal(api.state.mutations, 1, 'the replay confirms exactly one committed crime');\n    assert.equal(JSON.parse(await readFile(sessionFile, 'utf8')).pending, null);\n    const report = await readFile(reportFile, 'utf8');\n    assert(!report.includes('signal-token-secret') && !report.includes('do not persist authored bodies'),\n      'minigame credentials and authored action bodies stay out of reports');\n  });\n}\n\nasync function crimeMinigameStaleTest() {\n  for (const legacy of [false, true]) {\n    const api = await crimeMinigameApi({ staleFirst: !legacy });\n    await withReadySession(api, 'omerta-agent-alpha-crime-stale-', async ({ sessionFile, reportFile }) => {\n      if (legacy) await writePrivateSession(sessionFile, JSON.stringify(sessionFor(api.baseUrl, {\n        pending: { operationId: 'old-crime-attempt', turnId: 'old-turn', actionId: 'crime:pick:standard', startedAt: new Date().toISOString() },\n      })));\n      const summary = await runAgentAlpha({ baseUrl: api.baseUrl, sessionFile, reportFile, maxActions: 2 });\n      assert.equal(summary.actions, 1, 'a definitive minigame refusal refreshes authority within the attempt budget');\n      assert.equal(api.state.mutations, 1);\n      assert.notEqual(api.state.actKeys[0], api.state.actKeys[1], 'a replacement challenge starts a new logical attempt');\n      assert.equal(api.state.challengeCalls, legacy ? 1 : 2);\n      assert.equal(JSON.parse(await readFile(sessionFile, 'utf8')).pending, null);\n      const report = await readFile(reportFile, 'utf8');\n      assert(report.includes(legacy ? 'crime_minigame_required' : 'stale_crime_minigame'));\n    });\n  }\n}\n\nasync function crimeMinigameOriginTest() {\n  const api = await crimeMinigameApi({ challengePath: '//attacker.invalid/collect' });\n  await withReadySession(api, 'omerta-agent-alpha-crime-origin-', async ({ sessionFile, reportFile }) => {\n    await assert.rejects(runAgentAlpha({ baseUrl: api.baseUrl, sessionFile, reportFile, maxActions: 1 }),\n      /unsupported crime minigame/);\n    assert.equal(api.state.challengeCalls, 0);\n    assert.equal(api.state.actBodies.length, 0, 'an invalid challenge path cannot cause a mutation');\n    assert.equal(JSON.parse(await readFile(sessionFile, 'utf8')).pending, null);\n  });\n}\n\nasync function crimeMinigameFreshTurnTest() {\n  const api = await crimeMinigameApi({ reviseTurn(turn, call) {\n    turn.state.resources = { energy: 50 + call, nerve: 9 + call };\n    turn.actions[0].decisionCall = { callId: `crime-decision-${call}`, turnId: turn.turnId, actionId: turn.actions[0].id };\n  } });\n  await withReadySession(api, 'omerta-agent-alpha-crime-fresh-', async ({ sessionFile, reportFile }) => {\n    let challengeAt, observedAt;\n    const checkingFetch = async (url, options) => {\n      const pathname = new URL(url).pathname;\n      if (pathname === '/v1/agent/turn' && api.state.challengeCalls) {\n        assert(testNow - challengeAt >= 3100, 'The shared cadence is paid before final authority is observed.');\n        assert.equal(JSON.parse(await readFile(sessionFile, 'utf8')).pending, null, 'An undispatched challenge is not yet a durable operation.');\n        observedAt = testNow;\n      }\n      if (pathname === '/v1/agent/act') {\n        const pending = JSON.parse(await readFile(sessionFile, 'utf8')).pending;\n        assert.equal(testNow, observedAt, 'No cadence delay ages the final observed turn.');\n        assert.equal(pending.turnId, 'crime-turn-2');\n        assert.equal(pending.decisionCallId, 'crime-decision-2', 'Only the final turn can supply the associated decision.');\n        assert.equal(JSON.parse(options.body).decisionCallId, pending.decisionCallId);\n      }\n      const response = await fetch(url, options);\n      if (pathname.endsWith('/challenge')) challengeAt = testNow;\n      return response;\n    };\n    const result = await runAgentAlpha({ baseUrl: api.baseUrl, sessionFile, reportFile, maxActions: 1, fetchImpl: checkingFetch });\n    assert.equal(result.actions, 1);\n    assert.equal(api.state.challengeCalls, 1);\n    assert.equal(api.state.turnCalls, 2);\n    assert.equal(api.state.mutations, 1);\n  });\n  for (const change of ['actor', 'actor_goal', 'body', 'minigame', 'policy', 'goal']) {\n    const changed = await crimeMinigameApi({ reviseTurn(turn, call) {\n      if (call < 2) return;\n      if (change === 'actor' || change === 'actor_goal') turn.state.identity.generation++;\n      if (change === 'body') turn.actions[0].body.approach = 'quiet';\n      if (change === 'minigame') turn.actions[0].minigame.challengePath = '/v1/crimes/other/challenge';\n      if (change === 'policy') turn.policy = { ...POLICY, allowPvP: true };\n      if (change === 'goal' || change === 'actor_goal') turn.state.identity.level = 100;\n    } });\n    await withReadySession(changed, `omerta-agent-alpha-crime-changed-${change}-`, async ({ sessionFile, reportFile }) => {\n      const result = await runAgentAlpha({ baseUrl: changed.baseUrl, sessionFile, reportFile, maxActions: 1, stopAtLevel: 100 });\n      assert.equal(result.status, change === 'goal' ? 'level_reached' : 'refused');\n      assert.equal(changed.state.actBodies.length, 0, 'A changed actor, action, policy or completed goal cannot spend the prepared trace.');\n      assert.equal(JSON.parse(await readFile(sessionFile, 'utf8')).pending, null);\n    });\n  }\n}\n\nif (process.argv.includes('--crime-minigame')) {\n  await crimeMinigameRecoveryTest();\n  await crimeMinigameStaleTest();\n  await crimeMinigameOriginTest();\n  await crimeMinigameFreshTurnTest();\n} else if (process.argv.includes('--decision-recovery')) {\n",
           "baseline": "if (process.argv.includes('--decision-recovery')) {\n"
         },
         {
-          "at": 117506,
-          "current": "await crimeMinigameRecoveryTest();\nawait crimeMinigameStaleTest();\nawait crimeMinigameOriginTest();\n",
+          "at": 120802,
+          "current": "await crimeMinigameRecoveryTest();\nawait crimeMinigameStaleTest();\nawait crimeMinigameOriginTest();\nawait crimeMinigameFreshTurnTest();\n",
           "baseline": ""
+        }
+      ]
+    },
+    "test/agent-cohort.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "71c1a292f140ec4c67efa9317405c563d00424b3",
+        "bytes": 4459,
+        "sha256": "af78d18ddf07ccf480832dccc230ce548d4ee2ef2f5963f4ceccc50503365a0b"
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "a06c5b8876237802373b85d6902ca12466b9c50a",
+        "bytes": 4256,
+        "sha256": "a0a7b4cd31ba9162ff2cdacf407ed47b52a30f4748b99eb1cd8869a248d220c3"
+      },
+      "inverses": [
+        {
+          "at": 1515,
+          "current": "    assert.equal(checkpoint.lastRun.events.find(event => event.path === '/v1/agent/act')?.status, 200, 'every cohort identity commits its one authorized action without a cadence or stale-turn refusal');\n",
+          "baseline": ""
+        }
+      ]
+    },
+    "test/agentturn-jail-units.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "b2e64a64d0748cefe07e0ac8f115ac838666e2a5",
+        "bytes": 4273,
+        "sha256": "37b9620a6488c177882219038a380dac5ecef3799c3c7be24076254b7ce297e0"
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "4fe31efb6a6b2a1138fb2bb7ed9947fc1ff7e1c0",
+        "bytes": 4193,
+        "sha256": "816f6bdc974be6caefa2e32fa62b0feedd6fc07a6006d724cc59824ba7c1e538"
+      },
+      "inverses": [
+        {
+          "at": 0,
+          "current": "import { injectWithCrimeMinigame } from './crime-fixture.js';\n",
+          "baseline": ""
+        },
+        {
+          "at": 552,
+          "current": "  const response = await injectWithCrimeMinigame(app, { method, url, payload,\n",
+          "baseline": "  const response = await app.inject({ method, url, payload,\n"
         }
       ]
     },
@@ -746,6 +793,48 @@ export const CRIME_MINIGAME_SOURCE = freeze({
           "at": 1605,
           "current": "  const res = await injectWithCrimeMinigame(app, { method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload: body });\n",
           "baseline": "  const res = await app.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload: body });\n"
+        }
+      ]
+    },
+    "test/coldstart.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "e0492568bcbb85db08d0563031271332fad1eb10",
+        "bytes": 26933,
+        "sha256": "d4f26ed32a2458db3b5c8ecde174c81824d3dce06d3b3890fcd3dd574393894c"
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "2b54efdabdeef723df7fd041acde335adc0d8d03",
+        "bytes": 26868,
+        "sha256": "74bbfb0ff5606e842136645db49326488d92669f7c0edf5cad3dc0bfd04f2274"
+      },
+      "inverses": [
+        {
+          "at": 16972,
+          "current": "assert.deepEqual(crimeSelector, { required: true, scope: 'crime', targetId: 'pick', benefit: 'success_odds',\n  kind: 'signal-lock', challengePath: '/v1/crimes/pick/challenge' });\n",
+          "baseline": "assert.deepEqual(crimeSelector, { required: false, scope: 'crime', targetId: 'pick', benefit: 'feedback_only' });\n"
+        }
+      ]
+    },
+    "test/decision-guide-client.js": {
+      "current": {
+        "mode": "100644",
+        "blob": "85a3ea953ab9d48f12a0715dcd35868409b81823",
+        "bytes": 7665,
+        "sha256": "cc5b845208995855f04c372d9ec02158095ee34468d6781b4b93ac8356bfeaff"
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "ff17d0c8356b8b1420cb242b7e12d41288eb2078",
+        "bytes": 7606,
+        "sha256": "1ec84d7069f9a4a75971f1d6a1e609e003d1dbe53f7cabc1fa80f68ae6978285"
+      },
+      "inverses": [
+        {
+          "at": 970,
+          "current": " const c=vm.createContext({console,OmertaSiteAnalytics:analytics,document:{body:{style:{}}},activatedControl:null,acting:false,crimeMinigamePending:false,crimeMinigameAttempts:new Map(),operationPending:null,\n",
+          "baseline": " const c=vm.createContext({console,OmertaSiteAnalytics:analytics,document:{body:{style:{}}},activatedControl:null,acting:false,operationPending:null,\n"
         }
       ]
     },
@@ -1529,9 +1618,9 @@ export const CRIME_MINIGAME_SOURCE = freeze({
     "tools/agent-alpha.js": {
       "current": {
         "mode": "100644",
-        "blob": "d26be85ca40194e155cbefdcfd67ae82393c4e82",
-        "bytes": 53055,
-        "sha256": "8c9ee6b8107486c157c0cd441271617d16bf539db625b369c355ddf8670ede1e"
+        "blob": "f1dc100f0a8cee89da5e4ec593cfdb1bd2e7555f",
+        "bytes": 54515,
+        "sha256": "18f9a39027c38b64454d6fe3c3332396cee59184f46a795f2a0627edd9c85d38"
       },
       "baseline": {
         "mode": "100644",
@@ -1541,42 +1630,57 @@ export const CRIME_MINIGAME_SOURCE = freeze({
       },
       "inverses": [
         {
-          "at": 23359,
+          "at": 700,
+          "current": "import { isDeepStrictEqual, promisify } from 'node:util';\n",
+          "baseline": "import { promisify } from 'node:util';\n"
+        },
+        {
+          "at": 23378,
           "current": "  const pendingKeys = ['operationId', 'turnId', 'actionId', 'startedAt',\n    ...(session?.pending?.decisionCallId !== undefined ? ['decisionCallId'] : []),\n    ...(session?.pending?.minigame !== undefined ? ['minigame'] : [])];\n",
           "baseline": ""
         },
         {
-          "at": 23665,
+          "at": 23684,
           "current": "    exactKeys(session.pending, pendingKeys) &&\n    (session.pending.decisionCallId === undefined || (typeof session.pending.decisionCallId === 'string'\n      && /^[A-Za-z0-9_-]{1,128}$/.test(session.pending.decisionCallId))) &&\n    (session.pending.minigame === undefined || validCrimeMinigame(session.pending.minigame)) &&\n",
           "baseline": "    (exactKeys(session.pending, ['operationId', 'turnId', 'actionId', 'startedAt'])\n      || (exactKeys(session.pending, ['operationId', 'turnId', 'actionId', 'startedAt', 'decisionCallId'])\n        && typeof session.pending.decisionCallId === 'string' && /^[A-Za-z0-9_-]{1,128}$/.test(session.pending.decisionCallId))) &&\n"
         },
         {
-          "at": 40576,
+          "at": 40595,
           "current": "function validCrimeMinigame(value) {\n  return value && typeof value === 'object' && !Array.isArray(value)\n    && Object.keys(value).sort().join(',') === 'moves,token'\n    && typeof value.token === 'string' && value.token.length > 0 && value.token.length <= 2048\n    && Array.isArray(value.moves) && value.moves.length <= 64\n    && value.moves.every(move => Number.isInteger(move) && move >= 0 && move <= 3);\n}\n\nasync function prepareCrimeMinigame({ base, fetchImpl, session, action }) {\n  if (action.kind !== 'crime' || action.minigame?.required !== true) return null;\n  const path = action.minigame.challengePath;\n  if (action.minigame.kind !== 'signal-lock' || typeof path !== 'string'\n    || !/^\\/v1\\/crimes\\/[a-z0-9_-]+\\/challenge(?:\\?approach=(?:quiet|standard|loud))?$/.test(path))\n    throw new Error('Agent Alpha received an unsupported crime minigame');\n  const { minigame } = await requestJson(fetchImpl, base, path, { token: session.token });\n  if (minigame?.kind !== 'signal-lock' || minigame.maxMistakes !== 3\n    || !Array.isArray(minigame.rounds) || minigame.rounds.length !== 3\n    || !minigame.rounds.every((round, index) => Array.isArray(round) && round.length === index + 3)\n    || !Number.isFinite(Date.parse(minigame.expiresAt)) || Date.parse(minigame.expiresAt) <= Date.now())\n    throw new Error('Agent Alpha received an invalid crime minigame');\n  // The public signal is the agent's input. Persist its complete trace before\n  // executing the issued action, so a lost acknowledgement cannot reroll it.\n  const submission = { token: minigame.token, moves: minigame.rounds.flat() };\n  if (!validCrimeMinigame(submission)) throw new Error('Agent Alpha received an invalid crime minigame');\n  return submission;\n}\n\n",
           "baseline": ""
         },
         {
-          "at": 42707,
+          "at": 42726,
           "current": "        ...(pending.decisionCallId !== undefined ? { decisionCallId: pending.decisionCallId } : {}),\n        ...(pending.minigame !== undefined ? { minigame: pending.minigame } : {}) },\n",
           "baseline": "        ...(pending.decisionCallId !== undefined ? { decisionCallId: pending.decisionCallId } : {}) },\n"
         },
         {
-          "at": 42921,
+          "at": 42940,
           "current": "    const staleTurn = error?.status === 409 && error?.code === 'stale_turn';\n    const staleMinigame = error?.status === 400\n      && ['stale_crime_minigame', 'crime_minigame_required'].includes(error?.code);\n    if (!staleTurn && !staleMinigame) throw error;\n",
           "baseline": "    if (error?.status !== 409 || error?.code !== 'stale_turn') throw error;\n"
         },
         {
-          "at": 43381,
+          "at": 43400,
           "current": "      errorCode: error.code,\n",
           "baseline": "      errorCode: 'stale_turn',\n"
         },
         {
-          "at": 48038,
-          "current": "    const minigame = await prepareCrimeMinigame({ base, fetchImpl, session, action });\n",
+          "at": 47080,
+          "current": "    let turn = await requestJson(fetchImpl, base, '/v1/agent/turn', { token: session.token });\n",
+          "baseline": "    const turn = await requestJson(fetchImpl, base, '/v1/agent/turn', { token: session.token });\n"
+        },
+        {
+          "at": 47447,
+          "current": "    let action = recommendation.action;\n",
+          "baseline": "    const action = recommendation.action;\n"
+        },
+        {
+          "at": 48053,
+          "current": "    const minigame = await prepareCrimeMinigame({ base, fetchImpl, session, action });\n    if (minigame) {\n      // The challenge shares the action's hard cadence. Observe final authority\n      // after that wait, before creating any durable or dispatched operation.\n      await waitForCadence(timing, intervalMs);\n      const fresh = await requestJson(fetchImpl, base, '/v1/agent/turn', { token: session.token });\n      const owner = turn.state?.identity, current = fresh.state?.identity;\n      const sameActor = typeof owner?.id === 'string' && owner.id.length > 0\n        && Number.isSafeInteger(owner.generation) && owner.generation >= 1\n        && owner.id === current?.id && owner.generation === current?.generation;\n      if (sameActor && stopAtLevel !== undefined && Number(current.level) >= stopAtLevel)\n        return { status: 'level_reached', actions, level: Number(current.level) };\n      const selected = recommendationOf(fresh, role), next = selected.action;\n      if (!sameActor || !next || !isDeepStrictEqual(\n        [action.id, action.kind, action.method, action.path, action.body, action.cost, action.minigame],\n        [next.id, next.kind, next.method, next.path, next.body, next.cost, next.minigame])) {\n        await appendReport(reportStore, { timestamp: new Date().toISOString(), status: 'refused',\n          errorCode: selected.errorCode || 'crime_action_changed', actionKind: 'crime', actionId: action.id });\n        return { status: 'refused', actions };\n      }\n      turn = fresh; action = next;\n    }\n",
           "baseline": ""
         },
         {
-          "at": 48503,
+          "at": 49963,
           "current": "        ...(minigame ? { minigame } : {}),\n",
           "baseline": ""
         }
@@ -1930,4 +2034,4 @@ export const CRIME_MINIGAME_SOURCE = freeze({
     }
   }
 });
-export const CRIME_MINIGAME_SOURCE_SHA256 = 'd2afc7304aa88a0f7064cea147b97a3f8cdb1e758b3301c1136df464148f02ae';
+export const CRIME_MINIGAME_SOURCE_SHA256 = 'cb289e5aaaf2ac7ea05f047d4605ad6d491133a53dd03efff6c25b4feaf78d17';
