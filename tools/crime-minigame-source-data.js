@@ -3,8 +3,8 @@ const freeze = value => { if (value && typeof value === "object") { Object.value
 export const CRIME_MINIGAME_SOURCE = freeze({
   "status": "SEALED",
   "phase": "EXACT_CRIME_MINIGAME_SOURCE_COMPARISON_ONLY",
-  "revision": "d0f6d9b726733de56ba326c5e87163e63da39db2",
-  "tree": "0810bfb2a552c0292c8df06fea4be90b7b3a4ab6",
+  "revision": "126f315f27cde534ca11d192084f9616aedc2245",
+  "tree": "ebda38c9340e28497cc82fa6c92ea776351b09f0",
   "predecessor": "9cf7ced8beedd0950018a14bbab71b08b71a3d5b",
   "predecessorTree": "9477c277cca6b47b3a3ce20901e85a451243642f",
   "files": {
@@ -1939,6 +1939,27 @@ export const CRIME_MINIGAME_SOURCE = freeze({
         }
       ]
     },
+    "tools/rc1-postgres-client.sh": {
+      "current": {
+        "mode": "100644",
+        "blob": "d40451fd2cbf390c2aa53cdfb99d9667ccd7dda5",
+        "bytes": 1467,
+        "sha256": "fa562d1f99324f47ba75b4263dfce4ee50b0f267195c245efb58f0d8665132c1"
+      },
+      "baseline": {
+        "mode": "100644",
+        "blob": "443beb37131894a480062992d2344714203f559c",
+        "bytes": 1375,
+        "sha256": "b7ece65c49a874bdb7a0d724bf2f475eeb1cae2fecf3b21902e9a882eaf53e6b"
+      },
+      "inverses": [
+        {
+          "at": 620,
+          "current": "    --connect-timeout 15 --max-time 120 --retry 3 --retry-all-errors --retry-max-time 180 \\\n",
+          "baseline": ""
+        }
+      ]
+    },
     "tools/scale.js": {
       "current": {
         "mode": "100644",
@@ -2060,4 +2081,4 @@ export const CRIME_MINIGAME_SOURCE = freeze({
     }
   }
 });
-export const CRIME_MINIGAME_SOURCE_SHA256 = 'dcaaa0d132ca11b9cb9dfae6d7f82ef53b0694ba6c898ed58a06860d275b680a';
+export const CRIME_MINIGAME_SOURCE_SHA256 = '6ec88bdfa33052ccc7163f35aa78a3248f79d88657afdd8d4efeaa2798e77f94';
