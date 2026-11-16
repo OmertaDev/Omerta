@@ -1,6 +1,6 @@
 {
   "schema": "omerta.knowledge-graph.v1",
-  "sourceRevision": "059db7b9e1e5bd7b75397745b008e16f961f968f",
+  "sourceRevision": "ac426a9a1b338cf7c63bb7b41beac7f25842194d",
   "worktreeDirty": false,
   "sourceSnapshot": "2026-08-23",
   "ontology": {
@@ -43,12 +43,12 @@
     ]
   },
   "census": {
-    "nodes": 19397,
-    "edges": 77126,
+    "nodes": 19401,
+    "edges": 77137,
     "byNodeType": {
       "Artifact": 7914,
       "Command": 326,
-      "Commit": 5907,
+      "Commit": 5911,
       "Contract": 156,
       "Document": 978,
       "Domain": 13,
@@ -65,14 +65,14 @@
     },
     "byEdgeType": {
       "BELONGS_TO": 6133,
-      "CHANGED": 30201,
+      "CHANGED": 30208,
       "CONTAINS": 7935,
       "DECLARES": 326,
       "DEFINED_IN": 1823,
       "DEPENDS_ON": 69,
       "EXECUTES": 1284,
       "HANDLED_BY": 956,
-      "HAS_COMMIT": 5907,
+      "HAS_COMMIT": 5911,
       "IMPLEMENTS": 124,
       "IMPORTS": 9494,
       "INHERITS": 47,
@@ -161796,20 +161796,20 @@
       "path": "test/playthrough-truth.js",
       "kind": "test-suite",
       "extension": ".js",
-      "bytes": 3019,
-      "lines": 56,
-      "version": "f735e49b8a7f5c5e",
+      "bytes": 3607,
+      "lines": 66,
+      "version": "20c6ee449b421086",
       "text": true,
       "provenance": [
         {
           "file": "test/playthrough-truth.js",
           "line": 1,
-          "version": "f735e49b8a7f5c5e"
+          "version": "20c6ee449b421086"
         }
       ],
-      "lastChangedAt": "2026-11-10T05:34:34.000Z",
+      "lastChangedAt": "2026-11-16T08:51:06.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "7d1de997963893e552c3ddfe8a780a2c7fbad7dd"
+      "lastChangedCommit": "d0f6d9b726733de56ba326c5e87163e63da39db2"
     },
     {
       "key": "Artifact:test/population-goods-liquidity.js",
@@ -173761,20 +173761,20 @@
       "path": "tools/crime-minigame-source-data.js",
       "kind": "engineering-harness",
       "extension": ".js",
-      "bytes": 120917,
-      "lines": 2038,
-      "version": "3bd0c494dff701fd",
+      "bytes": 122421,
+      "lines": 2064,
+      "version": "2142323f0de2e241",
       "text": true,
       "provenance": [
         {
           "file": "tools/crime-minigame-source-data.js",
           "line": 1,
-          "version": "3bd0c494dff701fd"
+          "version": "2142323f0de2e241"
         }
       ],
-      "lastChangedAt": "2026-11-16T06:16:09.000Z",
+      "lastChangedAt": "2026-11-16T08:51:47.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "0e1b0f56b6cbe7278fa047cb5d39ee0428f4c150"
+      "lastChangedCommit": "722d9afea815c02c8f666a65e08b0ccdea48fd6a"
     },
     {
       "key": "Artifact:tools/current-economic-terms-source-data.js",
@@ -174726,18 +174726,18 @@
       "extension": ".js",
       "bytes": 501335,
       "lines": 13356,
-      "version": "62deca08bcda0a2c",
+      "version": "3a3066ffb9b34c40",
       "text": true,
       "provenance": [
         {
           "file": "tools/enterprise-native-questing-inputs.js",
           "line": 1,
-          "version": "62deca08bcda0a2c"
+          "version": "3a3066ffb9b34c40"
         }
       ],
-      "lastChangedAt": "2026-11-16T06:16:29.000Z",
+      "lastChangedAt": "2026-11-16T08:52:11.000Z",
       "lastChangedBy": "OmertaDev",
-      "lastChangedCommit": "059db7b9e1e5bd7b75397745b008e16f961f968f"
+      "lastChangedCommit": "ac426a9a1b338cf7c63bb7b41beac7f25842194d"
     },
     {
       "key": "Artifact:tools/enterprise-native-questing-seal.js",
@@ -228681,6 +228681,22 @@
       ]
     },
     {
+      "key": "Commit:722d9afea815c02c8f666a65e08b0ccdea48fd6a",
+      "type": "Commit",
+      "id": "722d9afea815c02c8f666a65e08b0ccdea48fd6a",
+      "label": "Seal the stable playthrough release source",
+      "title": "Seal the stable playthrough release source",
+      "date": "2026-11-16T08:51:47.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/722d9afea815c02c8f666a65e08b0ccdea48fd6a",
+      "provenance": [
+        {
+          "commit": "722d9afea815c02c8f666a65e08b0ccdea48fd6a",
+          "url": "https://github.com/OmertaDev/Omerta/commit/722d9afea815c02c8f666a65e08b0ccdea48fd6a"
+        }
+      ]
+    },
+    {
       "key": "Commit:72545c9efb762ad91499d0be89538ddaec810e21",
       "type": "Commit",
       "id": "72545c9efb762ad91499d0be89538ddaec810e21",
@@ -249881,6 +249897,22 @@
       ]
     },
     {
+      "key": "Commit:a98835f5154976912db877d20d87a0def3aee740",
+      "type": "Commit",
+      "id": "a98835f5154976912db877d20d87a0def3aee740",
+      "label": "Refresh knowledge for fresh minigame authority",
+      "title": "Refresh knowledge for fresh minigame authority",
+      "date": "2026-11-16T06:23:57.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/a98835f5154976912db877d20d87a0def3aee740",
+      "provenance": [
+        {
+          "commit": "a98835f5154976912db877d20d87a0def3aee740",
+          "url": "https://github.com/OmertaDev/Omerta/commit/a98835f5154976912db877d20d87a0def3aee740"
+        }
+      ]
+    },
+    {
       "key": "Commit:a9a8e3f8579a1753de1afb29b3d4bc0089c9395f",
       "type": "Commit",
       "id": "a9a8e3f8579a1753de1afb29b3d4bc0089c9395f",
@@ -250757,6 +250789,22 @@
         {
           "commit": "ac0e1f2cd220075da69fcc593f21647fcb4d0e91",
           "url": "https://github.com/OmertaDev/Omerta/commit/ac0e1f2cd220075da69fcc593f21647fcb4d0e91"
+        }
+      ]
+    },
+    {
+      "key": "Commit:ac426a9a1b338cf7c63bb7b41beac7f25842194d",
+      "type": "Commit",
+      "id": "ac426a9a1b338cf7c63bb7b41beac7f25842194d",
+      "label": "Pin native inputs for the stable playthrough candidate",
+      "title": "Pin native inputs for the stable playthrough candidate",
+      "date": "2026-11-16T08:52:11.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/ac426a9a1b338cf7c63bb7b41beac7f25842194d",
+      "provenance": [
+        {
+          "commit": "ac426a9a1b338cf7c63bb7b41beac7f25842194d",
+          "url": "https://github.com/OmertaDev/Omerta/commit/ac426a9a1b338cf7c63bb7b41beac7f25842194d"
         }
       ]
     },
@@ -263685,6 +263733,22 @@
         {
           "commit": "d0f266c02959bbff96c931671a049901b4a7c59c",
           "url": "https://github.com/OmertaDev/Omerta/commit/d0f266c02959bbff96c931671a049901b4a7c59c"
+        }
+      ]
+    },
+    {
+      "key": "Commit:d0f6d9b726733de56ba326c5e87163e63da39db2",
+      "type": "Commit",
+      "id": "d0f6d9b726733de56ba326c5e87163e63da39db2",
+      "label": "Stabilize the public playthrough regression world",
+      "title": "Stabilize the public playthrough regression world",
+      "date": "2026-11-16T08:51:06.000Z",
+      "author": "OmertaDev",
+      "url": "https://github.com/OmertaDev/Omerta/commit/d0f6d9b726733de56ba326c5e87163e63da39db2",
+      "provenance": [
+        {
+          "commit": "d0f6d9b726733de56ba326c5e87163e63da39db2",
+          "url": "https://github.com/OmertaDev/Omerta/commit/d0f6d9b726733de56ba326c5e87163e63da39db2"
         }
       ]
     },
@@ -311164,6 +311228,9 @@
           "commit": "a93245c8eb798dd3760720b65e61c300cb0fceed"
         },
         {
+          "commit": "a98835f5154976912db877d20d87a0def3aee740"
+        },
+        {
           "commit": "a9b74a32b3d75a52e0ea61cdd994cd7c6fb95d83"
         },
         {
@@ -314140,6 +314207,9 @@
           "commit": "a93245c8eb798dd3760720b65e61c300cb0fceed"
         },
         {
+          "commit": "a98835f5154976912db877d20d87a0def3aee740"
+        },
+        {
           "commit": "a9b74a32b3d75a52e0ea61cdd994cd7c6fb95d83"
         },
         {
@@ -317114,6 +317184,9 @@
         },
         {
           "commit": "a93245c8eb798dd3760720b65e61c300cb0fceed"
+        },
+        {
+          "commit": "a98835f5154976912db877d20d87a0def3aee740"
         },
         {
           "commit": "a9b74a32b3d75a52e0ea61cdd994cd7c6fb95d83"
@@ -320879,6 +320952,9 @@
         },
         {
           "commit": "a93245c8eb798dd3760720b65e61c300cb0fceed"
+        },
+        {
+          "commit": "a98835f5154976912db877d20d87a0def3aee740"
         },
         {
           "commit": "a9b74a32b3d75a52e0ea61cdd994cd7c6fb95d83"
@@ -337171,7 +337247,7 @@
       "type": "Repository",
       "id": "omerta",
       "label": "OmertaDev/Omerta",
-      "revision": "059db7b9e1e5bd7b75397745b008e16f961f968f",
+      "revision": "ac426a9a1b338cf7c63bb7b41beac7f25842194d",
       "currentBranch": "codex/mandatory-crime-minigame-20261115",
       "defaultBranch": "main",
       "visibility": "public",
@@ -385245,13 +385321,13 @@
       "type": "TestSuite",
       "id": "test/playthrough-truth.js",
       "label": "test/playthrough-truth.js",
-      "lines": 56,
-      "version": "f735e49b8a7f5c5e",
+      "lines": 66,
+      "version": "20c6ee449b421086",
       "provenance": [
         {
           "file": "test/playthrough-truth.js",
           "line": 1,
-          "version": "f735e49b8a7f5c5e"
+          "version": "20c6ee449b421086"
         }
       ]
     },
@@ -543680,6 +543756,14 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:722d9afea815c02c8f666a65e08b0ccdea48fd6a",
+      "to": "Artifact:tools/crime-minigame-source-data.js",
+      "provenance": {
+        "commit": "722d9afea815c02c8f666a65e08b0ccdea48fd6a"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:72545c9efb762ad91499d0be89538ddaec810e21",
       "to": "HistoricalArtifact:knowledge/generated/github-history.md",
       "provenance": {
@@ -594160,6 +594244,38 @@
     },
     {
       "type": "CHANGED",
+      "from": "Commit:a98835f5154976912db877d20d87a0def3aee740",
+      "to": "HistoricalArtifact:knowledge/generated/github-history.md",
+      "provenance": {
+        "commit": "a98835f5154976912db877d20d87a0def3aee740"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a98835f5154976912db877d20d87a0def3aee740",
+      "to": "HistoricalArtifact:knowledge/generated/graph-summary.md",
+      "provenance": {
+        "commit": "a98835f5154976912db877d20d87a0def3aee740"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a98835f5154976912db877d20d87a0def3aee740",
+      "to": "HistoricalArtifact:knowledge/generated/graph.json",
+      "provenance": {
+        "commit": "a98835f5154976912db877d20d87a0def3aee740"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:a98835f5154976912db877d20d87a0def3aee740",
+      "to": "HistoricalArtifact:knowledge/generated/inventory.md",
+      "provenance": {
+        "commit": "a98835f5154976912db877d20d87a0def3aee740"
+      }
+    },
+    {
+      "type": "CHANGED",
       "from": "Commit:a9a8e3f8579a1753de1afb29b3d4bc0089c9395f",
       "to": "Artifact:.github/workflows/ci.yml",
       "provenance": {
@@ -595876,6 +595992,14 @@
       "to": "Artifact:tools/rc1-source-pair.js",
       "provenance": {
         "commit": "ac0e1f2cd220075da69fcc593f21647fcb4d0e91"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:ac426a9a1b338cf7c63bb7b41beac7f25842194d",
+      "to": "Artifact:tools/enterprise-native-questing-inputs.js",
+      "provenance": {
+        "commit": "ac426a9a1b338cf7c63bb7b41beac7f25842194d"
       }
     },
     {
@@ -641892,6 +642016,14 @@
       "to": "Artifact:docs/superpowers/specs/2026-08-26-grill-completion.md",
       "provenance": {
         "commit": "d0f266c02959bbff96c931671a049901b4a7c59c"
+      }
+    },
+    {
+      "type": "CHANGED",
+      "from": "Commit:d0f6d9b726733de56ba326c5e87163e63da39db2",
+      "to": "Artifact:test/playthrough-truth.js",
+      "provenance": {
+        "commit": "d0f6d9b726733de56ba326c5e87163e63da39db2"
       }
     },
     {
@@ -821939,6 +822071,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:722d9afea815c02c8f666a65e08b0ccdea48fd6a",
+      "provenance": {
+        "commit": "722d9afea815c02c8f666a65e08b0ccdea48fd6a"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:72545c9efb762ad91499d0be89538ddaec810e21",
       "provenance": {
         "commit": "72545c9efb762ad91499d0be89538ddaec810e21"
@@ -832539,6 +832679,14 @@
     {
       "type": "HAS_COMMIT",
       "from": "Repository:omerta",
+      "to": "Commit:a98835f5154976912db877d20d87a0def3aee740",
+      "provenance": {
+        "commit": "a98835f5154976912db877d20d87a0def3aee740"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
       "to": "Commit:a9a8e3f8579a1753de1afb29b3d4bc0089c9395f",
       "provenance": {
         "commit": "a9a8e3f8579a1753de1afb29b3d4bc0089c9395f"
@@ -832974,6 +833122,14 @@
       "to": "Commit:ac0e1f2cd220075da69fcc593f21647fcb4d0e91",
       "provenance": {
         "commit": "ac0e1f2cd220075da69fcc593f21647fcb4d0e91"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:ac426a9a1b338cf7c63bb7b41beac7f25842194d",
+      "provenance": {
+        "commit": "ac426a9a1b338cf7c63bb7b41beac7f25842194d"
       }
     },
     {
@@ -839438,6 +839594,14 @@
       "to": "Commit:d0f266c02959bbff96c931671a049901b4a7c59c",
       "provenance": {
         "commit": "d0f266c02959bbff96c931671a049901b4a7c59c"
+      }
+    },
+    {
+      "type": "HAS_COMMIT",
+      "from": "Repository:omerta",
+      "to": "Commit:d0f6d9b726733de56ba326c5e87163e63da39db2",
+      "provenance": {
+        "commit": "d0f6d9b726733de56ba326c5e87163e63da39db2"
       }
     },
     {
@@ -922582,42 +922746,6 @@
       "to": "Artifact:test/crime-fixture.js",
       "provenance": {
         "file": "tools/crime-minigame-source-data.js",
-        "line": 1844
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:tools/crime-minigame-source-data.js",
-      "to": "Artifact:tools/crime-minigame-client.js",
-      "provenance": {
-        "file": "tools/crime-minigame-source-data.js",
-        "line": 1705
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:tools/crime-minigame-source-data.js",
-      "to": "Artifact:tools/crime-minigame-client.js",
-      "provenance": {
-        "file": "tools/crime-minigame-source-data.js",
-        "line": 1736
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:tools/crime-minigame-source-data.js",
-      "to": "Artifact:tools/crime-minigame-client.js",
-      "provenance": {
-        "file": "tools/crime-minigame-source-data.js",
-        "line": 1818
-      }
-    },
-    {
-      "type": "IMPORTS",
-      "from": "Artifact:tools/crime-minigame-source-data.js",
-      "to": "Artifact:tools/crime-minigame-client.js",
-      "provenance": {
-        "file": "tools/crime-minigame-source-data.js",
         "line": 1870
       }
     },
@@ -922627,7 +922755,7 @@
       "to": "Artifact:tools/crime-minigame-client.js",
       "provenance": {
         "file": "tools/crime-minigame-source-data.js",
-        "line": 1901
+        "line": 1731
       }
     },
     {
@@ -922636,7 +922764,7 @@
       "to": "Artifact:tools/crime-minigame-client.js",
       "provenance": {
         "file": "tools/crime-minigame-source-data.js",
-        "line": 1932
+        "line": 1762
       }
     },
     {
@@ -922645,7 +922773,43 @@
       "to": "Artifact:tools/crime-minigame-client.js",
       "provenance": {
         "file": "tools/crime-minigame-source-data.js",
-        "line": 1963
+        "line": 1844
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/crime-minigame-source-data.js",
+      "to": "Artifact:tools/crime-minigame-client.js",
+      "provenance": {
+        "file": "tools/crime-minigame-source-data.js",
+        "line": 1896
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/crime-minigame-source-data.js",
+      "to": "Artifact:tools/crime-minigame-client.js",
+      "provenance": {
+        "file": "tools/crime-minigame-source-data.js",
+        "line": 1927
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/crime-minigame-source-data.js",
+      "to": "Artifact:tools/crime-minigame-client.js",
+      "provenance": {
+        "file": "tools/crime-minigame-source-data.js",
+        "line": 1958
+      }
+    },
+    {
+      "type": "IMPORTS",
+      "from": "Artifact:tools/crime-minigame-source-data.js",
+      "to": "Artifact:tools/crime-minigame-client.js",
+      "provenance": {
+        "file": "tools/crime-minigame-source-data.js",
+        "line": 1989
       }
     },
     {
@@ -922663,7 +922827,7 @@
       "to": "Artifact:tools/crime-minigame-source-compatibility.js",
       "provenance": {
         "file": "tools/crime-minigame-source-data.js",
-        "line": 1767
+        "line": 1793
       }
     },
     {
