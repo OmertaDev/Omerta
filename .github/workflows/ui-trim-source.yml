@@ -31,3 +31,33 @@ jobs:
         run: |
           node test/grand-strategy-source-transfer.js
           node test/ui-trim-source-transfer.js
+
+  ui_browser:
+    name: Desktop and mobile browser checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      DATABASE_URL: ''
+      LEGAL_OPERATOR_NAME: CI Test Operator
+      LEGAL_POSTAL_ADDRESS: 123 Fixture Street, Test City
+      PRIVACY_CONTACT_EMAIL: privacy@example.test
+      DMCA_AGENT_NAME: CI Test Agent
+      DMCA_AGENT_EMAIL: copyright@example.test
+      DMCA_AGENT_ADDRESS: 123 Fixture Street, Test City
+      DMCA_AGENT_PHONE: '+1 202 555 0100'
+      DMCA_AGENT_REGISTERED: 'true'
+      PAYMENT_REFUND_POLICY: Test fixture policy; not a production policy.
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright-core install --with-deps chromium
+      - name: Full desktop and mobile UX suite
+        run: |
+          export CHROMIUM_PATH="$(node --input-type=module -e 'import { chromium } from "playwright-core"; process.stdout.write(chromium.executablePath());')"
+          npm run test:ux:browser
