@@ -1,3 +1,4 @@
+import { injectWithCrimeMinigame } from './crime-fixture.js';
 // SECRETS & THE COLLECTION (founder picks #7+#8 — omerta-secrets-collection-design.md).
 // Covers: the dig (self/cooldown/cap gates, the intel:dig burn win-or-lose, a REAL secret found on
 // a dirty mark, nothing on a clean one, disinformation cooking the books), extortion (cap gate +
@@ -21,7 +22,7 @@ const call = async (method, url, { token, body, mod } = {}) => {
   const headers = {};
   if (token) headers.authorization = `Bearer ${token}`;
   if (mod) headers['x-mod-key'] = 'test-mod-key';
-  const res = await app.inject({ method, url, headers, payload: body });
+  const res = await injectWithCrimeMinigame(app, { method, url, headers, payload: body });
   let body2; try { body2 = res.json(); } catch { body2 = null; }
   return { code: res.statusCode, body: body2 };
 };

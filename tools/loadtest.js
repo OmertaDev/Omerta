@@ -73,6 +73,7 @@
 // a real 30% from a plausible-sounding refactor. Run the A/B (stash the change, same box, same run) for
 // any future change to this path.
 import crypto from 'node:crypto';
+import { completeCrimeMinigame } from './crime-minigame-client.js';
 
 if (!process.env.DATABASE_URL) {
   console.error('loadtest needs DATABASE_URL pointed at a real (throwaway) Postgres.');
@@ -268,7 +269,9 @@ async function virtualPlayer(me, idx) {
       const victim = players[(idx + 1 + Math.floor(Math.random() * 3)) % players.length];
       if (victim.id !== me.id) await hit('write:pvp', 'POST', `/v1/streets/${victim.id}/jump`, { token: me.token });
     } else if (r < 8000) {
-      await hit('write:crime', 'POST', '/v1/crimes/pick', { token: me.token });
+      await completeCrimeMinigame((method, path, options) =>
+        hit(method === 'GET' ? 'read:crime-challenge' : 'write:crime', method, path, options),
+      '/v1/crimes/pick', { token: me.token });
     } else if (r < 9000) {
       // the singleton surface: den_volume + street_tax are shared by every gambler in the game
       await hit('write:casino', 'POST', '/v1/casino/dice', { token: me.token, body: { amount: 100, bet: 'pass' } });

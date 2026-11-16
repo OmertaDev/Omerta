@@ -173,9 +173,12 @@ curl -s -X POST $BASE/v1/character -H "$AUTH" \
 # 4. Read the rulebook (crimes, districts, guns, catalogs, thresholds).
 curl -s $BASE/v1/rules | jq .
 
-# 5. Pull your first job (the bread-and-butter cash+respect loop).
+# 5. Complete the required lock minigame, then pull your first job.
+# Follow each issued signal in order; record every press, including mistakes.
+CHALLENGE=$(curl -fsS "$BASE/v1/crimes/pick/challenge?approach=standard" -H "$AUTH")
+BODY=$(printf '%s' "$CHALLENGE" | jq -c '{approach:"standard",minigame:{token:.minigame.token,moves:(.minigame.rounds|flatten)}}')
 curl -s -X POST $BASE/v1/crimes/pick -H "$AUTH" \
-  -H 'idempotency-key: '$(uuidgen)
+  -H 'content-type: application/json' -H 'idempotency-key: '$(uuidgen) -d "$BODY"
 
 # 6. Read your full state any time.
 curl -s $BASE/v1/me -H "$AUTH" | jq .character
@@ -195,9 +198,16 @@ tab}`). Use the server's hint to choose a next step.
 Missions `m2`, `m11`, and `m12` require a puzzle. Hustle step 1 requires a
 puzzle as well as real legwork and the correct district. The mission catalog
 and Hustle board publish `puzzle: {required, scope, targetId}` metadata.
-Crimes offer optional preparation with explanatory feedback only. Preparation
-never raises rewards, XP, item drops, or success odds. Ordinary crime without
-preparation remains valid. Puzzles are gameplay, not human verification.
+Every crime requires the interactive signal-lock minigame. Clean play preserves
+full crime odds; each mistake reduces those odds by 15% of the baseline, and
+three mistakes fail the crime. Puzzles are gameplay, not human verification.
+
+For crime, read `GET /v1/crimes/:id/challenge?approach=standard` (or `quiet`/`loud`).
+Repeat its three signals and send `minigame:{token,moves}` with the crime body.
+The server validates the complete press history; no client score is accepted.
+Challenges expire and bind to the character, crime, approach and current attempt.
+The same field is required when executing a crime through Agent Act. Missing,
+incomplete and stale submissions do not spend nerve or start the street cooldown.
 
 - `POST /v1/task-puzzles` with exactly `{scope,targetId}` issues or resumes the
   current puzzle. Scope is `mission`, `hustle`, or `crime`. Target is a selected
@@ -218,9 +228,9 @@ preparation remains valid. Puzzles are gameplay, not human verification.
 - Any committed crime attempt, even a failure or another crime, starts a fresh
   preparation cycle. Reopen preparation after an ordinary or prepared attempt.
 
-The browser offers these in Start Here's Family missions and the Streets Hustle
-check-in, plus optional preparation on crime cards. Its solve buttons execute the
-job; closing does not. After an interrupted request, check the receipt before an
+The browser offers task puzzles in Start Here's Family missions and the Streets
+Hustle check-in. Every crime approach opens the required lock minigame. Finishing
+or failing it executes the job; closing does not. After an interrupted request, check the receipt before an
 explicit exact-key retry. Keyboard/touch controls, hints and recovery are described
 in [Task puzzles](docs/TASK-PUZZLES.md).
 
@@ -299,7 +309,7 @@ receipt recovery, disputes and the distinction between simulated and real revenu
 
 | Loop | Endpoints | The optimization |
 |---|---|---|
-| **Crime grind** | `POST /v1/crimes/:id` | Highest EV crime for your level/nerve; watch heat + jail risk. |
+| **Crime grind** | `GET /v1/crimes/:id/challenge` then `POST /v1/crimes/:id` | Complete the required lock minigame; mistakes reduce success odds. Watch heat + jail risk. |
 | **Kitchen** | `/v1/kitchen/*` (cook/collect/deal/crew) | Batch timing, quality-weighted deals, district demand, crew wages. |
 | **Trade-goods arbitrage** | `GET /v1/market/prices`, `/v1/goods/*` | Prices are a deterministic hash — buy low district, sell high. |
 | **The window** | `GET /v1/window`, `POST /v1/window/redeem` | Spend $OMR for cash at a published rate, from a funded till. The spent OMR funds family yield and the Desk; it does not reduce token supply. **One way** — cash cannot be turned into $OMR at all (there is no swap and no laundering; both answer `retired`). A short till refuses and takes nothing. |

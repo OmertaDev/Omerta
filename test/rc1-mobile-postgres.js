@@ -1,3 +1,4 @@
+import { solveCrimeMinigame } from './crime-fixture.js';
 // Real PostgreSQL + real browser, default newcomer balances, no injected client board.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -56,7 +57,7 @@ try {
     const crimeCommand = await crime.getAttribute('data-do');
     assert.equal(jobRequests.length, 0, 'arriving on Streets must not submit a job');
     const firstResponse = page.waitForResponse((response) => response.request().method() === 'POST' && new URL(response.url()).pathname.startsWith('/v1/crimes/'));
-    await crime.click(); const first = await firstResponse;
+    await crime.click(); await solveCrimeMinigame(page); const first = await firstResponse;
     assert.equal(first.status(), 200, await first.text());
     assert.equal(first.request().postDataJSON()?.approach, 'standard', 'the selected approach is submitted');
     const firstActionMs = Date.now() - started;

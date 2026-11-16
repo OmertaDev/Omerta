@@ -26,6 +26,7 @@ try {
     const checkpointText = await readFile(join(out, `${role.id}.json`), 'utf8');
     const checkpoint = JSON.parse(checkpointText);
     assert.equal(checkpoint.agentMarked, true, 'every cohort identity is visibly an agent');
+    assert.equal(checkpoint.lastRun.events.find(event => event.path === '/v1/agent/act')?.status, 200, 'every cohort identity commits its one authorized action without a cadence or stale-turn refusal');
     assert.equal(checkpointText.includes('"token"'), false);
     assert.equal(checkpointText.includes('Bearer '), false);
     ids.add(checkpoint.identity);

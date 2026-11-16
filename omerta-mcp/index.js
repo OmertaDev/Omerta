@@ -184,10 +184,14 @@ const TOOLS = [
   },
   { name: 'omerta_me', description: 'Your full character sheet: vitals, status, holdings, and the server\'s `coach` hint (the single highest-value next step).', inputSchema: { type: 'object', properties: {} } },
   { name: 'omerta_turn', description: 'Get one EV-ranked personalized turn: current resources/status, extraction readiness, multi-loop plans, executable actions, blockers, and next wake time. Call this before omerta_act.', inputSchema: { type: 'object', properties: {} } },
-  { name: 'omerta_act', description: 'Execute one structured action from the latest omerta_turn through the server-enforced turn endpoint. Omit actionId to use the recommendation. A success installs the returned post-action turn. Reuse operationId only when retrying the same ambiguous action.',
+  { name: 'omerta_act', description: 'Execute one structured action from the latest omerta_turn through the server-enforced turn endpoint. Omit actionId to use the recommendation. Crime actions require minigame: fetch the action\'s minigame.challengePath with omerta_request GET, play the challenge, and supply its token and moves. A success installs the returned post-action turn. Reuse operationId and the identical minigame only when retrying the same ambiguous action.',
     inputSchema: { type: 'object', properties: {
       actionId: { type: 'string', description: 'Action id returned by the latest omerta_turn. Omit to execute recommendedActionId.' },
       operationId: { type: 'string', description: 'Logical mutation id for safe retries. Omit on the first attempt.' },
+      minigame: { type: 'object', additionalProperties: false, required: ['token', 'moves'], properties: {
+        token: { type: 'string', maxLength: 2048 },
+        moves: { type: 'array', maxItems: 64, items: { type: 'integer', minimum: 0, maximum: 3 } },
+      }, description: 'Required for crime actions. Submit the issued token and your complete move sequence; preserve both unchanged for a retry.' },
     } } },
   { name: 'omerta_rules', description: 'The machine rulebook: crimes, districts, guns, drugs, goods, catalogs, thresholds, paths.', inputSchema: { type: 'object', properties: {} } },
   { name: 'omerta_opportunities', description: 'THE OPPORTUNITY BOARD — every open economic action (contracts, convoys, loans, buy-orders) ranked by reward + the standing skill-loops (trade-goods arbitrage spreads, the $OMR→cash redemption window, loan sharking) with live signals. Carries a `best` recommended move. Poll this to decide what to do.', inputSchema: { type: 'object', properties: {} } },
@@ -316,7 +320,8 @@ server.setRequestHandler(CallToolRequestSchema, async (req) => {
       if (!action) return ok({ error: 'unknown_action',
         message: 'That action was not in the latest turn, and no current recommendation was available. Call omerta_turn and choose a current executable action.' });
       if (!turnId) return ok({ error: 'unknown_turn', message: 'The latest response had no turnId. Call omerta_turn again.' });
-      const result = await api('POST', '/v1/agent/act', { turnId, actionId }, { operationId: args.operationId });
+      const result = await api('POST', '/v1/agent/act', { turnId, actionId,
+        ...(args.minigame === undefined ? {} : { minigame: args.minigame }) }, { operationId: args.operationId });
       // Success and stale_turn both carry the server's replacement snapshot. Ambiguous network
       // results retain the prior authority so an explicit same-operation retry stays possible.
       if (result.body?.turn) cacheTurn(result.body.turn);

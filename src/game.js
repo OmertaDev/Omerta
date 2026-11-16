@@ -2228,7 +2228,7 @@ async function takeFromMark(client, h, ch, markRow, take) {
 }
 
 // ── §7.2 CRIME ──
-export async function doCrime(ch, crimeId, client, h, approach, puzzle) {
+export async function doCrime(ch, crimeId, client, h, approach, puzzle, minigame = null) {
   const c = CRIMES.find((x) => x.id === crimeId);
   if (!c) throw new GameError('bad_crime', 'No such job.');
   const lvl = levelOf(Number(ch.respect));
@@ -2265,12 +2265,12 @@ export async function doCrime(ch, crimeId, client, h, approach, puzzle) {
   // D14 (SIGNED — option A): the stat contribution is a lever (M3.CRIME_STAT), steepened + offset so
   // a mid build is unchanged and the investment is felt. MUSCLE stays out of crime by design. The
   // OFFSET can push the pre-mult sum below 0 for an untrained street on a hard job — that is the
-  // intended "an unskilled crook fumbles the hard score"; the final chance is a probability, and
-  // Math.random() < (negative) is simply never true, so it needs no extra clamp.
+  // intended "an unskilled crook fumbles the hard score". Floor the chance at zero
+  // before applying minigame performance so the final probability stays valid.
   const cs = M3.CRIME_STAT;
   const statEdge = eff('cunning') * cs.CUN + eff('speed') * cs.SPD - cs.OFFSET;
-  const chance = Math.min(0.97, (c.base + statEdge
-    + gangLevel * 0.02 + (held.includes('brick') ? 0.02 : 0) + (rIdx >= 9 ? 0.02 : 0)) * ap.successMult);
+  const chance = Math.max(0, Math.min(0.97, (c.base + statEdge
+    + gangLevel * 0.02 + (held.includes('brick') ? 0.02 : 0) + (rIdx >= 9 ? 0.02 : 0)) * ap.successMult)) * (minigame?.multiplier ?? 1);
   const roll = Math.random();
   const outcome = await (async () => {
     // SOLDIERS: the assigned, fit second rides along (assists + takes a cut + carries the risk)
@@ -2405,7 +2405,8 @@ export async function doCrime(ch, crimeId, client, h, approach, puzzle) {
     return { ok: true, success: false, approach: ap.id, jailSeconds: jailS, victim: mark, soldier,
       cooldownMs: PACING.STREET_ACTION_CD_MS };
   })();
-  return { ...outcome, ...(puzzleFeedback ? { puzzle: puzzleFeedback } : {}) };
+  return { ...outcome, ...(puzzleFeedback ? { puzzle: puzzleFeedback } : {}),
+    ...(minigame ? { minigame, successChance: chance } : {}) };
 }
 
 // ── §7.3 TRAIN ──

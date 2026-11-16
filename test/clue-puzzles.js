@@ -1,3 +1,4 @@
+import { injectWithCrimeMinigame } from './crime-fixture.js';
 import assert from 'node:assert/strict';
 import { clueStepOf, CLUES, cityHourOf } from '../src/rules.js';
 import { cluePuzzleOf, isStructuredClueSalt, newClueSalt, publicCluePuzzle } from '../src/clue-puzzles.js';
@@ -64,7 +65,7 @@ assert.equal(readiness({ interaction: publicCluePuzzle(cluePuzzleOf('trail-v2:re
 const app = await buildServer();
 const pool = app.pool;
 const request = async (method, url, token, body) => {
-  const reply = await app.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload: body });
+  const reply = await injectWithCrimeMinigame(app, { method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload: body });
   return { status: reply.statusCode, body: reply.json() };
 };
 const privateFree = (value) => assert.doesNotMatch(JSON.stringify(value), /"(?:answerId|district|salt)"/);

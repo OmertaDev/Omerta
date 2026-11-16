@@ -28,6 +28,7 @@ process.env.SEASON_MOD = process.env.SEASON_MOD || 'dead_quiet';
 // the reckoning is measuring a different game than a run in week two.
 process.env.SEASON_PHASE = process.env.SEASON_PHASE || 'long_game';
 import { buildServer } from '../src/server.js';
+import { completeCrimeMinigame } from './crime-minigame-client.js';
 import { opsEngagement } from '../src/engagement.js';
 import { CRIMES, MISSIONS, GUNS, BUSINESSES, CONSTANTS, M3, PACING, RACKETS, PORT, POPULATION, nerveCapOf, DISTRICTS, STABLE } from '../src/rules.js';
 import { runPopulation, runResidentBehaviour } from '../src/population.js';
@@ -57,12 +58,14 @@ const POPULATE = !process.argv.includes('--no-population');
 const SYNTHETIC_ADULT_BIRTH_DATE = '1990-01-01';
 const app = await buildServer();
 const pool = app.pool;
-const call = async (method, url, { token, body } = {}) => {
+const send = async (method, url, { token, body } = {}) => {
   const res = await app.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload: body });
   let parsed = null;
   try { parsed = res.json(); } catch { parsed = null; }
   return { code: res.statusCode, body: parsed };
 };
+const call = (method, url, options) => method === 'POST' && /^\/v1\/crimes\/[^/?]+$/.test(url)
+  ? completeCrimeMinigame(send, url, options) : send(method, url, options);
 const fmt = (n) => Number(n).toLocaleString('en-US', { maximumFractionDigits: 0 });
 const hhmm = (min) => `${Math.floor(min / 60)}h${String(Math.round(min % 60)).padStart(2, '0')}m`;
 

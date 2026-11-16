@@ -236,7 +236,8 @@ for (const response of [{ code: 200, body: {} }, { code: 400, body: { error: 'un
     'a missing puzzle field, unrelated refusal or server error cannot pass the empty-task oracle');
 assertEmptyTaskPuzzle(await j('GET', taskPuzzleReadPath, token));
 const crimeSelector = puzzleRules.body.crimes.find(crime => crime.id === 'pick')?.puzzle;
-assert.deepEqual(crimeSelector, { required: false, scope: 'crime', targetId: 'pick', benefit: 'feedback_only' });
+assert.deepEqual(crimeSelector, { required: true, scope: 'crime', targetId: 'pick', benefit: 'success_odds',
+  kind: 'signal-lock', challengePath: '/v1/crimes/pick/challenge' });
 assertEmptyTaskPuzzle(await j('GET', '/v1/task-puzzles?' + new URLSearchParams({
   scope: crimeSelector.scope, targetId: crimeSelector.targetId,
 }), token));

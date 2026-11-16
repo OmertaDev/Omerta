@@ -1,3 +1,4 @@
+import { solveCrimeMinigame } from './crime-fixture.js';
 // Real gameplay survives the quieter shell: navigation, optional panels, and job terms/receipts.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -123,6 +124,7 @@ try {
   try {
     Math.random = () => .01;
     await page.locator(actionSelector).first().click();
+      await solveCrimeMinigame(page);
     const response = await actionResponse;
     assert.equal(response.status(), 200, 'the visible control still issues a real successful job');
     assert.equal((await response.json()).success, true);

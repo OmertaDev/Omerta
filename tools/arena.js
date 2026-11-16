@@ -62,6 +62,7 @@ import assert from 'node:assert';
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { buildServer } from '../src/server.js';
+import { completeCrimeMinigame } from './crime-minigame-client.js';
 import { runLedgerInvariants } from '../src/invariants.js';
 import { runPopulation, runResidentBehaviour } from '../src/population.js';
 import { sweepExpiredBounties } from '../src/social.js';
@@ -192,11 +193,14 @@ if (SEED_SERVER) {
 const app = await buildServer();
 const pool = app.pool;
 process.env.SEASON_PHASE = process.env.SEASON_PHASE || 'long_game'; // TEST_ONLY — set post-boot on purpose (see the env block)
-const call = async (method, url, token, body) => {
+const send = async (method, url, token, body) => {
   const res = await app.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload: body });
   let json = null; try { json = res.json(); } catch { /* empty */ }
   return { code: res.statusCode, body: json || {} };
 };
+const call = (method, url, token, body) => method === 'POST' && /^\/v1\/crimes\/[^/?]+$/.test(url)
+  ? completeCrimeMinigame((m, p, options) => send(m, p, options.token, options.body), url, { token, body })
+  : send(method, url, token, body);
 
 // ── bookkeeping ─────────────────────────────────────────────────────────────────────────────────
 // Every 4xx is COUNTED by strategy and code — a refusal is the game working, and the distribution of

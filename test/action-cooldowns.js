@@ -1,3 +1,4 @@
+import { injectWithCrimeMinigame } from './crime-fixture.js';
 // Real route regressions; --postgres additionally proves row locking and rollback.
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
@@ -54,7 +55,7 @@ if (postgres) {
   }
 }
 const call = async (method, url, token, payload, key = crypto.randomUUID()) => {
-  const res = await app.inject({ method, url, payload,
+  const res = await injectWithCrimeMinigame(app, { method, url, payload,
     headers: { ...(token ? { authorization: `Bearer ${token}` } : {}), 'idempotency-key': key } });
   return { code: res.statusCode, body: res.json() };
 };

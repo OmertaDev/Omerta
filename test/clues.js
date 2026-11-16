@@ -1,3 +1,4 @@
+import { injectWithCrimeMinigame } from './crime-fixture.js';
 // CLUE SCROLLS test (the 41st suite) — treasure trails (slate #4, design
 // omerta-ladder-clues-seasons-design.md). Covers: the forced drop on a successful crime
 // (CLUE_DROP_P=1, TEST-ONLY), one-active-scroll, the board + riddle, the COLD dig (wrong
@@ -21,7 +22,7 @@ import { runLedgerInvariants } from '../src/invariants.js';
 const app = await buildServer();
 const pool = app.pool;
 const call = async (method, url, { token, body } = {}) => {
-  const res = await app.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload: body });
+  const res = await injectWithCrimeMinigame(app, { method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload: body });
   return { code: res.statusCode, body: res.json() };
 };
 const meOf = async (t) => (await call('GET', '/v1/me', { token: t })).body.character;

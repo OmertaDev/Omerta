@@ -1,3 +1,4 @@
+import { injectWithCrimeMinigame } from './crime-fixture.js';
 import assert from 'node:assert/strict';
 import { buildServer } from './server-fixture.js';
 import { cityEventOf, dayOf } from '../src/rules.js';
@@ -8,7 +9,7 @@ process.env.SEASON_MOD = 'dead_quiet'; process.env.SEASON_PHASE = 'long_game';
 const app = await buildServer();
 let token;
 const call = async (method, url, payload) => {
-  const response = await app.inject({ method, url, payload,
+  const response = await injectWithCrimeMinigame(app, { method, url, payload,
     headers: token ? { authorization: `Bearer ${token}` } : {} });
   assert.equal(response.statusCode, 200, response.body);
   return response.json();

@@ -1,3 +1,4 @@
+import { solveCrimeMinigame } from './crime-fixture.js';
 // Real-page UX integration against a disposable in-process database.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -48,6 +49,52 @@ const openTab = async (page, tab) => {
 };
 const noOverflow = async (page, label) => {
   const dimensions = await page.evaluate(() => ({ width: innerWidth, scroll: document.documentElement.scrollWidth }));
+  if (dimensions.scroll > dimensions.width + 2) {
+    try {
+      const diagnostic = await page.evaluate(() => {
+        const box = element => {
+          const rect = element.getBoundingClientRect(), style = getComputedStyle(element);
+          return {
+            node: element.tagName.toLowerCase(), id: element.id, classes: String(element.className).slice(0,160),
+            left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom, width: rect.width, height: rect.height,
+            clientWidth: element.clientWidth, scrollWidth: element.scrollWidth,
+            display: style.display, position: style.position, visibility: style.visibility, opacity: style.opacity,
+            minWidth: style.minWidth, maxWidth: style.maxWidth, cssWidth: style.width, boxSizing: style.boxSizing,
+            overflowX: style.overflowX, overflowY: style.overflowY, flex: style.flex, grid: style.gridTemplateColumns,
+            whiteSpace: style.whiteSpace, overflowWrap: style.overflowWrap, transform: style.transform,
+          };
+        };
+        const ancestors = element => {
+          const parents = [];
+          for (let parent = element.parentElement; parent; parent = parent.parentElement) parents.push(parent);
+          return parents;
+        };
+        const offenders = [...document.querySelectorAll('body *')].map(element => {
+          const bounds = box(element);
+          if (!bounds.width || !bounds.height || bounds.right <= innerWidth + 2) return null;
+          const parents = ancestors(element);
+          const clipping = parents.filter(parent => /^(auto|scroll|hidden|clip)$/.test(getComputedStyle(parent).overflowX));
+          const visibleRight = Math.min(bounds.right, ...clipping.map(parent => {
+            const rect = parent.getBoundingClientRect(); return rect.left + parent.clientLeft + parent.clientWidth;
+          }));
+          return { ...bounds, text: element.textContent?.trim().slice(0,100), visibleRight,
+            clippingParents: clipping.slice(0,5).map(box), parents: parents.slice(0,5).map(box) };
+        }).filter(Boolean).sort((a,b) => b.visibleRight - a.visibleRight || b.right - a.right).slice(0,24);
+        const overlays = [...document.querySelectorAll('#toast,#toast>*,#brag,#wirepanel,#ux-screen-tools,#ux-screen-tools>.ux-screen-tools-body,dialog,.modal-bg,.ux-feel-arrival,.ux-reward-transfer')]
+          .map(element => ({ ...box(element), open: element.hasAttribute('open'), hidden: element.hasAttribute('hidden'),
+            text: element.textContent?.trim().slice(0,100) }));
+        return { width: innerWidth, height: innerHeight, root: box(document.documentElement), body: box(document.body),
+          fontStatus: document.fonts.status, fonts: [...document.fonts].slice(0,20).map(font => ({ family: font.family, status: font.status })),
+          focusView: document.body.classList.contains('ux-operation-focus'),
+          activeElement: document.activeElement ? box(document.activeElement) : null, offenders, overlays };
+      });
+      const record = { label, measured: dimensions, diagnostic };
+      console.log('UX_OVERFLOW_DIAGNOSTICS ' + JSON.stringify(record));
+      fs.writeFileSync(path.join(artifacts, `ux-overflow-${label.replace(/[^a-z0-9]+/gi,'-')}.json`), JSON.stringify(record,null,2));
+      await page.screenshot({ path: path.join(artifacts, 'ux-overflow-failure.png') });
+      console.log(`Overflow artifacts: ${artifacts}`);
+    } catch (error) { console.log('UX_OVERFLOW_DIAGNOSTIC_ERROR ' + String(error?.message || error)); }
+  }
   assert.ok(dimensions.scroll <= dimensions.width + 2, `${label} overflows: ${JSON.stringify(dimensions)}`);
 };
 
@@ -102,6 +149,7 @@ try {
   try {
     Math.random = () => .01;
     await page.locator('#tab-streets [data-do^="POST /v1/crimes/"][data-body*=standard]:enabled').first().click();
+    await solveCrimeMinigame(page);
     const response = await actionResponse; assert.equal(response.status(), 200); result = await response.json();
   } finally { Math.random = originalRandom; }
   assert.equal(result.success, true, 'the disposable fixture produces a real successful job');

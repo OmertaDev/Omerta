@@ -6,6 +6,9 @@ import { execFileSync } from 'node:child_process';
 import { GRAND_STRATEGY_SOURCE, GRAND_STRATEGY_SOURCE_SHA256 } from './grand-strategy-source-data.js';
 import { nativeGarageHistoricalInput, nativeGarageHistoricalEntry, nativeGarageHistoricalRecord } from './native-garage-source-transfer.js';
 
+// Keep genuine physical admission independent of later historical read projections.
+const readActualPhysical = fs.readFileSync.bind(fs);
+
 export { GRAND_STRATEGY_SOURCE };
 export const GRAND_STRATEGY_PREDECESSOR = '7d52e1f08dc9540b182553b70dedfce4fecfac22';
 export const GRAND_STRATEGY_RELEASE_FILES = Object.freeze([
@@ -184,7 +187,7 @@ export function grandStrategyActual(file) {
   assert(stat.isFile() && !stat.isSymbolicLink(), 'Regular physical reviewed source required');
   const descriptor = fs.openSync(file, 'r');
   let physical;
-  try { physical = fs.readFileSync(descriptor); } finally { fs.closeSync(descriptor); }
+  try { physical = readActualPhysical(descriptor); } finally { fs.closeSync(descriptor); }
   const raw = execFileSync('git', ['--no-replace-objects', 'show', 'HEAD:' + file], {
     windowsHide: true, maxBuffer: 64 * 1024 * 1024,
   });

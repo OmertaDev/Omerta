@@ -1,3 +1,4 @@
+import { injectWithCrimeMinigame } from './crime-fixture.js';
 // THE BROKERS — the activation sink and the epoch allocator.
 // Design: `omerta-brokers-design.md`.
 //
@@ -20,7 +21,7 @@ import { runLedgerInvariants } from '../src/invariants.js';
 const app = await buildServer();
 const pool = app.pool;
 const call = async (method, url, { token, body } = {}) => {
-  const res = await app.inject({ method, url,
+  const res = await injectWithCrimeMinigame(app, { method, url,
     headers: token ? { authorization: `Bearer ${token}` } : {}, payload: body });
   return { code: res.statusCode, body: res.json() };
 };

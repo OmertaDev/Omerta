@@ -1,3 +1,4 @@
+import { injectWithCrimeMinigame } from './crime-fixture.js';
 import { adultAuthFixture } from './auth-fixture.js';
 // M5 hardening test: the §10.4 invariant job over an organically-earned economy
 // (zero SQL cash seeding), drift detection, idempotency keys, invite codes,
@@ -55,7 +56,7 @@ app.post('/v1/__genuine_bug', async () => { throw new Error('a real null-derefer
 const pool = app.pool;
 const modH = { 'x-mod-key': 'test-mod-key' };
 const call = async (method, url, { token, body, headers } = {}) => {
-  const res = await app.inject({ method, url, payload: headers?.['content-type'] === 'application/json' && body === undefined ? undefined : adultAuthFixture(method, url, body),
+  const res = await injectWithCrimeMinigame(app, { method, url, payload: headers?.['content-type'] === 'application/json' && body === undefined ? undefined : adultAuthFixture(method, url, body),
     headers: { ...(token ? { authorization: `Bearer ${token}` } : {}), ...(headers || {}) } });
   return { code: res.statusCode, body: res.json(), headers: res.headers };
 };

@@ -213,7 +213,7 @@
 | [.agents/skills/viem-integration/references/wagmi-react.md](../../.agents/skills/viem-integration/references/wagmi-react.md) | documentation | 624 | 2026-08-27 |
 | [.agents/skills/viem-integration/references/writing-transactions.md](../../.agents/skills/viem-integration/references/writing-transactions.md) | documentation | 467 | 2026-08-27 |
 | [.agents/skills/viem-integration/SKILL.md](../../.agents/skills/viem-integration/SKILL.md) | documentation | 271 | 2026-08-27 |
-| [AGENTS.md](../../AGENTS.md) | documentation | 787 | 2026-11-10 |
+| [AGENTS.md](../../AGENTS.md) | documentation | 797 | 2026-11-15 |
 | [AGENTS.override.md](../../AGENTS.override.md) | documentation | 32 | 2026-09-25 |
 | [AUDIT-bank-city-leg.md](../../AUDIT-bank-city-leg.md) | audit | 119 | 2026-08-12 |
 | [AUDIT-blood-war.md](../../AUDIT-blood-war.md) | audit | 95 | 2026-08-05 |
@@ -726,7 +726,7 @@
 | [docs/supplier-history-security-review.md](../../docs/supplier-history-security-review.md) | documentation | 56 | 2026-10-11 |
 | [docs/supply-cadence-security-review.md](../../docs/supply-cadence-security-review.md) | documentation | 81 | 2026-10-11 |
 | [docs/supply-tender-security-review.md](../../docs/supply-tender-security-review.md) | documentation | 63 | 2026-10-11 |
-| [docs/TASK-PUZZLES.md](../../docs/TASK-PUZZLES.md) | documentation | 90 | 2026-11-10 |
+| [docs/TASK-PUZZLES.md](../../docs/TASK-PUZZLES.md) | documentation | 101 | 2026-11-15 |
 | [docs/territory-economics-integration-design.md](../../docs/territory-economics-integration-design.md) | design | 36 | 2026-10-13 |
 | [docs/territory-economics-observation-review.md](../../docs/territory-economics-observation-review.md) | documentation | 16 | 2026-10-13 |
 | [docs/territory-economics-security-review.md](../../docs/territory-economics-security-review.md) | documentation | 65 | 2026-10-13 |
@@ -757,7 +757,7 @@
 | [LAUNCH-READINESS.md](../../LAUNCH-READINESS.md) | operations | 297 | 2026-09-25 |
 | [LAUNCH.md](../../LAUNCH.md) | operations | 237 | 2026-09-25 |
 | [MARKETING-COPY.md](../../MARKETING-COPY.md) | documentation | 431 | 2026-09-25 |
-| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 131 | 2026-11-10 |
+| [MARKETING-POSTS.md](../../MARKETING-POSTS.md) | documentation | 131 | 2026-11-16 |
 | [MARKETING.md](../../MARKETING.md) | documentation | 352 | 2026-10-06 |
 | [OMERTA_LAUNCH_STATUS.md](../../OMERTA_LAUNCH_STATUS.md) | documentation | 52 | 2026-09-25 |
 | [omerta-backend-spec.md](../../omerta-backend-spec.md) | documentation | 80 | 2026-09-25 |

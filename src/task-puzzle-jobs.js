@@ -7,7 +7,8 @@ export const REQUIRED_PUZZLE_MISSIONS = Object.freeze(['m2', 'm11', 'm12']);
 export const missionPuzzle = id => REQUIRED_PUZZLE_MISSIONS.includes(id)
   ? { required: true, scope: 'mission', targetId: id } : null;
 export const hustlePuzzle = () => ({ required: true, scope: 'hustle', targetId: 'legwork', step: 1 });
-export const crimePuzzle = id => ({ required: false, scope: 'crime', targetId: id, benefit: 'feedback_only' });
+export const crimePuzzle = id => ({ required: true, scope: 'crime', targetId: id, benefit: 'success_odds',
+  kind: 'signal-lock', challengePath: `/v1/crimes/${id}/challenge` });
 const invalid = () => { throw new GameError('task_puzzle_context', 'The task context is invalid. Reopen the task to recover.'); };
 
 export async function taskPuzzleContext(ch, selector, client) {

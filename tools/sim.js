@@ -21,6 +21,7 @@ process.env.SEASON_MOD = process.env.SEASON_MOD || 'dead_quiet';
 process.env.SEASON_PHASE = process.env.SEASON_PHASE || 'long_game';
 process.env.SHOOT_CD_MS = '0';
 import assert from 'node:assert';
+import { completeCrimeMinigame } from './crime-minigame-client.js';
 import { buildServer } from '../src/server.js';
 import { recordPlayerIntel } from '../src/playerintel.js';
 import { runBuyback } from '../src/worker.js';
@@ -62,6 +63,7 @@ const streetCall = async (id, method, url, options) => {
     'UPDATE characters SET street_action_at=$2 WHERE id=$1',
     [id, new Date(Date.now() - PACING.STREET_ACTION_CD_MS)]);
   assert.equal(elapsed.rowCount, 1, `street-action time step: missing character ${id}`);
+  if (method === 'POST' && /^\/v1\/crimes\/[^/?]+$/.test(url)) return completeCrimeMinigame(call, url, options);
   return call(method, url, options);
 };
 // The named simulation targets have been introduced; identity gossip moves no value or phone numbers.

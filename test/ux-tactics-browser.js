@@ -1,3 +1,4 @@
+import { solveCrimeMinigame } from './crime-fixture.js';
 // Retired planning UI stays absent; native controls and authenticated previews remain authoritative.
 import assert from 'node:assert/strict';
 import { existsSync, mkdtempSync } from 'node:fs';
@@ -118,19 +119,27 @@ try {
   // current feedback receipt, without restoring the retired planning module.
   await page.setViewportSize({ width: 1440, height: 1050 });
   for (const [crimeId, roll, success, nerve] of [['pick', 0.01, true, 2], ['stereo', 0.99999, false, 3]]) {
-    await pool.query('UPDATE characters SET street_action_at=NULL WHERE id=$1', [row.id]);
+    const view = await api('GET', '/v1/me', token);
+    assert.equal(view.code, 200);
+    const maxNerve = (view.body.character || view.body).maxNerve;
+    assert(Number.isFinite(maxNerve) && maxNerve >= nerve, 'The fixture uses its authoritative nerve cap.');
+    // Passive accrual stays capped while the required minigame is played.
+    await pool.query('UPDATE characters SET nerve=$2,last_accrued_at=$3,street_action_at=NULL WHERE id=$1',
+      [row.id, maxNerve, new Date()]);
     await page.reload({ waitUntil: 'domcontentloaded' });
     await page.locator('#screen-main:not(.hidden)').waitFor();
     await page.evaluate(() => document.querySelectorAll('.modal-bg:not(.hidden)').forEach(node => node.classList.add('hidden')));
     await openJobs();
     const before = (await api('GET', '/v1/me', token)).body;
     const beforeCharacter = before.character || before;
+    assert.equal(Number(beforeCharacter.nerve), maxNerve, 'Each outcome starts from a full valid nerve pool.');
     const originalRandom = Math.random;
     let outcome;
     try {
       Math.random = () => roll;
       const confirmed = page.waitForResponse(response => response.url().endsWith(`/v1/crimes/${crimeId}`) && response.request().method() === 'POST');
       await page.locator(`#tab-streets [data-do="POST /v1/crimes/${crimeId}"].prime:enabled`).click();
+      await solveCrimeMinigame(page);
       const response = await confirmed;
       assert.equal(response.status(), 200);
       outcome = await response.json();

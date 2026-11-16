@@ -1,0 +1,65 @@
+.crime-minigame {
+  position:fixed; inset:12px; margin:auto;
+  width:min(520px,calc(100vw - 24px)); max-width:100%; max-height:calc(100dvh - 24px);
+  box-sizing:border-box; padding:0; overflow:auto; color:var(--fg,#eee3cc);
+  background:#151410; border:1px solid var(--gold,#bda164); border-radius:12px;
+  box-shadow:0 20px 90px #000b; font-family:inherit;
+}
+.crime-minigame::backdrop { background:#070807dc; }
+.crime-lock-frame { padding:clamp(18px,5vw,30px); }
+.crime-lock-eyebrow { color:var(--gold,#bda164); letter-spacing:.18em; font-size:10px; font-weight:700; margin:0 0 10px; }
+.crime-minigame h2 { font:normal 32px/1.15 Georgia,serif; margin:0 0 8px; }
+.crime-lock-job { margin:0 0 18px; color:var(--gold,#bda164); overflow-wrap:anywhere; }
+.crime-lock-rules,.crime-lock-terms { font-size:12px; line-height:1.6; color:var(--dim,#b1aa9a); }
+.crime-lock-board { border-block:1px solid #bda16438; margin:18px 0; padding:18px 0; }
+.crime-lock-stages { display:flex; gap:8px; padding:0; margin:0 0 20px; list-style:none; }
+.crime-lock-stages li { flex:1; padding-bottom:8px; border-bottom:2px solid #ffffff18; font-size:10px; color:var(--dim,#b1aa9a); }
+.crime-lock-stages li[aria-current] { color:var(--gold,#bda164); border-color:var(--gold,#bda164); }
+.crime-lock-stages li.complete { color:#b6c7a0; border-color:#66784c; }
+.crime-lock-alarm { display:flex; align-items:center; gap:7px; font-size:10px; letter-spacing:.04em; flex-wrap:wrap; }
+.crime-lock-alarm i { width:8px; height:8px; background:#37342d; border:1px solid #6b6150; border-radius:50%; }
+.crime-lock-alarm i.tripped { background:#c36047; border-color:#e09777; }
+.crime-lock-alarm span:last-child { margin-left:auto; color:var(--dim,#b1aa9a); }
+.crime-lock-sequence { display:flex; justify-content:center; gap:8px; margin:22px 0; }
+.crime-lock-sequence span { display:grid; place-items:center; width:42px; height:48px; border:1px solid #bda16450; border-radius:5px; color:var(--gold,#bda164); background:#0e0e0c; font:20px Georgia,serif; }
+.crime-lock-sequence span.matched { color:#b6c7a0; border-color:#66784c; }
+.crime-lock-begin { display:block; width:100%; min-height:44px; margin-bottom:14px; }
+.crime-lock-begin[hidden] { display:none; }
+.crime-lock-pads { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
+.crime-lock-pad { display:grid; place-items:center; gap:6px; min-width:0; min-height:86px; padding:12px 2px; color:var(--gold,#bda164); background:#23221b; border:1px solid #8a7851; border-bottom-width:4px; border-radius:8px; cursor:pointer; touch-action:manipulation; transition:background .12s,transform .12s; }
+.crime-lock-pad span { font:26px Georgia,serif; }
+.crime-lock-pad small { font-size:9px; letter-spacing:.1em; }
+.crime-lock-pad:disabled { opacity:.4; cursor:default; }
+.crime-lock-pad:not(:disabled):hover { background:#373021; }
+.crime-lock-pad:not(:disabled):active { transform:translateY(2px); background:#56462c; }
+.crime-minigame button:focus-visible { outline:2px solid #f5dc91; outline-offset:4px; }
+.crime-lock-status { min-height:3em; font-size:12px; line-height:1.5; color:var(--fg,#eee3cc); }
+.crime-lock-terms { font-size:11px; }
+.crime-lock-cancel { min-height:44px; margin-top:8px; }
+@media (max-width:360px) { .crime-lock-pads { gap:6px; } .crime-lock-alarm span:last-child { width:100%; margin-left:0; } }
+@media (prefers-reduced-motion:reduce) { .crime-lock-pad { transition:none; } }
+
+@media(max-width:760px) {
+  /* Keep required crime terms and all three approaches reachable on phones. */
+  #screen-main .ux-action-pocket:has([data-do^="POST /v1/crimes/"]) {
+    display:flex; flex-direction:column; max-height:min(50dvh,max(28vh,16rem));
+  }
+  #screen-main .ux-action-pocket:has([data-do^="POST /v1/crimes/"])>.ux-action-context {
+    margin:0; padding:0; border:0; background:none; box-shadow:none;
+    transform:none; transition:none; min-height:0; display:flex; flex-direction:column;
+  }
+  #screen-main .ux-action-pocket:has([data-do^="POST /v1/crimes/"]) .operation-action-terms {
+    min-height:0; overflow:auto; overscroll-behavior:contain;
+  }
+  #screen-main .ux-action-pocket:has([data-do^="POST /v1/crimes/"]) .verbrow { flex-shrink:0; }
+  #screen-main .ux-action-pocket:has([data-do^="POST /v1/crimes/"]) .act { min-height:44px; }
+}
+@media(min-width:440px) and (max-width:760px) and (max-height:450px) {
+  #screen-main .ux-action-pocket:has([data-do^="POST /v1/crimes/"])>.ux-action-context {
+    display:grid; grid-template-columns:minmax(0,2fr) minmax(0,3fr); gap:12px;
+  }
+  #screen-main .ux-action-pocket:has([data-do^="POST /v1/crimes/"]) .operation-action-terms { margin:0; }
+  #screen-main .ux-action-pocket:has([data-do^="POST /v1/crimes/"]) .verbrow {
+    display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); align-content:start; margin:0;
+  }
+}

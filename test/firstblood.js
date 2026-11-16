@@ -1,3 +1,4 @@
+import { injectWithCrimeMinigame } from './crime-fixture.js';
 // THE AHA MOMENT — "First Blood" (src/firstblood.js). A guaranteed early dramatic beat: soon after a
 // new player finds their feet, a nearby resident "makes a move" on them (recorded on the rivals ledger,
 // delivered as a cinematic), the coach points them at hitting back, and SETTLING it (a JUMP — the
@@ -17,7 +18,7 @@ import { runLedgerInvariants } from '../src/invariants.js';
 const app = await buildServer();
 const pool = app.pool;
 const call = async (method, url, { token, body } = {}) => {
-  const res = await app.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload: body });
+  const res = await injectWithCrimeMinigame(app, { method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload: body });
   return { code: res.statusCode, body: res.json() };
 };
 const meOf = async (token) => (await call('GET', '/v1/me', { token })).body.character;

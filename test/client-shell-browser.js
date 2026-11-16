@@ -1,3 +1,4 @@
+import { injectWithCrimeMinigame } from './crime-fixture.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import net from 'node:net';
@@ -20,7 +21,7 @@ const base = process.env.PUBLIC_URL;
 const app = await buildServer();
 let browser;
 const call = async (method, url, token, payload) => {
-  const result = await app.inject({ method, url, payload, headers: token ? { authorization: `Bearer ${token}` } : {} });
+  const result = await injectWithCrimeMinigame(app, { method, url, payload, headers: token ? { authorization: `Bearer ${token}` } : {} });
   assert.equal(result.statusCode, 200, `${method} ${url}`);
   return result.json();
 };

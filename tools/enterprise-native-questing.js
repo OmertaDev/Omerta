@@ -202,8 +202,12 @@ export function captureQuestingEnterpriseSource() {
   const authored = new Map(tree(declaration.authoredRevision).map(row => [row.file, row]));
   const read = actualReader(records), files = {};
   const actualClosure = questingNativeClosure(file => read(file).canonical);
-  const historicalClosure = questingNativeClosure(file => nativeGarageEnterpriseHistoricalInput(file, read(file).canonical));
-  assertNativeGarageEnterpriseClosure(actualClosure, historicalClosure, declaration.files.map(row => row.file));
+  const declaredClosure = declaration.files.map(row => row.file);
+  const exactCurrentClosure = actualClosure.length === declaredClosure.length
+    && actualClosure.every((file, index) => file === declaredClosure[index]);
+  const historicalClosure = exactCurrentClosure ? actualClosure
+    : questingNativeClosure(file => nativeGarageEnterpriseHistoricalInput(file, read(file).canonical));
+  assertNativeGarageEnterpriseClosure(actualClosure, historicalClosure, declaredClosure);
   for (const expected of declaration.files) {
     const actual = read(expected.file);
     const original = authored.get(expected.file);

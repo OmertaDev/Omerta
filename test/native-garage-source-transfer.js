@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { execFileSync, spawnSync } from 'node:child_process';
+import { crimeMinigameActual } from '../tools/crime-minigame-source-compatibility.js';
 import { NATIVE_GARAGE_SOURCE as source, NATIVE_GARAGE_SCOPE, NATIVE_GARAGE_GENERATED_FILES,
   assertNativeGarageCurrentSource, nativeGarageActual, qualifyNativeGarageSource,
   nativeGarageHistoricalInput, nativeGarageHistoricalEntry, nativeGarageHistoricalRecord } from '../tools/native-garage-source-transfer.js';
@@ -66,15 +67,17 @@ for (const file of Object.keys(source.additions)) {
 assert.strictEqual(nativeGarageHistoricalInput('src/unreviewed.js', 'arbitrary'), 'arbitrary');
 
 const observedFile = 'public/index.html', observed = nativeGarageActual(observedFile);
+const currentObserved = crimeMinigameActual(observedFile);
 const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'omerta-native-source-'));
 const moduleUrl = new URL('../tools/native-garage-source-transfer.js', import.meta.url).href;
 const wrappedRead = spawnSync(process.execPath, ['--input-type=module', '-e',
   'import assert from "node:assert/strict"; import fs from "node:fs"; import {execFileSync} from "node:child_process";'
   + ' import {nativeGarageActual,nativeGarageHistoricalInput,NATIVE_GARAGE_SOURCE} from ' + JSON.stringify(moduleUrl) + ';'
+  + ' import {crimeMinigameHistoricalInput} from ' + JSON.stringify(new URL('../tools/crime-minigame-source-compatibility.js', import.meta.url).href) + ';'
   + ' import {grandStrategyActual} from ' + JSON.stringify(new URL('../tools/grand-strategy-source-transfer.js', import.meta.url).href) + ';'
   + ' const file="src/server.js",read=fs.readFileSync,current=read(file); let calls=0;'
   + ' fs.readFileSync=(candidate,options)=>{const raw=read(candidate,options);if(candidate!==file)return raw;calls++;return nativeGarageHistoricalInput(file,raw)};'
-  + ' try {const actual=nativeGarageActual(file);assert(actual.physical.equals(current));assert.equal(calls,0);'
+  + ' try {const actual=nativeGarageActual(file);assert(actual.physical.equals(crimeMinigameHistoricalInput(file,current)));assert.equal(calls,0);'
   + ' const prior=grandStrategyActual(file);assert.equal(calls,0);'
   + ' const projected=fs.readFileSync(file);assert.equal(calls,1);'
   + ' assert(prior.physical.equals(projected));'
@@ -88,17 +91,19 @@ try {
   execFileSync('git', ['read-tree', 'HEAD'], { cwd: temporary, env: environment, windowsHide: true });
   fs.mkdirSync(path.join(temporary, 'public'));
   const target = path.join(temporary, observedFile);
-  fs.writeFileSync(target, observed.physical);
+  fs.writeFileSync(target, currentObserved.physical);
   const script = 'import { nativeGarageActual } from ' + JSON.stringify(moduleUrl) + '; nativeGarageActual("public/index.html");';
   const child = env => spawnSync(process.execPath, ['--input-type=module', '-e', script], {
     cwd: temporary, env, windowsHide: true, encoding: 'utf8',
   });
-  assert.equal(child(environment).status, 0); positives++;
-  fs.writeFileSync(target, Buffer.from(observed.committed.toString('utf8').replaceAll('\n', '\r\n')));
-  assert.equal(child(environment).status, 0); positives++;
+  const genuineLf = child(environment);
+  assert.equal(genuineLf.status, 0, genuineLf.stderr || genuineLf.stdout); positives++;
+  fs.writeFileSync(target, Buffer.from(currentObserved.committed.toString('utf8').replaceAll('\n', '\r\n')));
+  const genuineCrlf = child(environment);
+  assert.equal(genuineCrlf.status, 0, genuineCrlf.stderr || genuineCrlf.stdout); positives++;
   fs.appendFileSync(target, 'x');
   const changed = child(environment); assert.notEqual(changed.status, 0); assert.match(changed.stderr, /Physical source/); refusals++;
-  fs.writeFileSync(target, observed.physical);
+  fs.writeFileSync(target, currentObserved.physical);
   const changedIndex = child({ ...environment, GIT_INDEX_FILE: path.join(temporary, 'empty-index') });
   assert.notEqual(changedIndex.status, 0); assert.match(changedIndex.stderr, /stage-zero index/); refusals++;
 

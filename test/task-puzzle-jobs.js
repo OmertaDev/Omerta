@@ -1,3 +1,4 @@
+import { injectWithCrimeMinigame } from './crime-fixture.js';
 import assert from 'node:assert/strict';
 import Ajv from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
@@ -15,7 +16,7 @@ process.env.CLUE_DROP_P = '0'; // Hold optional random trail state equal for pai
 process.env.MOD_KEY = 'task-puzzle-lifecycle-test';
 const app = await buildServer(), pool = app.pool;
 const call = async (method, url, token, body) => {
-  const res = await app.inject({ method, url, payload: body, headers: token ? { authorization: `Bearer ${token}` } : {} });
+  const res = await injectWithCrimeMinigame(app, { method, url, payload: body, headers: token ? { authorization: `Bearer ${token}` } : {} });
   return { code: res.statusCode, body: res.json() };
 };
 const actor = async name => {
@@ -165,7 +166,7 @@ try {
   assert(api.paths['/v1/task-puzzles'].post.requestBody.content['application/json'].schema.required.includes('scope'));
   assert(api.paths['/v1/task-puzzles'].get.parameters.some(p => p.name === 'targetId' && p.required));
   assert(api.paths['/v1/missions/{id}'].post.requestBody.content['application/json'].schema.properties.puzzle);
-  assert(rules.crimes.every(crime => crime.puzzle?.scope === 'crime' && crime.puzzle.required === false && crime.puzzle.benefit === 'feedback_only'));
+  assert(rules.crimes.every(crime => crime.puzzle?.scope === 'crime' && crime.puzzle.required === true && crime.puzzle.benefit === 'success_odds' && crime.puzzle.kind === 'signal-lock'));
   const oldLife = solveTaskPuzzle(await issue(b, 'mission', 'm11'));
   const history = (await pool.query('SELECT * FROM task_puzzles WHERE character_id=$1 ORDER BY issue_order', [b.id])).rows;
   assert(history.some(row => row.consumed_at), 'The lifecycle fixture includes a consumed receipt.');

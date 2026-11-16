@@ -1,3 +1,4 @@
+import { injectWithCrimeMinigame } from './crime-fixture.js';
 import { adultAuthFixture } from './auth-fixture.js';
 // Red-team regression suite: each test reproduces a specific exploit found in the
 // game audit and asserts it is now closed. Grouped by the finding it guards.
@@ -15,7 +16,7 @@ const app = await buildServer();
 const pool = app.pool;
 const modH = { 'x-mod-key': 'test-mod-key' };
 const call = async (method, url, { token, body, headers } = {}) => {
-  const res = await app.inject({ method, url, payload: adultAuthFixture(method, url, body),
+  const res = await injectWithCrimeMinigame(app, { method, url, payload: adultAuthFixture(method, url, body),
     headers: { ...(token ? { authorization: `Bearer ${token}` } : {}), ...(headers || {}) } });
   let json; try { json = res.json(); } catch { json = null; }
   return { code: res.statusCode, body: json, headers: res.headers };

@@ -2,21 +2,21 @@
 
 A complete inventory of the built system, and an honest technical-debt register.
 
-The census below records the combined release source inventory measured on 2026-11-07. Availability and activation are documented separately in the deployment guides.
+The census below records dated source inventory snapshots. Availability and activation are documented separately in the deployment guides.
 
 ---
 
 ## 1. Size, measured
 
-Counts were measured for the combined release source on 2026-11-07, before generated release records; they do not identify a deployed revision.
+File counts and backend/test line totals were measured from the combined merge source on 2026-11-16. Other line totals retain their recorded snapshots; no count identifies a deployed revision.
 
-File counts include the combined playtest fixes, quest-quality additions and task puzzles. Backend and markdown inventory rows were refreshed on 2026-11-15 for the closed native garage interface and exact source-comparison proofs; the test row was refreshed on 2026-11-16 for the finite generated-artifact controls. Other rows retain their earlier dated snapshots.
+The combined inventory includes the required crime minigame, closed native garage interface, quest-quality additions and task puzzles. The route row retains the required-minigame snapshot pending the combined route check.
 
 | | |
 |---|---|
-| Backend modules | **623** files, **142959** lines (recursive source inventory) |
-| Test suites | **1053** files, **221139** lines (recursive source inventory; this row refreshed 2026-11-16) |
-| HTTP routes | **1401** registrations (**1401** unique; 1277 under `/v1`) |
+| Backend modules | **624** files, **143061** lines (recursive source inventory) |
+| Test suites | **1057** files, **221795** lines (recursive source inventory; this row refreshed 2026-11-16) |
+| HTTP routes | **1415** registrations (**1415** unique; 1282 under `/v1`; measured 2026-11-16) |
 | Database tables | **586** (`schema.sql`, 9848 lines) |
 | Client | **14683** lines in `public/index.html`; tabbed game interface with locally served Fieldwork and player guidance modules |
 | Ops dashboard + wiki | `public/admin.html`, `public/wiki.html` |

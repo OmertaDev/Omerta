@@ -5,6 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { execFileSync, spawnSync } from 'node:child_process';
+import { crimeMinigameActual } from '../tools/crime-minigame-source-compatibility.js';
 import { AGE_REMOVAL_SOURCE, ageRemovalHistoricalRecord } from '../tools/age-removal-source-transfer.js';
 import { NATIVE_GARAGE_PREDECESSOR, assertNativeGarageCurrentSource, nativeGarageActual,
   nativeGarageHistoricalInput, nativeGarageHistoricalEntry } from '../tools/native-garage-source-transfer.js';
@@ -105,7 +106,7 @@ for (const [file, row] of Object.entries(source.files)) {
   assert.throws(() => grandStrategyHistoricalInput(file, invalid), /Lossless UTF-8/); refusals += 2;
 }
 const observedFile = 'public/index.html', observed = grandStrategyActual(observedFile);
-const currentObserved = nativeGarageActual(observedFile);
+const currentObserved = crimeMinigameActual(observedFile);
 const priorObserved = grandStrategyHistoricalRecord(observedFile, observed);
 for (const file of ['public/index.html', 'public/sw.js', 'src/server.js']) {
   const actual = grandStrategyActual(file), pin = AGE_REMOVAL_SOURCE.files[file].baseline;
@@ -161,11 +162,11 @@ try {
     + '; const pin = source.files[file].baseline; const bytes = execFileSync("git", ["--no-replace-objects", "show", source.predecessor + ":" + file], { maxBuffer: 64 * 1024 * 1024, windowsHide: true });'
     + ' grandStrategyHistoricalRecord(file, { head: { mode: pin.mode, blob: pin.blob }, index: pin.mode + " " + pin.blob + " 0\\t" + file,'
     + ' committed: bytes, physical: bytes, regular: true, symbolic: false });';
-  const currentRecordScript = ending => 'import { nativeGarageActual, nativeGarageHistoricalRecord } from '
-    + JSON.stringify(new URL('../tools/native-garage-source-transfer.js', import.meta.url).href)
+  const currentRecordScript = ending => 'import { crimeMinigameActual } from '
+    + JSON.stringify(new URL('../tools/crime-minigame-source-compatibility.js', import.meta.url).href)
     + '; import { grandStrategyHistoricalRecord } from ' + JSON.stringify(new URL('../tools/grand-strategy-source-transfer.js', import.meta.url).href)
     + '; import { ageRemovalHistoricalRecord } from ' + JSON.stringify(new URL('../tools/age-removal-source-transfer.js', import.meta.url).href)
-    + '; const file = ' + JSON.stringify(observedFile) + '; const actual = nativeGarageHistoricalRecord(file, nativeGarageActual(file));'
+    + '; const file = ' + JSON.stringify(observedFile) + '; const actual = crimeMinigameActual(file);'
     + ' actual.physical = ' + (ending === 'LF' ? 'actual.committed' : 'Buffer.from(actual.committed.toString("utf8").replaceAll("\\n", "\\r\\n"))') + ';'
     + ' for (const qualify of [grandStrategyHistoricalRecord, ageRemovalHistoricalRecord]) qualify(file, actual);';
   assert.equal(child(environment).status, 0, 'Genuine closed source succeeds in an isolated checkout');

@@ -11,6 +11,7 @@ if ! apt-cache show "postgresql-client-$major" >/dev/null 2>&1; then
   # Ubuntu's default archive may only provide its original PostgreSQL major.
   sudo install -d /usr/share/postgresql-common/pgdg
   sudo curl --fail --silent --show-error --location \
+    --connect-timeout 15 --max-time 120 --retry 3 --retry-all-errors --retry-max-time 180 \
     -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc \
     https://www.postgresql.org/media/keys/ACCC4CF8.asc
   . /etc/os-release

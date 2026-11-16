@@ -4,6 +4,11 @@ import fs from 'node:fs';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { NATIVE_GARAGE_SOURCE, NATIVE_GARAGE_SOURCE_SHA256 } from './native-garage-source-data.js';
+import { CRIME_MINIGAME_SOURCE, CRIME_MINIGAME_GENERATED_FILES, qualifyCrimeMinigameRelease,
+  crimeMinigameHistoricalInput, crimeMinigameHistoricalEntry, crimeMinigameHistoricalRecord } from './crime-minigame-source-compatibility.js';
+
+// Keep genuine physical admission independent of later historical read projections.
+const readActualPhysical = fs.readFileSync.bind(fs);
 
 export { NATIVE_GARAGE_SOURCE };
 export const NATIVE_GARAGE_PREDECESSOR = '9cf7ced8beedd0950018a14bbab71b08b71a3d5b';
@@ -110,26 +115,30 @@ export function nativeGarageSourceDataBytes(value) {
 export function nativeGarageActual(file) {
   definition();
   const pin = pinFor(file); assert(pin, 'Only a finite reviewed native garage domain');
-  const head = git('ls-tree', 'HEAD', '--', file).trim(), index = git('ls-files', '--stage', '--', file).trim();
-  assert.equal(head, entry(file, pin, 'tree'), 'Genuine current HEAD must equal reviewed native successor');
-  assert.equal(index, entry(file, pin, 'index'), 'Genuine stage-zero index must equal reviewed native successor');
+  const head = git('ls-tree', 'HEAD', '--', file).trim(), rawIndex = git('ls-files', '--stage', '--', file).trim();
   const stat = fs.lstatSync(file);
   assert(stat.isFile() && !stat.isSymbolicLink(), 'Regular physical reviewed native source required');
   // Historical fixtures project path reads; descriptors retain genuine current physical bytes.
   const descriptor = fs.openSync(file, 'r');
-  let physical;
-  try { physical = fs.readFileSync(descriptor); } finally { fs.closeSync(descriptor); }
-  const committed = execFileSync('git', ['--no-replace-objects', 'show', 'HEAD:' + file], {
+  let rawPhysical;
+  try { rawPhysical = readActualPhysical(descriptor); } finally { fs.closeSync(descriptor); }
+  const rawCommitted = execFileSync('git', ['--no-replace-objects', 'show', 'HEAD:' + file], {
     windowsHide: true, maxBuffer: 64 * 1024 * 1024,
   });
+  const match = head.match(/^(100644|100755) blob ([a-f0-9]{40})\t/);
+  assert(match, 'Regular genuine current native source required');
+  const actual = crimeMinigameHistoricalRecord(file, { head: { mode: match[1], blob: match[2] },
+    index: rawIndex, committed: rawCommitted, physical: rawPhysical, regular: true, symbolic: false });
+  const { index, committed, physical } = actual;
+  assert.equal(entry(file, actual.head, 'tree'), entry(file, pin, 'tree'), 'Genuine current HEAD must equal reviewed native successor');
+  assert.equal(index, entry(file, pin, 'index'), 'Genuine stage-zero index must equal reviewed native successor');
   fingerprint(committed, pin);
   if (modified(file) || pin.text) {
     const current = canonical(committed); assert(current && !committed.includes(13), 'Canonical committed LF UTF-8 source');
     assert(physical.equals(committed) || physical.equals(Buffer.from(current.lf.replaceAll('\n', '\r\n'))),
       'Physical source must equal whole current HEAD in LF or uniform CRLF');
   } else assert(physical.equals(committed), 'Binary native source must equal whole HEAD');
-  return { head: { mode: pin.mode, blob: pin.blob }, index, committed, physical,
-    regular: true, symbolic: false };
+  return actual;
 }
 function baseline(file, input) {
   const current = canonical(input); assert(current, 'Uniform complete LF/CRLF source required');
@@ -144,12 +153,14 @@ function baseline(file, input) {
   fingerprint(restored, row.baseline); return { current, restored };
 }
 export function qualifyNativeGarageSource(file, input) {
+  input = crimeMinigameHistoricalInput(file, input);
   assert.equal(arguments.length, 2); definition(); assert(modified(file), 'Only exact modified native source has a historical view');
   const proof = baseline(file, input); nativeGarageActual(file);
   return Object.freeze({ file, baselineText: proof.restored, sourceRevision: source.revision,
     predecessorRevision: source.predecessor, ...flags });
 }
 export function nativeGarageHistoricalInput(file, input) {
+  input = crimeMinigameHistoricalInput(file, input);
   if (!modified(file)) return input;
   const current = canonical(input);
   if (!current || sha(current.lf) !== source.files[file].current.sha256) return input;
@@ -158,6 +169,7 @@ export function nativeGarageHistoricalInput(file, input) {
 }
 export function nativeGarageHistoricalEntry(file, input, kind) {
   assert(kind === 'tree' || kind === 'index');
+  input = crimeMinigameHistoricalEntry(file, input, kind);
   if (!modified(file)) return input;
   const row = source.files[file], expected = entry(file, row.current, kind);
   if (input !== expected && input !== expected + '\n') return input;
@@ -166,6 +178,7 @@ export function nativeGarageHistoricalEntry(file, input, kind) {
 }
 export function nativeGarageHistoricalRecord(file, actual) {
   assert.equal(arguments.length, 2);
+  actual = crimeMinigameHistoricalRecord(file, actual);
   if (!modified(file)) return actual;
   definition();
   assert.deepEqual(Object.keys(actual || {}).sort(), ['head', 'index', 'committed', 'physical', 'regular', 'symbolic'].sort());
@@ -200,7 +213,10 @@ export function assertNativeGarageCurrentSource() {
   assert.deepEqual([...Object.keys(source.files), ...Object.keys(source.additions)].sort(), NATIVE_GARAGE_SCOPE,
     'Exactly the finite reviewed native release and proof domains');
   const after = git('diff', '--name-only', '--no-renames', '-z', source.revision, 'HEAD').split('\0').filter(Boolean);
-  assert(after.every(file => excluded.has(file)), 'Only fixed independently generated domains may follow the native source candidate');
+  const successor = new Set([...Object.keys(CRIME_MINIGAME_SOURCE.files), ...Object.keys(CRIME_MINIGAME_SOURCE.additions),
+    ...CRIME_MINIGAME_GENERATED_FILES]);
+  assert(after.every(file => excluded.has(file) || successor.has(file)), 'Only fixed independently generated domains or the exact sealed crime successor may follow the native source candidate');
+  qualifyCrimeMinigameRelease();
   for (const file of NATIVE_GARAGE_SCOPE) nativeGarageActual(file);
   const metadata = 'tools/native-garage-source-data.js', rendered = nativeGarageSourceDataBytes(source);
   assert.equal(fs.readFileSync(metadata, 'utf8').replaceAll('\r\n', '\n'), rendered,

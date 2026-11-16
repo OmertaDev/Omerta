@@ -13,7 +13,7 @@ const sha = bytes => createHash('sha256').update(bytes).digest('hex');
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { windowsHide: true, maxBuffer: 16 * 1024 * 1024 });
 assertNativeGarageCurrentSource();
 const expectedNames = declaration.files.map(row => row.file);
-const changed = declaration.files.filter(row => Object.hasOwn(NATIVE_GARAGE_SOURCE.files, row.file));
+const changed = Object.entries(NATIVE_GARAGE_SOURCE.files).map(([file, row]) => ({ file, ...row.baseline }));
 assert(changed.length >= 8, 'Existing native execution includes the actual changed garage entry points');
 let checks = 0;
 for (const expected of changed) {
@@ -40,7 +40,7 @@ assert.strictEqual(retained.bytes, bytes); assert.strictEqual(retained.current, 
 
 const additions = Object.keys(NATIVE_GARAGE_SOURCE.additions);
 assert(additions.includes('src/nativegarage.js') && additions.includes('public/nativegarage-client.js'));
-const actual = [...expectedNames, ...additions.filter(file => !expectedNames.includes(file)), NATIVE_GARAGE_SOURCE_METADATA];
+const actual = [...new Set([...expectedNames, ...additions, NATIVE_GARAGE_SOURCE_METADATA])];
 assertNativeGarageEnterpriseClosure(actual, expectedNames, expectedNames);
 assert.throws(() => assertNativeGarageEnterpriseClosure([...actual, 'src/unreviewed.js'], expectedNames, expectedNames));
 assert.throws(() => assertNativeGarageEnterpriseClosure(actual.slice(1), expectedNames, expectedNames));

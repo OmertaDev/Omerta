@@ -92,6 +92,11 @@ try {
     if (actionError) throw actionError; return value;
   }
   async function invoke(accountId, method, path, body, key, expectedStatus = 200) {
+    if (method === 'POST' && /^\/v1\/crimes\/[^/?]+$/.test(path) && !body?.minigame) {
+      const challenge = await invoke(accountId, 'GET', path + '/challenge?approach=' + encodeURIComponent(body?.approach || 'standard'));
+      const lock = challenge.body.minigame;
+      body = { ...body, minigame: { token: lock.token, moves: lock.rounds.flat() } };
+    }
     const identity = { accountId, method, path, logicalAt: at,
       ...(body === undefined ? {} : { body }), ...(key === undefined ? {} : { key }) };
     const response = await observed(identity, () => proof.invoke('authenticated-http', identity, async () => {

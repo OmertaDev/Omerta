@@ -1,3 +1,4 @@
+import { injectWithCrimeMinigame } from './crime-fixture.js';
 import { adultAuthFixture } from './auth-fixture.js';
 import { recordPlayerIntel } from '../src/playerintel.js';
 import { earnBuildingClaim } from './deed-discovery-fixture.js';
@@ -133,7 +134,7 @@ const html = decomment(readFileSync(new URL('../public/index.html', import.meta.
     [200, false, '/v1/train/muscle', true],
   ]) {
     const observed = await vm.runInNewContext(`(async () => {
-      let acting = false, activatedControl = null, operationPending = null, operationPhase = '', _operationResponseCurrent = null;
+      let acting = false, crimeMinigamePending = false, crimeMinigameAttempts = new Map(), activatedControl = null, operationPending = null, operationPhase = '', _operationResponseCurrent = null;
       globalThis.window = globalThis;
       let me = { id: 'owner', generation: 1, loc: 'docks' };
       const currentTab = 'streets', feedbackUX = null;
@@ -1513,7 +1514,7 @@ assert(reads.size > 40, `only ${reads.size} (route, binding) pairs found — the
 
 
 const inject = async (method, url, token, payload) => {
-  const res = await app.inject({ method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload: adultAuthFixture(method, url, payload) });
+  const res = await injectWithCrimeMinigame(app, { method, url, headers: token ? { authorization: `Bearer ${token}` } : {}, payload: adultAuthFixture(method, url, payload) });
   try { return { code: res.statusCode, body: res.json() }; } catch { return { code: res.statusCode, body: null }; }
 };
 const token = (await inject('POST', '/v1/auth/guest')).body.token;
@@ -6930,6 +6931,7 @@ const ACTFNS = new Map();   // route path → the handler names its registration
     ['upgradeSpeakeasy', 'the raid early-return renders the RAIDED line; driven by the action ledger'],
     ['collectCorner', 'the corner take renders through the collect family — driven live'],
     ['settlePassStipend', 'an internal settle called from the pass claim, whose own reply carries the line'],
+    ['verifyCrimeMinigame', 'an internal grade nested under minigame; the enclosing doCrime outcome supplies the success or bust receipt'],
   ]);
   const muteUsed = new Set();
   const silenceViolations = (entries, used = null) => {

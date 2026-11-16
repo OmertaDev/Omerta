@@ -10,7 +10,7 @@ import { createServer } from 'node:net';
 import { basename, dirname, join, resolve } from 'node:path';
 import { performance } from 'node:perf_hooks';
 import { fileURLToPath } from 'node:url';
-import { promisify } from 'node:util';
+import { isDeepStrictEqual, promisify } from 'node:util';
 
 const SESSION_VERSION = 1;
 const MIN_INTERVAL_MS = 3100;
@@ -596,11 +596,15 @@ async function readSession(stateStore) {
   }
   const exactKeys = (value, keys) => value &&
     Object.keys(value).sort().join('\0') === [...keys].sort().join('\0');
+  const pendingKeys = ['operationId', 'turnId', 'actionId', 'startedAt',
+    ...(session?.pending?.decisionCallId !== undefined ? ['decisionCallId'] : []),
+    ...(session?.pending?.minigame !== undefined ? ['minigame'] : [])];
   const pendingValid = session?.pending === null || (
     session?.pending &&
-    (exactKeys(session.pending, ['operationId', 'turnId', 'actionId', 'startedAt'])
-      || (exactKeys(session.pending, ['operationId', 'turnId', 'actionId', 'startedAt', 'decisionCallId'])
-        && typeof session.pending.decisionCallId === 'string' && /^[A-Za-z0-9_-]{1,128}$/.test(session.pending.decisionCallId))) &&
+    exactKeys(session.pending, pendingKeys) &&
+    (session.pending.decisionCallId === undefined || (typeof session.pending.decisionCallId === 'string'
+      && /^[A-Za-z0-9_-]{1,128}$/.test(session.pending.decisionCallId))) &&
+    (session.pending.minigame === undefined || validCrimeMinigame(session.pending.minigame)) &&
     typeof session.pending.operationId === 'string' && session.pending.operationId &&
     typeof session.pending.turnId === 'string' && session.pending.turnId &&
     typeof session.pending.actionId === 'string' && session.pending.actionId &&
@@ -986,6 +990,33 @@ function operationKey(operationId) {
   return crypto.createHash('sha256').update(operationId).digest('hex');
 }
 
+function validCrimeMinigame(value) {
+  return value && typeof value === 'object' && !Array.isArray(value)
+    && Object.keys(value).sort().join(',') === 'moves,token'
+    && typeof value.token === 'string' && value.token.length > 0 && value.token.length <= 2048
+    && Array.isArray(value.moves) && value.moves.length <= 64
+    && value.moves.every(move => Number.isInteger(move) && move >= 0 && move <= 3);
+}
+
+async function prepareCrimeMinigame({ base, fetchImpl, session, action }) {
+  if (action.kind !== 'crime' || action.minigame?.required !== true) return null;
+  const path = action.minigame.challengePath;
+  if (action.minigame.kind !== 'signal-lock' || typeof path !== 'string'
+    || !/^\/v1\/crimes\/[a-z0-9_-]+\/challenge(?:\?approach=(?:quiet|standard|loud))?$/.test(path))
+    throw new Error('Agent Alpha received an unsupported crime minigame');
+  const { minigame } = await requestJson(fetchImpl, base, path, { token: session.token });
+  if (minigame?.kind !== 'signal-lock' || minigame.maxMistakes !== 3
+    || !Array.isArray(minigame.rounds) || minigame.rounds.length !== 3
+    || !minigame.rounds.every((round, index) => Array.isArray(round) && round.length === index + 3)
+    || !Number.isFinite(Date.parse(minigame.expiresAt)) || Date.parse(minigame.expiresAt) <= Date.now())
+    throw new Error('Agent Alpha received an invalid crime minigame');
+  // The public signal is the agent's input. Persist its complete trace before
+  // executing the issued action, so a lost acknowledgement cannot reroll it.
+  const submission = { token: minigame.token, moves: minigame.rounds.flat() };
+  if (!validCrimeMinigame(submission)) throw new Error('Agent Alpha received an invalid crime minigame');
+  return submission;
+}
+
 async function settlePending({ base, fetchImpl, reportStore, stateStore, session, actionKind }) {
   const pending = session.pending;
   let result;
@@ -995,16 +1026,20 @@ async function settlePending({ base, fetchImpl, reportStore, stateStore, session
       token: session.token,
       idempotencyKey: operationKey(pending.operationId),
       body: { turnId: pending.turnId, actionId: pending.actionId,
-        ...(pending.decisionCallId !== undefined ? { decisionCallId: pending.decisionCallId } : {}) },
+        ...(pending.decisionCallId !== undefined ? { decisionCallId: pending.decisionCallId } : {}),
+        ...(pending.minigame !== undefined ? { minigame: pending.minigame } : {}) },
     });
   } catch (error) {
-    if (error?.status !== 409 || error?.code !== 'stale_turn') throw error;
+    const staleTurn = error?.status === 409 && error?.code === 'stale_turn';
+    const staleMinigame = error?.status === 400
+      && ['stale_crime_minigame', 'crime_minigame_required'].includes(error?.code);
+    if (!staleTurn && !staleMinigame) throw error;
     session = { ...session, pending: null };
     await writeIdentityState(stateStore, session);
     await appendReport(reportStore, {
       timestamp: new Date().toISOString(),
       status: 'stale',
-      errorCode: 'stale_turn',
+      errorCode: error.code,
       actionId: pending.actionId,
       ...(actionKind ? { actionKind } : {}),
     });
@@ -1091,13 +1126,13 @@ async function runUnlocked(options, timing) {
     const returnedRecommendation = currentTurn && recommendationOf(currentTurn, role);
     if (returnedRecommendation && !returnedRecommendation.action && !returnedRecommendation.errorCode) break;
     await waitForCadence(timing, intervalMs);
-    const turn = await requestJson(fetchImpl, base, '/v1/agent/turn', { token: session.token });
+    let turn = await requestJson(fetchImpl, base, '/v1/agent/turn', { token: session.token });
     currentTurn = null;
     if (stopAtLevel !== undefined && Number(turn?.state?.identity?.level) >= stopAtLevel) {
       return { status: 'level_reached', actions, level: Number(turn.state.identity.level) };
     }
     const recommendation = recommendationOf(turn, role);
-    const action = recommendation.action;
+    let action = recommendation.action;
     if (!action) {
       if (recommendation.errorCode) {
         await appendReport(reportStore, {
@@ -1113,6 +1148,28 @@ async function runUnlocked(options, timing) {
       }
       break;
     }
+    const minigame = await prepareCrimeMinigame({ base, fetchImpl, session, action });
+    if (minigame) {
+      // The challenge shares the action's hard cadence. Observe final authority
+      // after that wait, before creating any durable or dispatched operation.
+      await waitForCadence(timing, intervalMs);
+      const fresh = await requestJson(fetchImpl, base, '/v1/agent/turn', { token: session.token });
+      const owner = turn.state?.identity, current = fresh.state?.identity;
+      const sameActor = typeof owner?.id === 'string' && owner.id.length > 0
+        && Number.isSafeInteger(owner.generation) && owner.generation >= 1
+        && owner.id === current?.id && owner.generation === current?.generation;
+      if (sameActor && stopAtLevel !== undefined && Number(current.level) >= stopAtLevel)
+        return { status: 'level_reached', actions, level: Number(current.level) };
+      const selected = recommendationOf(fresh, role), next = selected.action;
+      if (!sameActor || !next || !isDeepStrictEqual(
+        [action.id, action.kind, action.method, action.path, action.body, action.cost, action.minigame],
+        [next.id, next.kind, next.method, next.path, next.body, next.cost, next.minigame])) {
+        await appendReport(reportStore, { timestamp: new Date().toISOString(), status: 'refused',
+          errorCode: selected.errorCode || 'crime_action_changed', actionKind: 'crime', actionId: action.id });
+        return { status: 'refused', actions };
+      }
+      turn = fresh; action = next;
+    }
     const operationId = role === 'general' ? crypto.randomUUID() : `${role}:${crypto.randomUUID()}`;
     session = {
       ...session,
@@ -1122,6 +1179,7 @@ async function runUnlocked(options, timing) {
         actionId: action.id,
         startedAt: new Date().toISOString(),
         ...(action.decisionCall !== undefined ? { decisionCallId: action.decisionCall.callId } : {}),
+        ...(minigame ? { minigame } : {}),
       },
     };
     await writeIdentityState(stateStore, session);
