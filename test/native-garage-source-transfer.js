@@ -64,10 +64,13 @@ const moduleUrl = new URL('../tools/native-garage-source-transfer.js', import.me
 const wrappedRead = spawnSync(process.execPath, ['--input-type=module', '-e',
   'import assert from "node:assert/strict"; import fs from "node:fs"; import {execFileSync} from "node:child_process";'
   + ' import {nativeGarageActual,nativeGarageHistoricalInput,NATIVE_GARAGE_SOURCE} from ' + JSON.stringify(moduleUrl) + ';'
-  + ' const file="src/game.js",read=fs.readFileSync,current=read(file); let calls=0;'
+  + ' import {grandStrategyActual} from ' + JSON.stringify(new URL('../tools/grand-strategy-source-transfer.js', import.meta.url).href) + ';'
+  + ' const file="src/server.js",read=fs.readFileSync,current=read(file); let calls=0;'
   + ' fs.readFileSync=(candidate,options)=>{const raw=read(candidate,options);if(candidate!==file)return raw;calls++;return nativeGarageHistoricalInput(file,raw)};'
   + ' try {const actual=nativeGarageActual(file);assert(actual.physical.equals(current));assert.equal(calls,0);'
+  + ' const prior=grandStrategyActual(file);assert.equal(calls,0);'
   + ' const projected=fs.readFileSync(file);assert.equal(calls,1);'
+  + ' assert(prior.physical.equals(projected));'
   + ' assert(projected.equals(execFileSync("git",["show",NATIVE_GARAGE_SOURCE.predecessor+":"+file],{windowsHide:true})));}'
   + ' finally {fs.readFileSync=read;}'
 ], { windowsHide: true, encoding: 'utf8' });

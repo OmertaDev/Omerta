@@ -180,8 +180,11 @@ export function grandStrategyActual(file) {
   assert(pin, 'Only a finite reviewed successor domain');
   const headEntry = git('ls-tree', 'HEAD', '--', file).trim();
   const index = git('ls-files', '--stage', '--', file).trim();
-  const stat = fs.lstatSync(file), physical = fs.readFileSync(file);
+  const stat = fs.lstatSync(file);
   assert(stat.isFile() && !stat.isSymbolicLink(), 'Regular physical reviewed source required');
+  const descriptor = fs.openSync(file, 'r');
+  let physical;
+  try { physical = fs.readFileSync(descriptor); } finally { fs.closeSync(descriptor); }
   const raw = execFileSync('git', ['--no-replace-objects', 'show', 'HEAD:' + file], {
     windowsHide: true, maxBuffer: 64 * 1024 * 1024,
   });
