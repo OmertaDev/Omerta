@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import { randomUUID, createHash } from 'node:crypto';
 import { spawnSync, execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { phase2ErrorSummary } from './lib/phase2-error.js';
 import pg from 'pg';
 import { makeDb, dbCaps, verifyPhase2DefinitionSchema, migrateSchemaUnderLock } from '../src/db.js';
 import { baseLibrary, compileFixture, materialSource, schema, TABLES, deferred, forwardPool,
@@ -48,13 +49,6 @@ const policy = createActivationPolicy({ environment: 'postgres-test', allowedPro
 const concept = (id = 'note', version = 1) => ({ id, definitionVersion: version, kind: 'concept' });
 const fixture = (name,version = 1,definitions = [concept()]) => compileFixture(baseLibrary({ packageId: `omerta.pg.${name}`, version, definitions }));
 const rejects = (promise,code) => assert.rejects(promise,(error) => error.code === code,`expected ${code}`);
-const safeError = (error) => {
-  if (error?.code !== 'ERR_ASSERTION') return `code: ${/^[a-zA-Z0-9_]{1,64}$/.test(error?.code ?? '') ? error.code : 'test_failed'}`;
-  const location = String(error.stack ?? '').match(/(?:test[\\/])?(phase2-[a-z-]+\.js:\d+:\d+)/)?.[1] ?? 'unknown assertion location';
-  const scalar = (value) => value === null || typeof value === 'boolean' || (typeof value === 'number' && Number.isFinite(value))
-    ? JSON.stringify(value) : '[redacted non-scalar]';
-  return `assertion at ${location}; actual=${scalar(error.actual)} expected=${scalar(error.expected)}; ${String(error.operator ?? '').replace(/[^a-zA-Z]/g, '').slice(0, 32)}`;
-};
 
 // Only the already verified native child can allocate these per-block schemas. The locally retained
 // exact name grants cleanup ownership only after CREATE is positively acknowledged. An ambiguous
@@ -973,4 +967,4 @@ async function queryPlans(pool) {
 }
 
 try { assertQuestingPhase2SourceInputs(); const url=endpoint(); if(process.env.P2_TEST_CHILD) await child(url); else await parent(url); }
-catch(error) { console.error('phase2-postgres: FAIL '+safeError(error)); process.exitCode=1; }
+catch(error) { console.error('phase2-postgres: FAIL '+phase2ErrorSummary(error)); process.exitCode=1; }
