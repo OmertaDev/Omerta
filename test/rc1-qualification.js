@@ -5,7 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import { REQUIRED_PROOFS, CANONICAL_GATE_REGISTRY, evidencePath, indexEvidence, verifyIndex, qualify, sha256,
-  validateSourceManifest, validateGateRegistry, validateExecutionRecord, validateGateResult } from '../tools/rc1-qualification.mjs';
+  sourceInventory, validateSourceManifest, validateGateRegistry, validateExecutionRecord, validateGateResult } from '../tools/rc1-qualification.mjs';
 import { freeze, runGate, gateWorkingDirectory } from '../tools/rc1-evidence.mjs';
 
 const fixture = fs.mkdtempSync(path.join(os.tmpdir(), 'omerta-rc1-capture-test-'));
@@ -20,16 +20,41 @@ try {
   fs.mkdirSync('src'); fs.writeFileSync('src/fixture.js', '// synthetic capture test\n');
   fs.writeFileSync('src/binary.bin', Buffer.from([0, 10, 13, 255]));
   fs.writeFileSync('schema.sql', '-- synthetic\n'); fs.writeFileSync('package-lock.json', '{}\n');
+  const privateSource = 'omerta-privacy/circuits/private-action/src/main.nr';
+  const privateBytes = '// synthetic private action relation\n';
+  const addedSources = {
+    [privateSource]: privateBytes,
+    'omerta-privacy/src/client.mjs': '// synthetic private client\n',
+    'omerta-privacy/package.json': '{"type":"module"}\n',
+    'omerta-privacy/package-lock.json': '{}\n',
+    'omerta-privacy/vendor/poseidon/src/lib.nr': '// synthetic dependency\n',
+    'omerta-contracts/script/Deploy.s.sol': '// synthetic deployment input\n',
+    'omerta-contracts/scripts/build.sh': '# synthetic build input\n',
+    'omerta-contracts/lib/dependency/src/Dependency.sol': '// synthetic vendored dependency\n',
+    'omerta-contracts/foundry.toml': '[profile.default]\n',
+    'omerta-contracts/foundry.lock': '{}\n',
+    'omerta-contracts/remappings.txt': 'dependency/=lib/dependency/\n',
+    'omerta-contracts/package.json': '{}\n',
+    'omerta-contracts/package-lock.json': '{}\n',
+    'omerta-contracts/.gitmodules': '# synthetic dependency declarations\n',
+    'omerta-contracts/run-forge-test.sh': '# synthetic test wrapper\n',
+    '.gitmodules': '# synthetic root dependency declarations\n',
+  };
+  for (const [file, bytes] of Object.entries(addedSources)) {
+    fs.mkdirSync(path.dirname(file), { recursive: true }); fs.writeFileSync(file, bytes);
+  }
   fs.writeFileSync('.gitignore', 'evidence/\nlinks/\n'); write('configuration.json', { test: 'synthetic-only' });
   const registry = { gates: [
     { id: 'pass', command: ['node', '-e', 'console.log("synthetic capture only")'], timeoutMs: 10000, scope: 'regression', coverageExclusions: ['Not a full release proof'] },
     { id: 'fail', command: ['node', '-e', 'process.exit(7)'], timeoutMs: 10000 },
     { id: 'timeout', command: ['node', '-e', 'setInterval(()=>{}, 1000)'], timeoutMs: 200 },
+    { id: 'private-mutation', command: ['node', '-e', `require("fs").appendFileSync("${privateSource}", "// changed")`], timeoutMs: 10000 },
     { id: 'mutation', command: ['node', '-e', 'require("fs").appendFileSync("src/fixture.js", "// changed")'], timeoutMs: 10000 },
   ] };
   write(CANONICAL_GATE_REGISTRY, registry); git('add', '.');
   git('-c', 'user.name=RC1 Synthetic Test', '-c', 'user.email=rc1-test@example.invalid', 'commit', '--quiet', '-m', 'Synthetic fixture');
   const predecessor = git('rev-parse', 'HEAD');
+  git('update-index', '--assume-unchanged', privateSource);
   const manifest = freeze({ output: 'evidence', configuration: 'configuration.json', predecessor, registry: CANONICAL_GATE_REGISTRY });
   check(() => assert.equal(manifest.source, predecessor)); check(() => validateSourceManifest(manifest));
   const root = path.join(fixture, 'evidence'); indexEvidence(root);
@@ -102,10 +127,27 @@ try {
   }
   const failed = await runGate(root, 'fail'); check(() => assert.equal(failed.exitCode, 7)); check(() => assert.equal(failed.status, 'FAIL'));
   const timeout = await runGate(root, 'timeout'); check(() => assert.equal(timeout.timedOut, true)); check(() => assert.equal(timeout.status, 'FAIL'));
+  try {
+    const privateMutation = await runGate(root, 'private-mutation');
+    check(() => assert.equal(privateMutation.exitCode, 0));
+    check(() => assert.equal(privateMutation.sourceUnchanged, false,
+      'Private proof source mutation hidden from Git status must invalidate captured evidence'));
+    check(() => assert.equal(privateMutation.status, 'FAIL'));
+  } finally {
+    fs.writeFileSync(privateSource, privateBytes);
+    git('update-index', '--no-assume-unchanged', privateSource);
+  }
+  for (const file of Object.keys(addedSources))
+    check(() => assert(manifest.sourceFiles.some((entry) => entry.path === file), `Missing release input: ${file}`));
+  check(() => assert.throws(() => validateSourceManifest({ ...manifest,
+    sourceFiles: manifest.sourceFiles.filter((entry) => entry.path !== privateSource) }), /Source inventory differs/));
   const mutation = await runGate(root, 'mutation'); check(() => assert.equal(mutation.exitCode, 0));
   check(() => assert.equal(mutation.sourceUnchanged, false)); check(() => assert.equal(mutation.status, 'FAIL'));
   await assert.rejects(() => runGate(root, 'pass'), /Source checkout changed/);
   check(() => assert.throws(() => freeze({ output: root, configuration: 'configuration.json', predecessor, registry: CANONICAL_GATE_REGISTRY }), /never overwrite/));
+  git('update-index', '--add', '--cacheinfo', `160000,${predecessor},omerta-contracts/lib/external`);
+  git('-c', 'user.name=RC1 Synthetic Test', '-c', 'user.email=rc1-test@example.invalid', 'commit', '--quiet', '-m', 'Synthetic source gitlink');
+  check(() => assert.throws(() => sourceInventory(git('rev-parse', 'HEAD')), /Source gitlinks are not supported/));
   console.log(`rc1-qualification: ${assertions} source/blob/registry/path/artifact/result controls plus child capture, failure, timeout and mutation checks passed`);
 } finally {
   process.chdir(previousDirectory);
