@@ -211,14 +211,26 @@ async function signedOutstanding(client) {
   return Number((await client.query(
     "SELECT COALESCE(SUM(amount),0) s FROM vouchers WHERE kind='omr' AND status='signed' AND NOT claimed_onchain")).rows[0].s);
 }
+// Reserve signing gates compare exact six-decimal units, including cumulative
+// SQL totals beyond Number's safe precision. SQL counters must remain decimal
+// text: accepting Number values cannot recover precision lost by an adapter.
+function reserveMicros(value) {
+  const invalid = () => { throw new GameError('reserve_precision', 'Reserve amounts must use exact six-decimal units.'); };
+  if (typeof value !== 'string') invalid();
+  const parts = /^(0|[1-9]\d*)(?:\.(\d+))?$/.exec(value);
+  const fraction = (parts?.[2] || '').replace(/0+$/, '');
+  if (!parts || fraction.length > 6) invalid();
+  const micros = BigInt(parts[1]) * 1_000_000n + BigInt(fraction.padEnd(6, '0'));
+  return micros;
+}
 // The GATE quantity: cumulative $OMR ever committed to leave the reserve = signed (will be claimed)
 // PLUS already-claimed. funded_omr is cumulative-ever-funded and is NEVER decremented, so the honest
 // full-reserve rule is committed-ever ≤ funded — a CLAIM must NOT free signing room (the tokens
 // physically left the tranche; only a fresh fundReserve opens more). Counting only unclaimed here
 // let cumulative signed exceed cumulative funded once a voucher was claimed → extraction > inflow.
 async function committedOutstanding(client) {
-  return Number((await client.query(
-    "SELECT COALESCE(SUM(amount),0) s FROM vouchers WHERE kind='omr' AND (status='signed' OR claimed_onchain)")).rows[0].s);
+  return reserveMicros((await client.query(
+    "SELECT COALESCE(SUM(amount),0) s FROM vouchers WHERE kind='omr' AND (status='signed' OR claimed_onchain)")).rows[0]?.s);
 }
 
 // ── OMR withdrawal (full-reserve queue) ──
@@ -276,7 +288,9 @@ export async function requestWithdraw(pool, accountId, amount, toAddress) {
     const deadline = Math.floor(Date.now() / 1000) + WITHDRAW_TTL_SEC;
 
     const outstanding = await committedOutstanding(client); // committed-ever, not just unclaimed
-    const fits = outstanding + net <= Number(res.funded_omr);
+    // Match toVoucherMessage's exact String(row.amount) representation; the
+    // existing net rounding is unchanged, while SQL counters stay text only.
+    const fits = outstanding + reserveMicros(String(net)) <= reserveMicros(res.funded_omr);
     const id = uid();
     const row = { id, account_id: accountId, kind: 'omr', amount: net, gear_id: null, nonce, to_address: getAddress(to), deadline };
     let payload = null, status = 'queued';
@@ -421,24 +435,18 @@ export async function drainQueue(pool, { maxLiveClaimWei = null } = {}) {
     // The queue and reserve use exact six-decimal game units. Converting two
     // adjacent valid micro amounts through Number can make an underfunded claim
     // look equal to its backing and sign a larger exact EIP-712 amount.
-    const micros = (value) => {
-      const parts = /^(\d+)(?:\.(\d*))?$/.exec(String(value ?? 0));
-      const fraction = (parts?.[2] || '').replace(/0+$/, '');
-      if (!parts || fraction.length > 6) throw new GameError('reserve_precision', 'Reserve queue amounts must use exact six-decimal units.');
-      return BigInt(parts[1]) * 1_000_000n + BigInt(fraction.padEnd(6, '0'));
-    };
-    const funded = micros(res.funded_omr);
-    let outstanding = micros((await client.query("SELECT COALESCE(SUM(amount),0) s FROM vouchers WHERE kind='omr' AND (status='signed' OR claimed_onchain)")).rows[0].s);
+    const funded = reserveMicros(res.funded_omr);
+    let outstanding = await committedOutstanding(client);
     const physicalCap = maxLiveClaimWei == null ? null : BigInt(maxLiveClaimWei);
     if (physicalCap != null && physicalCap < 0n) throw new GameError('reserve_precision', 'Physical reserve capacity cannot be negative.');
-    let liveOutstanding = physicalCap == null ? 0n : micros((await client.query("SELECT COALESCE(SUM(amount),0) s FROM vouchers WHERE kind='omr' AND status='signed' AND NOT claimed_onchain")).rows[0].s);
+    let liveOutstanding = physicalCap == null ? 0n : reserveMicros((await client.query("SELECT COALESCE(SUM(amount),0) s FROM vouchers WHERE kind='omr' AND status='signed' AND NOT claimed_onchain")).rows[0]?.s);
     if (physicalCap != null && liveOutstanding * 1_000_000_000_000n > physicalCap) {
       await client.query('COMMIT');
       return { signed: 0, alert: true, reason: 'physical_claim_backing_unavailable' };
     }
     const queued = (await client.query("SELECT * FROM vouchers WHERE kind='omr' AND status='queued' ORDER BY created_at, nonce")).rows;
     for (const row of queued) {
-      const amount = micros(row.amount);
+      const amount = reserveMicros(row.amount);
       if (outstanding + amount > funded) break; // FIFO stops at the exact reserve edge
       if (physicalCap != null && (liveOutstanding + amount) * 1_000_000_000_000n > physicalCap) break;
       // recompute the deadline at SIGN time — a voucher may have sat queued past its original 24h TTL,
