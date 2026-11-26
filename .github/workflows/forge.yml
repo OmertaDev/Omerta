@@ -36,6 +36,7 @@ on:
       - 'test/tokenomics-pilot.js'
       - 'tools/player-genesis-*.js'
       - 'test/player-genesis-deployment.js'
+      - 'test/player-genesis-artifact-metadata.js'
       - 'test/marketv2*.js'
       - 'test/market-v2-deployment-plan.js'
       - 'tools/genesis-auction-*.js'
@@ -70,6 +71,7 @@ on:
       - 'test/tokenomics-pilot.js'
       - 'tools/player-genesis-*.js'
       - 'test/player-genesis-deployment.js'
+      - 'test/player-genesis-artifact-metadata.js'
       - 'test/marketv2*.js'
       - 'test/market-v2-deployment-plan.js'
       - 'tools/genesis-auction-*.js'
@@ -196,6 +198,7 @@ jobs:
           npm run test:eth-rewards
           node test/native-eth-source-transfer.js
           node test/tokenomics-pilot.js
+          node test/player-genesis-artifact-metadata.js
           node test/player-genesis-deployment.js
           node test/genesis-fee-readiness-source-transfer.js
           npm run test:genesis-auction:deployment

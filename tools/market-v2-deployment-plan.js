@@ -84,7 +84,7 @@ export function loadMarketV2Artifact(contract, { contractsRoot = ROOT } = {}) {
   const a = JSON.parse(bytes);
   const m = typeof a.rawMetadata === 'string' ? JSON.parse(a.rawMetadata) : a.metadata;
   if (m?.settings?.compilationTarget?.[`src/market-v2/${contract}.sol`] !== contract
-    || !m.compiler?.version?.startsWith('0.8.38+') || !m.settings.optimizer?.enabled
+    || !m.compiler?.version?.startsWith('0.8.38+') || m.settings.optimizer?.enabled !== true
     || m.settings.optimizer.runs !== 800 || m.settings.evmVersion !== 'cancun' || m.settings.viaIR !== true
     || !Array.isArray(a.abi) || identity(a.abi) !== identity(m.output.abi)) throw Error(`${contract}: compiler/ABI metadata mismatch`);
   const sourceHashes = {};

@@ -125,7 +125,9 @@ export function loadPlayerGenesisArtifact(contract, { contractsRoot = ROOT } = {
   const m = typeof a.rawMetadata === 'string' ? JSON.parse(a.rawMetadata) : a.metadata;
   if (m?.settings?.compilationTarget?.[target] !== contract || !m.compiler?.version?.startsWith('0.8.38+')
     || m.settings.optimizer?.enabled !== true || m.settings.optimizer.runs !== 800
-    || m.settings.evmVersion !== 'cancun' || Boolean(m.settings.viaIR) !== viaIR
+    || m.settings.evmVersion !== 'cancun'
+    || (m.settings.viaIR !== undefined && typeof m.settings.viaIR !== 'boolean')
+    || (m.settings.viaIR ?? false) !== viaIR
     || !m.sources?.[target]?.keccak256 || !Array.isArray(a.abi) || abiIdentity(a.abi) !== abiIdentity(m.output.abi))
     throw Error(`${contract}: compiler/ABI metadata mismatch`);
   const sources = {};
