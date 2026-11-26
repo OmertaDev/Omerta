@@ -31,7 +31,7 @@ const changedPaths = Object.freeze(['.github/workflows/forge.yml', 'package.json
   'src/deedbuildings.js', 'src/deeds.js', 'src/marketv2abi.js', 'src/preflight.js', 'src/routes/deeds.js',
   'src/watcher.js', 'test/grand-strategy-source-transfer.js', 'test/phase2-postgres.js',
   'tools/crime-minigame-source-compatibility.js', 'tools/market-v2-deployment-plan.js',
-  'tools/native-garage-source-transfer.js', 'tools/rc1-qualification.mjs']);
+  'tools/native-garage-source-transfer.js', 'tools/pgquery.js', 'tools/rc1-qualification.mjs']);
 const authoredPaths = Object.freeze(['tools/enterprise-native-questing.js', 'tools/native-garage-enterprise-source.js']);
 const addedPaths = Object.freeze(['test/launch-integration-source-transfer.js', 'test/lib/phase2-error.js',
   'tools/launch-integration-source-transfer.js']);
@@ -39,6 +39,10 @@ const generatedPaths = Object.freeze(['tools/launch-enterprise-source-data.js', 
 const supportPaths = Object.freeze(['test/launch-enterprise-source-transfer.js']);
 let declaredBytes;
 let declaredSizes;
+let declaredPlan;
+export const LAUNCH_ENTERPRISE_BATCH_TARGET_BYTES = 32 * 1024 * 1024;
+export const LAUNCH_ENTERPRISE_BATCH_MAX_BYTES = 256 * 1024 * 1024;
+const metadataMaxBytes = 128 * 1024;
 const fields = (value, names) => assert.deepEqual(Object.keys(value).sort(), [...names].sort());
 function pin(value) {
   fields(value, ['mode', 'blob', 'sha256', 'bytes']);
@@ -51,22 +55,80 @@ const equalPin = (left, right) => left.mode === right.mode && left.blob === righ
 function fullDeclaredPin(file) {
   const expected = declared.get(file); assert(expected);
   if (!declaredSizes) {
-    const files = [...changedPaths, ...authoredPaths];
-    const text = execFileSync('git', ['--no-optional-locks', '--no-replace-objects', 'cat-file', '--batch-check'], {
-      input: files.map(name => declared.get(name).blob).join('\n') + '\n',
-      encoding: 'utf8', windowsHide: true, maxBuffer: 64 * 1024,
-    });
-    const lines = text.split('\n'); assert.equal(lines.pop(), ''); assert.equal(lines.length, files.length);
-    const sizes = new Map();
-    for (let index = 0; index < files.length; index++) {
-      const match = /^([a-f0-9]{40}) blob (0|[1-9][0-9]*)$/.exec(lines[index]); assert(match);
-      assert.equal(match[1], declared.get(files[index]).blob);
-      const size = Number(match[2]); assert(Number.isSafeInteger(size)); sizes.set(files[index], size);
-    }
-    declaredSizes = sizes;
+    declaredSizes = new Map(immutableDeclaredPlan().entries.map(row => [row.file, row.bytes]));
   }
-  assert(declaredSizes.has(file), 'Only the closed twenty-two declared replacement sizes');
+  assert([...changedPaths, ...authoredPaths].includes(file), 'Only closed declared replacement sizes');
   return { ...expected, bytes: declaredSizes.get(file) };
+}
+
+// Pure framing helpers return no current-source receipt or native admission.
+export function planLaunchEnterpriseDeclaredChunks(rows, metadata) {
+  assert(Array.isArray(rows) && rows.length > 0 && Buffer.isBuffer(metadata));
+  assert(metadata.length <= metadataMaxBytes);
+  const text = metadata.toString('ascii'); assert(Buffer.from(text, 'ascii').equals(metadata));
+  const lines = text.split('\n'); assert.equal(lines.pop(), ''); assert.equal(lines.length, rows.length);
+  const names = new Set(), entries = []; let totalFramedBytes = 0;
+  for (let index = 0; index < rows.length; index++) {
+    const row = rows[index]; fields(row, ['file', 'mode', 'blob', 'sha256']);
+    assert(typeof row.file === 'string' && row.file.length && !/[\\:\0\r\n]/.test(row.file)
+      && row.file.split('/').every(part => part && !['.', '..', '.git'].includes(part)));
+    assert(!names.has(row.file), 'Duplicate declared path'); names.add(row.file);
+    assert(['100644', '100755'].includes(row.mode));
+    assert.match(row.blob, /^[a-f0-9]{40}$/); assert.match(row.sha256, /^[a-f0-9]{64}$/);
+    const match = /^([a-f0-9]{40}) blob (0|[1-9][0-9]*)$/.exec(lines[index]); assert(match);
+    assert.equal(match[1], row.blob, 'Immutable object metadata stays in declared order');
+    const bytes = Number(match[2]); assert(Number.isSafeInteger(bytes));
+    const framedBytes = bytes + Buffer.byteLength(lines[index] + '\n') + 1;
+    assert(Number.isSafeInteger(framedBytes) && framedBytes <= LAUNCH_ENTERPRISE_BATCH_MAX_BYTES,
+      'Individual immutable object exceeds unchanged process cap');
+    totalFramedBytes += framedBytes; assert(Number.isSafeInteger(totalFramedBytes));
+    entries.push(Object.freeze({ ...row, bytes, framedBytes }));
+  }
+  const chunks = []; let group = [], framedBytes = 0;
+  const finish = () => { if (group.length) chunks.push(Object.freeze({ entries: Object.freeze(group), framedBytes })); group = []; framedBytes = 0; };
+  for (const entry of entries) {
+    if (group.length && framedBytes + entry.framedBytes > LAUNCH_ENTERPRISE_BATCH_TARGET_BYTES) finish();
+    group.push(entry); framedBytes += entry.framedBytes;
+    if (entry.framedBytes > LAUNCH_ENTERPRISE_BATCH_TARGET_BYTES) finish();
+  }
+  finish();
+  assert.deepEqual(chunks.flatMap(chunk => chunk.entries.map(row => row.file)), rows.map(row => row.file));
+  return Object.freeze({ entries: Object.freeze(entries), chunks: Object.freeze(chunks), totalFramedBytes });
+}
+
+export function decodeLaunchEnterpriseDeclaredChunk(output, chunk) {
+  assert(Buffer.isBuffer(output)); fields(chunk, ['entries', 'framedBytes']);
+  assert(Array.isArray(chunk.entries) && chunk.entries.length > 0);
+  assert(Number.isSafeInteger(chunk.framedBytes) && chunk.framedBytes <= LAUNCH_ENTERPRISE_BATCH_MAX_BYTES);
+  assert(chunk.framedBytes <= LAUNCH_ENTERPRISE_BATCH_TARGET_BYTES || chunk.entries.length === 1);
+  assert.equal(output.length, chunk.framedBytes, 'Complete exact-sized immutable chunk');
+  const result = new Map(); let at = 0;
+  for (const row of chunk.entries) {
+    fields(row, ['file', 'mode', 'blob', 'sha256', 'bytes', 'framedBytes']);
+    assert(!result.has(row.file), 'Duplicate immutable object path');
+    const end = output.indexOf(10, at); assert(end >= at);
+    const rawHeader = output.subarray(at, end), header = rawHeader.toString('ascii');
+    assert(Buffer.from(header, 'ascii').equals(rawHeader));
+    assert.equal(header, `${row.blob} blob ${row.bytes}`, 'Exact immutable object reference/type/size');
+    assert.equal(row.framedBytes, rawHeader.length + 1 + row.bytes + 1);
+    at = end + 1; assert(at + row.bytes < output.length);
+    const content = output.subarray(at, at + row.bytes);
+    assertLaunchEnterpriseCurrentBytes(content, { mode: row.mode, blob: row.blob, sha256: row.sha256, bytes: row.bytes });
+    assert.equal(output[at + row.bytes], 10, 'Immutable object ends with its framing newline');
+    result.set(row.file, Buffer.from(content)); at += row.bytes + 1;
+  }
+  assert.equal(at, output.length, 'No trailing immutable chunk bytes'); return result;
+}
+
+function immutableDeclaredPlan() {
+  if (!declaredPlan) {
+    const metadata = execFileSync('git', ['--no-optional-locks', '--no-replace-objects', 'cat-file', '--batch-check'], {
+      input: declaration.files.map(row => row.blob).join('\n') + '\n', windowsHide: true, maxBuffer: metadataMaxBytes,
+    });
+    const plan = planLaunchEnterpriseDeclaredChunks(declaration.files, metadata);
+    assert.equal(plan.entries.length, 1917, 'Entire immutable original declaration'); declaredPlan = plan;
+  }
+  return declaredPlan;
 }
 export function assertLaunchEnterpriseCurrentBytes(bytes, expected) {
   assert(Buffer.isBuffer(bytes)); pin(expected);
@@ -147,21 +209,18 @@ function admission(value) { const records = issued.get(value); assert(records, '
 export function launchEnterpriseDeclaredInput(file, receipt) {
   admission(receipt); assert(declared.has(file), 'Only an original declared input');
   if (!declaredBytes) {
-    const rows = declaration.files;
-    const output = execFileSync('git', ['--no-optional-locks', '--no-replace-objects', 'cat-file', '--batch'], {
-      input: rows.map(row => row.blob).join('\n') + '\n', windowsHide: true, maxBuffer: 256 * 1024 * 1024,
-    });
-    const bytes = new Map(); let at = 0;
-    for (const row of rows) {
-      const end = output.indexOf(10, at); assert(end >= at);
-      const header = output.subarray(at, end).toString('ascii').split(' ');
-      assert.equal(header.length, 3); assert.equal(header[0], row.blob); assert.equal(header[1], 'blob');
-      assert.match(header[2], /^(0|[1-9][0-9]*)$/); const size = Number(header[2]); assert(Number.isSafeInteger(size));
-      at = end + 1; assert(at + size < output.length); const content = output.subarray(at, at + size);
-      assert.equal(blob(content), row.blob); assert.equal(sha(content), row.sha256); assert.equal(output[at + size], 10);
-      bytes.set(row.file, content); at += size + 1;
+    const bytes = new Map(), order = [];
+    for (const chunk of immutableDeclaredPlan().chunks) {
+      admission(receipt);
+      const output = execFileSync('git', ['--no-optional-locks', '--no-replace-objects', 'cat-file', '--batch'], {
+        input: chunk.entries.map(row => row.blob).join('\n') + '\n', windowsHide: true, maxBuffer: LAUNCH_ENTERPRISE_BATCH_MAX_BYTES,
+      });
+      const decoded = decodeLaunchEnterpriseDeclaredChunk(output, chunk);
+      for (const row of chunk.entries) {
+        assert(!bytes.has(row.file) && decoded.has(row.file)); bytes.set(row.file, decoded.get(row.file)); order.push(row.file);
+      }
     }
-    assert.equal(at, output.length); declaredBytes = bytes;
+    assert.deepEqual(order, declaration.files.map(row => row.file)); assert.equal(bytes.size, 1917); declaredBytes = bytes;
   }
   return Buffer.from(declaredBytes.get(file));
 }

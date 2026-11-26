@@ -14,8 +14,8 @@ const entry = (file, pin, kind) => kind === 'tree' ? pin.mode + ' blob ' + pin.b
 const admitted = assertLaunchIntegrationCurrentSource();
 assert.equal(source.predecessor, LAUNCH_INTEGRATION_PREDECESSOR);assert.equal(source.revision, LAUNCH_INTEGRATION_REVIEWED_REVISION);
 assert.deepEqual(source.reviewedProductChanges, LAUNCH_INTEGRATION_REVIEWED_PRODUCT_PATHS);
-assert.equal(LAUNCH_INTEGRATION_AUTHORED_PATHS.length, 16);assert.equal(Object.keys(source.files).length, 15);
-for (const file of ['.github/workflows/ui-trim-source.yml', 'test/deeds-supply-postgres.js', 'test/ux-tactics-browser.js', 'test/native-garage-enterprise-source.js']) assert(Object.hasOwn(source.files, file));
+assert.equal(LAUNCH_INTEGRATION_AUTHORED_PATHS.length, 18);assert.equal(Object.keys(source.files).length, 20);
+for (const file of ['schema.sql', 'test/phase2-postgres.js', '.github/workflows/forge.yml', '.github/workflows/ui-trim-source.yml', 'tools/pgquery.js', 'test/deeddiscovery-postgres.js', 'test/deeds-supply-postgres.js', 'test/ux-tactics-browser.js', 'test/native-garage-enterprise-source.js']) assert(Object.hasOwn(source.files, file));
 assert.equal(source.protectedFiles.length, 121);assert.deepEqual(source.reviewedProtectedChanges, ['package.json', 'public/index.html']);
 assert(!source.protectedFiles.includes('public/ux-navigation.css'), 'CSS is separately reviewed; do not invent protected-union membership');
 assert.deepEqual([admitted.sourceOnly, admitted.runtime, admitted.native, admitted.financial, admitted.migration,
@@ -44,11 +44,11 @@ for (const [file, row] of Object.entries(source.files)) {
   const unknown = { ...actual, head: { ...actual.head, blob: '0'.repeat(40) } };assert.strictEqual(launchIntegrationHistoricalRecord(file, unknown), unknown);refusals++;
 }
 for (const file of Object.keys(source.additions)) {const actual = launchIntegrationActual(file);assert.strictEqual(launchIntegrationHistoricalRecord(file, actual), actual);assert.throws(() => qualifyLaunchIntegrationSource(file, actual.committed));positives++;refusals++;}
-for (const file of ['public/index.html', 'public/ux-navigation.css', 'src/server.js', 'src/unreviewed-launch.js', '.github/workflows/ui-trim-source-unreviewed.yml', 'test/deeds-supply-postgres-unreviewed.js', 'test/ux-tactics-browser-unreviewed.js', 'test/native-garage-enterprise-source-unreviewed.js', './tools/launch-integration-source-transfer.js', 'tools/age-removal-source-data.js']) {
+for (const file of ['public/index.html', 'public/ux-navigation.css', 'schema.sql', 'test/phase2-postgres.js', 'src/server.js', 'src/unreviewed-launch.js', '.github/workflows/forge.yml', '.github/workflows/ui-trim-source-unreviewed.yml', 'tools/pgquery-unreviewed.js', 'test/deeddiscovery-postgres-unreviewed.js', 'test/deeds-supply-postgres-unreviewed.js', 'test/ux-tactics-browser-unreviewed.js', 'test/native-garage-enterprise-source-unreviewed.js', './tools/launch-integration-source-transfer.js', 'tools/age-removal-source-data.js']) {
   assert.throws(() => assertLaunchIntegrationPostCandidatePaths([file]));refusals++;
 }
 assertLaunchIntegrationPostCandidatePaths([...LAUNCH_INTEGRATION_AUTHORED_PATHS]);positives++;
-for (const file of ['.github/workflows/ui-trim-source.yml', 'test/deeds-supply-postgres.js', 'test/ux-tactics-browser.js', 'test/native-garage-enterprise-source.js']) {assertLaunchIntegrationPostCandidatePaths([file]);positives++;}
+for (const file of ['.github/workflows/ui-trim-source.yml', 'tools/pgquery.js', 'test/deeddiscovery-postgres.js', 'test/deeds-supply-postgres.js', 'test/ux-tactics-browser.js', 'test/native-garage-enterprise-source.js']) {assertLaunchIntegrationPostCandidatePaths([file]);positives++;}
 assert.throws(() => assertLaunchIntegrationPostCandidatePaths([LAUNCH_INTEGRATION_AUTHORED_PATHS[0], LAUNCH_INTEGRATION_AUTHORED_PATHS[0]]));refusals++;
 assert.throws(() => assertLaunchIntegrationPostCandidatePaths('arbitrary'));refusals++;
 assert.throws(() => launchIntegrationActual('src/unreviewed-launch.js'));refusals++;

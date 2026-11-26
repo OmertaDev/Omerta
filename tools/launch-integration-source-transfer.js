@@ -12,8 +12,12 @@ export const LAUNCH_INTEGRATION_PREDECESSOR = '83baa47c51c00ec16ac982aa751ee0c1c
 export const LAUNCH_INTEGRATION_REVIEWED_REVISION = '5c662b9c1f42785af9765fb81be3aff4803fbcd6';
 export const LAUNCH_INTEGRATION_REVIEWED_PRODUCT_PATHS = Object.freeze([
   'package.json', 'public/index.html', 'public/ux-navigation.css', 'src/preflight.js',
+  '.github/workflows/forge.yml',
+  'schema.sql', 'test/phase2-postgres.js',
 ]);
 export const LAUNCH_INTEGRATION_AUTHORED_PATHS = Object.freeze([
+  'tools/pgquery.js',
+  'test/deeddiscovery-postgres.js',
   '.github/workflows/ui-trim-source.yml',
   'test/deeds-supply-postgres.js',
   'test/ux-tactics-browser.js', 'test/native-garage-enterprise-source.js',
@@ -32,6 +36,8 @@ const generated = Object.freeze([
 ]);
 const metadata = 'tools/launch-integration-source-data.js';
 const projectedPaths = Object.freeze([...LAUNCH_INTEGRATION_REVIEWED_PRODUCT_PATHS,
+  'tools/pgquery.js',
+  'test/deeddiscovery-postgres.js',
   '.github/workflows/ui-trim-source.yml',
   'test/deeds-supply-postgres.js',
   'test/ux-tactics-browser.js', 'test/native-garage-enterprise-source.js',
@@ -93,7 +99,7 @@ function definition() {
   assert.equal(source.revision, LAUNCH_INTEGRATION_REVIEWED_REVISION);
   assert.equal(sha(JSON.stringify(source)), LAUNCH_INTEGRATION_SOURCE_SHA256);
   assert(Object.isFrozen(source) && Object.isFrozen(source.files) && Object.isFrozen(source.additions));
-  assert.deepEqual(Object.keys(source.files).sort(), projectedPaths, 'Exactly fifteen reviewed predecessor projection domains');
+  assert.deepEqual(Object.keys(source.files).sort(), projectedPaths, 'Exactly twenty reviewed predecessor projection domains');
   assert.deepEqual(Object.keys(source.additions).sort(), addedPaths, 'Exactly four new qualification helper/test domains');
   const rendered = launchIntegrationSourceDataBytes(source);
   genuine(metadata, { mode: '100644', blob: blob(rendered), sha256: sha(rendered), bytes: Buffer.byteLength(rendered) });
