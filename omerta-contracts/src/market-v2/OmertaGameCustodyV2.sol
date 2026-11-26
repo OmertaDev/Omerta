@@ -21,6 +21,11 @@ interface IGameCustodyGenesisV2 {
     function playerClaimsOpen() external view returns (bool);
 }
 
+interface IGameOperatingSinkV2 {
+    function omr() external view returns (address);
+    function custody() external view returns (address);
+}
+
 /// @notice Fixed-token game deposits and reserve-backed, signed OMR withdrawals.
 /// @dev A ProtocolCustody operator: every token movement is to or from this vault.
 /// The game signer attests ledger withdrawals; its onchain authority is bounded by
@@ -54,6 +59,12 @@ contract OmertaGameCustodyV2 is EIP712, Ownable2Step, Pausable, ReentrancyGuard 
     uint256 public cumulativeClaimed;
     mapping(uint256 => bool) public usedNonce;
     mapping(uint256 => uint256) public claimedOnDay;
+    address public operatingSink;
+    bytes32 public operatingSinkRuntimeHash;
+    uint256 public operatingDailyCapOMR;
+    uint256 public cumulativeOperatingSettled;
+    mapping(uint256 => uint256) public operatingPaidOnDay;
+    mapping(bytes32 => bool) public usedOperatingOperation;
 
     error InvalidConfiguration();
     error NotReady();
@@ -67,14 +78,17 @@ contract OmertaGameCustodyV2 is EIP712, Ownable2Step, Pausable, ReentrancyGuard 
     event Deposited(address indexed payer, uint256 amount);
     event ReserveFunded(address indexed payer, uint256 amount);
     event Claimed(uint256 indexed nonce, address indexed to, uint8 kind, uint256 amount, uint256 gearId);
+    event OperatingSinkBound(address indexed sink, bytes32 runtimeHash, uint256 dailyCapOMR);
+    event OperatingCostSettled(bytes32 indexed operationId, uint256 amount);
 
     constructor(address safe_, address signer_, IGameCustodyTokenV2 omr_, IGameCustodyGenesisV2 genesis_, uint256 cap_)
         EIP712("OmertaVoucherClaim", "1")
         Ownable(safe_)
     {
-        if (signer_ == address(0) || address(omr_).code.length == 0 || address(genesis_).code.length == 0
-            || cap_ == 0 || cap_ % LEDGER_SCALE != 0 || genesis_.omr() != address(omr_)
-            || genesis_.treasury() != safe_) revert InvalidConfiguration();
+        if (
+            signer_ == address(0) || address(omr_).code.length == 0 || address(genesis_).code.length == 0 || cap_ == 0
+                || cap_ % LEDGER_SCALE != 0 || genesis_.omr() != address(omr_) || genesis_.treasury() != safe_
+        ) revert InvalidConfiguration();
         signer = signer_;
         omr = omr_;
         genesis = genesis_;
@@ -83,10 +97,12 @@ contract OmertaGameCustodyV2 is EIP712, Ownable2Step, Pausable, ReentrancyGuard 
     }
 
     function activate() external onlyOwner {
-        if (activated || !omr.policySealed() || !omr.isOperator(address(this))
-            || address(genesis).codehash != genesisRuntimeHash || !genesis.playerClaimsOpen()
-            || requiredReserve == 0 || cumulativeReserveFunded < requiredReserve
-            || omr.balanceOf(address(this)) < requiredReserve) revert NotReady();
+        if (
+            activated || !omr.policySealed() || !omr.isOperator(address(this))
+                || address(genesis).codehash != genesisRuntimeHash || !genesis.playerClaimsOpen()
+                || requiredReserve == 0 || cumulativeReserveFunded < requiredReserve
+                || omr.balanceOf(address(this)) < requiredReserve
+        ) revert NotReady();
         activated = true;
         emit Activated();
     }
@@ -111,8 +127,29 @@ contract OmertaGameCustodyV2 is EIP712, Ownable2Step, Pausable, ReentrancyGuard 
         emit RequiredReserveSet(amount);
     }
 
-    function pause() external onlyOwner { _pause(); }
-    function unpause() external onlyOwner { _unpause(); }
+    /// @notice Admit one exact operating-payment module before activating custody.
+    /// @dev It may settle only signed, already-debited game costs. The backend must remove
+    /// those costs from player/family liabilities without recreating Desk liabilities.
+    function bindOperatingSink(IGameOperatingSinkV2 sink, uint256 cap) external onlyOwner {
+        if (
+            activated || operatingSink != address(0) || address(sink).code.length == 0 || address(sink) == address(this)
+                || sink.omr() != address(omr) || sink.custody() != address(this) || cap == 0 || cap % LEDGER_SCALE != 0
+        ) {
+            revert InvalidConfiguration();
+        }
+        operatingSink = address(sink);
+        operatingSinkRuntimeHash = address(sink).codehash;
+        operatingDailyCapOMR = cap;
+        emit OperatingSinkBound(address(sink), operatingSinkRuntimeHash, cap);
+    }
+
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    function unpause() external onlyOwner {
+        _unpause();
+    }
 
     /// @dev Credit the depositing wallet only after the confirmed event is indexed.
     function deposit(uint256 amount) external nonReentrant whenNotPaused {
@@ -137,16 +174,49 @@ contract OmertaGameCustodyV2 is EIP712, Ownable2Step, Pausable, ReentrancyGuard 
     }
 
     function hashVoucher(Voucher calldata v) public view returns (bytes32) {
-        return _hashTypedDataV4(keccak256(abi.encode(VOUCHER_TYPEHASH,
-            v.to, v.amount, v.kind, v.gearId, v.nonce, v.deadline)));
+        return _hashTypedDataV4(
+            keccak256(abi.encode(VOUCHER_TYPEHASH, v.to, v.amount, v.kind, v.gearId, v.nonce, v.deadline))
+        );
+    }
+
+    /// @notice Move earned operating revenue to the fixed, runtime-pinned sink.
+    /// @dev The quote signer attests that the game already retired this liability, just
+    /// as the withdrawal signer attests a withdrawal debit. The declared backing floor
+    /// retires these attested costs and completed claims; it is not an onchain proof of
+    /// every offchain balance. A finite daily cap bounds the new signer's authority.
+    function settleOperatingCost(bytes32 operationId, uint256 amount) external nonReentrant whenNotPaused {
+        if (
+            !activated || msg.sender != operatingSink || operatingSink == address(0)
+                || msg.sender.codehash != operatingSinkRuntimeHash
+        ) revert NotReady();
+        if (
+            operationId == bytes32(0) || usedOperatingOperation[operationId] || amount == 0
+                || amount % LEDGER_SCALE != 0
+        ) revert InvalidAmount();
+        uint256 day = block.timestamp / 1 days;
+        uint256 next = operatingPaidOnDay[day] + amount;
+        if (next > operatingDailyCapOMR) revert DailyCapExceeded();
+        uint256 beforeBalance = omr.balanceOf(address(this));
+        uint256 settled = cumulativeOperatingSettled + amount;
+        uint256 declared = requiredReserve + cumulativeFunded - cumulativeReserveFunded;
+        uint256 retired = cumulativeClaimed + settled;
+        uint256 remaining = declared > retired ? declared - retired : 0;
+        if (beforeBalance < amount || beforeBalance - amount < remaining) revert NotReady();
+        usedOperatingOperation[operationId] = true;
+        operatingPaidOnDay[day] = next;
+        cumulativeOperatingSettled = settled;
+        IERC20(address(omr)).safeTransfer(operatingSink, amount);
+        if (omr.balanceOf(address(this)) + amount != beforeBalance) revert InvalidAmount();
+        emit OperatingCostSettled(operationId, amount);
     }
 
     function claim(Voucher calldata v, bytes calldata signature) external nonReentrant whenNotPaused {
         if (!activated) revert NotReady();
-        if (v.kind != 0 || v.gearId != 0 || v.to == address(0) || v.to == address(this) || v.amount == 0
-            || v.amount % LEDGER_SCALE != 0 || usedNonce[v.nonce] || v.deadline < block.timestamp
-            || v.deadline > block.timestamp + MAX_VOUCHER_TTL
-            || ECDSA.recover(hashVoucher(v), signature) != signer) revert InvalidVoucher();
+        if (
+            v.kind != 0 || v.gearId != 0 || v.to == address(0) || v.to == address(this) || v.amount == 0
+                || v.amount % LEDGER_SCALE != 0 || usedNonce[v.nonce] || v.deadline < block.timestamp
+                || v.deadline > block.timestamp + MAX_VOUCHER_TTL || ECDSA.recover(hashVoucher(v), signature) != signer
+        ) revert InvalidVoucher();
         uint256 day = block.timestamp / 1 days;
         uint256 next = claimedOnDay[day] + v.amount;
         if (next > dailyCapOMR) revert DailyCapExceeded();

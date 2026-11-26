@@ -898,7 +898,7 @@
           "type": "error"
         }
       ],
-      "artifactSha256": "7f12445195acb9c513e061bca35e63c85e080726790271254929a75e0f5149ec",
+      "artifactSha256": "263c097f6dad4c41f40fa16f81686d0c8d9618d291eef8e12a18bae8c0244c30",
       "compiler": {
         "evmVersion": "cancun",
         "optimizer": true,
@@ -906,8 +906,8 @@
         "version": "0.8.38+commit.1835d247",
         "viaIr": true
       },
-      "creationBytecodeHash": "0x52c2a09f58232e96ffa48336cb83cd7ff76c31c8827152019b0b1e7a926eea2c",
-      "runtimeTemplateHash": "0x2f74774e04ba9ee6f4e04a23352d3ba4d325cd7a3c1b64de6d5e761d0b5f8014",
+      "creationBytecodeHash": "0xb3829079df7b7422eab023b292b37c7b37ae1810c6ac32648026eaf1f18c0e1e",
+      "runtimeTemplateHash": "0x18830b5cdcf0c07625bdd47b0dffa06ebdee61eb983c36154ab45345d936981d",
       "source": "src/market-v2/OmertaEthRewardsV2.sol",
       "sourcePins": {
         "lib/openzeppelin-contracts/contracts/interfaces/IERC1363.sol": "0xd5ea07362ab630a6a3dee4285a74cf2377044ca2e4be472755ad64d7c5d4b69d",
@@ -943,7 +943,7 @@
         "lib/v4-core/src/types/PoolOperation.sol": "0x7a1a107fc1f2208abb2c9364c8c54e56e98dca27673e9441bed2b949b6382162",
         "src/market-v2/IOmertaMarketStateV2.sol": "0x6b8deba1c3a95d5b617dab08696d8b2603b4cda3b755d4976b6eb6ac28b34ab4",
         "src/market-v2/IOmertaRestrictedOMRV2.sol": "0xcea3bdf1451b2c4d60903366c75516105762384f00525c44698d84d002443a51",
-        "src/market-v2/OmertaEthRewardsV2.sol": "0xfb1a11519195b286ec20a2b31f0aa8e6eff9ee05af2159509cf5800c11880186",
+        "src/market-v2/OmertaEthRewardsV2.sol": "0x253e8ffb3e12f8fda3177596da1c20fb39e21c134a86ab859c05822b4d43a472",
         "src/market-v2/OmertaSwapRouterV2.sol": "0xa3317765dfed514d9b0c002786ac3307d6ff52f809b59474bb7e4f8ec799c0b1"
       }
     },
@@ -2015,7 +2015,7 @@
           "type": "error"
         }
       ],
-      "artifactSha256": "1ce0b55185619527ad72c189e86e6ba66efd9a8cbf0bd087ab35989919158e17",
+      "artifactSha256": "856983178ab3b5b77f15b1f04b81930e88240effc3c9b678104c669c9811c8c4",
       "compiler": {
         "evmVersion": "cancun",
         "optimizer": true,
@@ -3983,7 +3983,7 @@
           "type": "error"
         }
       ],
-      "artifactSha256": "73ed5271a7805b7fe2199db28849ef65cd76cbbd846856706eb0edfd7fbdfd94",
+      "artifactSha256": "1932dea1562af33d9720bfe0b68f677df0a697a82263fc139a28d939f32a3e36",
       "compiler": {
         "evmVersion": "cancun",
         "optimizer": true,
@@ -4271,7 +4271,7 @@
           "type": "error"
         }
       ],
-      "artifactSha256": "33b9f0ed4055b4c0f6750b3a5036831be9516cfbcb7adbf71b445e48eb4c4ea8",
+      "artifactSha256": "fbd0b128089792ed170b4344d9881b998fb6bf4947d38f7e92e4a87c1503c749",
       "compiler": {
         "evmVersion": "cancun",
         "optimizer": true,
@@ -4569,6 +4569,46 @@
             }
           ],
           "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "components": [
+                {
+                  "internalType": "Currency",
+                  "name": "currency0",
+                  "type": "address"
+                },
+                {
+                  "internalType": "Currency",
+                  "name": "currency1",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint24",
+                  "name": "fee",
+                  "type": "uint24"
+                },
+                {
+                  "internalType": "int24",
+                  "name": "tickSpacing",
+                  "type": "int24"
+                },
+                {
+                  "internalType": "contract IHooks",
+                  "name": "hooks",
+                  "type": "address"
+                }
+              ],
+              "internalType": "struct PoolKey",
+              "name": "key",
+              "type": "tuple"
+            }
+          ],
+          "name": "configureSettlementPool",
+          "outputs": [],
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -5175,6 +5215,32 @@
           "type": "function"
         },
         {
+          "inputs": [],
+          "name": "settlementPoolConfigured",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "settlementPoolId",
+          "outputs": [
+            {
+              "internalType": "bytes32",
+              "name": "",
+              "type": "bytes32"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
           "inputs": [
             {
               "internalType": "bytes4",
@@ -5727,6 +5793,19 @@
             {
               "indexed": true,
               "internalType": "PoolId",
+              "name": "poolId",
+              "type": "bytes32"
+            }
+          ],
+          "name": "SettlementPoolConfigured",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "PoolId",
               "name": "id",
               "type": "bytes32"
             },
@@ -5994,6 +6073,16 @@
         },
         {
           "inputs": [],
+          "name": "SettlementPoolAlreadyConfigured",
+          "type": "error"
+        },
+        {
+          "inputs": [],
+          "name": "SettlementPoolPolicySealed",
+          "type": "error"
+        },
+        {
+          "inputs": [],
           "name": "SwapAmountCannotBeZero",
           "type": "error"
         },
@@ -6035,7 +6124,7 @@
           "type": "error"
         }
       ],
-      "artifactSha256": "78df238f432d8175772f54d11ea09e28e9ba1ec70d1437b5d056dfc8baab6a92",
+      "artifactSha256": "2a714222b21cfffd542fa57e536c73225729bafb0c2b00d0617e7556a8d08e8d",
       "compiler": {
         "evmVersion": "cancun",
         "optimizer": true,
@@ -6043,8 +6132,8 @@
         "version": "0.8.38+commit.1835d247",
         "viaIr": false
       },
-      "creationBytecodeHash": "0xcb02246500846fddb415ccc0b0816a99421f10c09f739e460527c65a6c7b4a86",
-      "runtimeTemplateHash": "0x1bd4a62de577faa7e7c72d18b28eac610b8e2c939c93d4301a716952f78560bb",
+      "creationBytecodeHash": "0xfe243aacfaa13a55a76a6ab3d09e94c9475721466853be374d4b263df6010581",
+      "runtimeTemplateHash": "0xd0e7ea1fcf45a12d1a63999b7f293bb30d3f1b11ad89f994b79ffa79e52c0c25",
       "source": "src/market-v2/core/OmertaPoolManagerV2.sol",
       "sourcePins": {
         "lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol": "0x74ed01eb66b923d0d0cfe3be84604ac04b76482a55f9dd655e1ef4d367f95bc2",
@@ -6092,7 +6181,7 @@
         "lib/v4-core/src/types/PoolOperation.sol": "0x7a1a107fc1f2208abb2c9364c8c54e56e98dca27673e9441bed2b949b6382162",
         "lib/v4-core/src/types/Slot0.sol": "0x8b4912fac7e25ea680056748121113f902d56f8b2640f421d5c38d438db11c1b",
         "src/market-v2/IOmertaRestrictedOMRV2.sol": "0xcea3bdf1451b2c4d60903366c75516105762384f00525c44698d84d002443a51",
-        "src/market-v2/core/OmertaPoolManagerV2.sol": "0x722466f8683886ac289d4c7f013a6d3f5ea0d31c37d77172de6ea2f016e5cd4e"
+        "src/market-v2/core/OmertaPoolManagerV2.sol": "0x1799cc5dc0a4f762bb319d63e32f39670b46cf214d2648de83fef241e22c211a"
       }
     }
   },
@@ -6292,7 +6381,7 @@
       "sha256Lf": "d6af03909291e3d5d3d33a59da87b51952492bf5feef9f55538b7272616f6654"
     },
     "src/market-v2/OmertaEthRewardsV2.sol": {
-      "sha256Lf": "b4b916bab1d87c491718df3c278da70dcad9ccc852253ddaa92b283a60087b62"
+      "sha256Lf": "6a6cbb143a602a586a46230639821d6bdffafe421bfddc391f03ff4b595a9390"
     },
     "src/market-v2/OmertaEthStakingV2.sol": {
       "sha256Lf": "b6f791a3e4634dc1a58baab198b460312d763df1bd17f045e4887b43cc319f74"
@@ -6307,7 +6396,7 @@
       "sha256Lf": "ca0c08015ea1aa0452703c1d853cdae0eab4b253a1c4197333d65d4a1f50b0ab"
     },
     "src/market-v2/core/OmertaPoolManagerV2.sol": {
-      "sha256Lf": "3373a354aa4fc40e6ae02dc6e7c80460578ed1fba5de3beed72754293763fb8e"
+      "sha256Lf": "b382651184bf80c049e23ce84f4b2898a88f85cad0670b554cddae22eef04cf9"
     }
   }
 }

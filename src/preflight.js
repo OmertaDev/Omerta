@@ -156,7 +156,7 @@ export const OPERATIONAL_ENV = [
   // GearVault (Redeemed events) — the NFT re-import watcher (Option A). Dormant unless set on the worker.
   'GEARVAULT_ADDRESS',
   // StreetDeed (Extracted/Redeemed events) — the on-chain tradeable deed NFT. Dormant unless set.
-  'STREET_DEED_ADDRESS',
+  'STREET_DEED_ADDRESS', 'STREET_DEED_RUNTIME_HASH', // Explicit reviewed runtime pin; no default or proxy equivalence.
   // THE STOCK DELIVERY RAIL (brokers §3.4) — deliver treasury-bought stock into the player's on-chain
   // Street Deed's ERC-6551 TBA. Dormant unless STOCK_VAULT_ADDRESS is set (the Delivered watcher) +
   // the ERC-6551 config (the canonical registry is the default; the account impl + salt are deploy

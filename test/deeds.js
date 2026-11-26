@@ -8,7 +8,7 @@
 // flow writes ZERO transactions rows — the portrait/dynasty/estate precedent).
 process.env.MOD_KEY = 'test-mod-key';
 import assert from 'node:assert';
-import { recoverTypedDataAddress } from 'viem';
+import { recoverTypedDataAddress, keccak256, decodeFunctionData, encodeFunctionResult, encodeErrorResult } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { buildServer } from './server-fixture.js';
 import { recordMeeting } from '../src/contacts.js';
@@ -18,7 +18,7 @@ import { DEED_DISCOVERY, deedInvestigationRoute } from '../src/deeddiscovery.js'
 import { DEEDS, deedRankOf, deedRenown, deedNeighborhoodsOpen,
          GOODS, goodPriceOf, CONSUMABLES, cityEventOf, dayOf, seasonModOf,
          OPERATIONS, opSlotsOf, RACKETS, ASSETS, PACING } from '../src/rules.js';
-import { deedChainConfig, DEED_VOUCHER_TYPES, deedTokenId, markDeedExtracted, reimportDeed,
+import { deedChainConfig, DEED_VOUCHER_TYPES, GAMEPLAY_DEED_VOUCHER_TYPES, deedTokenId, markDeedExtracted, reimportDeed,
          sweepDeedReimports } from '../src/chain.js';
 import { GOODS_RESALE_BPS } from '../src/goodsquote.js';
 
@@ -478,6 +478,86 @@ assert(bHeir.history.some((h) => h.kind === 'fell'), 'a bloodline dying holding 
 process.env.VOUCHER_SIGNER_PK = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80';
 process.env.STREET_DEED_ADDRESS = '0x3333333333333333333333333333333333333333';
 process.env.CHAIN_ID = '46630';
+// Finite synthetic RPC model only: no listener/network, deployed runtime, confirmations or watcher
+// qualification. The real quote reader still decodes these ABI responses and checks its block/code
+// guards. Confirmed callback metadata below models the trusted source boundary; it does not prove it.
+const deedRpcURL = 'http://deed-fixture.invalid/confirmed-model';
+const deedRuntime = '0x60016000', deedBlockHash = '0x' + 'a'.repeat(64);
+process.env.STREET_DEED_RUNTIME_HASH = keccak256(deedRuntime);
+process.env.CHAIN_RPC_URL = deedRpcURL;
+process.env.CHAIN_CONFIRMATIONS = '5';
+const nativeIdentities = new Map(), quotedDeedNonces = new Set(), usedDeedNonces = new Set(), deedRpcCalls = [];
+const syntheticNames = new Set(['Enzo Alley', 'Stranded Row']);
+const fixtureReadAbi = [
+  ['primarySaleConfigured', [], 'bool'], ['deedName', ['uint256'], 'string'],
+  ['deedDistrict', ['uint256'], 'string'], ['gameplayIdentity', ['uint256'], 'bool'],
+  ['ownerOf', ['uint256'], 'address'], ['quoteClaim', ['string'], 'uint256'],
+  ['usedNonce', ['uint256'], 'bool'],
+].map(([name, inputs, output]) => ({ type: 'function', name, stateMutability: 'view',
+  inputs: inputs.map(type => ({ type })), outputs: [{ type: output }] }));
+const nonexistentAbi = [{ type: 'error', name: 'ERC721NonexistentToken', inputs: [{ name: 'tokenId', type: 'uint256' }] }];
+const realFetch = globalThis.fetch;
+const finiteDeedFetch = async (input, init) => {
+  const request = new Request(input, init);
+  assert.equal(request.url, deedRpcURL, 'synthetic RPC refuses every other URL');
+  assert.equal(request.method, 'POST');
+  const rpc = JSON.parse(await request.text());
+  assert.equal(rpc.jsonrpc, '2.0'); assert(!Array.isArray(rpc));
+  const params = rpc.params || []; let result, error;
+  switch (rpc.method) {
+    case 'eth_chainId': assert.deepEqual(params, []); result = '0xb626'; break;
+    case 'eth_blockNumber': assert.deepEqual(params, []); result = '0x64'; break;
+    case 'eth_getBlockByNumber':
+      assert.deepEqual(params, ['0x5f', false]);
+      result = { number: '0x5f', hash: deedBlockHash, timestamp: '0x6553f100', transactions: [] }; break;
+    case 'eth_getCode':
+      assert.deepEqual(params, [process.env.STREET_DEED_ADDRESS, '0x5f']); result = deedRuntime; break;
+    case 'eth_call': {
+      assert.equal(params.length, 2); assert.equal(params[1], '0x5f');
+      assert.deepEqual(Object.keys(params[0]).sort(), ['data', 'to']);
+      assert.equal(params[0].to.toLowerCase(), process.env.STREET_DEED_ADDRESS.toLowerCase());
+      const { functionName, args = [] } = decodeFunctionData({ abi: fixtureReadAbi, data: params[0].data });
+      const token = args[0]?.toString();
+      if (['deedName', 'deedDistrict', 'gameplayIdentity', 'ownerOf'].includes(functionName))
+        assert([...syntheticNames].some(name => deedTokenId(name) === token), 'unknown synthetic identity');
+      const identity = nativeIdentities.get(token);
+      let value;
+      if (functionName === 'primarySaleConfigured') value = true;
+      else if (functionName === 'deedName') value = identity?.name || '';
+      else if (functionName === 'deedDistrict') value = identity?.district || '';
+      else if (functionName === 'gameplayIdentity') value = identity?.gameplayIdentity || false;
+      else if (functionName === 'ownerOf') {
+        assert(identity, 'owner reads require an issued synthetic identity');
+        if (identity.owner) value = identity.owner;
+        else error = { code: 3, message: 'execution reverted', data: encodeErrorResult({ abi: nonexistentAbi,
+          errorName: 'ERC721NonexistentToken', args: [args[0]] }) };
+      } else if (functionName === 'quoteClaim') {
+        assert(syntheticNames.has(args[0])); value = 10000000000000000n;
+      } else if (functionName === 'usedNonce') {
+        assert(quotedDeedNonces.has(token), 'unknown synthetic nonce'); value = usedDeedNonces.has(token);
+      }
+      else assert.fail('unrecognized synthetic selector');
+      if (!error) result = encodeFunctionResult({ abi: fixtureReadAbi, functionName, result: value });
+      deedRpcCalls.push(functionName); break;
+    }
+    default: assert.fail('unrecognized synthetic RPC method');
+  }
+  return new Response(JSON.stringify({ jsonrpc: '2.0', id: rpc.id, ...(error ? { error } : { result }) }),
+    { headers: { 'content-type': 'application/json' } });
+};
+globalThis.fetch = finiteDeedFetch;
+const confirmedDeedEvent = (voucher, { block = '90', tx = 'b', logIndex = 2 } = {}) => ({
+  confirmed: true, chainId: 46630, contract: process.env.STREET_DEED_ADDRESS,
+  runtimeHash: process.env.STREET_DEED_RUNTIME_HASH, transactionHash: '0x' + tx.repeat(64),
+  blockHash: deedBlockHash, blockNumber: block, logIndex, tokenId: voucher.tokenId,
+  nonce: Number(voucher.nonce), to: voucher.voucher.to, name: voucher.voucher.name, district: voucher.voucher.district,
+});
+const gameplayIssueEvent = (voucher, options) => {
+  const event = confirmedDeedEvent(voucher, options);
+  return { ...event, issue: { ...event, logIndex: event.logIndex + 1, kind: 'gameplay', count: '1' } };
+};
+const modelIssued = voucher => nativeIdentities.set(voucher.tokenId,
+  { name: voucher.voucher.name, district: voucher.voucher.district, gameplayIdentity: true, owner: voucher.voucher.to });
 const signerAddr = privateKeyToAccount(process.env.VOUCHER_SIGNER_PK).address;
 const eWallet = privateKeyToAccount('0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d').address;
 const burnerWallet = privateKeyToAccount('0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a').address;
@@ -520,8 +600,12 @@ assert.equal((await call('POST', '/v1/deeds/extract', { token: e.token, body: { 
   'the attestation is read STRICTLY — a truthy accident is not an attestation');
 
 // EXTRACT — the voucher signs and the deed goes extraction-pending (state 1→2, INERT)
+const homeBeforeExtract = (await pool.query('SELECT home_authority_token FROM street_deeds WHERE account_id=$1', [e.acct])).rows[0].home_authority_token;
 const ext = await call('POST', '/v1/deeds/extract', { token: e.token, body: { attest: true } });
 assert.equal(ext.code, 200, 'the extract signs a voucher');
+quotedDeedNonces.add(String(ext.body.nonce));
+assert.notEqual((await pool.query('SELECT home_authority_token FROM street_deeds WHERE account_id=$1', [e.acct])).rows[0].home_authority_token,
+  homeBeforeExtract, 'extraction rotates the home authority fence');
 {
   const att = (await pool.query('SELECT attested_at FROM street_deeds WHERE onchain_token_id IS NOT NULL')).rows[0];
   assert.ok(att?.attested_at, 'the attestation is RECORDED on the row (it survives the on-chain re-key)');
@@ -536,9 +620,12 @@ assert.deepEqual(deedChainConfig(), { ...contractDomain, verifyingContract: cont
   'the server domain matches the contract domain field-for-field');
 const msg = { to: ext.body.voucher.to, name: ext.body.voucher.name, district: ext.body.voucher.district,
   nonce: BigInt(ext.body.voucher.nonce), deadline: BigInt(ext.body.voucher.deadline) };
-const rec = await recoverTypedDataAddress({ domain: contractDomain, types: DEED_VOUCHER_TYPES,
-  primaryType: 'DeedVoucher', message: msg, signature: ext.body.signature });
-assert.equal(rec.toLowerCase(), signerAddr.toLowerCase(), 'the DeedVoucher recovers to the server signer under the CONTRACT domain — EIP-712 parity');
+assert.equal(ext.body.primaryType, 'GameplayDeedVoucher');
+assert.equal(ext.body.claimMethod, 'claimGameplay');
+assert.equal(ext.body.transaction.value, '0', 'the gameplay first issue quotes zero');
+const rec = await recoverTypedDataAddress({ domain: contractDomain, types: GAMEPLAY_DEED_VOUCHER_TYPES,
+  primaryType: 'GameplayDeedVoucher', message: msg, signature: ext.body.signature });
+assert.equal(rec.toLowerCase(), signerAddr.toLowerCase(), 'the gameplay voucher recovers to the server signer under the CONTRACT domain — EIP-712 parity');
 assert.equal(ext.body.tokenId, deedTokenId('Enzo Alley'), 'the tokenId is uint256(keccak256(name)) — exact on-chain parity');
 
 // INERT: pending, can't extract twice, can't list, can't claim a fresh street, can't shake a corner
@@ -546,8 +633,11 @@ const ePend = (await call('GET', '/v1/deeds', { token: e.token })).body;
 assert.equal(ePend.chain.extractPending, true, 'the deed reads extraction-pending');
 assert.equal(ePend.chain.tokenId, deedTokenId('Enzo Alley'), 'the pending tokenId is surfaced');
 assert.equal(ePend.deed.onChain, true, 'the deed flags on-chain');
-assert.equal((await call('POST', '/v1/deeds/extract', { token: e.token })).body.error, 'already',
-  'a pending street cannot be extracted twice');
+const pendingRetry = await call('POST', '/v1/deeds/extract', { token: e.token, body: { attest: true } });
+assert.equal(pendingRetry.code, 200, 'an attested pending request resumes the existing voucher');
+assert.equal(String(pendingRetry.body.nonce), String(ext.body.nonce), 'retry allocates no second nonce');
+assert.equal(pendingRetry.body.signature, ext.body.signature);
+assert.equal(pendingRetry.body.transaction.data, ext.body.transaction.data);
 assert.equal((await call('POST', '/v1/deeds/list', { token: e.token, body: { price: 1000 } })).body.error, 'onchain',
   'an inert street cannot be listed on the in-game market');
 assert.equal((await call('POST', '/v1/deeds/claim', { token: e.token, body: { name: 'New Row', district: 'canal' } })).body.error,
@@ -566,12 +656,23 @@ assert.equal(eInert.corner.collectable, 0, 'and nothing reads as collectable');
 assert.equal((await call('POST', '/v1/deeds/corner', { token: e.token })).body.error, 'nothing',
   'and the till agrees — the board and the button say the same nothing');
 
-// CONFIRM ON-CHAIN (the Extracted watcher): state 2→3 — re-key to onchain:<token>, freeing the extractor
-await markDeedExtracted(pool, { nonce: ext.body.nonce, tokenId: ext.body.tokenId });
+// Synthetic confirmed-source boundary: missing metadata or an unpaired first issue refuses before
+// state mutation. These callbacks are not a watcher/RPC authenticity or finality qualification.
+await assert.rejects(() => markDeedExtracted(pool, { nonce: ext.body.nonce, tokenId: ext.body.tokenId }),
+  error => error.code === 'migration_required');
+await assert.rejects(() => markDeedExtracted(pool, confirmedDeedEvent(ext.body)),
+  error => error.code === 'migration_required');
+assert.equal((await pool.query('SELECT status FROM vouchers WHERE nonce=$1', [ext.body.nonce])).rows[0].status, 'signed');
+const enzoExtraction = gameplayIssueEvent(ext.body);
+await markDeedExtracted(pool, enzoExtraction);
+modelIssued(ext.body);
+usedDeedNonces.add(String(ext.body.nonce));
+const homeBeforeBurn = (await pool.query('SELECT home_authority_token FROM street_deeds WHERE name=$1', ['Enzo Alley'])).rows[0].home_authority_token;
 const eFreed = (await call('GET', '/v1/deeds', { token: e.token })).body;
 assert.equal(eFreed.deed, null, 'once on-chain, the extractor no longer holds an off-chain deed');
 assert.equal(eFreed.canClaim, false, 'extraction cannot refresh the lifetime discovery reward');
-await markDeedExtracted(pool, { nonce: ext.body.nonce, tokenId: ext.body.tokenId }); // idempotent — a re-delivered event is a no-op
+assert.equal((await markDeedExtracted(pool, enzoExtraction)).duplicate, true,
+  'the exact paired first-issuance receipt is idempotent');
 
 // RE-IMPORT (the Redeemed watcher): a DEEDLESS burner with a linked wallet takes the on-chain deed back
 const burner = await mk('Bruno');
@@ -579,15 +680,22 @@ const burnerAgentKey = await call('POST', '/v1/auth/agent-key', { token: burner.
 assert.equal(burnerAgentKey.code, 200, 'the importing wallet is also controlled by a real agent account');
 burner.token = burnerAgentKey.body.token;
 await linkWallet(burner.acct, burnerWallet);
-const ri = await reimportDeed(pool, { ref: 'tx1:0', from: burnerWallet, tokenId: ext.body.tokenId });
+const enzoBurn = { ...confirmedDeedEvent(ext.body, { block: '91', tx: 'c', logIndex: 3 }),
+  ref: '0x' + 'c'.repeat(64) + ':3', from: burnerWallet };
+await assert.rejects(() => reimportDeed(pool, { ref: enzoBurn.ref, from: burnerWallet, tokenId: ext.body.tokenId }),
+  error => error.code === 'migration_required', 'a blind burn callback is not provenance');
+nativeIdentities.get(ext.body.tokenId).owner = null;
+const ri = await reimportDeed(pool, enzoBurn);
 assert.equal(ri.applied, true, 'the re-import applies to the linked burner');
+assert.notEqual((await pool.query('SELECT home_authority_token FROM street_deeds WHERE name=$1', ['Enzo Alley'])).rows[0].home_authority_token,
+  homeBeforeBurn, 're-import rotates the home authority fence again');
 const brBoard = (await call('GET', '/v1/deeds', { token: burner.token })).body;
 assert.equal(brBoard.deed.name, 'Enzo Alley', 'the burner now holds the street — deed + name travelled');
 assert.equal(brBoard.deed.onChain, false, 'back in the game (not on-chain)');
 assert(brBoard.history.some((h) => h.kind === 'claim'), 'the WHOLE legend travelled with the token');
 assert(brBoard.history.some((h) => h.detail && h.detail.includes('on-chain')), 'a lineage line marks the re-import');
 assert.equal(brBoard.corner.iControl, true, 'control RESET to the re-importer — a clean corner (the identity-NFT lesson)');
-assert.equal((await reimportDeed(pool, { ref: 'tx1:0', from: burnerWallet, tokenId: ext.body.tokenId })).duplicate, true,
+assert.equal((await reimportDeed(pool, enzoBurn)).duplicate, true,
   're-import is idempotent on the log ref (txHash:logIndex)');
 
 // THE ON-CHAIN LIFE IS OVER — every field that described it is cleared with the token id (red-team C4).
@@ -621,8 +729,17 @@ assert.equal((await deedTargetRows(pool)).some((t) => t.name === 'Enzo Alley'), 
   const st = 'Stranded Row';
   const stToken = deedTokenId(st);
   const lost = await mk('Ghost');   // burned it, then vanished — no wallet ever links
-  await pool.query('INSERT INTO street_deeds (account_id,name,name_lc,district,onchain_token_id) VALUES ($1,$2,$3,$4,$5)',
-    ['onchain:' + stToken, st, st.toLowerCase(), 'docks', stToken]);
+  const lostWallet = '0x000000000000000000000000000000000000bEEF';
+  assert.equal((await claimFixture(lost, { name: st, district: 'docks' })).code, 200,
+    'the stranded fixture earns canonical gameplay provenance through the ordinary route');
+  await mint(lost.acct);
+  const strandedExtract = await call('POST', '/v1/deeds/extract', { token: lost.token,
+    body: { address: lostWallet, attest: true } });
+  assert.equal(strandedExtract.code, 200, 'explicit recipient does not require that recipient to link');
+  const strandedEvent = gameplayIssueEvent(strandedExtract.body, { block: '92', tx: 'd' });
+  await markDeedExtracted(pool, strandedEvent);
+  modelIssued(strandedExtract.body);
+  usedDeedNonces.add(String(strandedExtract.body.nonce));
   const recover = (body) => call('POST', '/v1/mod/deeds/recover', { mod: true, body });
 
   // GATE: no treasury address configured → refuse. With nowhere agreed to send a recovered street,
@@ -636,13 +753,18 @@ assert.equal((await deedTargetRows(pool)).some((t) => t.name === 'Enzo Alley'), 
   assert.equal((await recover({ street: st })).body.error, 'not_burned',
     'no recorded burn → no recovery: a voucher for a street somebody still owns is a confiscation');
 
-  // record the burn from a wallet that is not linked to any account (the stranding condition)
-  await pool.query("INSERT INTO deed_reimports (ref, wallet_address, token_id) VALUES ($1,$2,$3)",
-    ['lostburn:0', '0x000000000000000000000000000000000000bEEF', stToken]);
+  // Record a same-domain synthetic confirmed burn after the authenticated first issue. An unlinked
+  // recipient leaves this pending; no entitlement or first-issuance receipt is grandfathered in SQL.
+  const strandedBurn = { ...confirmedDeedEvent(strandedExtract.body, { block: '93', tx: 'e', logIndex: 3 }),
+    ref: '0x' + 'e'.repeat(64) + ':3', from: lostWallet };
+  nativeIdentities.get(stToken).owner = null;
+  assert.equal((await reimportDeed(pool, strandedBurn)).pending, true);
+  assert.equal((await reimportDeed(pool, strandedBurn)).pending, true, 'pending replay retains the authenticated burn');
   // WALL 3 — a fresh burn is IN FLIGHT, not stranded. The sweep may still land it.
   assert.equal((await recover({ street: st })).body.error, 'too_soon',
     'a burn minutes old is in flight — the wait is what distinguishes stranded from in-flight');
-  await pool.query("UPDATE deed_reimports SET created_at = now() - interval '60 days' WHERE ref='lostburn:0'");
+  // Only the retry clock is aged; immutable domain/identity/event provenance is unchanged.
+  await pool.query("UPDATE deed_reimports SET created_at = now() - interval '60 days' WHERE ref=$1", [strandedBurn.ref]);
 
   // WALL 2 again — a street that is NOT in the on-chain state is not recoverable at all
   assert.equal((await recover({ street: 'Corvino Way' })).body.error, 'not_stranded',
@@ -665,7 +787,7 @@ assert.equal((await deedTargetRows(pool)).some((t) => t.name === 'Enzo Alley'), 
 
   // WALL 4 — the pending re-import is SUPERSEDED. Without this the sweep could later hand the street
   // to the burner while the treasury holds the NFT: two parties each believing they own it.
-  assert.equal((await pool.query("SELECT status FROM deed_reimports WHERE ref='lostburn:0'")).rows[0].status,
+  assert.equal((await pool.query('SELECT status FROM deed_reimports WHERE ref=$1', [strandedBurn.ref])).rows[0].status,
     'superseded', 'the pending re-import is superseded, so the sweep can never split-brain the street');
   await sweepDeedReimports(pool);
   assert.equal((await pool.query('SELECT account_id FROM street_deeds WHERE name=$1', [st])).rows[0].account_id,
@@ -678,6 +800,10 @@ assert.equal((await deedTargetRows(pool)).some((t) => t.name === 'Enzo Alley'), 
   delete process.env.DEED_RECOVERY_ADDRESS;
   void lost;
 }
+assert(deedRpcCalls.includes('usedNonce') && deedRpcCalls.includes('ownerOf'),
+  'retry and recovery traverse the actual quote reader against the finite ABI model');
+globalThis.fetch = realFetch;
+delete process.env.CHAIN_RPC_URL;
 
 // ════════════ THE VAULT'S RECORD — what travels with the street (the red-team follow-up) ════════════
 //

@@ -1,0 +1,5 @@
+// Capture intrinsic lengths/backing memory before a bounded owning copy.
+const Bytes=Uint8Array,typed=Object.getPrototypeOf(Bytes.prototype),lengthOf=Object.getOwnPropertyDescriptor(typed,'length').get,bufferOf=Object.getOwnPropertyDescriptor(typed,'buffer').get,abLength=Object.getOwnPropertyDescriptor(ArrayBuffer.prototype,'byteLength').get,bufferProto=typeof Buffer==='undefined'?null:Buffer.prototype;
+export function ownBytes(input,length){if(!input||![Bytes.prototype,bufferProto].filter(Boolean).includes(Object.getPrototypeOf(input)))throw new TypeError('Ordinary byte window required');if(lengthOf.call(input)!==length)throw new TypeError('Exact owner header packet length required');abLength.call(bufferOf.call(input));return new Bytes(input);}
+export const fromBytes=bytes=>Array.from(bytes).reduce((n,b)=>(n<<8n)+BigInt(b),0n);
+export function bytes32(n){if(typeof n!=='bigint'||n<0n||n>=1n<<256n)throw new TypeError('Bounded unsigned32-byte word required');const b=new Bytes(32);for(let i=31;i>=0;i--){b[i]=Number(n&255n);n>>=8n;}return b;}

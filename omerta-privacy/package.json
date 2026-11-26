@@ -1,0 +1,24 @@
+{
+  "name": "@omerta/private-game",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Private game transition circuits and local proof conformance; not production activation",
+  "dependencies": {
+    "@aztec/bb.js": "5.3.0",
+    "@noble/hashes": "1.8.0",
+    "@noir-lang/noir_js": "1.0.0",
+    "@noir-lang/noir_wasm": "1.0.0",
+    "@zk-kit/lean-imt": "2.2.5",
+    "@zk-kit/lean-imt.sol": "2.0.1",
+    "poseidon-lite": "0.3.0",
+    "poseidon-solidity": "0.0.5"
+  },
+  "devDependencies": {
+    "playwright-core": "1.62.0",
+    "viem": "2.55.1"
+  },
+  "scripts": {
+    "test:bytecodec": "node --test experiments/private-mutable-envelope-codec/codec.test.mjs"
+  }
+}

@@ -102,6 +102,10 @@ export async function preflightPlayerGenesis(input, client, { phase = 'predeploy
       ['revenuePolicyId', 'bytes32', RESTRICTED_MARKET_POLICY_ID], ['developerRecipient', 'address', plan.roles.dev],
       ['rwaRecipient', 'address', plan.roles.rwa], ['communityRecipient', 'address', plan.roles.community], ['polRecipient', 'address', plan.addresses.polFunding],
       ['rewardsRecipient', 'address', plan.addresses.ethRewards], ['MAX_HOOK_FEE_BPS', 'uint16', 50]]);
+    requireTrue('settlementPoolConfigured: live binding mismatch', await read(manager,
+      'function settlementPoolConfigured() view returns (bool)', 'settlementPoolConfigured') === true);
+    same('settlementPoolId', await read(manager, 'function settlementPoolId() view returns (bytes32)', 'settlementPoolId'),
+      plan.canonicalPool.poolId);
     await getters(positions, [['poolManager', 'address', manager], ['permit2', 'address', plan.externalRuntimePins.permit2.address]]);
     const eth = plan.ethRewards, vault = plan.addresses.ethStaking, buyer = plan.addresses.ethRewards;
     await getters(vault, [['owner', 'address', safe], ['governanceSafe', 'address', safe], ['omr', 'address', omr], ['distributor', 'address', buyer],

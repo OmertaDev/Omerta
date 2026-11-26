@@ -499,47 +499,114 @@ try {
     const deadParticipation = (await app.pool.query('SELECT status FROM city_home_activity_members WHERE activity_id=$1 AND account_id=$2', [activityOpened.effect.activityId,buyer.account])).rows[0];
     assert.equal(deadParticipation.status,'left');
   }
-  // Actual signer and canonical event adapters; local fixtures never call an RPC or submit a transaction.
+  // Actual signer/event modules over an explicitly synthetic chain snapshot; no RPC or transaction.
+  // Minted/link flags below are fixture assistance, not character mint or SIWE qualification.
   process.env.CHAIN_ID = '46630'; process.env.STREET_DEED_ADDRESS = '0x3333333333333333333333333333333333333333';
   process.env.VOUCHER_SIGNER_PK = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80';
-  const { requestDeedWithdraw,markDeedExtracted,recordDeedTransfer,reimportDeed,sweepDeedVouchers,recoverStrandedDeed,DEED_VOUCHER_TYPES } = await import('../src/chain.js');
-  const { recoverTypedDataAddress } = await import('viem'), { privateKeyToAccount } = await import('viem/accounts');
-  const issuer = 'home-chain-issuer-' + crypto.randomUUID(), receiver = 'home-chain-receiver-' + crypto.randomUUID();
+  const { recoverTypedDataAddress, keccak256, stringToHex, encodeErrorResult, ContractFunctionRevertedError } = await import('viem');
+  const fixtureCode = '0x60016000', fixtureRuntimeHash = keccak256(fixtureCode);
+  process.env.STREET_DEED_RUNTIME_HASH = fixtureRuntimeHash; process.env.CHAIN_CONFIRMATIONS = '5';
+  const { requestDeedWithdraw,markDeedExtracted,recordDeedTransfer,reimportDeed,sweepDeedVouchers,recoverStrandedDeed,
+    readDeedClaimQuote,deedTokenId,DEED_VOUCHER_TYPES,GAMEPLAY_DEED_VOUCHER_TYPES } = await import('../src/chain.js');
+  const { privateKeyToAccount } = await import('viem/accounts');
+  const issuerActor = await actor('Home Chain Issuer'), receiverActor = await actor('Home Chain Receiver');
+  const issuer = issuerActor.account, receiver = receiverActor.account;
   const issuerWallet = '0x' + crypto.randomBytes(20).toString('hex'), receiverWallet = '0x' + crypto.randomBytes(20).toString('hex');
-  for (const [id,wallet] of [[issuer,issuerWallet],[receiver,receiverWallet]]) {
-    await app.pool.query('INSERT INTO accounts(id,auth_provider,auth_subject) VALUES($1,\'home-chain-fixture\',$1)', [id]);
-    await app.pool.query('INSERT INTO account_persistent(account_id,wallet_address,minted) VALUES($1,$2,true)', [id,wallet]);
-  }
-  const chainName = 'Authority ' + crypto.randomUUID(), chainKey = chainName.toLowerCase(), originalToken = crypto.randomUUID();
-  await app.pool.query('INSERT INTO street_deeds(account_id,name,name_lc,district,home_authority_token) VALUES($1,$2,$3,\'foundry\',$4)', [issuer,chainName,chainKey,originalToken]);
+  for (const [id,wallet] of [[issuer,issuerWallet],[receiver,receiverWallet]])
+    await app.pool.query('UPDATE account_persistent SET wallet_address=$2,minted=true WHERE account_id=$1', [id,wallet]);
+  const chainName = ('Authority ' + crypto.randomUUID()).slice(0, 28), chainKey = chainName.toLowerCase();
+  await claim(issuerActor, chainName);
   const chainRow = async () => (await app.pool.query('SELECT * FROM street_deeds WHERE name_lc=$1', [chainKey])).rows[0];
+  const originalToken = (await chainRow()).home_authority_token, fixtureTokenId = deedTokenId(chainName);
+  assert.equal((await chainRow()).issuance_kind, 'gameplay');
+  let fixtureBlock = 100n, fixtureTransaction = 0, fixtureIssued = false, fixtureOwner = null, fixtureDistrict;
+  const fixtureTimestamp = BigInt(Math.floor(Date.now() / 1000));
+  const fixtureUsedNonces = new Set(), hash = value => keccak256(stringToHex('home-chain-fixture:' + value));
+  const blockHash = number => hash('block:' + number), missingTokenAbi = [
+    { type: 'error', name: 'ERC721NonexistentToken', inputs: [{ name: 'tokenId', type: 'uint256' }] },
+  ];
+  const publicClient = {
+    getChainId: async () => 46630,
+    getBlockNumber: async () => fixtureBlock + 5n,
+    getBlock: async ({ blockNumber }) => {
+      assert.equal(blockNumber, fixtureBlock);
+      return { number: fixtureBlock, hash: blockHash(fixtureBlock), timestamp: fixtureTimestamp };
+    },
+    getCode: async ({ address, blockNumber }) => {
+      assert.equal(address.toLowerCase(), process.env.STREET_DEED_ADDRESS.toLowerCase());
+      assert.equal(blockNumber, fixtureBlock); return fixtureCode;
+    },
+    readContract: async ({ address, blockNumber, functionName, args = [] }) => {
+      assert.equal(address.toLowerCase(), process.env.STREET_DEED_ADDRESS.toLowerCase());
+      assert.equal(blockNumber, fixtureBlock);
+      if (functionName === 'primarySaleConfigured') return true;
+      if (functionName === 'usedNonce') return fixtureUsedNonces.has(String(args[0]));
+      assert.equal(String(args[0]), fixtureTokenId, 'Chain fixture reads the exact earned identity.');
+      if (functionName === 'deedName') return fixtureIssued ? chainName : '';
+      if (functionName === 'deedDistrict') return fixtureIssued ? fixtureDistrict : '';
+      if (functionName === 'gameplayIdentity') return fixtureIssued;
+      if (functionName === 'ownerOf') {
+        if (fixtureOwner) return fixtureOwner;
+        throw new ContractFunctionRevertedError({ abi: missingTokenAbi, functionName: 'ownerOf',
+          data: encodeErrorResult({ abi: missingTokenAbi, errorName: 'ERC721NonexistentToken', args: [BigInt(fixtureTokenId)] }) });
+      }
+      throw new Error('Unexpected home chain fixture read: ' + functionName);
+    },
+  };
+  const reader = async (name, district, options = {}) => {
+    assert.equal(name, chainName);
+    fixtureDistrict ??= district; assert.equal(district, fixtureDistrict);
+    return readDeedClaimQuote(name, district, { ...options, publicClient });
+  };
+  const event = extra => {
+    fixtureBlock++;
+    return { confirmed: true, chainId: 46630, contract: process.env.STREET_DEED_ADDRESS, runtimeHash: fixtureRuntimeHash,
+      transactionHash: hash('transaction:' + ++fixtureTransaction), blockHash: blockHash(fixtureBlock),
+      blockNumber: fixtureBlock.toString(), logIndex: 0, tokenId: fixtureTokenId, ...extra };
+  };
+  const extracted = voucher => {
+    const receipt = event({ nonce: Number(voucher.nonce), name: voucher.voucher.name,
+      district: voucher.voucher.district, to: voucher.voucher.to });
+    if (voucher.issuanceRoute === 'gameplay') receipt.issue = { ...receipt, kind: 'gameplay', count: '1', logIndex: 1 };
+    else assert.equal(voucher.issuanceRoute, 'remint');
+    return receipt;
+  };
   const noMint = Number((await app.pool.query('SELECT COUNT(*) n FROM transactions')).rows[0].n);
-  await assert.rejects(requestDeedWithdraw(app.pool,issuer,issuerWallet,{attest:false}), error => error.code === 'attestation');
+  await assert.rejects(requestDeedWithdraw(app.pool,issuer,issuerWallet,{attest:false,reader}), error => error.code === 'attestation');
   assert.equal((await chainRow()).home_authority_token, originalToken);
-  const voucher = await requestDeedWithdraw(app.pool,issuer,issuerWallet,{attest:true}), reservedToken = (await chainRow()).home_authority_token;
+  const voucher = await requestDeedWithdraw(app.pool,issuer,issuerWallet,{attest:true,reader}), reservedToken = (await chainRow()).home_authority_token;
   assert.notEqual(reservedToken, originalToken);
+  assert.equal(voucher.primaryType, 'GameplayDeedVoucher'); assert.equal(voucher.claimMethod, 'claimGameplay');
+  assert.equal(voucher.transaction.value, '0');
   const signedBy = await recoverTypedDataAddress({ domain:{name:'OmertaStreetDeed',version:'1',chainId:46630,verifyingContract:process.env.STREET_DEED_ADDRESS},
-    types:DEED_VOUCHER_TYPES,primaryType:'DeedVoucher',message:{...voucher.voucher,nonce:BigInt(voucher.voucher.nonce),deadline:BigInt(voucher.voucher.deadline)},signature:voucher.signature });
+    types:voucher.primaryType === 'GameplayDeedVoucher' ? GAMEPLAY_DEED_VOUCHER_TYPES : DEED_VOUCHER_TYPES,
+    primaryType:voucher.primaryType,message:{...voucher.voucher,nonce:BigInt(voucher.voucher.nonce),deadline:BigInt(voucher.voucher.deadline)},signature:voucher.signature });
   assert.equal(signedBy.toLowerCase(),privateKeyToAccount(process.env.VOUCHER_SIGNER_PK).address.toLowerCase());
-  await markDeedExtracted(app.pool,{nonce:voucher.nonce,tokenId:voucher.tokenId}); const extractedToken = (await chainRow()).home_authority_token;
+  const firstExtraction = extracted(voucher);
+  await markDeedExtracted(app.pool,firstExtraction); fixtureIssued = true; fixtureOwner = issuerWallet;
+  fixtureUsedNonces.add(String(voucher.nonce)); const extractedToken = (await chainRow()).home_authority_token;
   assert.notEqual(extractedToken,reservedToken);
-  await markDeedExtracted(app.pool,{nonce:voucher.nonce,tokenId:voucher.tokenId}); assert.equal((await chainRow()).home_authority_token,extractedToken,'Repeated extraction does not create a fake ownership event.');
-  await recordDeedTransfer(app.pool,{tokenId:voucher.tokenId,from:issuerWallet,to:receiverWallet}); const transferredToken = (await chainRow()).home_authority_token;
+  await markDeedExtracted(app.pool,firstExtraction); assert.equal((await chainRow()).home_authority_token,extractedToken,'Repeated extraction does not create a fake ownership event.');
+  const firstTransfer = event({ from: issuerWallet, to: receiverWallet });
+  await recordDeedTransfer(app.pool,firstTransfer); fixtureOwner = receiverWallet; const transferredToken = (await chainRow()).home_authority_token;
   assert.notEqual(transferredToken,extractedToken);
-  await recordDeedTransfer(app.pool,{tokenId:voucher.tokenId,from:issuerWallet,to:receiverWallet}); assert.equal((await chainRow()).home_authority_token,transferredToken);
-  await reimportDeed(app.pool,{ref:'home-event:' + crypto.randomUUID() + ':0',from:receiverWallet,tokenId:voucher.tokenId});
+  await recordDeedTransfer(app.pool,firstTransfer); assert.equal((await chainRow()).home_authority_token,transferredToken);
+  const firstBurn = event({ from: receiverWallet }); firstBurn.ref = firstBurn.transactionHash + ':' + firstBurn.logIndex;
+  fixtureOwner = null; await reimportDeed(app.pool,firstBurn,{reader});
   const returned = await chainRow(); assert.equal(returned.account_id,receiver); assert.notEqual(returned.home_authority_token,transferredToken);
-  const expiry = await requestDeedWithdraw(app.pool,receiver,receiverWallet,{attest:true}), expiringToken = (await chainRow()).home_authority_token;
+  const expiry = await requestDeedWithdraw(app.pool,receiver,receiverWallet,{attest:true,reader}), expiringToken = (await chainRow()).home_authority_token;
   await app.pool.query('UPDATE vouchers SET deadline=0 WHERE id=$1', [expiry.id]);
-  const swept = await sweepDeedVouchers(app.pool,{usedNonce:async () => false}); assert.equal(swept.cleared,1);
+  const swept = await sweepDeedVouchers(app.pool,{usedNonce:async nonce => (await reader(chainName,fixtureDistrict,{mode:'remint',nonce})).usedNonce}); assert.equal(swept.cleared,1);
   const cleared = await chainRow(); assert.equal(cleared.onchain_token_id,null); assert.notEqual(cleared.home_authority_token,expiringToken);
-  const stranded = await requestDeedWithdraw(app.pool,receiver,receiverWallet,{attest:true});
-  await markDeedExtracted(app.pool,{nonce:stranded.nonce,tokenId:stranded.tokenId});
-  const unlinked = '0x' + crypto.randomBytes(20).toString('hex'), strandedRef = 'home-stranded:' + crypto.randomUUID() + ':0';
-  await reimportDeed(app.pool,{ref:strandedRef,from:unlinked,tokenId:stranded.tokenId});
+  const stranded = await requestDeedWithdraw(app.pool,receiver,receiverWallet,{attest:true,reader});
+  await markDeedExtracted(app.pool,extracted(stranded)); fixtureOwner = receiverWallet; fixtureUsedNonces.add(String(stranded.nonce));
+  const unlinked = '0x' + crypto.randomBytes(20).toString('hex');
+  await recordDeedTransfer(app.pool,event({from:receiverWallet,to:unlinked})); fixtureOwner = unlinked;
+  const strandedBurn = event({from:unlinked}), strandedRef = strandedBurn.transactionHash + ':' + strandedBurn.logIndex;
+  strandedBurn.ref = strandedRef; fixtureOwner = null; await reimportDeed(app.pool,strandedBurn,{reader});
   await app.pool.query('UPDATE deed_reimports SET created_at=$2 WHERE ref=$1', [strandedRef,new Date(0)]);
   process.env.DEED_RECOVERY_ADDRESS = receiverWallet;
-  const strandedBefore = (await chainRow()).home_authority_token; await recoverStrandedDeed(app.pool,{tokenId:stranded.tokenId});
+  const strandedBefore = (await chainRow()).home_authority_token; await recoverStrandedDeed(app.pool,{tokenId:stranded.tokenId,reader});
   assert.notEqual((await chainRow()).home_authority_token,strandedBefore,'Recovery voucher reservation retires the former home identity.');
   assert.equal(Number((await app.pool.query('SELECT COUNT(*) n FROM transactions')).rows[0].n),noMint,'Home epochs never change the signer/chain currency ledger.');
   console.log('Home authority PASS: actual signed reservation, extraction/replay, observed owner change/replay, reimport, confirmed-unused voucher clear and stranded reservation; historical deadline/burn fixtures seeded, elapsed grace/age and deployed chain activation not claimed.');

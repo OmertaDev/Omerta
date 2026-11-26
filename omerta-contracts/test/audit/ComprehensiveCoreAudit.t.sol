@@ -258,14 +258,18 @@ contract ComprehensiveCoreAuditTest is Test {
 
     function test_deedBurnDuringMintClearsOwnershipAndPreservesReplayWall() public {
         StreetDeed deed = new StreetDeed(safe, vm.addr(SIGNING_KEY), "https://plate/", "https://deed/", 10);
+        vm.prank(safe);
+        deed.configurePrimarySale(alice, payable(bob), false);
         CoreAuditBurnDeedReceiver receiver = new CoreAuditBurnDeedReceiver(deed);
         StreetDeed.DeedVoucher memory v = StreetDeed.DeedVoucher(address(receiver), "Audit Street", "Harbor", 31, block.timestamp + 1 hours);
         bytes memory sig = _sign(_typedDigest("OmertaStreetDeed", address(deed), keccak256(abi.encode(
             keccak256("DeedVoucher(address to,string name,string district,uint256 nonce,uint256 deadline)"),
             v.to, keccak256(bytes(v.name)), keccak256(bytes(v.district)), v.nonce, v.deadline
         ))));
+        uint256 price = deed.quoteClaim(v.name);
+        vm.deal(address(this), price);
         vm.recordLogs();
-        deed.claim(v, sig);
+        deed.claim{value: price}(v, sig);
         Vm.Log[] memory logs = vm.getRecordedLogs();
         uint256 id = deed.tokenIdFor(v.name);
         assertEq(deed.balanceOf(address(receiver)), 0);

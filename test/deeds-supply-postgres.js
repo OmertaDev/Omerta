@@ -19,6 +19,9 @@ const first = await pool.connect(), second = await pool.connect();
 const definition = fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8');
 const migration = definition.match(/CREATE TABLE IF NOT EXISTS street_deed_supply \([\s\S]*?SELECT 1, COUNT\(\*\) FROM street_deeds ON CONFLICT \(id\) DO NOTHING;/)?.[0];
 assert(migration, 'test exercises the actual boot migration');
+const paidIntentMigration = definition.match(/CREATE TABLE IF NOT EXISTS street_deed_paid_intents \([\s\S]*?\);/)?.[0];
+const issuanceKindMigration = definition.match(/^ALTER TABLE street_deeds ADD COLUMN IF NOT EXISTS issuance_kind [^\r\n]+;$/m)?.[0];
+assert(paidIntentMigration && issuanceKindMigration, 'test exercises the current canonical intent and issuance migrations');
 const finalBuilding = DEED_BUILDINGS.filter(lot => lot.issuanceKind === 'gameplay').at(-1);
 const issuedBuildings = DEED_BUILDINGS.filter(lot => lot.id !== finalBuilding.id);
 const player = account_id => ({ id: account_id, account_id, name: account_id, alive: true,
@@ -32,6 +35,8 @@ try {
   ); CREATE TABLE street_deed_history (
     account_id TEXT NOT NULL, kind TEXT NOT NULL, detail TEXT NOT NULL, at TIMESTAMPTZ DEFAULT now()
   )`);
+  await first.query(issuanceKindMigration);
+  await first.query(paidIntentMigration);
   const buildingMigration = definition.match(/CREATE TABLE IF NOT EXISTS street_deed_building_assignments \([\s\S]*?\);/)?.[0];
   assert(buildingMigration, 'test exercises the durable property-assignment migration');
   await first.query(buildingMigration);

@@ -20,7 +20,7 @@
 @media(prefers-reduced-motion:reduce){.ux-clock--ready{animation:none;outline:1px solid var(--gold,#c7af79)}}
 @media(max-width:760px){
   /* Keep header actions reachable in one scrollable row, leaving the selected operation in view. */
-  #top{flex-wrap:nowrap;overflow-x:auto;max-width:100%;box-sizing:border-box;scrollbar-width:thin}#top>*{flex-shrink:0}#top #whoami{margin-left:0;white-space:nowrap}
+  #screen-main #top{flex-wrap:nowrap;overflow-x:auto;max-width:100%;box-sizing:border-box;scrollbar-width:thin}#top>*{flex-shrink:0}#top #whoami{margin-left:0;white-space:nowrap}
   .ux-screen-tools{margin:0 0 8px}.ux-screen-tools>summary{display:list-item;min-height:44px;align-content:center;cursor:pointer;color:var(--neon);font:12px/1.5 var(--mono);padding:10px 0;box-sizing:border-box}
   .ux-screen-tools>summary:focus-visible{outline:2px solid var(--neon);outline-offset:2px}
   .ux-screen-tools-close{display:block;min-height:44px;margin-left:auto}

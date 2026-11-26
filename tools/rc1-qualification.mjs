@@ -23,7 +23,10 @@ const readJson = (file) => JSON.parse(fs.readFileSync(file, 'utf8'));
 const finite = (value) => typeof value === 'number' && Number.isFinite(value);
 const noExclusions = (proof) => Array.isArray(proof.coverageExclusions) && proof.coverageExclusions.length === 0;
 export const CANONICAL_GATE_REGISTRY = 'docs/release/readiness-work/gate-registry.json';
-const sourcePath = (file) => /^(src\/|public\/|content\/|tools\/|test\/|\.github\/workflows\/|omerta-contracts\/(src\/|test\/|foundry.toml)|schema.sql$|package(-lock)?\.json$|render.yaml$)/.test(file)
+// Inventory committed inputs; installed dependencies and compiler/prover binaries need separate qualification.
+const sourcePath = (file) => /^(src\/|public\/|content\/|tools\/|test\/|\.github\/workflows\/|schema.sql$|package(-lock)?\.json$|render.yaml$|\.gitmodules$)/.test(file)
+  || /^omerta-privacy(?:\/|$)/.test(file)
+  || /^omerta-contracts(?:$|\/(?:(?:src|test|script|scripts|lib)(?:\/|$)|(?:foundry\.toml|foundry\.lock|remappings\.txt|\.gitmodules|package(?:-lock)?\.json|run-forge-test(?:-sandboxed)?\.sh)$))/.test(file)
   || file === CANONICAL_GATE_REGISTRY;
 const gitBytes = (...args) => execFileSync('git', args, { maxBuffer: 64 * 1024 * 1024 });
 const gitText = (...args) => gitBytes(...args).toString('utf8').trim();
@@ -37,6 +40,8 @@ export function sourceInventory(source) {
     return { path: line.slice(at + 1), mode, type, blob };
   }).filter((entry) => sourcePath(entry.path)).sort((a, b) => a.path.localeCompare(b.path));
   assert(entries.length > 0, 'No selected source files');
+  const gitlink = entries.find((entry) => entry.type === 'commit' || entry.mode === '160000');
+  assert(!gitlink, `Source gitlinks are not supported: ${gitlink?.path}; vendor dependency blobs before qualification`);
   assert(entries.every((entry) => entry.type === 'blob' && ['100644', '100755'].includes(entry.mode)), 'Source links are not supported');
   const objects = [...new Set(entries.map((entry) => entry.blob))];
   const sizes = execFileSync('git', ['cat-file', '--batch-check'], { input: `${objects.join('\n')}\n`, encoding: 'utf8' })

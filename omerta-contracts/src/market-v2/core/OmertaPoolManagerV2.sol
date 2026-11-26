@@ -115,14 +115,13 @@ contract OmertaPoolManagerV2 is IPoolManager, OmertaProtocolFeesV2, NoDelegateCa
     bytes32 public constant revenuePolicyId =
         keccak256("OMERTA_RESTRICTED_LP_REVENUE_V2_350_BASE_50_ETH_STAKERS_BOTH_DIRECTIONS");
     address public immutable omr;
-    address public immutable developerRecipient;
-    address public immutable rwaRecipient;
-    address public immutable communityRecipient;
-    address public immutable polRecipient;
-    address public immutable rewardsRecipient;
+    // Constructor-only storage fixes recipients without embedding five runtime immutables.
+    address[5] private _revenueRecipients;
     mapping(Currency currency => mapping(uint8 bucket => uint256 amount)) public owed;
     mapping(Currency currency => uint256 amount) public totalOwed;
     uint256 private _withdrawalGuard = 1;
+    bool public settlementPoolConfigured;
+    bytes32 public settlementPoolId;
 
     error InvalidRestrictedConfiguration();
     error RestrictedPolicyNotSealed();
@@ -135,11 +134,14 @@ contract OmertaPoolManagerV2 is IPoolManager, OmertaProtocolFeesV2, NoDelegateCa
     error WithdrawalReentered();
     error InvalidRevenueBucket();
     error OnlyRevenueRecipient();
+    error SettlementPoolAlreadyConfigured();
+    error SettlementPoolPolicySealed();
 
     event TradeRevenueAccrued(address indexed caller, PoolId indexed poolId, Currency indexed currency, uint256 amount);
     event TradeRevenueClaimed(
         Currency indexed currency, uint8 indexed bucket, address indexed recipient, uint256 amount
     );
+    event SettlementPoolConfigured(PoolId indexed poolId);
 
     modifier onlyRestrictedPolicy() {
         _checkRestrictedPolicy();
@@ -168,11 +170,29 @@ contract OmertaPoolManagerV2 is IPoolManager, OmertaProtocolFeesV2, NoDelegateCa
         }
         if (rewardsRecipient_ == address(0) || rewardsRecipient_ == address(this)) revert InvalidRestrictedConfiguration();
         omr = omr_;
-        developerRecipient = recipients_[0];
-        rwaRecipient = recipients_[1];
-        communityRecipient = recipients_[2];
-        polRecipient = recipients_[3];
-        rewardsRecipient = rewardsRecipient_;
+        _revenueRecipients = [recipients_[0], recipients_[1], recipients_[2], recipients_[3], rewardsRecipient_];
+    }
+
+    function developerRecipient() external view returns (address) { return _revenueRecipients[0]; }
+    function rwaRecipient() external view returns (address) { return _revenueRecipients[1]; }
+    function communityRecipient() external view returns (address) { return _revenueRecipients[2]; }
+    function polRecipient() external view returns (address) { return _revenueRecipients[3]; }
+    function rewardsRecipient() external view returns (address) { return _revenueRecipients[4]; }
+
+    /// @notice Bind the sole settlement pool before the token's transfer policy is sealed.
+    /// @dev The pool cannot be replaced, and all value-bearing pool operations use this exact key.
+    function configureSettlementPool(PoolKey memory key) external onlyOwner {
+        if (IOmertaRestrictedOMRV2(omr).policySealed()) revert SettlementPoolPolicySealed();
+        if (settlementPoolConfigured) revert SettlementPoolAlreadyConfigured();
+        _validatePoolKey(key);
+        if (key.tickSpacing > MAX_TICK_SPACING) TickSpacingTooLarge.selector.revertWith(key.tickSpacing);
+        if (key.tickSpacing < MIN_TICK_SPACING) TickSpacingTooSmall.selector.revertWith(key.tickSpacing);
+        if (!key.hooks.isValidHookAddress(key.fee)) Hooks.HookAddressNotValid.selector.revertWith(address(key.hooks));
+        key.fee.getInitialLPFee();
+        PoolId id = key.toId();
+        settlementPoolId = PoolId.unwrap(id);
+        settlementPoolConfigured = true;
+        emit SettlementPoolConfigured(id);
     }
 
     /// @inheritdoc IPoolManager
@@ -196,15 +216,7 @@ contract OmertaPoolManagerV2 is IPoolManager, OmertaProtocolFeesV2, NoDelegateCa
         returns (int24 tick)
     {
         _checkPoolKey(key);
-        // see TickBitmap.sol for overflow conditions that can arise from tick spacing being too large
-        if (key.tickSpacing > MAX_TICK_SPACING) TickSpacingTooLarge.selector.revertWith(key.tickSpacing);
-        if (key.tickSpacing < MIN_TICK_SPACING) TickSpacingTooSmall.selector.revertWith(key.tickSpacing);
-        if (key.currency0 >= key.currency1) {
-            CurrenciesOutOfOrderOrEqual.selector
-                .revertWith(Currency.unwrap(key.currency0), Currency.unwrap(key.currency1));
-        }
-        if (!key.hooks.isValidHookAddress(key.fee)) Hooks.HookAddressNotValid.selector.revertWith(address(key.hooks));
-
+        // Static key validity was checked at configuration; the exact ID is checked above.
         uint24 lpFee = key.fee.getInitialLPFee();
 
         key.hooks.beforeInitialize(key, sqrtPriceX96);
@@ -582,17 +594,17 @@ contract OmertaPoolManagerV2 is IPoolManager, OmertaProtocolFeesV2, NoDelegateCa
     }
 
     function _recipient(uint8 bucket) private view returns (address) {
-        if (bucket == 0) return developerRecipient;
-        if (bucket == 1) return rwaRecipient;
-        if (bucket == 2) return communityRecipient;
-        if (bucket == 3) return polRecipient;
-        if (bucket == 4) return rewardsRecipient;
-        revert InvalidRevenueBucket();
+        if (bucket >= 5) revert InvalidRevenueBucket();
+        return _revenueRecipients[bucket];
+    }
+
+    function _isRestrictedOperator(address operator) private view returns (bool) {
+        return IOmertaRestrictedOMRV2(omr).isOperator(operator);
     }
 
     function _checkRestrictedPolicy() private view {
         IOmertaRestrictedOMRV2 token = IOmertaRestrictedOMRV2(omr);
-        if (!token.policySealed() || token.settlementManager() != address(this) || !token.isOperator(address(this))) {
+        if (!token.policySealed() || token.settlementManager() != address(this) || !_isRestrictedOperator(address(this))) {
             revert RestrictedPolicyNotSealed();
         }
     }
@@ -600,25 +612,37 @@ contract OmertaPoolManagerV2 is IPoolManager, OmertaProtocolFeesV2, NoDelegateCa
     function _checkRestrictedOperator() internal view override {
         _checkRestrictedPolicy();
         if (_withdrawalGuard != 1) revert WithdrawalReentered();
-        if (!IOmertaRestrictedOMRV2(omr).isOperator(msg.sender)) revert RestrictedOperatorRequired();
+        if (!_isRestrictedOperator(msg.sender)) revert RestrictedOperatorRequired();
     }
 
     function _checkPoolKey(PoolKey memory key) internal view override {
+        if (!settlementPoolConfigured || PoolId.unwrap(key.toId()) != settlementPoolId) {
+            revert RestrictedPoolNotAllowed();
+        }
+        _validatePoolKey(key);
+    }
+
+    function _validatePoolKey(PoolKey memory key) private view {
         if (!key.currency0.isAddressZero() || Currency.unwrap(key.currency1) != omr) {
             revert RestrictedPoolNotAllowed();
         }
         address hook = address(key.hooks);
         if (hook == address(0)) return;
         if (
-            !IOmertaRestrictedOMRV2(omr).isOperator(hook)
+            !_isRestrictedOperator(hook)
                 || Hooks.hasPermission(key.hooks, Hooks.BEFORE_SWAP_RETURNS_DELTA_FLAG)
         ) {
             revert RestrictedHookNotAllowed();
         }
-        (bool ok, bytes memory data) = hook.staticcall(abi.encodeWithSignature("poolManager()"));
-        if (!ok || data.length != 32 || abi.decode(data, (address)) != address(this)) {
-            revert RestrictedHookNotAllowed();
+        bool validManager;
+        bytes4 selector = bytes4(keccak256("poolManager()"));
+        // Keep the exact ABI-length and canonical address checks without allocating return bytes.
+        assembly ("memory-safe") {
+            mstore(0, selector)
+            let ok := staticcall(gas(), hook, 0, 4, 0, 32)
+            validManager := and(and(ok, eq(returndatasize(), 32)), eq(mload(0), address()))
         }
+        if (!validManager) revert RestrictedHookNotAllowed();
     }
 
     function _checkCurrency(Currency currency) internal view override {

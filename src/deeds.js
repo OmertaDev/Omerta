@@ -89,6 +89,8 @@ export async function recordDeedEvent(client, accountId, kind, detail = '') {
 // validated like a living-street name: markup-stripped (stored-XSS), length-bounded, city-wide unique.
 // FREE in Phase 1 (pure onboarding/collectible — the ETH mint fee attaches at Phase 3). ZERO §10.4.
 export async function claimDeed(ch, body, client, h) {
+  if ((await client.query('SELECT 1 FROM street_deed_paid_intents WHERE account_id=$1', [ch.account_id])).rowCount)
+    throw new GameError('intent_pending', 'Resume your existing property intent first.');
   const existing = await loadDeed(client, ch.account_id);
   if (existing) throw new GameError('have_deed', `You already hold the deed to ${existing.name}.`);
   const selectedBuilding = deedBuildingById(body?.buildingId);
@@ -126,7 +128,7 @@ export async function claimDeed(ch, body, client, h) {
   if (!building) throw new GameError('deed_building_claimed', 'That building was just claimed. Investigate another property.');
   try {
     // corner_at starts the corner-take clock at claim (Phase 2 — the owner controls their own corner)
-    await client.query('INSERT INTO street_deeds (account_id, name, name_lc, district, corner_at, home_authority_token, building_id) VALUES ($1,$2,$3,$4,now(),$5,$6)',
+    await client.query("INSERT INTO street_deeds (account_id, name, name_lc, district, corner_at, home_authority_token, building_id, issuance_kind) VALUES ($1,$2,$3,$4,now(),$5,$6,'gameplay')",
       [ch.account_id, name, nameLc, district, crypto.randomUUID(), building.id]);
   } catch (err) {
     // a concurrent claim of the same name races on the unique index → a clean 400, not a 500
@@ -140,10 +142,46 @@ export async function claimDeed(ch, body, client, h) {
   return { ok: true, name, district, districtName: districtName(district), building, issuanceKind: building.issuanceKind };
 }
 
+// Explicit prospective purchase intent. No benefit reader consults this table and no permanent
+// assignment/counter is consumed here. withCharacter owns the transaction and lifetime lock.
+export async function reservePaidDeed(ch, body, client) {
+  const building = deedBuildingById(body?.buildingId);
+  const name = cleanText(body?.name || '').replace(/\s+/g, ' ').trim().slice(0, DEEDS.NAME_MAX);
+  if (!building || building.issuanceKind !== 'paid' || body?.district && body.district !== building.district)
+    throw new GameError('building', 'Choose an available paid property.');
+  if (name.length < DEEDS.NAME_MIN || !/^[\w .,'&-]+$/.test(name))
+    throw new GameError('name', 'Choose a valid street name.');
+  const account = (await client.query('SELECT * FROM account_persistent WHERE account_id=$1 FOR UPDATE', [ch.account_id])).rows[0];
+  if (!account?.minted || !account.wallet_address)
+    throw new GameError('not_minted', 'Use a minted account with a linked wallet to reserve a paid property.');
+  const supply = await deedSupply(client, { lock: true });
+  if (await loadDeed(client, ch.account_id)) throw new GameError('have_deed', 'You already hold a street.');
+  const old = (await client.query('SELECT * FROM street_deed_paid_intents WHERE account_id=$1 FOR UPDATE', [ch.account_id])).rows[0];
+  if (old) {
+    if (old.name !== name || old.building_id !== building.id) throw new GameError('intent_pending', 'Resume your existing property intent first.');
+    return { ok: true, status: 'payment_required', name, district: building.district, building, benefitEligible: false };
+  }
+  const pending = Number((await client.query('SELECT COUNT(*) n FROM street_deed_paid_intents')).rows[0].n);
+  if (pending >= supply.remaining || pending >= supply.paid.remaining)
+    throw new GameError('deed_supply_exhausted', 'No paid property slots are available.');
+  if ((await client.query('SELECT 1 FROM street_deeds WHERE name_lc=$1', [name.toLowerCase()])).rowCount
+      || (await client.query('SELECT 1 FROM street_deed_building_assignments WHERE building_id=$1 OR street_name=$2', [building.id, name])).rowCount)
+    throw new GameError('taken', 'That street or property is already assigned.');
+  try {
+    await client.query('INSERT INTO street_deed_paid_intents (account_id,name,name_lc,district,building_id) VALUES ($1,$2,$3,$4,$5)',
+      [ch.account_id, name, name.toLowerCase(), building.district, building.id]);
+  } catch (e) { if (e?.code === '23505') throw new GameError('taken', 'That name or property is already reserved.'); throw e; }
+  return { ok: true, status: 'payment_required', name, district: building.district, building, benefitEligible: false };
+}
+
 // The board: your deed (or the claim form), its legend + renown/rank, and the districts (with how
 // built-up each is — the growing-world texture). Read-only; the client re-derives no game state.
 export async function deedBoard(ch, client, h) {
   const deed = await loadDeed(client, ch.account_id);
+  const paidIntent = (await client.query('SELECT * FROM street_deed_paid_intents WHERE account_id=$1', [ch.account_id])).rows[0];
+  const pending = (await client.query("SELECT id,nonce,status,deadline,signed_payload FROM vouchers WHERE account_id=$1 AND kind='deed' AND status='signed' ORDER BY created_at DESC", [ch.account_id])).rows.find(v => {
+    try { return JSON.parse(v.signed_payload)?.voucher?.name === (deed || paidIntent)?.name; } catch { return false; }
+  });
   const supply = await deedSupply(client);
   const discovery = await discoveryAvailability(ch, client);
   const acct = (await client.query('SELECT minted, wallet_address FROM account_persistent WHERE account_id=$1', [ch.account_id])).rows[0] || {};
@@ -257,15 +295,18 @@ export async function deedBoard(ch, client, h) {
   // (the car/boat precedent — no rent/control) until someone RE-IMPORTS it (burns it back). `extractPending`
   // = a voucher signed, not yet claimed on-chain (still inert; the account can't claim a new street yet).
   const chain = {
-    configured: !!(process.env.STREET_DEED_ADDRESS && process.env.CHAIN_ID),
-    activationPending: !(process.env.STREET_DEED_ADDRESS && process.env.CHAIN_ID),
+    configured: !!(process.env.STREET_DEED_ADDRESS && process.env.CHAIN_ID && /^0x[0-9a-f]{64}$/i.test(process.env.STREET_DEED_RUNTIME_HASH || '') && !/^0x0{64}$/i.test(process.env.STREET_DEED_RUNTIME_HASH)),
+    activationPending: !(process.env.STREET_DEED_ADDRESS && process.env.CHAIN_ID && process.env.STREET_DEED_RUNTIME_HASH),
     minted: !!acct.minted, walletLinked: !!acct.wallet_address,
-    extractPending: !!(deed && deed.onchain_token_id),
+    extractPending: !!(pending || deed && deed.onchain_token_id),
+    pendingVoucher: pending ? { id: pending.id, nonce: pending.nonce, status: pending.status, deadline: pending.deadline } : null,
     tokenId: deed && deed.onchain_token_id ? deed.onchain_token_id : null,
-    canExtract: !!(deed && !deed.onchain_token_id && deed.sale_price == null && acct.minted && acct.wallet_address
-      && process.env.STREET_DEED_ADDRESS && process.env.CHAIN_ID),
+    canExtract: !!((paidIntent || deed && (!deed.onchain_token_id || pending) && deed.sale_price == null) && acct.minted && acct.wallet_address
+      && process.env.STREET_DEED_ADDRESS && process.env.CHAIN_ID && process.env.STREET_DEED_RUNTIME_HASH),
   };
   return {
+    paidIntent: paidIntent ? { name: paidIntent.name, district: paidIntent.district, building: buildingForDeed(paidIntent),
+      status: 'payment_required', benefitEligible: false } : null,
     deed: deed ? { name: deed.name, district: deed.district, districtName: districtName(deed.district),
       issuanceKind: buildingForDeed(deed)?.issuanceKind || null,
       claimedAt: deed.claimed_at, building: buildingForDeed(deed), neighborhood: myHood ? myHood.name : null, frontier: myHood ? myHood.frontier : false,

@@ -68,6 +68,9 @@ contract EthRewardsManagerMock {
     function configure(address recipient, PoolKey memory key) external {
         rewardsRecipient = recipient; settlementPoolId = PoolId.unwrap(key.toId()); settlementPoolConfigured = true;
     }
+    function setPoolConfiguration(bool configured, bytes32 id) external {
+        settlementPoolConfigured = configured; settlementPoolId = id;
+    }
     function setTax(uint256 nativeAmount, uint256 omrAmount) external { nativeTax = nativeAmount; omrTax = omrAmount; }
     function setMode(uint256 bps, bool lie_, bool reenter_) external { outputBps = bps; lie = lie_; reenter = reenter_; }
     function sweep(Currency currency, uint8 bucket) external returns (uint256 amount) {
@@ -221,6 +224,47 @@ contract EthRewardsV2Test is Test {
         assertEq(omr.allowance(address(rewards), address(canonical)), 0); assertEq(omr.balanceOf(address(rewards)), 0);
         assertEq(rewards.omrConvertedOnDay(block.timestamp / 1 days), 100 ether);
         rewards.fundRewards(0.1 ether); assertEq(vault.totalEthFunded(), 0.1 ether);
+    }
+
+    function testMissingOrWrongConfiguredPoolBlocksConversionWithoutSpending() public {
+        _activate(); _supplyOmr(100 ether);
+        bytes32 canonicalId = PoolId.unwrap(key.toId());
+        uint256 nativeBefore = address(rewards).balance;
+        uint256 managerNativeBefore = address(manager).balance;
+        uint256 managerOmrBefore = omr.balanceOf(address(manager));
+        for (uint256 mode; mode < 2; ++mode) {
+            manager.setPoolConfiguration(mode != 0, mode == 0 ? canonicalId : bytes32(uint256(canonicalId) ^ 1));
+            vm.expectRevert(OmertaEthRewardsV2.NotReady.selector);
+            rewards.minimumNativeFor(100 ether);
+            vm.prank(KEEPER);
+            vm.expectRevert(OmertaEthRewardsV2.NotReady.selector);
+            rewards.convertOmr(100 ether, 0.09 ether, uint64(block.timestamp + 1));
+            assertEq(omr.balanceOf(address(rewards)), 100 ether);
+            assertEq(address(rewards).balance, nativeBefore);
+            assertEq(address(manager).balance, managerNativeBefore);
+            assertEq(omr.balanceOf(address(manager)), managerOmrBefore);
+            assertEq(omr.allowance(address(rewards), address(canonical)), 0);
+            assertEq(rewards.omrConvertedOnDay(block.timestamp / 1 days), 0);
+        }
+        manager.setPoolConfiguration(true, canonicalId);
+        uint256 minimum = rewards.minimumNativeFor(100 ether);
+        vm.prank(KEEPER);
+        assertEq(rewards.convertOmr(100 ether, minimum, uint64(block.timestamp + 1)), 0.1 ether);
+        assertEq(omr.balanceOf(address(rewards)), 0);
+        assertEq(rewards.omrConvertedOnDay(block.timestamp / 1 days), 100 ether);
+        assertEq(omr.allowance(address(rewards), address(canonical)), 0);
+    }
+
+    function testNativeFundingRemainsAvailableWithMissingOrWrongConversionPool() public {
+        _collect(0.2 ether, 0);
+        bytes32 canonicalId = PoolId.unwrap(key.toId());
+        manager.setPoolConfiguration(false, canonicalId);
+        rewards.fundRewards(0.1 ether);
+        manager.setPoolConfiguration(true, bytes32(uint256(canonicalId) ^ 1));
+        rewards.fundRewards(0.1 ether);
+        assertEq(vault.totalEthFunded(), 0.2 ether);
+        assertEq(rewards.totalEthFunded(), 0.2 ether);
+        assertEq(rewards.nativeFundedOnDay(block.timestamp / 1 days), 0.2 ether);
     }
 
     function testConversionFloorIncludesProtocolAndLpFeesBeforeSlippage() public {

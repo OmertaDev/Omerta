@@ -16,6 +16,11 @@ import * as Preflight from '../src/preflight.js';
 import { walkSrc } from './lib/srcfiles.js';
 
 const { preflight, isHardened, CLASSIFIED, TEST_ONLY_ENV, REQUIRED_ENV, EXPLICIT_ENV } = Preflight;
+assert(Preflight.OPERATIONAL_ENV.includes('STREET_DEED_RUNTIME_HASH'),
+  'the deed runtime pin is explicit operator configuration beside the deed address');
+assert(!TEST_ONLY_ENV.includes('STREET_DEED_RUNTIME_HASH') && !Object.hasOwn(REQUIRED_ENV, 'STREET_DEED_RUNTIME_HASH')
+  && !Object.hasOwn(EXPLICIT_ENV, 'STREET_DEED_RUNTIME_HASH'),
+  'classifying the optional deed rail adds no global boot requirement or runtime default');
 assert.equal(typeof Preflight.normalizeRwaReviewerConfig, 'function',
   'runtime and preflight share one exported pure reviewer-config normalizer');
 for (const [label, env] of [

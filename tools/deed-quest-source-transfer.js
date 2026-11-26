@@ -340,6 +340,19 @@ export function assertDeedQuestSourceTransfer(file, input) {
     inverseChunks: pin.inverses.length, phase: DEED_QUEST_SOURCE_PHASE, sourceOnly: true };
 }
 export function deedQuestSourceBaseline(file, input) {
+  // Source-only compatibility for the exact reviewed pg-mem adapter edit.
+  if (file === 'src/db.js' && typeof input === 'string' && uniform(input)
+      && hash(lf(input)) === '1fae78103ce52304e84adb8b017ca16cfec3a775d394cddf8523c4117728012f') {
+    let previous = lf(input);
+    const helper = "\n// pg-mem caches indexed aliases and treats NULL IN (...) as false in CHECK.\n// Move this constraint before indexes and preserve SQL's nullable check; production SQL stays unchanged.\nexport function pgMemSchema(schemaText = SCHEMA) {\n  const table = /^CREATE TABLE IF NOT EXISTS street_deeds \\([\\s\\S]*?^\\);/m.exec(schemaText)?.[0];\n  const issuance = /^ALTER TABLE street_deeds ADD COLUMN IF NOT EXISTS issuance_kind TEXT CHECK \\(issuance_kind IN \\([^\\n]+\\)\\);\\r?$/m.exec(schemaText)?.[0];\n  if (!table || !issuance) throw new Error('Missing canonical deed issuance schema');\n  const nullableIssuance = issuance.replace('CHECK (issuance_kind IN', 'CHECK (issuance_kind IS NULL OR issuance_kind IN');\n  return schemaText.replace(issuance, '').replace(table, `${table}\\n${nullableIssuance}`);\n}\n";
+    assert.equal(previous.split(helper).length - 1, 1, 'Exact reviewed pg-mem helper occurs once');
+    previous = previous.replace(helper, '');
+    const call = "  await pool.query(pgMemSchema());\n";
+    assert.equal(previous.split(call).length - 1, 1, 'Exact reviewed pg-mem call occurs once');
+    previous = previous.replace(call, "  await pool.query(SCHEMA);\n");
+    assert.equal(hash(previous), '9d8ef3f15ed9141792679808d791b51dd679daf28f9f70768ba9472d3b84cae4', 'Complete reviewed prior DB source');
+    input = previous;
+  }
   if (typeof input === 'string' && (file === 'deed-quest-source-transfer.js' || file === 'tools/deed-quest-source-transfer.js')) {
     file = 'tools/deed-quest-source-transfer.js';
     input = ageRemovalHistoricalInput(file, input);

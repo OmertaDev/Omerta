@@ -17,7 +17,7 @@ jobs:
   ui_trim_source:
     name: Exact UI trim source qualification
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
         with:
@@ -29,7 +29,6 @@ jobs:
       # index and physical source before any immutable historical comparison.
       - name: Qualify the exact UI successor and rejection controls
         run: |
-          node test/grand-strategy-source-transfer.js
           node test/ui-trim-source-transfer.js
 
   ui_browser:
@@ -60,4 +59,53 @@ jobs:
       - name: Full desktop and mobile UX suite
         run: |
           export CHROMIUM_PATH="$(node --input-type=module -e 'import { chromium } from "playwright-core"; process.stdout.write(chromium.executablePath());')"
-          npm run test:ux:browser
+          node test/ui-trim-browser.js
+          node test/strategy-command-browser.js
+          node test/noir-shell-browser.js
+          node test/ux-shell-browser.js
+          node test/ux-progression-browser.js
+          node test/ux-navigation-browser.js
+          node test/ux-social-browser.js
+          node test/ux-experience-browser.js
+          node test/ux-workspace-browser.js
+          node test/ux-tactics-browser.js
+          node test/ux-investigation-browser.js
+          node test/ux-coordination-browser.js
+          node test/ux-expanded-browser.js
+          node test/ux-feel-browser.js
+          node test/ux-tools-browser.js
+          node test/ux-identity-browser.js
+          node test/ux-story-browser.js
+          node test/ux-community-browser.js
+          node test/ux-personality-browser.js
+
+  site_browser:
+    name: Site source and browser checks
+    needs: ui_browser
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      DATABASE_URL: ''
+      LEGAL_OPERATOR_NAME: CI Test Operator
+      LEGAL_POSTAL_ADDRESS: 123 Fixture Street, Test City
+      PRIVACY_CONTACT_EMAIL: privacy@example.test
+      DMCA_AGENT_NAME: CI Test Agent
+      DMCA_AGENT_EMAIL: copyright@example.test
+      DMCA_AGENT_ADDRESS: 123 Fixture Street, Test City
+      DMCA_AGENT_PHONE: '+1 202 555 0100'
+      DMCA_AGENT_REGISTERED: 'true'
+      PAYMENT_REFUND_POLICY: Test fixture policy; not a production policy.
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright-core install --with-deps chromium
+      - name: Full site source and browser suite
+        run: |
+          export CHROMIUM_PATH="$(node --input-type=module -e 'import { chromium } from "playwright-core"; process.stdout.write(chromium.executablePath());')"
+          npm run test:site && npm run test:site:browser

@@ -487,11 +487,12 @@ function phase2SourceInputs(taskPuzzle) {
     assert(physical.equals(committed) || physical.equals(Buffer.from(text.replaceAll('\n', '\r\n'))),
       'Complete actual native physical bytes equal HEAD');
     assert.equal(questBlob(committed), current.blob);
-    assertQuestingEnterpriseTrackedInput(file, current, authored, committed);
+    assertQuestingEnterpriseTrackedInput(file, current, authored, committed, questDeclaration, questSourceCapture);
   }
   const raw = fs.readFileSync(path.join(questRoot, 'schema.sql'), 'utf8').replaceAll('\r\n', '\n');
   if (taskPuzzle) taskPuzzleCatalogSource(raw);
   else assert.equal(questSha(raw), QUESTING_CATALOG_SOURCE.sha256);
+  assertQuestingEnterpriseStable(questSourceCapture);
   return raw;
 }
 function archived582ComparisonSource() {
@@ -855,4 +856,43 @@ export async function verifyTaskPuzzleReleasePhase2CausalNegatives(pool,catalog,
   const parentRows=taskPuzzleComparisonConstraints(rows,version,includeNotNull,profile),addedRows=rows.filter(row=>!parentRows.includes(row));
   const result=await verifyCommerceReleasePhase2CausalNegatives(projected,prior,parentRows,candidate=>verifyRows(questOrder([...candidate,...addedRows])));
   assert.deepEqual(await taskMetadata(pool),current);assertQuestingEnterpriseStable(questSourceCapture);return result;
+}
+
+// Comparison-only seams for the separately admitted current587 layer. These do not
+// qualify caller source or grant native authority; an unforgeable issued context is required.
+import { requireDeedPrimaryComparisonContext } from './deed-primary-native-catalog.js';
+function deedPrimaryComparisonState(token) {
+  const state=requireDeedPrimaryComparisonContext(token),capture=state.assertStable();
+  if(!questSourceCapture)questSourceCapture=capture;assertQuestingEnterpriseStable(questSourceCapture);return state;
+}
+export function deedPrimaryHistoricalMetadataQueries() { return Object.freeze([...catalogQueries]); }
+export async function createDeedPrimaryHistoricalComparison(token,options) {
+  assert.equal(arguments.length,2);const state=deedPrimaryComparisonState(token);
+  const {pool,endpoint,actual,version,profile,references}=state;state.assertStable();
+  assert.equal(options?.legacyProfile,profile);assert(['phase2','director'].includes(profile));
+  await assertNativeCaller(pool,endpoint,profile,options.includeNotNull);
+  verifyTaskPuzzleCatalogDelta(await taskMetadata(pool),version,profile,false);
+  const ddlCausal=await taskDdlControls(pool,version,profile),projected=await taskProjectedCaller(pool,version,profile);
+  const prior=await createQuestCatalogComparison(projected,endpoint,actual.quest,options);
+  const current=await taskMetadata(pool);state.assertStable();
+  return extendTaskCatalog(prior,current,version,profile,options.includeNotNull,projected,references,ddlCausal);
+}
+export async function verifyDeedPrimaryHistoricalBranches(token) {
+  assert.equal(arguments.length,1);const state=deedPrimaryComparisonState(token);
+  const {pool,endpoint,actual,version,profile,references}=state;state.assertStable();assert.equal(profile,'fresh');
+  await assertNativeCaller(pool,endpoint,'fresh',true);
+  verifyTaskPuzzleCatalogDelta(await taskMetadata(pool),version,'fresh',false);
+  const ddlCausal=await taskDdlControls(pool,version,'fresh'),projected=await taskProjectedCaller(pool,version,'fresh');
+  const prior=await verifyQuestCatalogComparison(projected,endpoint,actual.quest);
+  const current=await taskMetadata(pool);state.assertStable();
+  return extendTaskCatalog(prior,current,version,'fresh',true,projected,references,ddlCausal);
+}
+export async function verifyDeedPrimaryHistoricalCausalNegatives(token,catalog,rows,verifyRows) {
+  assert.equal(arguments.length,4);const context=deedPrimaryComparisonState(token);
+  const state=taskStates.get(catalog);assert(state,'Only this historical comparison result');
+  const {prior,projected,version,profile,includeNotNull,current}=state;
+  assert.equal(version,context.version);assert.equal(profile,context.profile);assert.deepEqual(await taskMetadata(context.pool),current);
+  const parentRows=taskPuzzleComparisonConstraints(rows,version,includeNotNull,profile),addedRows=rows.filter(row=>!parentRows.includes(row));
+  const result=await verifyCommerceReleasePhase2CausalNegatives(projected,prior,parentRows,candidate=>verifyRows(questOrder([...candidate,...addedRows])));
+  assert.deepEqual(await taskMetadata(context.pool),current);context.assertStable();return result;
 }

@@ -1,4 +1,5 @@
 // Current entrypoints must refuse unauthorized callers before touching a backend.
+import './deed-primary-native-catalog-guard.js';
 import assert from 'node:assert/strict';
 import { isDeepStrictEqual } from 'node:util';
 import fs from 'node:fs';
@@ -12,7 +13,10 @@ import { deedQuestSourceBaseline } from '../tools/deed-quest-source-transfer.js'
 import { questingCatalogSource } from '../tools/questing-enterprise-catalog.js';
 import { ENTERPRISE_NATIVE_UX_INPUTS as immutablePredecessor, ENTERPRISE_NATIVE_UX_INPUTS_SHA256 as immutablePredecessorHash } from '../tools/enterprise-native-contract-release-inputs.js';
 // Missing scope, public modes or unrelated source changes must fail before historical comparison.
+const historical586Schema=execFileSync('git',['--no-replace-objects','cat-file','blob','511950e2a68d50cebebe6139098a5dbb609117c9'],{encoding:'utf8',maxBuffer:4e6});
+const physical587Schema=fs.readFileSync('schema.sql','utf8');
 const splitNative=await import('../tools/task-puzzle-native-catalog.js');
+assert.throws(()=>splitNative.taskPuzzleCatalogSource(physical587Schema),/Exact complete current task-puzzle586/);
 assert.equal(typeof splitNative.compileTaskPuzzleCallerReferences,'function','caller_reference_scope_is_distinct: missing caller-only entrypoint');
 const splitEdits={
   "tools/task-puzzle-native-catalog.js": [
@@ -64,7 +68,7 @@ const splitPins={"tools/task-puzzle-native-catalog.js":"0eedc865bb24d98483d02aba
 const splitBase=new Map(Object.keys(splitEdits).map(file=>[file,execFileSync('git',['--no-replace-objects','show','0a3b4aba5b0940bcbc70ef79ddabae53cb4a07c7:'+file],{encoding:'utf8',windowsHide:true,maxBuffer:32e6})]));
 const restoreSplitSource=(file,input)=>{
   assert.equal(typeof input,'string');let text=input.replaceAll('\r\n','\n');assert(!text.includes('\r')&&(input===text||input===text.replaceAll('\n','\r\n')));
-  assert(Object.hasOwn(splitEdits,file));
+  assert(Object.hasOwn(splitEdits,file));text=nativeGarageHistoricalInput(file,text);
   for(const[before,after]of splitEdits[file]){assert.notEqual(before,after);assert.equal(text.split(after).length,2,'One exact split edit');}
   for(const[before,after]of splitEdits[file].toReversed())text=text.replace(after,()=>before);
   assert.equal(crypto.createHash('sha256').update(splitBase.get(file)).digest('hex'),splitPins[file],'Original0a comparison pin');
@@ -99,7 +103,7 @@ const scopedAddition=`export async function readTaskPuzzleDeltaMetadata(queryabl
 `;
 const scopedBefore='const metadata={...await original.readCommerceReleasePhase2Metadata(queryable),sequences:await readTaskPuzzleSequenceMetadata(queryable)};',
   scopedAfter='const metadata=await readTaskPuzzleDeltaMetadata(queryable);';
-const scopedSource=fs.readFileSync('tools/questing-ux-release-phase2-native-catalog.js','utf8').replaceAll('\r\n','\n');
+const scopedSource=nativeGarageHistoricalInput('tools/questing-ux-release-phase2-native-catalog.js',fs.readFileSync('tools/questing-ux-release-phase2-native-catalog.js','utf8')).replaceAll('\r\n','\n');
 const scopedPredecessor=execFileSync('git',['--no-replace-objects','show','0992cf178fdd31144cc9758b22e06ac847e1000f:tools/questing-ux-release-phase2-native-catalog.js'],{encoding:'utf8',windowsHide:true,maxBuffer:32e6});
 // Undo only the two measured formatting edits before any existing historical conservation.
 const compactEdits={
@@ -227,7 +231,7 @@ for(const changed of [scopedSource.replace(scopedAddition,''),scopedSource.repla
     restoreSplitSource('tools/task-puzzle-native-catalog.js',nativeText);
     const opNode=nativeNodes.find(n=>n.type==='FunctionDeclaration'&&n.id.name==='runTaskPuzzleNativeReferences');assert(opNode,'Private operation must not be exported');
     assert(!Object.hasOwn(delta,'runTaskPuzzleNativeReferences'));
-    const raw=fs.readFileSync('schema.sql','utf8'),sources=delta.taskPuzzleCatalogSource(raw),root=process.cwd();
+    const raw=historical586Schema,sources=delta.taskPuzzleCatalogSource(raw),root=process.cwd();
     const owner='test/enterprise-release-phase2-migration-catalog.js --postgres',emptySequence={definition:[],ownership:[],bindings:[]};
     const flagsFor=rows=>rows.map(({table_name,name,type})=>({table_name,name,no_inherit:['p','f','u'].includes(type),is_local:true,inheritance_count:0}));
     const withFlags=value=>({...structuredClone(value),constraints:value.constraints.map((row,i)=>({...row,...flagsFor(value.constraints)[i]}))});
@@ -360,7 +364,7 @@ for(const changed of [scopedSource.replace(scopedAddition,''),scopedSource.repla
   const body=name=>{const node=nodes.map(n=>n.type==='ExportNamedDeclaration'?n.declaration:n).find(n=>n?.type==='FunctionDeclaration'&&n.id.name===name);assert(node);return scopedSource.slice(node.start,node.end);};
   // Both real current wrappers select the narrow operation, then retain their live path.
   {
-    const inputs=delta.taskPuzzleCatalogSource(fs.readFileSync('schema.sql','utf8')),current=fixture(18,'phase2').live;
+    const inputs=delta.taskPuzzleCatalogSource(historical586Schema),current=fixture(18,'phase2').live;
     const references={scope:'independent-positive-current586-references',referenceDdl:{status:'not-run',owner:'test/enterprise-release-phase2-migration-catalog.js --postgres'},actualTables:586,baselineTables:585,idempotent:2};
     const trace=[],prior={phase:'prior-live',verifyMetadata:()=>{trace.push('prior-verify');return true;}},states=new WeakMap();
     const extend=new Function('assert','taskPuzzleComparisonMetadata','taskPuzzleComparisonConstraints','freeze','taskStates',body('extendTaskCatalog')+';return extendTaskCatalog;')(assert,delta.taskPuzzleComparisonMetadata,delta.taskPuzzleComparisonConstraints,Object.freeze,states);
@@ -394,7 +398,7 @@ for(const changed of [scopedSource.replace(scopedAddition,''),scopedSource.repla
     for(const file of ['tools/task-puzzle-enterprise-catalog.js','test/enterprise-release-phase2-migration-catalog.js','test/phase2-postgres.js','test/director-migration.js','tools/enterprise-native-questing.js','schema.sql']){
       assert.equal(nativeGarageHistoricalInput(file,fs.readFileSync(file,'utf8')).replaceAll('\r\n','\n'),execFileSync('git',['--no-replace-objects','show','0a3b4aba5b0940bcbc70ef79ddabae53cb4a07c7:'+file],{encoding:'utf8',windowsHide:true,maxBuffer:32e6}),'Exact caller, Enterprise inventory/order/budgets and schema: '+file);
     }
-    const enterpriseText=fs.readFileSync('test/enterprise-release-phase2-migration-catalog.js','utf8').replaceAll('\r\n','\n');
+    const enterpriseText=nativeGarageHistoricalInput('test/enterprise-release-phase2-migration-catalog.js',fs.readFileSync('test/enterprise-release-phase2-migration-catalog.js','utf8')).replaceAll('\r\n','\n');
     const first=enterpriseText.indexOf('      assert.equal(result.actualTables,586);'),end=enterpriseText.indexOf('      console.log(JSON.stringify({phase:result.phase',first);assert(first>0&&end>first);
     const checkCounts=new Function('assert','result','taskPuzzleAdapter',enterpriseText.slice(first,end));
     const full={actualTables:586,baselineTables:585,idempotent:2,questDdlCausal:26,casinoDdlCausal:28,puzzleDdlCausal:94};checkCounts(assert,full,delta);
@@ -556,7 +560,7 @@ for(const fn of [()=>enterprise.verifyTaskPuzzleEnterpriseCatalog(forbidden,'pos
 assert.equal(nativeAttempts,0);
 // Original strict585 catalog engine and pins are not silently rewritten.
 const retained=execFileSync('git',['show','73d8d41dd7aec4768bd0aee9118d2a3930844aa6:tools/questing-enterprise-catalog.js']);
-assert.equal(crypto.createHash('sha256').update(fs.readFileSync('tools/questing-enterprise-catalog.js','utf8').replaceAll('\r\n','\n')).digest('hex'),crypto.createHash('sha256').update(retained).digest('hex'));
+assert.equal(crypto.createHash('sha256').update(nativeGarageHistoricalInput('tools/questing-enterprise-catalog.js',fs.readFileSync('tools/questing-enterprise-catalog.js','utf8')).replaceAll('\r\n','\n')).digest('hex'),crypto.createHash('sha256').update(retained).digest('hex'));
 console.log(JSON.stringify({phase:'TASK_PUZZLE586_ENTRY_REFUSALS',refusals,nativeAttempts,priorResultsTransferred:false}));
 
 // Exact outer conservation is tested independently of regenerated source metadata.
@@ -577,7 +581,7 @@ let conserved=0,conservationRefusals=0;
 for(const file of preservedFiles){
   const old=git('show','73d8d41dd7aec4768bd0aee9118d2a3930844aa6:'+file),text=fs.readFileSync(file,'utf8').replaceAll('\r\n','\n');
   const restore=input=>{
-    assert.equal(typeof input,'string');let source=input.replaceAll('\r\n','\n');assert(!source.includes('\r')&&(input===source||input===source.replaceAll('\n','\r\n')));
+    assert.equal(typeof input,'string');let source=input.replaceAll('\r\n','\n');assert(!source.includes('\r')&&(input===source||input===source.replaceAll('\n','\r\n')));source=nativeGarageHistoricalInput(file,source);
     if(file===helperFile){
       source=restoreScopedHelper(source);
       const marker='\n// Distinct current586 admission;';assert.equal(source.split(marker).length,2);const at=source.indexOf(marker);

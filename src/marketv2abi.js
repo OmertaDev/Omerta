@@ -5,7 +5,7 @@ import {createHash} from 'node:crypto';
 export const MARKET_V2_ETH_ABI_NAMES=Object.freeze([
   'OmertaEthRewardsV2','OmertaEthStakingV2','OmertaMarketStateV2','OmertaHookV2','OmertaPoolManagerV2',
 ]);
-export const MARKET_V2_ETH_ABI_DIGEST='ed64becb0cd97f18f34638892c3b67223e8373bc1bb40be38e57383a576611ad';
+export const MARKET_V2_ETH_ABI_DIGEST='fed88ec095aca55efa2daf228377aa83353ebd90d5b785c51fd0f28678395aa2';
 const canonical=value=>Array.isArray(value)?value.map(canonical):value&&typeof value==='object'
   ?Object.fromEntries(Object.keys(value).sort().map(key=>[key,canonical(value[key])])):value;
 export const ethAbiPackDigest=value=>createHash('sha256').update(JSON.stringify(canonical(value))).digest('hex');

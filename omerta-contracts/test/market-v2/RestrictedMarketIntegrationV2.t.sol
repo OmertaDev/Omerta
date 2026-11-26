@@ -20,6 +20,7 @@ import {IOmertaRestrictedOMRV2} from "../../src/market-v2/IOmertaRestrictedOMRV2
 import {OmertaSwapRouterV2} from "../../src/market-v2/OmertaSwapRouterV2.sol";
 
 interface IRestrictedRevenueIntegrationV2 {
+    function configureSettlementPool(PoolKey calldata key) external;
     function owed(Currency, uint8) external view returns (uint256);
     function totalOwed(Currency) external view returns (uint256);
     function sweep(Currency, uint8) external returns (uint256);
@@ -86,6 +87,7 @@ contract RestrictedMarketIntegrationV2Test is Test {
         _register(address(router), IOmertaRestrictedOMRV2.OperatorRole.SettlementInput);
         _register(address(lpRouter), IOmertaRestrictedOMRV2.OperatorRole.SettlementInput);
         omr.bindSettlementManager(address(manager), address(manager).codehash);
+        IRestrictedRevenueIntegrationV2(address(manager)).configureSettlementPool(key);
         omr.sealPolicy();
         vm.prank(trader, trader);
         omr.registerWallet(trader);

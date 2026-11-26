@@ -97,7 +97,12 @@ try {
     assert.match(await page.locator(`#${trainingTerms}`).innerText(), /10 energy per session.*recovery clock/s);
     await noPlanningUi();
     assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 2), 'Native job choices fit the viewport.');
-    await pick.scrollIntoViewIfNeeded();
+    await page.evaluate(() => {
+      const action = document.querySelector('#tab-streets [data-do="POST /v1/crimes/pick"].prime:enabled');
+      const card = action?.closest('.noir-job-card');
+      if (!card) throw new Error('Current enabled native pick card is required for screenshot.');
+      card.scrollIntoView({ block: 'center', inline: 'nearest' });
+    });
     await page.screenshot({ path: path.join(artifacts, `native-streets-${viewport.width}.png`) });
 
     await openTab(page, 'port');

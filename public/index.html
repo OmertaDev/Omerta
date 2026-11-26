@@ -1288,7 +1288,7 @@
 <link rel="stylesheet" href="/ux-feedback.css?v=20261024">
 <link rel="stylesheet" href="/ux-progression.css?v=20261024">
 <link rel="stylesheet" href="/ux-social.css?v=20261024">
-<link rel="stylesheet" href="/ux-navigation.css?v=20261024">
+<link rel="stylesheet" href="/ux-navigation.css?v=20261126-mobile-header">
 <link rel="stylesheet" href="/ux-world.css?v=20261024-2">
 <link rel="stylesheet" href="/ux-feel.css?v=20261025-1">
 <link rel="stylesheet" href="/ux-tools.css?v=20261025-1">
@@ -9207,6 +9207,144 @@
   let deedPropertyRender = 0;
   let deedPropertyActor = null;
   const deedPropertyNames = new Map();
+  // Street Deed checkout uses the server-authored transaction; it never rebuilds claim calldata.
+  let deedCheckoutPending = false;
+  function deedCheckoutFailure(message) { return Object.assign(new Error(message), { deedCheckout: true }); }
+  function deedCheckoutScope() {
+    const auth = token, actor = me?.id, generation = me?.generation, navigation = navigationRevision, wallet = me?.wallet?.toLowerCase();
+    return () => !!actor && token === auth && me?.id === actor && me?.generation === generation
+      && me?.wallet?.toLowerCase() === wallet && currentTab === 'deeds' && navigationRevision === navigation;
+  }
+  function deedCheckoutHeld(reply) {
+    return ({ migration_required: 'This deed needs a reviewed migration before checkout can continue.',
+      chain_unconfigured: 'Deed checkout is held until the chain and contract runtime are configured.',
+      claim_pending: 'This claim is already being confirmed. Wait for the deed record to update.' })[reply?.body?.error]
+      || 'Deed checkout is unavailable. Refresh the property record and retry.';
+  }
+  function deedCheckoutUint(value, label, textOnly = false) {
+    if ((!textOnly && typeof value === 'number' && Number.isSafeInteger(value) && value >= 0)) value = String(value);
+    if (typeof value !== 'string' || !/^(0|[1-9][0-9]*)$/.test(value) || value.length > 78)
+      throw deedCheckoutFailure('Invalid ' + label + '. Refresh the deed quote.');
+    const result = BigInt(value);
+    if (result >= 1n << 256n) throw deedCheckoutFailure('Invalid ' + label + '. Refresh the deed quote.');
+    return result;
+  }
+  function deedEthPrice(wei) {
+    const amount = deedCheckoutUint(wei, 'ETH price', true), unit = 10n ** 18n;
+    const fraction = (amount % unit).toString().padStart(18, '0').replace(/0+$/, '');
+    return (amount / unit).toString() + (fraction ? '.' + fraction : '');
+  }
+  function validateDeedCheckout(body, wallet) {
+    const address = value => typeof value === 'string' && /^0x[0-9a-f]{40}$/i.test(value) && !/^0x0{40}$/i.test(value);
+    const hash = value => typeof value === 'string' && /^0x[0-9a-f]{64}$/i.test(value) && !/^0x0{64}$/i.test(value);
+    const voucher = body?.voucher, quote = body?.quote, transaction = body?.transaction;
+    if (body?.status !== 'signed' || !voucher || !quote || !transaction || !address(wallet)
+      || !address(voucher.to) || voucher.to.toLowerCase() !== wallet.toLowerCase()
+      || !address(body.contract) || !address(transaction.to) || !address(quote.contract)
+      || transaction.to.toLowerCase() !== body.contract.toLowerCase() || quote.contract.toLowerCase() !== body.contract.toLowerCase()
+      || typeof transaction.data !== 'string' || !/^0x(?:[0-9a-f]{2}){4,}$/i.test(transaction.data)
+      || typeof body.signature !== 'string' || !/^0x[0-9a-f]{130}$/i.test(body.signature)
+      || !['paid', 'gameplay', 'remint'].includes(body.issuanceRoute)
+      || !((body.primaryType === 'DeedVoucher' && body.claimMethod === 'claim')
+        || (body.primaryType === 'GameplayDeedVoucher' && body.claimMethod === 'claimGameplay'))
+      || (body.issuanceRoute === 'paid' && body.primaryType !== 'DeedVoucher')
+      || (body.issuanceRoute === 'gameplay' && body.primaryType !== 'GameplayDeedVoucher')
+      || typeof voucher.name !== 'string' || !voucher.name || typeof voucher.district !== 'string' || !voucher.district
+      || quote.name !== voucher.name || quote.district !== voucher.district || quote.usedNonce !== false
+      || !hash(quote.runtimeHash) || !hash(quote.blockHash) || typeof quote.identityIssued !== 'boolean'
+      || typeof quote.gameplayIdentity !== 'boolean' || typeof quote.nativeName !== 'string' || typeof quote.nativeDistrict !== 'string'
+      || (quote.identityIssued ? quote.nativeName !== voucher.name || quote.nativeDistrict !== voucher.district
+        : quote.nativeName !== '' || quote.nativeDistrict !== '')
+      || (body.issuanceRoute === 'remint') !== quote.identityIssued
+      || (body.issuanceRoute === 'remint' && quote.liveOwner !== null))
+      throw deedCheckoutFailure('The deed quote or wallet binding is incomplete. Refresh before paying.');
+    const chain = deedCheckoutUint(body.chainId, 'chain'), quotedChain = deedCheckoutUint(quote.chainId, 'quote chain');
+    const value = deedCheckoutUint(transaction.value, 'transaction value', true), quotedValue = deedCheckoutUint(quote.valueWei, 'quoted value', true);
+    const nonce = deedCheckoutUint(voucher.nonce, 'voucher nonce'), deadline = deedCheckoutUint(voucher.deadline, 'voucher deadline');
+    const at = deedCheckoutUint(quote.timestamp, 'quote timestamp'); deedCheckoutUint(quote.blockNumber, 'quote block');
+    if (chain === 0n || chain !== quotedChain || value !== quotedValue || deadline <= at
+      || (body.issuanceRoute !== 'paid' && value !== 0n))
+      throw deedCheckoutFailure('The deed price, network or expiry changed. Refresh before paying.');
+    return Object.freeze({ from: wallet, to: transaction.to, data: transaction.data, value: '0x' + value.toString(16),
+      valueWei: transaction.value, chainIdHex: '0x' + chain.toString(16), signature: body.signature, nonce: nonce.toString(),
+      primaryType: body.primaryType, claimMethod: body.claimMethod, route: body.issuanceRoute,
+      priceEth: deedEthPrice(transaction.value), name: voucher.name,
+      pendingKey: 'omerta-deed-claim:' + chain + ':' + body.contract.toLowerCase() + ':' + wallet.toLowerCase() + ':' + nonce });
+  }
+  async function reservePaidDeed(property, name, district) {
+    if (deedCheckoutPending) return;
+    const current = deedCheckoutScope();
+    if (!current() || property?.issuanceKind !== 'paid' || property.claimed !== false || property.reserved !== false || !name) return;
+    deedCheckoutPending = true;
+    try {
+      const reply = await api('POST', '/v1/deeds/paid/reserve', { name, buildingId: property.id, district }, { isCurrent: current, beforeDispatch: current });
+      if (!current() || reply.ignored) return;
+      if (reply.code >= 400 || reply.body?.status !== 'payment_required' || reply.body?.benefitEligible !== false)
+        throw deedCheckoutFailure(deedCheckoutHeld(reply));
+      toast('Property reserved for payment. No deed or benefits are granted until its mint is confirmed.');
+      return reply;
+    } catch (error) { if (current()) toast(error?.deedCheckout ? error.message : 'The reservation could not be confirmed. Refresh before retrying.', true); }
+    finally { deedCheckoutPending = false; }
+  }
+  async function beginDeedCheckout() {
+    if (deedCheckoutPending) return;
+    const current = deedCheckoutScope(), wallet = me?.wallet;
+    if (!current() || !wallet) { toast('Link your wallet in the Capital Desk before minting a deed.', true); return; }
+    deedCheckoutPending = true;
+    try {
+      const attest = await ask('Take your deed on-chain?', 'The NFT goes inert in-game (no corner or in-game sale) until re-imported. Your vault stays with the street name. By continuing, you attest that you may lawfully hold the instruments this deed’s vault can receive — treasury-bought stock is delivered into it with no further check. You will review the exact ETH price and pay network gas separately.', { yes: 'I attest — review price' });
+      if (!attest || !current()) return;
+      const extract = () => api('POST', '/v1/deeds/extract', { address: wallet, attest: true }, { isCurrent: current, beforeDispatch: current });
+      const reply = await extract();
+      if (!current() || reply.ignored) return;
+      if (reply.code >= 400) throw deedCheckoutFailure(deedCheckoutHeld(reply));
+      const tx = validateDeedCheckout(reply.body, wallet);
+      if (localStorage.getItem(tx.pendingKey)) throw deedCheckoutFailure('A deed transaction already has a pending or unknown outcome. Check your wallet and wait for confirmation before retrying.');
+      const approved = await ask('Review deed mint', tx.name + ': ' + tx.priceEth + ' ETH, plus network gas paid by you. Chain ' + BigInt(tx.chainIdHex) + '. A reservation or wallet submission grants no new paid deed or benefits; confirmation is required.', { yes: 'Continue to wallet' });
+      if (!approved || !current()) return;
+      if (typeof navigator === 'undefined' || typeof navigator.locks?.request !== 'function')
+        throw deedCheckoutFailure('This browser cannot safely submit this deed transaction. Use another secure browser and retry.');
+      const provider = await pickProvider();
+      if (!provider || !current()) return;
+      await provider.request({ method: 'eth_requestAccounts' });
+      if (!current()) return;
+      const fresh = await extract();
+      if (!current() || fresh.ignored) return;
+      if (fresh.code >= 400) throw deedCheckoutFailure(deedCheckoutHeld(fresh));
+      const latest = validateDeedCheckout(fresh.body, wallet);
+      if (latest.to !== tx.to || latest.data !== tx.data || latest.value !== tx.value || latest.chainIdHex !== tx.chainIdHex
+        || latest.signature !== tx.signature || latest.nonce !== tx.nonce || latest.primaryType !== tx.primaryType
+        || latest.claimMethod !== tx.claimMethod || latest.route !== tx.route)
+        throw deedCheckoutFailure('The deed price or transaction changed. Retry to review the refreshed quote; nothing was sent.');
+      const send = async () => {
+        if (!current() || localStorage.getItem(tx.pendingKey)) throw deedCheckoutFailure('This deed checkout changed or is already pending. Refresh its record.');
+        const [account] = await provider.request({ method: 'eth_accounts' });
+        if (!current() || account?.toLowerCase() !== wallet.toLowerCase()
+          || me?.wallet?.toLowerCase() !== wallet.toLowerCase()) throw deedCheckoutFailure('Choose your linked wallet account and retry.');
+        const chain = await provider.request({ method: 'eth_chainId' });
+        if (!current() || me?.wallet?.toLowerCase() !== wallet.toLowerCase() || BigInt(chain) !== BigInt(tx.chainIdHex)) throw deedCheckoutFailure('Switch your wallet to chain ' + BigInt(tx.chainIdHex) + ' and retry. Nothing was sent.');
+        localStorage.setItem(tx.pendingKey, 'pending');
+        let result;
+        try { result = await provider.request({ method: 'eth_sendTransaction', params: [{ from: latest.from, to: latest.to,
+          data: latest.data, value: latest.value, chainId: latest.chainIdHex }] }); }
+        catch (error) { if (error?.code === 4001) localStorage.removeItem(tx.pendingKey); throw error; }
+        if (typeof result !== 'string' || !/^0x[0-9a-f]{64}$/i.test(result))
+          throw deedCheckoutFailure('Submission has an unknown outcome. Check your wallet before retrying.');
+        localStorage.setItem(tx.pendingKey, result);
+        return result;
+      };
+      const hash = await navigator.locks.request(tx.pendingKey, { ifAvailable: true }, lock => {
+        if (!lock) throw deedCheckoutFailure('Another tab is reviewing this deed. Use that tab.');
+        return send();
+      });
+      if (current()) toast('Deed transaction submitted: ' + hash + '. Wait for confirmed registration before benefits become available.');
+    } catch (error) {
+      if (current()) toast(error?.deedCheckout ? error.message : error?.code === 4001
+        ? 'Wallet request cancelled. You can retry the same pending deed quote.'
+        : 'Deed checkout did not complete. Check any wallet request or transaction before retrying.', true);
+    } finally { deedCheckoutPending = false; if (current()) await renderDeeds(); }
+  }
+
   async function renderDeeds(propertyFocus = deedPropertyFocus) {
     const actor = me?.id || null;
     if (actor !== deedPropertyActor) {
@@ -9226,7 +9364,7 @@
     const reply = await api('GET', '/v1/deeds', undefined, { isCurrent: valid });
     if (!valid() || reply.ignored) return;
     const b = reply.body || {};
-    const deed = b.deed, districts = b.districts || [], history = b.history || [], ranks = b.ranks || [];
+    const deed = b.deed, paidIntent = b.paidIntent, districts = b.districts || [], history = b.history || [], ranks = b.ranks || [];
     const upgrades = b.upgrades || {}, rewards = b.rewards || {}, nextUpgrade = upgrades.next;
     const upgradeReasons = {
       no_deed: 'Claim a street first.', not_deed_owner: 'Only the current deed owner can upgrade it.',
@@ -9322,10 +9460,12 @@
       That vault is keyed on the street's name, so anything left in it survives the burn and travels with the
       deed to whoever extracts it next, including a buyer if you sell in-game. Move what's yours out first.</div>`;
     const chainCard = () => {
-      if (!deed) return '';
-      if (chain.activationPending || !chain.configured) return `<div class="card" id="deed-mint-pending" style="margin-top:10px"><span class="t">Deed NFT activation pending</span><div class="d">Your in-game property is recorded. NFT issuance is not available yet. Mint availability and any wallet network gas will be shown before it opens.</div></div>`;
+      if (!deed && !paidIntent) return '';
+      if (paidIntent) return `<div class="card" style="border-color:var(--gold);margin-top:10px"><span class="t">Reserved for payment: ${esc(paidIntent.name)}</span><div class="d">${esc(paidIntent.building?.id || '')} · ${esc(paidIntent.district)}. This is an unpaid reservation; no property or benefits have been granted.</div>${chain.configured && !chain.activationPending ? '<button class="act" id="deed-extract">Review ETH price and mint</button>' : '<div class="d">Checkout is held until chain and contract runtime configuration is ready.</div>'}</div>`;
+      if (chain.activationPending || !chain.configured) return `<div class="card" id="deed-mint-pending" style="margin-top:10px"><span class="t">Deed NFT activation pending</span><div class="d">Your in-game property is recorded. NFT issuance is not available yet. Checkout is held until chain and contract runtime configuration is ready.</div></div>`;
       if (chain.extractPending) return `<div class="card" style="border-color:var(--gold);margin-top:10px"><span class="t">Mint your deed</span>
-        <div class="d">Your street is being taken on-chain — submit the signed claim to your wallet to mint the NFT. It's <b>inert in-game</b> (no corner, no in-game sale) until you re-import it.</div>
+        <div class="d">Your street is being taken on-chain — review its current price and submit the signed claim from your linked wallet to mint the NFT. It's <b>inert in-game</b> (no corner, no in-game sale) until you re-import it.</div>
+        <button class="act" id="deed-extract">Review pending claim and wallet transaction</button>
         ${burnWarning}
         ${chain.tokenId ? `<div class="d" style="margin-top:3px"><a href="/deed/${esc(chain.tokenId)}" target="_blank">its NFT page →</a></div>` : ''}</div>`;
       let row = '';
@@ -9350,8 +9490,8 @@
     t.innerHTML = `
       <div class="card"><span class="t">City properties</span>
         <div class="d">1,000 gameplay Deeds · 1,000 paid mint Deeds · 500 partnership Deeds. From Level 25, earn a gameplay building's deed through a qualifying quest or by following its leads across the city. Each account has one lifetime gameplay claim. Existing deeds and secondary trades remain available.</div>
-        <div class="d">Operating benefits require level 25 on your current character, however you acquired the property. Paid NFT minting is not available yet.</div>
-        ${b.supply?.gameplay && b.supply?.paid ? `<div class="d" id="deed-supply">Gameplay: ${Number(b.supply.gameplay.remaining).toLocaleString()} of 1,000 remaining${b.supply.gameplay.remaining === 0 ? ' · fully claimed' : ''}. Paid allocation: ${Number(b.supply.paid.remaining).toLocaleString()} of 1,000 unissued · minting pending. Partnership: 500 reserved.</div>` : ''}
+        <div class="d">Operating benefits require level 25 on your current character, however you acquired the property. Select an available paid property to reserve it, then review its exact ETH price and player-paid gas before minting. Availability depends on chain readiness.</div>
+        ${b.supply?.gameplay && b.supply?.paid ? `<div class="d" id="deed-supply">Gameplay: ${Number(b.supply.gameplay.remaining).toLocaleString()} of 1,000 remaining${b.supply.gameplay.remaining === 0 ? ' · fully claimed' : ''}. Paid allocation: ${Number(b.supply.paid.remaining).toLocaleString()} of 1,000 unissued. Partnership: 500 reserved.</div>` : ''}
         ${deed?.building ? `<div class="d">Your property: ${esc(deed.building.id)} · ${esc(deed.building.kind.replaceAll('_', ' '))}</div>` : ''}
         <button class="act" id="deed-atlas-open">explore the property map</button>
         <button class="act" id="deed-quests-open">quests and inventory</button>
@@ -9417,12 +9557,25 @@
         const entry = progress.get(p.id), detail = $('#deed-property-detail');
         if (p.issuanceKind === 'paid' || p.issuanceKind === 'partnership') {
           const paid = p.issuanceKind === 'paid';
+          const canReserve = paid && p.claimed === false && p.reserved === false && !deed && !paidIntent;
           detail.innerHTML = `<span class="t">${esc(p.id)} · ${esc(p.kind.replaceAll('_', ' '))}</span>
             <div class="d"><span class="chip">${paid ? 'Paid mint allocation' : 'Partnership allocation'}</span></div>
             ${p.claimed || entry?.claimed ? `<div class="d">Already claimed: ${esc(entry?.street || p.street || 'this permanent property')}${p.tokenId ? ' · deed ' + esc(p.tokenId) : ''}.</div>`
-              : paid ? '<div class="d">This property belongs to the 1,000-Deed paid mint allocation. Paid NFT minting is not available yet. Discovery and quests cannot claim this allocation.</div>'
+              : paid ? `<div class="d">Reserve this exact paid property, then review its live ETH mint price and pay your own network gas. A reservation grants no property or benefits. Discovery and quests cannot claim this allocation.</div>${p.reserved ? '<div class="d">This property is reserved for a pending payment.</div>' : ''}`
               : '<div class="d">This property belongs to the 500-Deed partnership allocation. It cannot be claimed through discovery or public paid minting.</div>'}
+            ${canReserve ? `<label class="d" for="deed-paid-name">Property name</label><input id="deed-paid-name" placeholder="name your street" size="20" maxlength="${b.nameMax || 28}"><button class="act" id="deed-paid-reserve"${acting || deedCheckoutPending ? ' disabled' : ''}>Reserve this paid property</button>` : ''}
             <button class="act" id="deed-property-refresh">recheck property</button>`;
+          const input = $('#deed-paid-name');
+          if (input) { input.value = deedPropertyNames.get(p.id) || ''; input.oninput = () => { if (actor === me?.id) deedPropertyNames.set(p.id, input.value); }; }
+          const reserve = $('#deed-paid-reserve');
+          if (reserve) reserve.onclick = async () => {
+            if (!valid()) return;
+            const name = input.value.trim();
+            if (!name) { toast('Name this property first.'); return; }
+            reserve.disabled = true;
+            await reservePaidDeed(p, name, district);
+            if (actor === me?.id && currentTab === 'deeds' && navigation === navigationRevision) await renderDeeds({ district, buildingId: p.id });
+          };
           $('#deed-property-refresh').onclick = () => openPropertyDistrict(district, p.id);
           return;
         }
@@ -9506,9 +9659,7 @@
       if (!p) { toast('Name a price.'); return; }
       act('POST', '/v1/deeds/list', { price: p }).then(() => renderDeeds()); }; }
     { const el = $('#deed-unlist'); if (el) el.onclick = () => act('POST', '/v1/deeds/unlist').then(() => renderDeeds()); }
-    { const el = $('#deed-extract'); if (el) el.onclick = () =>
-      ask('Take your street on-chain as a tradeable NFT? It goes inert in-game (no corner, no in-game sale) until you re-import it — but you keep the deed and its whole legend, and it sells on any marketplace.\n\nBy continuing you also ATTEST that you may lawfully hold the instruments this deed’s vault can receive — treasury-bought stock is delivered into it with no further check.', 'I attest — take it on-chain')
-        .then((ok) => { if (ok) act('POST', '/v1/deeds/extract', { attest: true }).then(() => renderDeeds()); }); }
+    { const el = $('#deed-extract'); if (el) el.onclick = () => beginDeedCheckout(); }
     // BUY = a CONFIRM STEP, not a one-tap. A street carries an on-chain vault keyed on its name, so
     // before the money moves we read what that vault RECEIVED (the record) and — when the chain is
     // live — what it HOLDS right now (one RPC, here rather than on the polled board). A buyer who

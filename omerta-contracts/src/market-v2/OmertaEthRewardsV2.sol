@@ -18,6 +18,8 @@ import {OmertaSwapRouterV2} from "./OmertaSwapRouterV2.sol";
 interface IEthTaxManagerV2 {
     function omr() external view returns (address);
     function rewardsRecipient() external view returns (address);
+    function settlementPoolConfigured() external view returns (bool);
+    function settlementPoolId() external view returns (bytes32);
     function sweep(Currency currency, uint8 bucket) external returns (uint256);
 }
 interface IEthRewardHookV2 {
@@ -248,7 +250,9 @@ contract OmertaEthRewardsV2 is Pausable, ReentrancyGuard {
         if (!s.valid || s.epoch == 0 || s.observedAt == 0 || s.observedAt > block.timestamp
             || block.timestamp - s.observedAt > _policy.maxMarketAge || s.minLiquidity == 0
             || s.omrPerEth == 0 || s.stressBps > _policy.maxStressBps) revert MarketUnavailable();
-        if (IEthRewardHookV2(address(_key.hooks)).rewardsRecipient() != address(this)
+        if (!IEthTaxManagerV2(manager).settlementPoolConfigured()
+            || IEthTaxManagerV2(manager).settlementPoolId() != canonicalPoolId
+            || IEthRewardHookV2(address(_key.hooks)).rewardsRecipient() != address(this)
             || !omr.policySealed() || omr.settlementManager() != manager
             || !omr.isRecipient(address(this))) revert NotReady();
     }

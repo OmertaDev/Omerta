@@ -27,6 +27,7 @@ contract RestrictedRoleProbeV2 {
 }
 
 contract RestrictedManagerPolicyMockV2 is RestrictedRoleProbeV2 {
+    bool public constant settlementPoolConfigured = true;
     address public immutable omr;
     uint16 public immutable TRADE_FEE_BPS;
     bytes32 private immutable _policyId;
@@ -162,6 +163,24 @@ contract RestrictedOMRV2Test is Test, IUnlockCallback {
         token.sealPolicy();
         vm.expectRevert(RestrictedOMR.UnauthorizedTransfer.selector);
         token.transfer(bob, 1 ether);
+    }
+
+    function testSealRequiresConfiguredPoolGetterToSucceedAndReturnTrue() public {
+        _registerOperators();
+        token.bindSettlementManager(address(manager), address(manager).codehash);
+        bytes memory query = abi.encodeWithSignature("settlementPoolConfigured()");
+        vm.mockCall(address(manager), query, abi.encode(false));
+        vm.expectRevert(RestrictedOMR.InvalidSettlementManager.selector);
+        token.sealPolicy();
+        assertFalse(token.policySealed());
+        vm.clearMockedCalls();
+        vm.mockCallRevert(address(manager), query, bytes("pool unavailable"));
+        vm.expectRevert(RestrictedOMR.InvalidSettlementManager.selector);
+        token.sealPolicy();
+        assertFalse(token.policySealed());
+        vm.clearMockedCalls();
+        token.sealPolicy();
+        assertTrue(token.policySealed());
     }
 
     function testSealRejectsAnyInventoryAlreadyDistributedOutsideOwner() public {

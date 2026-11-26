@@ -18,6 +18,9 @@ const first = await pool.connect(), second = await pool.connect();
 const definition = fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8');
 const discoveryMigration = definition.match(/-- Deed discovery issuance\.[\s\S]*?-- End deed discovery issuance\./)?.[0];
 assert(discoveryMigration);
+const paidIntentMigration = definition.match(/CREATE TABLE IF NOT EXISTS street_deed_paid_intents \([\s\S]*?\);/)?.[0];
+const issuanceKindMigration = definition.match(/^ALTER TABLE street_deeds ADD COLUMN IF NOT EXISTS issuance_kind [^\r\n]+;$/m)?.[0];
+assert(paidIntentMigration && issuanceKindMigration, 'canonical primary issuance schema is retained');
 const actor = (id, account = id) => ({ id, account_id: account, name: id, alive: true,
   is_npc: false, loc: 'cathedral', respect: 1e8, energy: 100 });
 const target = 'cathedral-0001';
@@ -44,6 +47,8 @@ try {
       district TEXT,building_id TEXT UNIQUE,onchain_token_id TEXT,extracted_by_account TEXT,
       corner_at TIMESTAMPTZ,home_authority_token TEXT,claimed_at TIMESTAMPTZ DEFAULT now());
     CREATE TABLE street_deed_history(account_id TEXT,kind TEXT,detail TEXT,at TIMESTAMPTZ DEFAULT now());`);
+  await first.query(paidIntentMigration);
+  await first.query(issuanceKindMigration);
   for (const table of ['street_deed_building_assignments', 'street_deed_supply', 'mystery_instances', 'mystery_node_state']) {
     const ddl = definition.match(new RegExp(`CREATE TABLE IF NOT EXISTS ${table} \\([\\s\\S]*?\\n\\);`))?.[0];
     assert(ddl, `actual ${table} DDL is retained`);

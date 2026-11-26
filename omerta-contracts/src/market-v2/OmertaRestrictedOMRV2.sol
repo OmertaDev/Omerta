@@ -5,18 +5,22 @@ import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {ERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {Ownable2Step} from "@openzeppelin/contracts/access/Ownable2Step.sol";
+import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
+import {PoolKey} from "v4-core/types/PoolKey.sol";
+import {IVenuePolicy, VenueNotAllowed} from "../interfaces/IVenuePolicy.sol";
 import {IOmertaRestrictedOMRV2} from "./IOmertaRestrictedOMRV2.sol";
 
 interface IRestrictedSettlementPolicyV2 {
     function omr() external view returns (address);
     function TRADE_FEE_BPS() external view returns (uint16);
     function revenuePolicyId() external view returns (bytes32);
+    function settlementPoolConfigured() external view returns (bool);
 }
 
 /// @notice Fixed-supply OMR with an immutable settlement policy and delayed, runtime-pinned module admissions.
 /// @dev Custody operators must be reviewed typed contracts, with fixed runtime and no arbitrary forwarding.
 ///      Approvals and permits are standard ERC20 approvals; they never bypass the caller's transfer role.
-contract OmertaRestrictedOMRV2 is ERC20Permit, Ownable2Step, IOmertaRestrictedOMRV2 {
+contract OmertaRestrictedOMRV2 is ERC20Permit, Ownable2Step, IOmertaRestrictedOMRV2, IERC165, IVenuePolicy {
     uint256 public constant SUPPLY = 100_000_000e18;
     bytes32 public constant REVENUE_POLICY_ID = keccak256("OMERTA_RESTRICTED_LP_REVENUE_V2_350_BASE_50_ETH_STAKERS_BOTH_DIRECTIONS");
     uint64 public constant override POLICY_UPDATE_DELAY = 7 days;
@@ -80,6 +84,39 @@ contract OmertaRestrictedOMRV2 is ERC20Permit, Ownable2Step, IOmertaRestrictedOM
         genesisTreasury = treasurySafe;
         genesisTreasuryRuntimeHash = treasurySafe.code.length == 0 ? keccak256("") : treasurySafe.codehash;
         _mint(treasurySafe, SUPPLY);
+    }
+
+    function supportsInterface(bytes4 interfaceId) external pure override returns (bool) {
+        return interfaceId == type(IERC165).interfaceId || interfaceId == type(IVenuePolicy).interfaceId;
+    }
+
+    function venueEnforcement() external pure override returns (VenueEnforcement) {
+        return VenueEnforcement.Enforced;
+    }
+
+    /// @notice No pools on the chain's canonical Uniswap manager are permitted.
+    /// @dev Our custom settlement manager is declared by externalVenues(), not by
+    /// keys that consumers would resolve against a different manager address.
+    function canonicalPools() external pure override returns (PoolKey[] memory) {
+        return new PoolKey[](0);
+    }
+
+    /// @notice Venue permission is independent of caller, recipient and runtime authorization.
+    /// @dev The custom manager is one external singleton; its own policy enforces the exact pool.
+    function venueAllowed(address venue, bytes32 poolId, bool) public view override returns (bool) {
+        return venue != address(0) && venue == settlementManager && poolId == bytes32(0);
+    }
+
+    function externalVenues()
+        external
+        view
+        override
+        returns (bool inboundRestricted, bool outboundRestricted, ExternalVenue[] memory allowed)
+    {
+        address manager = settlementManager;
+        allowed = new ExternalVenue[](manager == address(0) ? 0 : 1);
+        if (manager != address(0)) allowed[0] = ExternalVenue(manager, true, true);
+        return (true, true, allowed);
     }
 
     /// @notice Configure receiving-only holders before sealing; later additions require the public delay.
@@ -153,10 +190,18 @@ contract OmertaRestrictedOMRV2 is ERC20Permit, Ownable2Step, IOmertaRestrictedOM
         settlementManager = manager;
         _setOperator(manager, OperatorRole.SettlementManager, expectedRuntimeHash);
         emit SettlementManagerBound(manager, expectedRuntimeHash);
+        emit ExternalVenuesChanged();
+        emit VenueStatusChanged(manager, bytes32(0), true, true);
+        emit VenueStatusChanged(manager, bytes32(0), false, true);
     }
 
     function sealPolicy() external onlyOwner onlyUnsealed {
         if (settlementManager == address(0)) revert InvalidSettlementManager();
+        try IRestrictedSettlementPolicyV2(settlementManager).settlementPoolConfigured() returns (bool configured) {
+            if (!configured) revert InvalidSettlementManager();
+        } catch {
+            revert InvalidSettlementManager();
+        }
         // No native OMR may pre-fund an independent pool or claim ledger before enforcement.
         // Initial LP/protocol distribution follows sealing through the reviewed operators.
         if (owner() != genesisTreasury || balanceOf(genesisTreasury) != SUPPLY) revert InvalidGenesisInventory();
@@ -313,20 +358,57 @@ contract OmertaRestrictedOMRV2 is ERC20Permit, Ownable2Step, IOmertaRestrictedOM
 
     function _update(address from, address to, uint256 value) internal override {
         if (from != address(0)) {
-            if (!isRecipient(to)) revert InvalidRecipient();
+            if (!isRecipient(to)) _refuseTransfer(from, to, true);
             address caller = _msgSender();
             if (!policySealed) {
-                if (caller != owner() || from != owner()) revert UnauthorizedTransfer();
+                if (caller != owner() || from != owner()) _refuseTransfer(from, to, false);
             } else {
-                if (!isOperator(caller)) revert UnauthorizedTransfer();
+                if (!isOperator(caller)) _refuseTransfer(from, to, false);
                 OperatorRole role = operatorRole[caller];
                 if (
                     (role == OperatorRole.SettlementInput && to != settlementManager)
                         || (role == OperatorRole.ProtocolCustody && from != caller && to != caller)
                         || (role == OperatorRole.SettlementManager && from != settlementManager)
-                ) revert UnauthorizedTransfer();
+                ) _refuseTransfer(from, to, false);
             }
         }
         super._update(from, to, value);
+    }
+
+    /// @dev Called only after an existing authorization predicate has rejected the transfer.
+    /// No venue probe participates in accepting a transfer or grants custody authority.
+    function _refuseTransfer(address from, address to, bool invalidRecipient) private view {
+        if (_isUnadmittedPool(from)) revert VenueNotAllowed(from, bytes32(0), false);
+        if (_isUnadmittedPool(to)) revert VenueNotAllowed(to, bytes32(0), true);
+        if (invalidRecipient) revert InvalidRecipient();
+        revert UnauthorizedTransfer();
+    }
+
+    /// @dev Recognizes conventional token0/token1 pools involving OMR. Identification of arbitrary
+    /// custom vaults is outside URC-5; unrecognized endpoints still fail custody authorization.
+    /// Previously configured account identities retain their ordinary runtime/registration errors.
+    function _isUnadmittedPool(address account) private view returns (bool) {
+        if (
+            account.code.length == 0 || account == genesisTreasury || operatorRole[account] != OperatorRole.None
+                || contractHolderRuntimeHash[account] != bytes32(0) || registeredWallet[account]
+        ) return false;
+        (bool firstOk, uint256 first) = _boundedPoolWord(account, 0x0dfe1681); // token0()
+        if (!firstOk || first > type(uint160).max) return false;
+        (bool secondOk, uint256 second) = _boundedPoolWord(account, 0xd21220a7); // token1()
+        if (!secondOk || second > type(uint160).max || first == second) return false;
+        if (address(uint160(first)) != address(this) && address(uint160(second)) != address(this)) return false;
+        // A fallback returning an address for every selector does not identify a pool.
+        (bool fallbackWord,) = _boundedPoolWord(account, 0xffffffff);
+        return !fallbackWord;
+    }
+
+    /// @dev Fixed gas, calldata and output bounds: no returndata allocation or external writes.
+    function _boundedPoolWord(address target, uint32 selector) private view returns (bool valid, uint256 word) {
+        assembly ("memory-safe") {
+            mstore(0, shl(224, selector))
+            valid := staticcall(8000, target, 0, 4, 0, 32)
+            valid := and(valid, eq(returndatasize(), 32))
+            word := mload(0)
+        }
     }
 }
