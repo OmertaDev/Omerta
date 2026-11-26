@@ -4,8 +4,14 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { decodeFunctionData, decodeAbiParameters, encodeAbiParameters, getContractAddress, getAddress,
   keccak256, toHex, parseAbi, zeroAddress } from 'viem';
-import { MARKET_V2_ROLES, MARKET_V2_HOOK_FLAGS, RESTRICTED_MARKET_POLICY_ID, RESTRICTED_MARKET_SUPPLY, RESTRICTED_MARKET_TRADE_FEE_BPS, loadMarketV2Artifact, mineMarketV2Hook,
-  buildMarketV2DeploymentPlan } from '../tools/market-v2-deployment-plan.js';
+import { MARKET_V2_ROLES, MARKET_V2_HOOK_FLAGS, RESTRICTED_MARKET_POLICY_ID, RESTRICTED_MARKET_SUPPLY, RESTRICTED_MARKET_TRADE_FEE_BPS, loadMarketV2Artifact as loadArtifact, mineMarketV2Hook,
+  buildMarketV2DeploymentPlan as buildPlan } from '../tools/market-v2-deployment-plan.js';
+
+// An explicit isolated compiler project can supply artifacts without replacing local out/.
+const contractsRoot = process.argv.find(arg => arg.startsWith('--contracts-root='))?.slice(17);
+const artifactOptions = contractsRoot ? { contractsRoot } : {};
+const loadMarketV2Artifact = (name, options = {}) => loadArtifact(name, { ...artifactOptions, ...options });
+const buildMarketV2DeploymentPlan = (input, options = {}) => buildPlan(input, { ...artifactOptions, ...options });
 
 const A = n => getAddress(`0x${BigInt(n).toString(16).padStart(40, '0')}`);
 const H = `0x${'19'.repeat(32)}`;
@@ -194,6 +200,29 @@ if (process.argv.includes('--example')) {
       assert.deepEqual(finalRegistry.required.contractHolders[index], { index, contractHolderAt: plan.addresses[role], contractHolderRuntimeHash: H });
     });
     assert.ok(plan.executionConditions.some(x => x.includes('offline generator does not perform them')));
+  });
+  test('one exact settlement pool is configured after hook admission and read back before sealing', () => {
+    const abi = parseAbi(['function configureSettlementPool((address currency0,address currency1,uint24 fee,int24 tickSpacing,address hooks) key)']);
+    const configured = plan.steps.filter(step => step.functionName === 'configureSettlementPool');
+    assert.equal(configured.length, 1);
+    const step = configured[0];
+    const configure = plan.steps.indexOf(step);
+    const hook = plan.steps.findIndex(entry => entry.label === 'Register restricted hook operator');
+    const seal = plan.steps.findIndex(entry => entry.functionName === 'sealPolicy');
+    assert.ok(hook < configure && configure < seal);
+    assert.equal(step.transaction.from, fixture.roles.safe);
+    assert.equal(step.transaction.to, fixture.external.poolManager.address);
+    const key = { currency0: zeroAddress, currency1: fixture.external.omr.address,
+      fee: fixture.policies.pool.fee, tickSpacing: fixture.policies.pool.tickSpacing, hooks: plan.addresses.hook };
+    const decoded = decodeFunctionData({ abi, data: step.transaction.data });
+    assert.equal(decoded.functionName, 'configureSettlementPool');
+    assert.deepEqual(decoded.args, [key]);
+    const expectedId = keccak256(encodeAbiParameters(abi[0].inputs, [key]));
+    const required = plan.steps[seal - 1].required.manager;
+    assert.equal(required.address, fixture.external.poolManager.address);
+    assert.equal(required.settlementPoolConfigured, true);
+    assert.equal(required.settlementPoolId, expectedId);
+    assert.deepEqual(required.poolKey, key);
   });
   test('inventory must remain entirely with the Safe until sealing and typed funding uses that Safe', () => {
     const x = clone(fixture); x.roles.capitalProvider = A(0x10008);

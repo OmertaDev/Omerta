@@ -21,6 +21,7 @@ import {OmertaEthStakingV2} from "../../src/market-v2/OmertaEthStakingV2.sol";
 import {OmertaEthRewardsV2} from "../../src/market-v2/OmertaEthRewardsV2.sol";
 
 interface IEthRewardsIntegrationRevenueV2 {
+    function configureSettlementPool(PoolKey calldata key) external;
     function rewardsRecipient() external view returns (address);
     function owed(Currency currency, uint8 bucket) external view returns (uint256);
     function totalOwed(Currency currency) external view returns (uint256);
@@ -100,6 +101,7 @@ contract EthRewardsIntegrationV2Test is Test {
         _register(address(router), IOmertaRestrictedOMRV2.OperatorRole.SettlementInput);
         _register(address(lpRouter), IOmertaRestrictedOMRV2.OperatorRole.SettlementInput);
         omr.bindSettlementManager(address(manager), address(manager).codehash);
+        IEthRewardsIntegrationRevenueV2(address(manager)).configureSettlementPool(key);
         omr.sealPolicy();
         _fundWallet(ALICE);
         _fundWallet(BOB);

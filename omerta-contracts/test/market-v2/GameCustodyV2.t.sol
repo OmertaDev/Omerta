@@ -16,6 +16,7 @@ contract GameCustodyGenesisFixture {
 }
 
 contract GameCustodyManagerFixture {
+    bool public constant settlementPoolConfigured = true;
     address public immutable omr;
     uint16 public constant TRADE_FEE_BPS = 400;
     constructor(address token) { omr = token; }

@@ -11,6 +11,7 @@ import {Currency} from "v4-core/types/Currency.sol";
 
 /// Controlled pool reads isolate purchase eligibility; these are not oracle proofs.
 contract InventoryBondPolicyFixtureV2 {
+    bool public constant settlementPoolConfigured = true;
     address public immutable omr;
     uint16 public constant TRADE_FEE_BPS = 400;
 

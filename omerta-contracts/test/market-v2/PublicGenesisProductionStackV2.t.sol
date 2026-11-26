@@ -27,7 +27,7 @@ import {GenesisPlayerSale} from "../../src/GenesisPlayerSale.sol";
 import {OmertaGenesisCoordinatorV2, IGenesisGatedAuction} from "../../src/market-v2/OmertaGenesisCoordinatorV2.sol";
 import {OmertaGuardedAuction, IOmertaGenesisClaimGate} from "../../src/genesis-auction/OmertaGuardedAuction.sol";
 import {AuctionParameters} from "../../src/genesis-auction/vendor/cca/interfaces/IContinuousClearingAuction.sol";
-import {GenesisLaunchTreasuryFixture, GenesisArbSysClockFixture} from "./PlayerGenesisProductionStackV2.t.sol";
+import {GenesisLaunchTreasuryFixture, GenesisArbSysClockFixture, IGenesisPoolConfigurationV2} from "./PlayerGenesisProductionStackV2.t.sol";
 
 /// @dev Real restricted-token production stack with no player-sale deployment or inventory.
 /// The local treasury/ArbSys fixtures do not prove production Safe signing or native block cadence.
@@ -84,6 +84,7 @@ contract PublicGenesisProductionStackV2Test is Test, DeployPermit2 {
         _register(address(positions), IOmertaRestrictedOMRV2.OperatorRole.SettlementInput);
         _register(address(permit), IOmertaRestrictedOMRV2.OperatorRole.SettlementInput);
         _safe(address(token), abi.encodeCall(token.bindSettlementManager, (address(manager), address(manager).codehash)));
+        _safe(address(manager), abi.encodeCall(IGenesisPoolConfigurationV2.configureSettlementPool, (coordinator.poolKey())));
         for (uint256 i; i < recipients.length; ++i) _enroll(recipients[i]);
         _enroll(bob);
     }

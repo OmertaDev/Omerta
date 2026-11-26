@@ -9,6 +9,7 @@ import {Pausable} from "@openzeppelin/contracts/utils/Pausable.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {Base64} from "@openzeppelin/contracts/utils/Base64.sol";
+import {IFeeRevenueRouter} from "./FeeRevenueRouter.sol";
 
 /// @title StreetDeed — the on-chain half of OMERTÀ's Street Deeds (omerta-street-deeds-design.md §2/§3).
 /// @notice A named, mapped plot of the city, extracted from the game as a tradeable ERC-721 collectible.
@@ -21,9 +22,10 @@ import {Base64} from "@openzeppelin/contracts/utils/Base64.sol";
 ///         extracted item is INERT in-game). To play the rent/turf game with a deed again, its holder
 ///         RE-IMPORTS it (`redeem` → the burn is the proof; the backend re-creates the in-game deed).
 ///
-///         Minting is by a SERVER-SIGNED voucher only — there is deliberately no owner-mint, so "the
-///         Safe was compromised" and "deeds were minted" stay two separate events (the OMR.minter
-///         discipline). A compromised signer is bounded by: the daily mint cap (rate), the nonce
+///         Public issuance is split into 1,000 paid and 1,000 gameplay-earned identities. Gameplay
+///         vouchers use a separate signed type and never charge a primary-sale payment.
+///         A separate, fixed 500-identity partnership allocation may be minted by the Safe only to
+///         its one-time configured recipient. A compromised signer is bounded by the daily cap, nonce
 ///         (no replay), the short deadline (+ a MAX_VOUCHER_TTL backstop), the Safe rotating the
 ///         signer — and, decisively, that a deed carries NO extraction value (the `minted` flag does
 ///         not travel), so a signer that mints trophies to itself steals nothing a player can cash out.
@@ -45,10 +47,48 @@ contract StreetDeed is ERC721, EIP712, Ownable2Step, Pausable, ReentrancyGuard {
     /// @notice Permanent cap on distinct streets, including identities whose NFT was redeemed.
     ///         Re-extracting the same street does not issue another identity or free a supply slot.
     uint256 public constant MAX_DEED_IDENTITIES = 2_500;
+    uint256 public constant MAX_PUBLIC_IDENTITIES = 2_000;
+    uint256 public constant MAX_PAID_IDENTITIES = 1_000;
+    uint256 public constant MAX_GAMEPLAY_IDENTITIES = 1_000;
+    uint256 public constant MAX_PARTNERSHIP_IDENTITIES = 500;
+    uint256 public constant MAX_PARTNERSHIP_BATCH = 25;
+    uint256 public constant PUBLIC_PRICE_STEP = 0.01 ether;
+    uint256 public constant PUBLIC_PRICE_TIER_SIZE = 100;
     uint256 public totalDeedIdentities;
+    uint256 public paidPublicCount;
+    uint256 public gameplayMintedCount;
+    uint256 public partnershipMintedCount;
+    bool public primarySaleConfigured;
+    address public partnershipRecipient;
+    address payable public saleProceedsRecipient;
+    bool public saleProceedsRouted;
+
+    struct DeedIdentity {
+        string name;
+        string district;
+    }
+
+    error PrimarySaleNotConfigured();
+    error PrimarySaleAlreadyConfigured();
+    error InvalidPrimarySaleConfiguration();
+    error PublicSaleSoldOut();
+    error GameplaySupplyExceeded();
+    error IncorrectPublicPayment(uint256 supplied, uint256 required);
+    error PartnershipSupplyExceeded();
+    error InvalidPartnershipBatch();
+    error IdentityAlreadyIssued();
+    error SalePaymentFailed();
+
+    event PrimarySaleConfigured(address indexed partnershipRecipient, address indexed proceedsRecipient, bool routeProceeds);
+    event PublicSalePaid(address indexed payer, address indexed to, uint256 indexed tokenId, uint256 publicCount, uint256 amount);
+    event GameplayIdentityIssued(address indexed to, uint256 indexed tokenId, uint256 gameplayCount);
+    event PartnershipMinted(address indexed to, uint256 indexed tokenId, string name, string district);
 
     bytes32 public constant DEED_VOUCHER_TYPEHASH =
         keccak256("DeedVoucher(address to,string name,string district,uint256 nonce,uint256 deadline)");
+
+    bytes32 public constant GAMEPLAY_DEED_VOUCHER_TYPEHASH =
+        keccak256("GameplayDeedVoucher(address to,string name,string district,uint256 nonce,uint256 deadline)");
 
     struct DeedVoucher {
         address to;
@@ -65,6 +105,8 @@ contract StreetDeed is ERC721, EIP712, Ownable2Step, Pausable, ReentrancyGuard {
 
     // ── on-chain identity (immutable per token; survives the game server being down) ──
     mapping(uint256 => string) public deedName;
+    /// @notice Original issuance route; burning, trading and re-extraction never change it.
+    mapping(uint256 => bool) public gameplayIdentity;
     /// @notice THE LISTING LOCK (design 5, drain-before-sale) — every deed is NON-TRANSFERABLE by
     ///         default: minted locked, and RE-LOCKED on every transfer, so each new owner starts
     ///         locked too. Selling is a deliberate two-step — the OWNER (never an approved operator:
@@ -114,6 +156,71 @@ contract StreetDeed is ERC721, EIP712, Ownable2Step, Pausable, ReentrancyGuard {
         emit DailyMintCapSet(dailyMintCap_);
     }
 
+    /// @notice Fix the partnership destination and primary-sale payment route before any identity issues.
+    /// @dev Routed proceeds use a dedicated fixed-policy router whose feeContract is this collection.
+    function configurePrimarySale(address partnershipRecipient_, address payable proceedsRecipient_, bool routeProceeds_)
+        external
+        onlyOwner
+    {
+        if (primarySaleConfigured || totalDeedIdentities != 0) revert PrimarySaleAlreadyConfigured();
+        if (partnershipRecipient_ == address(0) || partnershipRecipient_ == address(this)
+            || proceedsRecipient_ == address(0) || proceedsRecipient_ == address(this)) {
+            revert InvalidPrimarySaleConfiguration();
+        }
+        if (routeProceeds_) {
+            if (proceedsRecipient_.code.length == 0) revert InvalidPrimarySaleConfiguration();
+            IFeeRevenueRouter router = IFeeRevenueRouter(proceedsRecipient_);
+            if (router.feeContract() != address(this)
+                || router.policyId() != keccak256("OMERTA_NON_MINT_FEE_ROUTER_V1_5000_2500_1000_1500")
+                || router.devBps() != 5000 || router.vigBps() != 2500
+                || router.treasuryBps() != 1000 || router.communityBps() != 1500
+                || router.devRecipient() == address(0) || router.vigRecipient() == address(0)
+                || router.treasuryRecipient() == address(0) || router.communityRecipient() == address(0)) {
+                revert InvalidPrimarySaleConfiguration();
+            }
+        }
+        partnershipRecipient = partnershipRecipient_;
+        saleProceedsRecipient = proceedsRecipient_;
+        saleProceedsRouted = routeProceeds_;
+        primarySaleConfigured = true;
+        emit PrimarySaleConfigured(partnershipRecipient_, proceedsRecipient_, routeProceeds_);
+    }
+
+    function publicMintPrice() public view returns (uint256) {
+        if (!primarySaleConfigured) revert PrimarySaleNotConfigured();
+        if (paidPublicCount >= MAX_PAID_IDENTITIES) revert PublicSaleSoldOut();
+        return PUBLIC_PRICE_STEP * (paidPublicCount / PUBLIC_PRICE_TIER_SIZE + 1);
+    }
+
+    /// @notice Re-extracting any previously issued identity is free and does not advance the price tier.
+    function quoteClaim(string calldata name) external view returns (uint256) {
+        if (!primarySaleConfigured) revert PrimarySaleNotConfigured();
+        if (bytes(deedName[tokenIdFor(name)]).length != 0) return 0;
+        return publicMintPrice();
+    }
+
+    /// @notice Mint only new partnership identities to the fixed recipient, in atomic batches of at most 25.
+    function mintPartnership(DeedIdentity[] calldata identities) external onlyOwner nonReentrant whenNotPaused {
+        if (!primarySaleConfigured) revert PrimarySaleNotConfigured();
+        uint256 count = identities.length;
+        if (count == 0 || count > MAX_PARTNERSHIP_BATCH) revert InvalidPartnershipBatch();
+        if (partnershipMintedCount + count > MAX_PARTNERSHIP_IDENTITIES) revert PartnershipSupplyExceeded();
+        require(totalDeedIdentities + count <= MAX_DEED_IDENTITIES, "SD: lifetime cap");
+        _consumeDailyMints(count);
+        for (uint256 i; i < count; ++i) {
+            DeedIdentity calldata identity = identities[i];
+            require(bytes(identity.name).length != 0, "SD: empty name");
+            uint256 id = tokenIdFor(identity.name);
+            if (bytes(deedName[id]).length != 0) revert IdentityAlreadyIssued();
+            ++partnershipMintedCount;
+            ++totalDeedIdentities;
+            deedName[id] = identity.name;
+            deedDistrict[id] = identity.district;
+            _safeMint(partnershipRecipient, id);
+            emit PartnershipMinted(partnershipRecipient, id, identity.name, identity.district);
+        }
+    }
+
     // ── admin (the Safe) ──
     function setSigner(address s) external onlyOwner {
         require(s != address(0), "SD: zero signer");
@@ -152,10 +259,18 @@ contract StreetDeed is ERC721, EIP712, Ownable2Step, Pausable, ReentrancyGuard {
     }
 
     function hashVoucher(DeedVoucher calldata v) public view returns (bytes32) {
+        return _hashVoucher(v, DEED_VOUCHER_TYPEHASH);
+    }
+
+    function hashGameplayVoucher(DeedVoucher calldata v) public view returns (bytes32) {
+        return _hashVoucher(v, GAMEPLAY_DEED_VOUCHER_TYPEHASH);
+    }
+
+    function _hashVoucher(DeedVoucher calldata v, bytes32 typehash) private view returns (bytes32) {
         return _hashTypedDataV4(
             keccak256(
                 abi.encode(
-                    DEED_VOUCHER_TYPEHASH,
+                    typehash,
                     v.to,
                     keccak256(bytes(v.name)),
                     keccak256(bytes(v.district)),
@@ -170,32 +285,70 @@ contract StreetDeed is ERC721, EIP712, Ownable2Step, Pausable, ReentrancyGuard {
     ///         derived from the name, so only one live deed exists per name. After a burn, a fresh
     ///         voucher may re-extract the same immutable identity. The extraction entitlement
     ///         (`minted`) and the rent/turf control stay in the game — this only issues the collectible.
-    function claim(DeedVoucher calldata v, bytes calldata sig) external nonReentrant whenNotPaused {
+    function claim(DeedVoucher calldata v, bytes calldata sig) external payable nonReentrant whenNotPaused {
+        _claim(v, sig, false);
+    }
+
+    /// @notice Issue an earned deed without a mint fee, authorized by a gameplay-specific signature.
+    /// @dev The game signer verifies discovery eligibility. The contract independently bounds the
+    ///      lifetime gameplay allocation, payment, replay domain and aggregate daily mint rate.
+    function claimGameplay(DeedVoucher calldata v, bytes calldata sig) external payable nonReentrant whenNotPaused {
+        _claim(v, sig, true);
+    }
+
+    function _claim(DeedVoucher calldata v, bytes calldata sig, bool gameplay) private {
         require(block.timestamp <= v.deadline, "SD: expired");
         require(v.deadline <= block.timestamp + MAX_VOUCHER_TTL, "SD: deadline too far");
         require(v.to != address(0), "SD: zero recipient");
         require(bytes(v.name).length != 0, "SD: empty name");
         require(!usedNonce[v.nonce], "SD: replay");
-        require(ECDSA.recover(hashVoucher(v), sig) == signer, "SD: bad signature");
+        require(ECDSA.recover(gameplay ? hashGameplayVoucher(v) : hashVoucher(v), sig) == signer, "SD: bad signature");
         usedNonce[v.nonce] = true;
-
-        uint256 day = block.timestamp / 1 days;
-        uint256 newTotal = mintedOnDay[day] + 1;
-        require(dailyMintCap == 0 || newTotal <= dailyMintCap, "SD: daily cap");
-        mintedOnDay[day] = newTotal;
+        if (!primarySaleConfigured) revert PrimarySaleNotConfigured();
+        _consumeDailyMints(1);
 
         uint256 id = tokenIdFor(v.name);
+        uint256 price;
+        bool issuedGameplay;
         if (bytes(deedName[id]).length == 0) {
+            if (gameplay) {
+                if (gameplayMintedCount >= MAX_GAMEPLAY_IDENTITIES) revert GameplaySupplyExceeded();
+                ++gameplayMintedCount;
+                gameplayIdentity[id] = true;
+                issuedGameplay = true;
+            } else {
+                price = publicMintPrice();
+                ++paidPublicCount;
+            }
+            if (msg.value != price) revert IncorrectPublicPayment(msg.value, price);
             require(totalDeedIdentities < MAX_DEED_IDENTITIES, "SD: lifetime cap");
             ++totalDeedIdentities;
             deedName[id] = v.name;
             deedDistrict[id] = v.district;
         } else {
             require(keccak256(bytes(deedDistrict[id])) == keccak256(bytes(v.district)), "SD: identity changed");
+            if (msg.value != 0) revert IncorrectPublicPayment(msg.value, 0);
         }
         _safeMint(v.to, id); // reverts if the name (tokenId) already exists — one live deed per name
 
         emit Extracted(v.nonce, v.to, id, v.name, v.district);
+        if (issuedGameplay) emit GameplayIdentityIssued(v.to, id, gameplayMintedCount);
+        if (price != 0) {
+            if (saleProceedsRouted) {
+                IFeeRevenueRouter(saleProceedsRecipient).route{value: price}(paidPublicCount);
+            } else {
+                (bool sent,) = saleProceedsRecipient.call{value: price}("");
+                if (!sent) revert SalePaymentFailed();
+            }
+            emit PublicSalePaid(msg.sender, v.to, id, paidPublicCount, price);
+        }
+    }
+
+    function _consumeDailyMints(uint256 count) private {
+        uint256 day = block.timestamp / 1 days;
+        uint256 next = mintedOnDay[day] + count;
+        require(dailyMintCap == 0 || next <= dailyMintCap, "SD: daily cap");
+        mintedOnDay[day] = next;
     }
 
     /// @notice Burn the deed back toward the game — the on-chain half of re-import. The burn IS the

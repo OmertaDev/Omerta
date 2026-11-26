@@ -19,6 +19,10 @@ import {OmertaGameSettlementV2 as Game} from "../../src/market-v2/OmertaGameSett
 import {IOmertaMarketStateV2} from "../../src/market-v2/IOmertaMarketStateV2.sol";
 import {StabilityObservationFixture} from "./StabilityV2.t.sol";
 
+interface ILifecyclePoolConfigurationV2 {
+    function configureSettlementPool(PoolKey calldata key) external;
+}
+
 /// @dev Actual restricted token, reviewed manager, hook, controllers and seasonal fee bridge.
 /// Only the observation feed is a fixture; token admission and settlement are not mocked.
 contract PolicyLifecycleIntegrationV2Test is Test {
@@ -100,6 +104,7 @@ contract PolicyLifecycleIntegrationV2Test is Test {
         token.setContractHolder(address(firstBridge), address(firstBridge).codehash);
         token.setContractHolder(address(funding), address(funding).codehash);
         token.bindSettlementManager(address(manager), address(manager).codehash);
+        ILifecyclePoolConfigurationV2(address(manager)).configureSettlementPool(key);
         token.sealPolicy();
         manager.initialize(key, 79228162514264337593543950336);
         token.approve(address(bootstrap), 1 ether);

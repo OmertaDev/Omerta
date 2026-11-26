@@ -35,6 +35,7 @@ contract FamilyRegistryFixture {
 }
 contract FamilyBridgeFixture { uint256 public checkpoints; function checkpointFees() external { ++checkpoints; } }
 contract FamilyManagerFixture {
+    bool public constant settlementPoolConfigured = true;
     address public immutable omr; uint16 public constant TRADE_FEE_BPS = 400;
     constructor(address token) { omr = token; }
     function revenuePolicyId() external pure returns(bytes32) { return keccak256("OMERTA_RESTRICTED_LP_REVENUE_V2_350_BASE_50_ETH_STAKERS_BOTH_DIRECTIONS"); }

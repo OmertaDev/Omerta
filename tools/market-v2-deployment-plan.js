@@ -413,7 +413,8 @@ export function buildMarketV2DeploymentPlan(input, { contractsRoot = ROOT, artif
     manager: { address: external.poolManager.address, runtimeHash: external.poolManager.runtimeHash, owner: r.safe, omr: external.omr.address,
       TRADE_FEE_BPS: RESTRICTED_MARKET_TRADE_FEE_BPS, revenuePolicyId: RESTRICTED_MARKET_POLICY_ID,
       developerRecipient: r.dev, rwaRecipient: r.rwa, communityRecipient: r.community, polRecipient: deployed.polFunding,
-      rewardsRecipient: r.stakingReward, MAX_HOOK_FEE_BPS: 50 },
+      rewardsRecipient: r.stakingReward, MAX_HOOK_FEE_BPS: 50,
+      settlementPoolConfigured: false, settlementPoolId: `0x${'0'.repeat(64)}` },
     rewards: { collector: r.stakingReward, rewardAsset: 'native ETH', stakersOnly: true, bucket: 4, feeBps: 50,
       accounting: 'Onchain time-weighted unwithdrawn staked principal; 30-day minimum withdrawal lock per deposit; matured principal continues earning until withdrawal',
       claimFee: 0, userPaysNativeGas: true, rewardEpochSeconds: 30 * 86400 },
@@ -437,6 +438,10 @@ export function buildMarketV2DeploymentPlan(input, { contractsRoot = ROOT, artif
     externalCall(`Register reviewed custody operator: ${operator.purpose}`, external.omr.address, restrictedTokenAbi, 'setOperator',
       [operator.address, operator.role, operator.runtimeHash], r.safe);
   }
+  const settlementPoolAbi = [{ type: 'function', name: 'configureSettlementPool', stateMutability: 'nonpayable',
+    inputs: [{ ...POOL_PARAM, name: 'key' }], outputs: [] }];
+  externalCall('Configure the only settlement pool after hook admission and before sealing', external.poolManager.address,
+    settlementPoolAbi, 'configureSettlementPool', [pool], r.safe);
   const expectedContractHolders = [
     ...RESTRICTED_CONTRACT_HOLDERS.map(role => ({ address: contractHolderAddresses[role], runtimeHash: restricted.holderRuntimeHashes[role], purpose: role })),
     ...additionalContractHolders,
@@ -475,6 +480,7 @@ export function buildMarketV2DeploymentPlan(input, { contractsRoot = ROOT, artif
     treasuryRecipients: [...new Set([r.dev, r.rwa, r.community, r.stakingReward, ...familyMap.values()])],
     eachRecipientAllowed: true, genesisTreasuryRuntimeHashMatchesLiveCode: true,
     includesAllEverConfiguredEntries: true,
+    manager: { address: external.poolManager.address, settlementPoolConfigured: true, settlementPoolId: poolId, poolKey: pool },
   } });
   externalCall('Seal the immutable restricted transfer policy before funding', external.omr.address, restrictedTokenAbi, 'sealPolicy', [], r.safe);
 

@@ -19,8 +19,8 @@ contract DeedSupplyBurnReceiver is IERC721Receiver {
 }
 
 /// StreetDeed — the on-chain tradeable deed NFT (omerta-street-deeds-design.md §2/§3). The claims under
-/// test are the ones the whole design rests on: a deed is minted ONLY on a server signature (bounded by
-/// nonce/deadline/daily-cap, no owner-mint), the tokenId is a bijection of the street NAME (so a name
+/// test include the signed public claim path and fixed partnership allocation, daily limits,
+/// immutable identity and the tokenId bijection of the street NAME (so a name
 /// mints at most once and the same street re-extracts to the same id after a burn), and the burn (redeem)
 /// is the ownership proof that lets a holder bring it back into the game.
 contract StreetDeedTest is Test {
@@ -38,6 +38,10 @@ contract StreetDeedTest is Test {
     function setUp() public {
         signerAddr = vm.addr(signerPk);
         deed = new StreetDeed(safe, signerAddr, IMG, EXT, 0);
+        vm.prank(safe);
+        deed.configurePrimarySale(safe, payable(safe), false);
+        vm.deal(address(this), 1_000 ether);
+        vm.deal(safe, 10 ether);
     }
 
     function _voucher(address to, string memory name, string memory district, uint256 nonce)
@@ -60,7 +64,8 @@ contract StreetDeedTest is Test {
     function _mintTo(address to, string memory name, uint256 nonce) internal returns (uint256 id) {
         StreetDeed.DeedVoucher memory v = _voucher(to, name, "The Docks", nonce);
         bytes memory sig = _sign(v);
-        deed.claim(v, sig);
+        uint256 fee = deed.quoteClaim(name);
+        deed.claim{value: fee}(v, sig);
         return deed.tokenIdFor(name);
     }
 
@@ -113,7 +118,7 @@ contract StreetDeedTest is Test {
     function test_claim_mints_the_named_deed_to_the_recipient() public {
         StreetDeed.DeedVoucher memory v = _voucher(alice, "Corvino Way", "The Docks", 1);
         bytes memory sig = _sign(v);
-        deed.claim(v, sig);
+        deed.claim{value: 0.01 ether}(v, sig);
 
         uint256 id = deed.tokenIdFor("Corvino Way");
         assertEq(deed.ownerOf(id), alice, "minted to alice");
@@ -125,23 +130,42 @@ contract StreetDeedTest is Test {
 
     function test_lifetime_cap_survives_burn_and_allows_same_identity_reextraction() public {
         assertEq(deed.MAX_DEED_IDENTITIES(), 2_500, "fixed scarcity promise");
-        for (uint256 i; i < deed.MAX_DEED_IDENTITIES(); ++i) {
+        for (uint256 i; i < deed.MAX_PAID_IDENTITIES(); ++i) {
             _mintTo(alice, string.concat("Limited Street ", i.toString()), i + 1);
+        }
+        StreetDeed.DeedVoucher memory reserved = _voucher(bob, "Reserved Partnership Street", "The Docks", 3_000);
+        bytes memory reservedSignature = _sign(reserved);
+        vm.expectRevert(StreetDeed.PublicSaleSoldOut.selector);
+        deed.claim{value: 0.11 ether}(reserved, reservedSignature);
+        assertEq(deed.totalDeedIdentities(), 1_000, "paid issuance cannot consume other allocations");
+        for (uint256 i; i < deed.MAX_GAMEPLAY_IDENTITIES(); ++i) {
+            StreetDeed.DeedVoucher memory earned = _voucher(alice, string.concat("Earned Street ", i.toString()), "The Docks", 1_001 + i);
+            (uint8 v, bytes32 r, bytes32 s) = vm.sign(signerPk, deed.hashGameplayVoucher(earned));
+            deed.claimGameplay(earned, abi.encodePacked(r, s, v));
+        }
+        assertEq(deed.totalDeedIdentities(), 2_000, "public issuance cannot consume the partnership reserve");
+        for (uint256 batch; batch < 20; ++batch) {
+            StreetDeed.DeedIdentity[] memory identities = new StreetDeed.DeedIdentity[](25);
+            for (uint256 i; i < 25; ++i) {
+                identities[i] = StreetDeed.DeedIdentity(string.concat("Partner Street ", (batch * 25 + i).toString()), "The Docks");
+            }
+            vm.prank(safe);
+            deed.mintPartnership(identities);
         }
         assertEq(deed.totalDeedIdentities(), 2_500, "all identities issued");
 
         StreetDeed.DeedVoucher memory excess = _voucher(bob, "One Too Many", "The Docks", 3_001);
         bytes memory sig = _sign(excess);
-        vm.expectRevert(bytes("SD: lifetime cap"));
-        deed.claim(excess, sig);
+        vm.expectRevert(StreetDeed.PublicSaleSoldOut.selector);
+        deed.claim{value: 0.01 ether}(excess, sig);
         assertFalse(deed.usedNonce(3_001), "failed issuance does not consume its voucher");
 
         uint256 id = deed.tokenIdFor("Limited Street 0");
         vm.prank(alice);
         deed.redeem(id);
         assertEq(deed.totalDeedIdentities(), 2_500, "burn never frees an identity slot");
-        vm.expectRevert(bytes("SD: lifetime cap"));
-        deed.claim(excess, sig);
+        vm.expectRevert(StreetDeed.PublicSaleSoldOut.selector);
+        deed.claim{value: 0.01 ether}(excess, sig);
 
         _mintTo(bob, "Limited Street 0", 3_002);
         assertEq(deed.ownerOf(id), bob, "same permanent identity returns at the cap");
@@ -152,7 +176,7 @@ contract StreetDeedTest is Test {
         StreetDeed.DeedVoucher memory v = _voucher(address(deed), "Rejected Street", "The Docks", 1);
         bytes memory sig = _sign(v);
         vm.expectRevert(); // StreetDeed is not an ERC721 receiver.
-        deed.claim(v, sig);
+        deed.claim{value: 0.01 ether}(v, sig);
         assertEq(deed.totalDeedIdentities(), 0, "recipient rejection rolls back the counter");
         assertEq(deed.deedName(deed.tokenIdFor(v.name)), "", "and the identity");
         assertFalse(deed.usedNonce(1), "and the nonce");
@@ -187,20 +211,23 @@ contract StreetDeedTest is Test {
     function test_a_name_can_be_minted_at_most_once() public {
         StreetDeed.DeedVoucher memory v1 = _voucher(alice, "Ash Street", "Neon Mile", 1);
         bytes memory s1 = _sign(v1);
-        deed.claim(v1, s1);
+        deed.claim{value: 0.01 ether}(v1, s1);
         // a DIFFERENT nonce/recipient but the SAME name derives the SAME tokenId → _safeMint reverts
         StreetDeed.DeedVoucher memory v2 = _voucher(bob, "Ash Street", "Neon Mile", 2);
         bytes memory s2 = _sign(v2);
-        vm.expectRevert(); // ERC721: token already minted
-        deed.claim(v2, s2);
+        uint256 duplicateId = deed.tokenIdFor("Ash Street");
+        vm.prank(alice);
+        deed.setTransferLock(duplicateId, false); // reach the NFT duplicate guard, not the listing lock
+        vm.expectRevert(abi.encodeWithSignature("ERC721InvalidSender(address)", address(0)));
+        deed.claim(v2, s2); // existing identity has zero primary-sale payment
     }
 
     function test_replay_is_rejected() public {
         StreetDeed.DeedVoucher memory v = _voucher(alice, "Ruby Lane", "Neon Mile", 7);
         bytes memory sig = _sign(v);
-        deed.claim(v, sig);
+        deed.claim{value: 0.01 ether}(v, sig);
         vm.expectRevert(bytes("SD: replay"));
-        deed.claim(v, sig);
+        deed.claim{value: 0.01 ether}(v, sig);
     }
 
     function test_expired_voucher_reverts() public {
@@ -208,7 +235,7 @@ contract StreetDeedTest is Test {
         v.deadline = block.timestamp - 1;
         bytes memory sig = _sign(v);
         vm.expectRevert(bytes("SD: expired"));
-        deed.claim(v, sig);
+        deed.claim{value: 0.01 ether}(v, sig);
     }
 
     function test_deadline_too_far_reverts() public {
@@ -216,7 +243,7 @@ contract StreetDeedTest is Test {
         v.deadline = block.timestamp + 31 days;
         bytes memory sig = _sign(v);
         vm.expectRevert(bytes("SD: deadline too far"));
-        deed.claim(v, sig);
+        deed.claim{value: 0.01 ether}(v, sig);
     }
 
     function test_bad_signature_reverts() public {
@@ -226,21 +253,21 @@ contract StreetDeedTest is Test {
         (uint8 vv, bytes32 r, bytes32 s) = vm.sign(0xB0B, digest);
         bytes memory badSig = abi.encodePacked(r, s, vv);
         vm.expectRevert(bytes("SD: bad signature"));
-        deed.claim(v, badSig);
+        deed.claim{value: 0.01 ether}(v, badSig);
     }
 
     function test_zero_recipient_reverts() public {
         StreetDeed.DeedVoucher memory v = _voucher(address(0), "Lockgate", "The Canal", 1);
         bytes memory sig = _sign(v);
         vm.expectRevert(bytes("SD: zero recipient"));
-        deed.claim(v, sig);
+        deed.claim{value: 0.01 ether}(v, sig);
     }
 
     function test_empty_name_reverts() public {
         StreetDeed.DeedVoucher memory v = _voucher(alice, "", "The Docks", 1);
         bytes memory sig = _sign(v);
         vm.expectRevert(bytes("SD: empty name"));
-        deed.claim(v, sig);
+        deed.claim{value: 0.01 ether}(v, sig);
     }
 
     // ── the daily mint cap (a leaked-signer rate wall) ──
@@ -249,17 +276,17 @@ contract StreetDeedTest is Test {
         deed.setDailyMintCap(1);
         StreetDeed.DeedVoucher memory v1 = _voucher(alice, "The Kilns", "Bricktown", 1);
         bytes memory s1 = _sign(v1);
-        deed.claim(v1, s1); // first of the day: ok
+        deed.claim{value: 0.01 ether}(v1, s1); // first of the day: ok
         StreetDeed.DeedVoucher memory v2 = _voucher(bob, "Mortar Row", "Bricktown", 2);
         bytes memory s2 = _sign(v2);
         vm.expectRevert(bytes("SD: daily cap"));
-        deed.claim(v2, s2);
+        deed.claim{value: 0.01 ether}(v2, s2);
         // a new UTC day resets it
         vm.warp(block.timestamp + 1 days);
         StreetDeed.DeedVoucher memory v3 = _voucher(bob, "Mortar Row", "Bricktown", 3);
         v3.deadline = block.timestamp + 1 hours;
         bytes memory s3 = _sign(v3);
-        deed.claim(v3, s3);
+        deed.claim{value: 0.01 ether}(v3, s3);
         assertEq(deed.ownerOf(deed.tokenIdFor("Mortar Row")), bob, "next day mints");
     }
 
@@ -270,23 +297,25 @@ contract StreetDeedTest is Test {
     /// doing anything wrong). A deployer must now STATE the cap; 0 still means unlimited.
     function test_the_cap_is_constructor_bound_and_holds_with_no_setter_call() public {
         StreetDeed capped = new StreetDeed(safe, signerAddr, IMG, EXT, 1);
+        vm.prank(safe);
+        capped.configurePrimarySale(safe, payable(safe), false);
         assertEq(capped.dailyMintCap(), 1, "the constructor arg IS the wall");
         StreetDeed.DeedVoucher memory v1 =
             StreetDeed.DeedVoucher(alice, "First Cut", "Bricktown", 1, block.timestamp + 1 hours);
         (uint8 a, bytes32 b, bytes32 c) = vm.sign(signerPk, capped.hashVoucher(v1));
-        capped.claim(v1, abi.encodePacked(b, c, a));
+        capped.claim{value: 0.01 ether}(v1, abi.encodePacked(b, c, a));
         StreetDeed.DeedVoucher memory v2 =
             StreetDeed.DeedVoucher(bob, "Second Cut", "Bricktown", 2, block.timestamp + 1 hours);
         (uint8 d, bytes32 e, bytes32 f) = vm.sign(signerPk, capped.hashVoucher(v2));
         vm.expectRevert(bytes("SD: daily cap"));
-        capped.claim(v2, abi.encodePacked(e, f, d));
+        capped.claim{value: 0.01 ether}(v2, abi.encodePacked(e, f, d));
     }
 
     // ── the burn (re-import proof) ──────────────────────────────────────────────────────────────
     function test_redeem_burns_the_deed_for_its_holder_and_emits() public {
         StreetDeed.DeedVoucher memory v = _voucher(alice, "Saltwater Row", "The Docks", 1);
         bytes memory sig = _sign(v);
-        deed.claim(v, sig);
+        deed.claim{value: 0.01 ether}(v, sig);
         uint256 id = deed.tokenIdFor("Saltwater Row");
 
         vm.expectEmit(true, true, false, false, address(deed));
@@ -301,7 +330,7 @@ contract StreetDeedTest is Test {
     function test_redeem_reverts_for_a_non_holder() public {
         StreetDeed.DeedVoucher memory v = _voucher(alice, "The Slag", "The Foundry", 1);
         bytes memory sig = _sign(v);
-        deed.claim(v, sig);
+        deed.claim{value: 0.01 ether}(v, sig);
         uint256 id = deed.tokenIdFor("The Slag");
         vm.prank(bob);
         vm.expectRevert(bytes("SD: not owner"));
@@ -317,7 +346,7 @@ contract StreetDeedTest is Test {
     function test_the_same_street_re_extracts_to_the_same_id_after_a_burn() public {
         StreetDeed.DeedVoucher memory v = _voucher(alice, "Furnace Row", "The Foundry", 1);
         bytes memory sig = _sign(v);
-        deed.claim(v, sig);
+        deed.claim{value: 0.01 ether}(v, sig);
         uint256 id = deed.tokenIdFor("Furnace Row");
         vm.prank(alice);
         deed.redeem(id);
@@ -336,7 +365,7 @@ contract StreetDeedTest is Test {
         bytes memory sig = _sign(changed);
         uint256 beforeMints = deed.mintedOnDay(block.timestamp / 1 days);
         vm.expectRevert(bytes("SD: identity changed"));
-        deed.claim(changed, sig);
+        deed.claim{value: 0.01 ether}(changed, sig);
         assertEq(deed.deedDistrict(id), "The Docks", "burn/remint must preserve street identity");
         assertFalse(deed.usedNonce(916), "rejected identity cannot consume the nonce");
         assertEq(deed.mintedOnDay(block.timestamp / 1 days), beforeMints);
@@ -350,7 +379,7 @@ contract StreetDeedTest is Test {
     function test_pause_blocks_claim_but_not_redeem() public {
         StreetDeed.DeedVoucher memory v = _voucher(alice, "The Strip", "Neon Mile", 1);
         bytes memory sig = _sign(v);
-        deed.claim(v, sig);
+        deed.claim{value: 0.01 ether}(v, sig);
         uint256 id = deed.tokenIdFor("The Strip");
 
         vm.prank(safe);
@@ -359,7 +388,7 @@ contract StreetDeedTest is Test {
         StreetDeed.DeedVoucher memory v2 = _voucher(bob, "Ruby Lane", "Neon Mile", 2);
         bytes memory s2 = _sign(v2);
         vm.expectRevert(); // EnforcedPause
-        deed.claim(v2, s2);
+        deed.claim{value: 0.01 ether}(v2, s2);
 
         // redeem is NEVER pausable — a holder must always be able to bring property home
         vm.prank(alice);
@@ -368,7 +397,7 @@ contract StreetDeedTest is Test {
         deed.ownerOf(id);
     }
 
-    // ── admin gating (no owner-mint anywhere; only the Safe touches config) ──
+    // ── admin gating (only the Safe touches configuration) ──
     function test_only_owner_admin() public {
         vm.expectRevert();
         deed.setSigner(bob);
@@ -386,13 +415,13 @@ contract StreetDeedTest is Test {
         deed.setSigner(address(0));
     }
 
-    function test_there_is_no_owner_mint_path() public {
-        // The only way to mint is claim(voucher, sig). The Safe cannot mint a deed to itself — proven
-        // by there being no such function; this test documents the property and mints via the ONLY path.
+    function test_owner_public_mint_still_requires_a_server_voucher() public {
+        // The owner uses the same signed and paid public path; its separate partnership allocation
+        // is bounded and cannot redirect its fixed recipient.
         StreetDeed.DeedVoucher memory v = _voucher(safe, "Gallows Hill", "The Cathedral", 9);
         bytes memory sig = _sign(v);
         vm.prank(safe);
-        deed.claim(v, sig); // even the Safe must present a server signature
+        deed.claim{value: 0.01 ether}(v, sig); // even the Safe must present a server signature
         assertEq(deed.ownerOf(deed.tokenIdFor("Gallows Hill")), safe, "minted via the signed path");
     }
 
@@ -424,7 +453,7 @@ contract StreetDeedTest is Test {
     function test_tokenURI_assembles_the_identity_on_chain() public {
         StreetDeed.DeedVoucher memory v = _voucher(alice, "Nine Fingers Row", "The Docks", 1);
         bytes memory sig = _sign(v);
-        deed.claim(v, sig);
+        deed.claim{value: 0.01 ether}(v, sig);
         uint256 id = deed.tokenIdFor("Nine Fingers Row");
         assertEq(deed.tokenURI(id), _uriFor("Nine Fingers Row", "The Docks", id), "on-chain metadata");
     }
@@ -436,7 +465,7 @@ contract StreetDeedTest is Test {
         string memory raw = 'A"B';
         StreetDeed.DeedVoucher memory v = _voucher(alice, raw, "The Docks", 1);
         bytes memory sig = _sign(v);
-        deed.claim(v, sig);
+        deed.claim{value: 0.01 ether}(v, sig);
         uint256 id = deed.tokenIdFor(raw);
         assertEq(deed.tokenURI(id), _uriFor('A\\"B', "The Docks", id), "escaped quote in name");
     }

@@ -5,6 +5,7 @@ import {Test} from "forge-std/Test.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IPoolManager} from "v4-core/interfaces/IPoolManager.sol";
 import {IHooks} from "v4-core/interfaces/IHooks.sol";
+import {PoolKey} from "v4-core/types/PoolKey.sol";
 import {Hooks} from "v4-core/libraries/Hooks.sol";
 import {StateLibrary} from "v4-core/libraries/StateLibrary.sol";
 import {PoolIdLibrary} from "v4-core/types/PoolId.sol";
@@ -20,6 +21,10 @@ import {GenesisPlayerSale} from "../../src/GenesisPlayerSale.sol";
 import {OmertaGenesisCoordinatorV2, IGenesisGatedAuction} from "../../src/market-v2/OmertaGenesisCoordinatorV2.sol";
 import {OmertaGuardedAuction, IOmertaGenesisClaimGate} from "../../src/genesis-auction/OmertaGuardedAuction.sol";
 import {AuctionParameters} from "../../src/genesis-auction/vendor/cca/interfaces/IContinuousClearingAuction.sol";
+
+interface IGenesisPoolConfigurationV2 {
+    function configureSettlementPool(PoolKey calldata key) external;
+}
 
 /// @dev Exercises contract treasury callers without granting the treasury a token operator role.
 /// This fixture does not test Safe signatures, thresholds or production deployment infrastructure.
@@ -111,6 +116,7 @@ contract PlayerGenesisProductionStackV2Test is Test, DeployPermit2 {
         _register(address(positions), IOmertaRestrictedOMRV2.OperatorRole.SettlementInput);
         _register(address(permit), IOmertaRestrictedOMRV2.OperatorRole.SettlementInput);
         _safe(address(token), abi.encodeCall(token.bindSettlementManager, (address(manager), address(manager).codehash)));
+        _safe(address(manager), abi.encodeCall(IGenesisPoolConfigurationV2.configureSettlementPool, (coordinator.poolKey())));
         _enroll(alice);
         _enroll(bob);
         for (uint256 i; i < recipients.length; ++i) _enroll(recipients[i]);

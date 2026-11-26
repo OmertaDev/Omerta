@@ -23,6 +23,8 @@ import {IOmertaRestrictedOMRV2} from "../../src/market-v2/IOmertaRestrictedOMRV2
 // Keep the non-via-IR manager artifact separate from this via-IR test compilation unit.
 interface OmertaPoolManagerV2 is IPoolManager {
     error InvalidRestrictedConfiguration();
+    error SettlementPoolAlreadyConfigured();
+    error SettlementPoolPolicySealed();
     error RestrictedPolicyNotSealed();
     error RestrictedOperatorRequired();
     error RestrictedPoolNotAllowed();
@@ -34,6 +36,9 @@ interface OmertaPoolManagerV2 is IPoolManager {
     error InvalidRevenueBucket();
     error OnlyRevenueRecipient();
 
+    function configureSettlementPool(PoolKey calldata key) external;
+    function settlementPoolConfigured() external view returns (bool);
+    function settlementPoolId() external view returns (bytes32);
     function TRADE_FEE_BPS() external view returns (uint16);
     function MAX_HOOK_FEE_BPS() external view returns (uint16);
     function rewardsRecipient() external view returns (address);
@@ -89,6 +94,30 @@ contract RestrictedZeroFeeHookFixtureV2 is BaseTestHooks {
 
     receive() external payable {
         require(msg.sender == address(poolManager));
+    }
+}
+
+/// @dev Models malformed policy getter responses without entering any swap callback.
+contract RestrictedHookPolicyResponseFixtureV2 {
+    address private immutable _manager;
+    uint8 private immutable _mode;
+
+    constructor(address manager_, uint8 mode_) {
+        _manager = manager_;
+        _mode = mode_;
+    }
+
+    function poolManager() external view returns (address) {
+        uint8 mode = _mode;
+        if (mode == 0) revert("policy unavailable");
+        uint256 response = uint256(uint160(_manager));
+        if (mode == 3) response |= uint256(1) << 160;
+        uint256 size = mode == 1 ? 31 : mode == 2 ? 64 : 32;
+        assembly ("memory-safe") {
+            mstore(0, response)
+            mstore(32, 0)
+            return(0, size)
+        }
     }
 }
 
@@ -265,12 +294,17 @@ contract RestrictedPoolManagerV2Test is Test {
     RestrictedRevenueInvariantHandlerV2 internal invariantHandler;
     PoolKey internal noHookKey;
     PoolKey internal hookedKey;
+    PoolKey internal configuredKey;
     Currency internal eth = Currency.wrap(address(0));
     Currency internal token;
     address[4] internal recipients = [address(0xD), address(0xE), address(0xF), address(0x10)];
     address internal rewardsRecipient = address(0x18);
 
     function setUp() public {
+        _setUp(false);
+    }
+
+    function _setUp(bool withHook) internal {
         omr = new OmertaRestrictedOMRV2(address(this));
         // Deploy the manager artifact independently: do not inline v4 Pool.swap into this test.
         manager = IPoolManager(
@@ -290,7 +324,8 @@ contract RestrictedPoolManagerV2Test is Test {
         beforeReturnHook = _deployHook(0xBEF1, Hooks.BEFORE_SWAP_FLAG | Hooks.BEFORE_SWAP_RETURNS_DELTA_FLAG, manager);
         noHookKey = PoolKey(eth, token, 0, 60, IHooks(address(0)));
         hookedKey = PoolKey(eth, token, 0, 60, IHooks(address(hook)));
-        invariantHandler = new RestrictedRevenueInvariantHandlerV2(manager, omr, router, lpRouter, noHookKey, hookedKey);
+        configuredKey = withHook ? hookedKey : noHookKey;
+        invariantHandler = new RestrictedRevenueInvariantHandlerV2(manager, omr, router, lpRouter, configuredKey, configuredKey);
         omr.setContractHolder(address(invariantHandler), address(invariantHandler).codehash);
         for (uint256 i; i < recipients.length; ++i) {
             _registerWallet(recipients[i]);
@@ -306,15 +341,14 @@ contract RestrictedPoolManagerV2Test is Test {
         _register(address(foreignHook), IOmertaRestrictedOMRV2.OperatorRole.ProtocolCustody);
         _register(address(beforeReturnHook), IOmertaRestrictedOMRV2.OperatorRole.ProtocolCustody);
         omr.bindSettlementManager(address(manager), address(manager).codehash);
+        revenueManager.configureSettlementPool(configuredKey);
         omr.sealPolicy();
 
-        manager.initialize(noHookKey, Q96);
-        manager.initialize(hookedKey, Q96);
+        manager.initialize(configuredKey, Q96);
         vm.deal(address(this), 1_000_000 ether);
         omr.approve(address(router), type(uint256).max);
         omr.approve(address(lpRouter), type(uint256).max);
-        _addLiquidity(noHookKey, int256(uint256(INITIAL_L)));
-        _addLiquidity(hookedKey, int256(uint256(INITIAL_L)));
+        _addLiquidity(configuredKey, int256(uint256(INITIAL_L)));
         vm.deal(address(invariantHandler), 1_000_000 ether);
         omr.transfer(address(invariantHandler), 100_000 ether);
         bytes4[] memory selectors = new bytes4[](3);
@@ -419,12 +453,14 @@ contract RestrictedPoolManagerV2Test is Test {
     }
 
     function testZeroFeeHookCannotUndercutBuyOrSellRevenue() public {
+        _setUp(true);
         _assertTradeFee(hookedKey, true, true, Q96 / 2);
         _assertTradeFee(hookedKey, false, true, Q96 * 2);
         assertEq(hook.swapCalls(), 2, "the competing hook executed");
     }
 
     function testApprovedHookAtFiftyBpsKeepsEverySwapModeAtFourPointFivePercentMaximum() public {
+        _setUp(true);
         hook.setFeeBps(50);
         for (uint256 mode; mode < 4; ++mode) {
             bool buy = mode < 2;
@@ -466,6 +502,7 @@ contract RestrictedPoolManagerV2Test is Test {
     }
 
     function testFuzzMandatoryRewardAndSeparateStabilityFitExactRawCap(uint32 amountSeed, bool buy, bool exactInput) public {
+        _setUp(true);
         hook.setFeeBps(50);
         uint256 amount = bound(uint256(amountSeed), 100, 1_000_000);
         bool nativeFee = exactInput ? !buy : buy;
@@ -489,6 +526,7 @@ contract RestrictedPoolManagerV2Test is Test {
     }
 
     function testApprovedHookOneUnitOverExactCapRollsBackEverySwapModeAndPayout() public {
+        _setUp(true);
         hook.setFeeBps(50);
         hook.setFeeExtra(1);
         uint256 nativeBefore = address(manager).balance;
@@ -582,9 +620,9 @@ contract RestrictedPoolManagerV2Test is Test {
         assertEq(manager.getLiquidity(noHookKey.toId()), INITIAL_L, "StateLibrary pool storage remains compatible");
     }
 
-    function testTwoPoolInternalNettingCannotAvoidEitherLegFee() public {
+    function testSamePoolInternalNettingCannotAvoidEitherLegFee() public {
         uint256 beforeToken = omr.balanceOf(address(manager));
-        (BalanceDelta buy, BalanceDelta sell) = nettingRouter.execute{value: 1 ether}(noHookKey, hookedKey, 1 ether);
+        (BalanceDelta buy, BalanceDelta sell) = nettingRouter.execute{value: 1 ether}(noHookKey, noHookKey, 1 ether);
         assertEq(int256(buy.amount1()) + int256(sell.amount1()), 0);
         assertEq(nettingRouter.lastOmrDelta(), 0);
         assertEq(omr.balanceOf(address(manager)), beforeToken, "no underlying OMR settlement happened");
@@ -594,6 +632,25 @@ contract RestrictedPoolManagerV2Test is Test {
         assertGt(revenueManager.owed(eth, 4), 0, "internally netted sell still funds rewards");
         _assertLiabilities(eth);
         _assertLiabilities(token);
+    }
+
+    function testCrossPoolInternalNettingRefusesWithoutChangingAnyAccounting() public {
+        uint256 beforeToken = omr.balanceOf(address(manager));
+        uint256 beforeNative = address(manager).balance;
+        (uint160 priceBefore, int24 tickBefore,,) = manager.getSlot0(noHookKey.toId());
+        vm.expectRevert(OmertaPoolManagerV2.RestrictedPoolNotAllowed.selector);
+        nettingRouter.execute{value: 1 ether}(noHookKey, hookedKey, 1 ether);
+        assertEq(omr.balanceOf(address(manager)), beforeToken);
+        assertEq(address(manager).balance, beforeNative);
+        assertEq(revenueManager.totalOwed(eth), 0);
+        assertEq(revenueManager.totalOwed(token), 0);
+        assertEq(nettingRouter.lastOmrDelta(), 0);
+        (uint160 priceAfter, int24 tickAfter,,) = manager.getSlot0(noHookKey.toId());
+        assertEq(priceAfter, priceBefore); assertEq(tickAfter, tickBefore);
+        assertEq(manager.getLiquidity(noHookKey.toId()), INITIAL_L);
+        assertEq(manager.getLiquidity(hookedKey.toId()), 0);
+        assertEq(manager.getNonzeroDeltaCount(), 0);
+        assertFalse(manager.isUnlocked());
     }
 
     function testClaimTokenMintAndBurnSettlementStillPaysEveryTradeFee() public {
@@ -623,20 +680,33 @@ contract RestrictedPoolManagerV2Test is Test {
     }
 
     function testForeignManagerHookAndCustomBeforeSwapAccountingAreRejected() public {
-        PoolKey memory invalid = noHookKey;
-        invalid.hooks = IHooks(address(foreignHook));
+        OmertaRestrictedOMRV2 fresh = new OmertaRestrictedOMRV2(address(this));
+        OmertaPoolManagerV2 freshManager = OmertaPoolManagerV2(
+            deployCode("OmertaPoolManagerV2.sol:OmertaPoolManagerV2",
+                abi.encode(address(fresh), address(this), recipients, rewardsRecipient))
+        );
+        fresh.setOperator(address(foreignHook), IOmertaRestrictedOMRV2.OperatorRole.ProtocolCustody, address(foreignHook).codehash);
+        fresh.setOperator(address(beforeReturnHook), IOmertaRestrictedOMRV2.OperatorRole.ProtocolCustody, address(beforeReturnHook).codehash);
+        PoolKey memory invalid = PoolKey(eth, Currency.wrap(address(fresh)), 0, 60, IHooks(address(foreignHook)));
         vm.expectRevert(OmertaPoolManagerV2.RestrictedHookNotAllowed.selector);
-        manager.initialize(invalid, Q96);
+        freshManager.configureSettlementPool(invalid);
         invalid.hooks = IHooks(address(beforeReturnHook));
         vm.expectRevert(OmertaPoolManagerV2.RestrictedHookNotAllowed.selector);
-        manager.initialize(invalid, Q96);
+        freshManager.configureSettlementPool(invalid);
+        assertFalse(freshManager.settlementPoolConfigured());
     }
 
     function testUnapprovedHookAndForeignCurrenciesAreRejected() public {
-        PoolKey memory invalid = noHookKey;
-        invalid.hooks = IHooks(address(uint160(0xBEEF0000) | Hooks.AFTER_SWAP_FLAG));
+        OmertaRestrictedOMRV2 fresh = new OmertaRestrictedOMRV2(address(this));
+        OmertaPoolManagerV2 freshManager = OmertaPoolManagerV2(
+            deployCode("OmertaPoolManagerV2.sol:OmertaPoolManagerV2",
+                abi.encode(address(fresh), address(this), recipients, rewardsRecipient))
+        );
+        PoolKey memory invalid = PoolKey(eth, Currency.wrap(address(fresh)), 0, 60,
+            IHooks(address(uint160(0xBEEF0000) | Hooks.AFTER_SWAP_FLAG)));
         vm.expectRevert(OmertaPoolManagerV2.RestrictedHookNotAllowed.selector);
-        manager.initialize(invalid, Q96);
+        freshManager.configureSettlementPool(invalid);
+        assertFalse(freshManager.settlementPoolConfigured());
         invalid = noHookKey;
         invalid.currency1 = Currency.wrap(address(0xBAD));
         vm.expectRevert(OmertaPoolManagerV2.RestrictedPoolNotAllowed.selector);
@@ -645,13 +715,126 @@ contract RestrictedPoolManagerV2Test is Test {
         manager.sync(Currency.wrap(address(0xBAD)));
     }
 
-    function testAnyoneCanInitializeAnotherPermittedNoHookPool() public {
+    function testAnotherNoHookPoolCannotBeInitialized() public {
         PoolKey memory another = noHookKey;
         another.fee = 100;
         vm.prank(address(0xBAD));
+        vm.expectRevert(OmertaPoolManagerV2.RestrictedPoolNotAllowed.selector);
         manager.initialize(another, Q96);
         (uint160 sqrtPrice,,,) = manager.getSlot0(another.toId());
-        assertEq(sqrtPrice, Q96);
+        assertEq(sqrtPrice, 0);
+    }
+
+    function testEveryPoolIdentityFieldRejectsAlternateInitialization() public {
+        for (uint256 field; field < 5; ++field) {
+            PoolKey memory other = noHookKey;
+            if (field == 0) other.currency0 = Currency.wrap(address(1));
+            else if (field == 1) other.currency1 = Currency.wrap(address(0xBAD));
+            else if (field == 2) other.fee = 100;
+            else if (field == 3) other.tickSpacing = 10;
+            else other.hooks = IHooks(address(hook));
+            vm.expectRevert(OmertaPoolManagerV2.RestrictedPoolNotAllowed.selector);
+            manager.initialize(other, Q96);
+        }
+    }
+
+    function testAlternatePoolRejectedByEveryPoolAccountingEntry() public {
+        PoolKey memory other = noHookKey;
+        other.fee = 100;
+        vm.expectRevert(OmertaPoolManagerV2.RestrictedPoolNotAllowed.selector);
+        _swap(other, true, -1 ether, Q96 / 2);
+        vm.expectRevert(OmertaPoolManagerV2.RestrictedPoolNotAllowed.selector);
+        _addLiquidity(other, 1 ether);
+        vm.expectRevert(OmertaPoolManagerV2.RestrictedPoolNotAllowed.selector);
+        probe.probe(abi.encodeCall(IPoolManager.donate, (other, 0, 0, bytes(""))));
+        vm.expectRevert(OmertaPoolManagerV2.RestrictedPoolNotAllowed.selector);
+        manager.updateDynamicLPFee(other, 0);
+        manager.setProtocolFeeController(address(this));
+        vm.expectRevert(OmertaPoolManagerV2.RestrictedPoolNotAllowed.selector);
+        manager.setProtocolFee(other, 0);
+        assertEq(revenueManager.totalOwed(eth), 0);
+        assertEq(revenueManager.totalOwed(token), 0);
+        assertEq(manager.getLiquidity(noHookKey.toId()), INITIAL_L);
+    }
+
+    function testFuzzChangedFeeSpacingOrHookCannotInitialize(uint24 fee, int24 spacing, address otherHook) public {
+        for (uint256 field; field < 3; ++field) {
+            PoolKey memory other = noHookKey;
+            if (field == 0) other.fee = fee == noHookKey.fee ? fee + 1 : fee;
+            else if (field == 1) other.tickSpacing = spacing == noHookKey.tickSpacing ? spacing + 1 : spacing;
+            else other.hooks = IHooks(otherHook == address(0) ? address(1) : otherHook);
+            vm.expectRevert(OmertaPoolManagerV2.RestrictedPoolNotAllowed.selector);
+            manager.initialize(other, Q96);
+        }
+        assertEq(manager.getLiquidity(noHookKey.toId()), INITIAL_L);
+    }
+
+    function testConfigurationRequiresOwnerAndCannotBeReplacedOrAddedAfterSeal() public {
+        OmertaRestrictedOMRV2 fresh = new OmertaRestrictedOMRV2(address(this));
+        OmertaPoolManagerV2 freshManager = OmertaPoolManagerV2(
+            deployCode("OmertaPoolManagerV2.sol:OmertaPoolManagerV2", abi.encode(address(fresh), address(this), recipients, rewardsRecipient))
+        );
+        PoolKey memory key = PoolKey(eth, Currency.wrap(address(fresh)), 0, 60, IHooks(address(0)));
+        vm.prank(address(0xBAD));
+        vm.expectRevert("UNAUTHORIZED");
+        freshManager.configureSettlementPool(key);
+        fresh.bindSettlementManager(address(freshManager), address(freshManager).codehash);
+        vm.expectRevert(OmertaRestrictedOMRV2.InvalidSettlementManager.selector);
+        fresh.sealPolicy();
+        freshManager.configureSettlementPool(key);
+        PoolKey memory other = PoolKey(key.currency0, key.currency1, 100, key.tickSpacing, key.hooks);
+        vm.expectRevert(OmertaPoolManagerV2.SettlementPoolAlreadyConfigured.selector);
+        freshManager.configureSettlementPool(other);
+        fresh.sealPolicy();
+        vm.expectRevert(OmertaPoolManagerV2.SettlementPoolPolicySealed.selector);
+        freshManager.configureSettlementPool(other);
+        freshManager.initialize(key, Q96);
+        vm.expectRevert(OmertaPoolManagerV2.RestrictedPoolNotAllowed.selector);
+        freshManager.initialize(other, Q96);
+    }
+
+    function testConfigurationRejectsMalformedCurrencySpacingFeeAndHook() public {
+        OmertaRestrictedOMRV2 fresh = new OmertaRestrictedOMRV2(address(this));
+        OmertaPoolManagerV2 freshManager = OmertaPoolManagerV2(
+            deployCode("OmertaPoolManagerV2.sol:OmertaPoolManagerV2", abi.encode(address(fresh), address(this), recipients, rewardsRecipient))
+        );
+        PoolKey memory key = PoolKey(eth, Currency.wrap(address(fresh)), 0, 60, IHooks(address(0)));
+        for (uint256 field; field < 7; ++field) {
+            PoolKey memory invalid = PoolKey(eth, Currency.wrap(address(fresh)), 0, 60, IHooks(address(0)));
+            if (field == 0) invalid.currency0 = Currency.wrap(address(1));
+            else if (field == 1) invalid.currency1 = Currency.wrap(address(0xBAD));
+            else if (field == 2) invalid.tickSpacing = 0;
+            else if (field == 3) invalid.tickSpacing = type(int24).max;
+            else if (field == 4) invalid.fee = 1_000_001;
+            else if (field == 5) invalid.hooks = IHooks(address(hook));
+            else invalid.fee = 0x800000;
+            vm.expectRevert();
+            freshManager.configureSettlementPool(invalid);
+        }
+        fresh.bindSettlementManager(address(freshManager), address(freshManager).codehash);
+        freshManager.configureSettlementPool(key);
+        fresh.sealPolicy();
+        freshManager.initialize(key, Q96);
+    }
+
+    function testHookManagerGetterMustSucceedWithExactlyOneCanonicalAddressWord() public {
+        OmertaRestrictedOMRV2 fresh = new OmertaRestrictedOMRV2(address(this));
+        OmertaPoolManagerV2 freshManager = OmertaPoolManagerV2(
+            deployCode("OmertaPoolManagerV2.sol:OmertaPoolManagerV2", abi.encode(address(fresh), address(this), recipients, rewardsRecipient))
+        );
+        PoolKey memory key = PoolKey(eth, Currency.wrap(address(fresh)), 0, 60, IHooks(address(0)));
+        for (uint8 mode; mode < 5; ++mode) {
+            address target = address(uint160(((uint256(0xC000) + mode) << 144) | Hooks.AFTER_SWAP_FLAG));
+            deployCodeTo("RestrictedPoolManagerV2.t.sol:RestrictedHookPolicyResponseFixtureV2",
+                abi.encode(address(freshManager), mode), target);
+            fresh.setOperator(target, IOmertaRestrictedOMRV2.OperatorRole.ProtocolCustody, target.codehash);
+            key.hooks = IHooks(target);
+            if (mode < 4) vm.expectRevert(OmertaPoolManagerV2.RestrictedHookNotAllowed.selector);
+            freshManager.configureSettlementPool(key);
+        }
+        fresh.bindSettlementManager(address(freshManager), address(freshManager).codehash);
+        fresh.sealPolicy();
+        freshManager.initialize(key, Q96);
     }
 
     function testUnsealedOrOtherBoundManagerCannotInitializePools() public {
@@ -699,6 +882,7 @@ contract RestrictedPoolManagerV2Test is Test {
     }
 
     function testPinnedRuntimeChangeRevokesOperatorAndHookAccess() public {
+        _setUp(true);
         vm.etch(address(hook), hex"00");
         vm.expectRevert(OmertaPoolManagerV2.RestrictedHookNotAllowed.selector);
         _swap(hookedKey, true, -1 ether, Q96 / 2);
@@ -813,8 +997,9 @@ contract RestrictedPoolManagerV2Test is Test {
     function invariantTradeRevenueRemainsCoveredAndSplitAfterMixedOperations() public view {
         _assertLiabilities(eth);
         _assertLiabilities(token);
-        assertGe(manager.getLiquidity(noHookKey.toId()), INITIAL_L);
-        assertGe(manager.getLiquidity(hookedKey.toId()), INITIAL_L);
+        assertGe(manager.getLiquidity(configuredKey.toId()), INITIAL_L);
+        PoolKey memory other = address(configuredKey.hooks) == address(0) ? hookedKey : noHookKey;
+        assertEq(manager.getLiquidity(other.toId()), 0, "unconfigured pool remains unavailable");
         assertFalse(manager.isUnlocked());
     }
 
