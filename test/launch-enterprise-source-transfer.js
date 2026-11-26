@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { LAUNCH_ENTERPRISE_SOURCE as source } from '../tools/launch-enterprise-source-data.js';
 import { QUESTING_ENTERPRISE_NATIVE_INPUTS as declaration } from '../tools/enterprise-native-questing-inputs.js';
+import { assertQuestingEnterpriseTrackedInput, assertQuestingEnterpriseStable } from '../tools/enterprise-native-questing.js';
 import { validateLaunchEnterpriseDefinition, assertLaunchEnterpriseCurrentBytes,
   captureLaunchEnterpriseSource, launchEnterpriseDeclaredInput, nativeGarageEnterprisePredecessor,
   assertNativeGarageEnterpriseClosure, planLaunchEnterpriseDeclaredChunks, decodeLaunchEnterpriseDeclaredChunk,
@@ -15,8 +16,17 @@ const before = JSON.stringify(declaration);
 assert.deepEqual(validateLaunchEnterpriseDefinition(source), {
   sourceOnly: true, currentSourceQualified: false, nativeAdmission: false, priorResultsTransferred: false,
 }); controls++;
-assert.equal(source.replacements.length, 21); assert.equal(source.authored.length, 2);
-assert.equal(source.currentClosure.length, declaration.files.length + 5);
+assert.equal(source.replacements.length, 28); assert.equal(source.authored.length, 2);
+assert.equal(source.additions.length, 5); assert.equal(source.support.length, 1);
+assert.equal(source.replacements.length + source.authored.length + source.additions.length + source.support.length, 36);
+for (const file of ['tools/deed-quest-source-transfer.js', 'test/director-migration.js', 'test/enterprise-release-phase2-migration-catalog.js',
+  'test/task-puzzle-native-catalog-guard.js', 'test/task-puzzle-native-integration-guard.js',
+  'tools/questing-enterprise-catalog.js', 'tools/questing-ux-release-phase2-native-catalog.js'])
+  assert(source.replacements.some(row => row.file === file));
+assert.equal(source.currentClosure.length, declaration.files.length + 7);
+assert(source.currentClosure.includes('tools/deed-primary-native-catalog.js'));
+assert(source.currentClosure.includes('test/deed-primary-native-catalog-guard.js'));
+assert(source.additions.some(row => row.file === 'test/deed-primary-native-catalog-guard.js'));
 assert(source.currentClosure.includes('test/lib/phase2-error.js'));
 assert(source.currentClosure.includes('tools/launch-enterprise-source-data.js'));
 assert(source.currentClosure.includes('tools/launch-integration-source-data.js'));
@@ -74,6 +84,14 @@ assert.throws(() => launchEnterpriseDeclaredInput('src/chain.js', {}));
 assert.throws(() => assertNativeGarageEnterpriseClosure(source.currentClosure, declaration.files.map(value => value.file),
   declaration.files.map(value => value.file), {}));
 assert.throws(() => captureLaunchEnterpriseSource({})); refusals += 4;
+for (const capture of [{}, Object.freeze({ revision: '0'.repeat(40), files: Object.freeze({}) }),
+  JSON.parse(JSON.stringify({ revision: '0'.repeat(40), files: {} }))]) {
+  assert.throws(() => assertQuestingEnterpriseStable(capture), /Genuine current questing source capture required/);
+  assert.throws(() => assertQuestingEnterpriseTrackedInput('schema.sql', {}, {}, Buffer.alloc(0), declaration, capture),
+    /Genuine current questing source capture required/); refusals += 2;
+}
+assert.throws(() => assertQuestingEnterpriseTrackedInput('schema.sql', {}, {}, Buffer.alloc(0),
+  Object.freeze({ ...declaration }), {}), /Caller cannot substitute/); refusals++;
 assert.equal(JSON.stringify(declaration), before); controls++;
 console.log(JSON.stringify({ phase: 'LAUNCH_ENTERPRISE_SOURCE_PURE_CONTROLS', controls, refusals,
   oldDeclaredInputs: declaration.files.length, sourceOnly: true, currentSourceQualified: false,

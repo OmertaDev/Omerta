@@ -219,6 +219,36 @@ export const LAUNCH_ENTERPRISE_SOURCE = freeze({
       }
     },
     {
+      "file": "test/director-migration.js",
+      "before": {
+        "mode": "100644",
+        "blob": "e030e2ecbf1385b4120c0fb007233d41ee9ff9b2",
+        "sha256": "ad15526aa69d33ffc25a57fa576ecc90787aaa595d38d2dc72fd5853ab223dda",
+        "bytes": 72451
+      },
+      "current": {
+        "mode": "100644",
+        "blob": "e2a2be7f97b566169cf7dccd80830e256e83731d",
+        "sha256": "ea888bc2f794d641b588ff5a2beffab46ea96031f9104614f862114427e34bdc",
+        "bytes": 72513
+      }
+    },
+    {
+      "file": "test/enterprise-release-phase2-migration-catalog.js",
+      "before": {
+        "mode": "100644",
+        "blob": "52a65b3565084a512dfabf2e717d3a486c564be6",
+        "sha256": "1354b7d7432ad8236079d00af76c2345f2cc9a6482bc6064b67aa2d55f399e60",
+        "bytes": 34322
+      },
+      "current": {
+        "mode": "100644",
+        "blob": "a04b8d163dedbe27aa79b4ce7ac3607c670a89b6",
+        "sha256": "21f5782239ab7083e649e6c26dfacbf1ef1aa3cfca95a13463f3af900ef8d224",
+        "bytes": 35829
+      }
+    },
+    {
       "file": "test/grand-strategy-source-transfer.js",
       "before": {
         "mode": "100644",
@@ -243,9 +273,39 @@ export const LAUNCH_ENTERPRISE_SOURCE = freeze({
       },
       "current": {
         "mode": "100644",
-        "blob": "2adb306714d43667ea18a2dddfe790f5d3c36652",
-        "sha256": "81ecf44220853aff07b151ae96db990a3dab6e6ac5bb850ee20923c9a463be23",
-        "bytes": 89132
+        "blob": "7beb1e6bb4dacfcdd672822654610a32d342d7fe",
+        "sha256": "93cb63003453519dfe89d253844a6f8902961c59baafd0aef4deced4bb98a4c6",
+        "bytes": 89123
+      }
+    },
+    {
+      "file": "test/task-puzzle-native-catalog-guard.js",
+      "before": {
+        "mode": "100644",
+        "blob": "e505d2dcaeec6c34b6b64a162b3c5a36f9e3d528",
+        "sha256": "9958edd308423bc8e8494225e307592df72bdab7255ac9788011d421237eb4ee",
+        "bytes": 14521
+      },
+      "current": {
+        "mode": "100644",
+        "blob": "54c76fa5eea0b8171b08c4a6028f4d71c2fd39ec",
+        "sha256": "9a93cbc678b559ca814181dbf0adaea859bf6dcb93c27b9bb31d312896281bdf",
+        "bytes": 14879
+      }
+    },
+    {
+      "file": "test/task-puzzle-native-integration-guard.js",
+      "before": {
+        "mode": "100644",
+        "blob": "2df2a30149160c6bf4550bf9bf01488fc937bf5e",
+        "sha256": "5c1a0b1c1fca82f5f503f29314ec7073bd50ee33427478988669923314f07ac3",
+        "bytes": 75751
+      },
+      "current": {
+        "mode": "100644",
+        "blob": "c4234dc6d33ef1a0fc099d3bc81b7a1551e6b1ee",
+        "sha256": "560718f1fc8a48dc2e73c23374d837a39251512ec03f97dd5833bb6966613e89",
+        "bytes": 76433
       }
     },
     {
@@ -261,6 +321,21 @@ export const LAUNCH_ENTERPRISE_SOURCE = freeze({
         "blob": "b01f94c03f5a131c65980d0b87a40ddf3c8963ea",
         "sha256": "d35fbf21b464e7811497a2c262119bfde2e2e122f0ebccf8372057d3e19179b3",
         "bytes": 11244
+      }
+    },
+    {
+      "file": "tools/deed-quest-source-transfer.js",
+      "before": {
+        "mode": "100644",
+        "blob": "c0814082ece20a4de4a4404cce5a9bc819c62622",
+        "sha256": "1dacd21c2d82b49982f5f28ab6d90da47af24fce111404c6cdeab1ccb1d51e8f",
+        "bytes": 93966
+      },
+      "current": {
+        "mode": "100644",
+        "blob": "2d003e786f874db654a09b05dce2c0bff9d7cfaf",
+        "sha256": "dfd069c0d80dd7d105e4cf6a56795ada37450db7d07a44b1acd661b8b3ca7906",
+        "bytes": 95617
       }
     },
     {
@@ -309,6 +384,36 @@ export const LAUNCH_ENTERPRISE_SOURCE = freeze({
       }
     },
     {
+      "file": "tools/questing-enterprise-catalog.js",
+      "before": {
+        "mode": "100644",
+        "blob": "f1e7713e990c0b06ebba84f9f34692d2d334277e",
+        "sha256": "15b4476298609a8e8ec663dcb9c3c0d59829e8d04a25e5681a081561b9978cca",
+        "bytes": 27997
+      },
+      "current": {
+        "mode": "100644",
+        "blob": "e613e62719359f8fc102a75305edef9fc64e6cdd",
+        "sha256": "44246803a189e6897400d41123a00a2a34d31bc6a0272323f3a2da24b4b02706",
+        "bytes": 28422
+      }
+    },
+    {
+      "file": "tools/questing-ux-release-phase2-native-catalog.js",
+      "before": {
+        "mode": "100644",
+        "blob": "3c0b5bb5273c494bc5d0e9739f9e60df7806b233",
+        "sha256": "cebaa259f97f182fcaa3bea08e7bb43858fc229af111e1ba7e77102d6f27e443",
+        "bytes": 63655
+      },
+      "current": {
+        "mode": "100644",
+        "blob": "c020a9d5bb138fb605a5371882f70fbd8a09710d",
+        "sha256": "3d16d5a52a2ceb9889211d87c1debcff0cf38dca565df5071956d70fe8b3aff5",
+        "bytes": 66904
+      }
+    },
+    {
       "file": "tools/rc1-qualification.mjs",
       "before": {
         "mode": "100644",
@@ -335,9 +440,9 @@ export const LAUNCH_ENTERPRISE_SOURCE = freeze({
       },
       "current": {
         "mode": "100644",
-        "blob": "2089ee86d8d90ee5d35e49e9c497770721fc90de",
-        "sha256": "0df141f41e902ffd1386446dc7151c89f5f36437cf44d47c85096d4c6baf1e45",
-        "bytes": 27954
+        "blob": "8ba2bb017766a8e0ff1c15e0c0f65087c16d3ec7",
+        "sha256": "87bc0b06254edb816382fe4f9f44efedfe57ece7b7146b0c24c6bb6d65422bc9",
+        "bytes": 28584
       }
     },
     {
@@ -350,20 +455,29 @@ export const LAUNCH_ENTERPRISE_SOURCE = freeze({
       },
       "current": {
         "mode": "100644",
-        "blob": "1ab963b24dceec5b9f8d919a4e25099c3f6f8f09",
-        "sha256": "d2d56e26111d53eff04b8f2124cb365a2663e5d511b2fd0b538b4f854c1ebbc0",
-        "bytes": 18968
+        "blob": "691d6f9d5af4799b7026ed6cb9f3d33aede5afbf",
+        "sha256": "cdf49abbd30f3d91855e0ee1424c11e1ee46dc416e37e3bdd9ad001c25f953fe",
+        "bytes": 19369
       }
     }
   ],
   "additions": [
     {
+      "file": "test/deed-primary-native-catalog-guard.js",
+      "current": {
+        "mode": "100644",
+        "blob": "6eafa9158ce878c1bdf03f6e63b0aeb7f06eea28",
+        "sha256": "9a9fe03d617d61c71b246514bfbf1f7604f16867b81131bc752a5f12f51f6775",
+        "bytes": 10224
+      }
+    },
+    {
       "file": "test/launch-integration-source-transfer.js",
       "current": {
         "mode": "100644",
-        "blob": "c1c36d3cc6a5747e3602f1599723e899926e0586",
-        "sha256": "5dc7526550d2aa58ed3a358378c56d6610efaa7f3148951cfd68535ce5e7721e",
-        "bytes": 9549
+        "blob": "837fccd7423dd73b19258151dd5004ab621fd32c",
+        "sha256": "b2851546210a6c8f43cf331f9e6fc9db436c66454149f9a4cff16728f7b3e98b",
+        "bytes": 14678
       }
     },
     {
@@ -376,12 +490,21 @@ export const LAUNCH_ENTERPRISE_SOURCE = freeze({
       }
     },
     {
+      "file": "tools/deed-primary-native-catalog.js",
+      "current": {
+        "mode": "100644",
+        "blob": "b5ba572a4e679f03ad1afb58014179feb3f2d653",
+        "sha256": "d27cd44237f395299d77d2b66e69581f8415e75abf81ae48b265d28722b48bfa",
+        "bytes": 34198
+      }
+    },
+    {
       "file": "tools/launch-integration-source-transfer.js",
       "current": {
         "mode": "100644",
-        "blob": "113e817c5ac4f8e96b77742f3a33fbe163e02df7",
-        "sha256": "0a5912a1947547730c7fcafa101af54f936cd4d143364b680686a86b86234574",
-        "bytes": 17361
+        "blob": "da3788b9c93c956bbf91daf6a9e13dd1b8ef34cb",
+        "sha256": "5bc07319b3f8523dfc787d99e1ade23fb3cadff1b9e2051cd40e723361a7a01e",
+        "bytes": 18926
       }
     }
   ],
@@ -394,9 +517,9 @@ export const LAUNCH_ENTERPRISE_SOURCE = freeze({
       "file": "test/launch-enterprise-source-transfer.js",
       "current": {
         "mode": "100644",
-        "blob": "fae64e35c518db5aaa2a5d5e335c94598bd71fb0",
-        "sha256": "e272c98016d4344ae749dcf0115a63d726db3f0f96369f28ed30c497e180f495",
-        "bytes": 10881
+        "blob": "bae4ef33464731907aaf9c00bc3ef070690840df",
+        "sha256": "77d7bfd5b60f24f62b115934c23447590200bb1cc90d22b0fcea59cf57eebc55",
+        "bytes": 12531
       }
     }
   ],
@@ -2280,6 +2403,7 @@ export const LAUNCH_ENTERPRISE_SOURCE = freeze({
     "src/task-puzzle-jobs.js",
     "src/task-puzzles.js",
     "test/crime-fixture.js",
+    "test/deed-primary-native-catalog-guard.js",
     "test/enterprise-native-questing-guard.js",
     "test/grand-strategy-source-transfer.js",
     "test/launch-integration-source-transfer.js",
@@ -2301,6 +2425,7 @@ export const LAUNCH_ENTERPRISE_SOURCE = freeze({
     "tools/ci-foundry.js",
     "tools/crime-minigame-source-compatibility.js",
     "tools/crime-minigame-source-data.js",
+    "tools/deed-primary-native-catalog.js",
     "tools/enterprise-native-contract-release-inputs.js",
     "tools/enterprise-native-questing-seal.js",
     "tools/enterprise-native-questing.js",
@@ -2325,4 +2450,4 @@ export const LAUNCH_ENTERPRISE_SOURCE = freeze({
     "tools/ui-trim-source-transfer.js"
   ]
 });
-export const LAUNCH_ENTERPRISE_SOURCE_SHA256 = 'c749534a876c9f8b29b4980785cfa9a9323ae04de0806550c4c0a3dc75f92c4e';
+export const LAUNCH_ENTERPRISE_SOURCE_SHA256 = 'c82c4487918312f310f9a97bad2ad708dd25e1abc8a291a591aeaa7c39e63498';

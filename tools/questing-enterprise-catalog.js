@@ -204,11 +204,13 @@ export function questingCatalogProjection(reference, baseline, version) {
 async function nativeCaller(pool, endpoint, source) {
   const input = questingCatalogSource(source), raw = uniform(fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8'));
   assert.equal(input.current, raw, 'Native DDL is the complete physical current schema');
-  const { assertQuestingEnterpriseTrackedInput } = await import('./enterprise-native-questing.js');
+  const { assertQuestingEnterpriseTrackedInput, captureQuestingEnterpriseSource,
+    assertQuestingEnterpriseStable } = await import('./enterprise-native-questing.js');
+  const sourceCapture = captureQuestingEnterpriseSource();
   const record = revision => { const line = git('ls-tree', '-z', revision, '--', 'schema.sql').toString('utf8');
     const match = line.match(/^(100644|100755) blob ([a-f0-9]{40})\tschema\.sql\0$/); assert(match); return { type: 'blob', mode: match[1], blob: match[2] }; };
   const { QUESTING_ENTERPRISE_NATIVE_INPUTS: declaration } = await import('./enterprise-native-questing-inputs.js');
-  assertQuestingEnterpriseTrackedInput('schema.sql', record('HEAD'), record(declaration.authoredRevision), Buffer.from(raw));
+  assertQuestingEnterpriseTrackedInput('schema.sql', record('HEAD'), record(declaration.authoredRevision), Buffer.from(raw), declaration, sourceCapture);
   assert.equal(process.execArgv.length, 0); assert.equal(process.argv.length, 3); assert.equal(process.argv[2], '--postgres');
   assert(String(process.argv[1]).replaceAll('\\', '/').endsWith('/test/enterprise-release-phase2-migration-catalog.js'));
   const key = 'ENTERPRISE_NATIVE_CATALOG_TEST_DATABASE_URL';
@@ -226,14 +228,15 @@ async function nativeCaller(pool, endpoint, source) {
   assert.equal(row.role, address.username); assert.equal(row.owner, row.role); assert.equal('/' + row.database, address.pathname); assert.equal(row.schema, 'public');
   assert.match(row.version, local ? /^18\.4\b/ : /^(?:16\b|18\.4\b)/);
   if (local) assert.equal(row.directory.replaceAll('\\', '/').toLowerCase(), { '35439': 'c:/users/jorge/appdata/local/temp/omerta-economy-oct15-pg184', '35449': 'c:/users/jorge/appdata/local/temp/omerta-employment-pg184-proof' }[address.port]);
-  await emptyNamespace(pool); return { input, address, version: Number(row.version.split('.')[0]) };
+  await emptyNamespace(pool); assertQuestingEnterpriseStable(sourceCapture);
+  return { input, address, version: Number(row.version.split('.')[0]), sourceCapture };
 }
 async function emptyNamespace(pool) {
   assert.deepEqual((await pool.query("SELECT nspname FROM pg_namespace WHERE nspname !~ '^pg_' AND nspname<>'information_schema' ORDER BY nspname")).rows.map(row => row.nspname), ['public']);
   assert.deepEqual((await pool.query("SELECT c.relname,c.relkind FROM pg_class c JOIN pg_namespace n ON n.oid=c.relnamespace WHERE n.nspname='public' ORDER BY c.relname,c.relkind")).rows, []);
 }
 export async function verifyQuestingEnterpriseCatalog(pool, endpoint, source) {
-  const { input, address, version } = await nativeCaller(pool, endpoint, source);
+  const { input, address, version, sourceCapture } = await nativeCaller(pool, endpoint, source);
   const { default: pg } = await import('pg');
   const compiler = await import('./commerce-deed-release-phase2-native-catalog.js');
   const readMetadata = async client => {
@@ -312,8 +315,10 @@ export async function verifyQuestingEnterpriseCatalog(pool, endpoint, source) {
   });
   projection.verify(upgraded);
   assert.deepEqual(projection.project(upgraded), baseline); await emptyNamespace(pool);
+  const { assertQuestingEnterpriseStable } = await import('./enterprise-native-questing.js');
+  assertQuestingEnterpriseStable(sourceCapture);
   const historical = await compiler.verifyCommerceEnterpriseSlotBranches(pool, endpoint, historicalSource);
-  await emptyNamespace(pool);
+  await emptyNamespace(pool); assertQuestingEnterpriseStable(sourceCapture);
   return freeze({ current, upgraded, baseline, archivedBaseline, historical, causal: projection.causal, ddlCausal, casinoDdlCausal, actualTables: 585, baselineTables: 582,
     phase: 'actual quest585 fresh and current582→585 native upgrade; exact four-field archived582 comparison; legacy casino migration is separate' });
 }

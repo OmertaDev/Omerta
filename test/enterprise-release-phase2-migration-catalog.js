@@ -39,7 +39,26 @@ const questingAdapter=await import('../tools/questing-enterprise-catalog.js');
 const questingCurrent=hash(lf(dispatchRaw))===questingAdapter.QUESTING_CATALOG_SOURCE.sha256;
 const taskPuzzleAdapter=await import('../tools/task-puzzle-native-catalog.js');
 const taskPuzzleCurrent=hash(lf(dispatchRaw))===taskPuzzleAdapter.TASK_PUZZLE_CATALOG_SOURCE.sha256;
-if(taskPuzzleCurrent){
+const deedPrimaryAdapter=await import('../tools/deed-primary-native-catalog.js');
+const deedPrimaryCurrent=hash(lf(dispatchRaw))===deedPrimaryAdapter.DEED_PRIMARY_CATALOG_SOURCE.sha256;
+if(deedPrimaryCurrent){
+  const sources=deedPrimaryAdapter.deedPrimaryCatalogSource(dispatchRaw);
+  assert.equal(sources.actualTables,587);assert.equal(sources.baselineTables,586);
+  console.log('Exact raw C3 current587 source qualifies separately; historical586 is comparison-only.');
+  if(native){
+    const {default:pg}=await import('pg'),pool=new pg.Pool({connectionString:endpoint.href,max:1});
+    try{
+      const result=await deedPrimaryAdapter.verifyDeedPrimaryEnterpriseCatalog(pool,endpoint.href,dispatchRaw);
+      assert.equal(result.actualTables,587);assert.equal(result.baselineTables,586);assert.equal(result.idempotent,2);
+      assert.equal(result.c3DdlCausal,2*deedPrimaryAdapter.DEED_PRIMARY_DDL_CONTROLS.length);
+      assert.equal(result.puzzleDdlCausal,2*taskPuzzleAdapter.TASK_PUZZLE_DDL_CONTROLS.length);
+      assert.equal(result.questDdlCausal,26);assert.equal(result.casinoDdlCausal,28);
+      console.log(JSON.stringify({phase:result.phase,freshTables:587,upgradeTables:587,historicalComparisonTables:586,
+        c3DdlCausal:result.c3DdlCausal,puzzleDdlCausal:result.puzzleDdlCausal,questDdlCausal:result.questDdlCausal,
+        casinoDdlCausal:result.casinoDdlCausal,idempotent:result.idempotent,native:true,priorNativeResultsTransferred:false}));
+    }finally{await pool.end();}
+  }
+}else if(taskPuzzleCurrent){
   const sources=taskPuzzleAdapter.taskPuzzleCatalogSource(dispatchRaw);
   assert.equal(sources.actualTables,586);assert.equal(sources.baselineTables,585);
   console.log('Exact raw task-puzzle586 source qualifies separately; complete585 remains an independent comparison reference.');

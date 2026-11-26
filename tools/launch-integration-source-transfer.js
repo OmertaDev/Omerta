@@ -14,8 +14,15 @@ export const LAUNCH_INTEGRATION_REVIEWED_PRODUCT_PATHS = Object.freeze([
   'package.json', 'public/index.html', 'public/ux-navigation.css', 'src/preflight.js',
   '.github/workflows/forge.yml',
   'schema.sql', 'test/phase2-postgres.js',
+  'tools/market-v2-deployment-plan.js',
 ]);
 export const LAUNCH_INTEGRATION_AUTHORED_PATHS = Object.freeze([
+  'test/audit/deed-reimport-order.js', 'tools/deed-quest-source-transfer.js',
+  'tools/deed-primary-native-catalog.js', 'test/deed-primary-native-catalog-guard.js',
+  'test/enterprise-release-phase2-migration-catalog.js', 'test/task-puzzle-native-catalog-guard.js',
+  'test/task-puzzle-native-integration-guard.js', 'test/phase2-postgres.js', 'test/director-migration.js',
+  'tools/questing-ux-release-phase2-native-catalog.js', 'tools/questing-enterprise-catalog.js',
+  'omerta-contracts/test/audit/ComprehensiveCoreAudit.t.sol', 'test/city-home-interiors-api.js',
   'tools/pgquery.js',
   'test/deeddiscovery-postgres.js',
   '.github/workflows/ui-trim-source.yml',
@@ -36,6 +43,11 @@ const generated = Object.freeze([
 ]);
 const metadata = 'tools/launch-integration-source-data.js';
 const projectedPaths = Object.freeze([...LAUNCH_INTEGRATION_REVIEWED_PRODUCT_PATHS,
+  'test/audit/deed-reimport-order.js', 'tools/deed-quest-source-transfer.js',
+  'test/enterprise-release-phase2-migration-catalog.js', 'test/task-puzzle-native-catalog-guard.js',
+  'test/task-puzzle-native-integration-guard.js', 'test/director-migration.js',
+  'tools/questing-ux-release-phase2-native-catalog.js', 'tools/questing-enterprise-catalog.js',
+  'omerta-contracts/test/audit/ComprehensiveCoreAudit.t.sol', 'test/city-home-interiors-api.js',
   'tools/pgquery.js',
   'test/deeddiscovery-postgres.js',
   '.github/workflows/ui-trim-source.yml',
@@ -45,7 +57,8 @@ const projectedPaths = Object.freeze([...LAUNCH_INTEGRATION_REVIEWED_PRODUCT_PAT
   'test/native-garage-source-transfer.js', 'tools/crime-minigame-source-compatibility.js',
   'tools/native-garage-source-transfer.js', 'tools/enterprise-native-questing.js',
   'tools/native-garage-enterprise-source.js'].sort());
-const addedPaths = Object.freeze(['test/launch-enterprise-source-transfer.js', 'test/launch-integration-source-transfer.js',
+const addedPaths = Object.freeze(['test/deed-primary-native-catalog-guard.js', 'test/launch-enterprise-source-transfer.js',
+  'test/launch-integration-source-transfer.js', 'tools/deed-primary-native-catalog.js',
   'tools/launch-enterprise-source-data.js', 'tools/launch-integration-source-transfer.js']);
 const predecessorCache = new Map();
 const oldSeals = Object.freeze(['tools/age-removal-source-data.js', 'tools/ui-trim-source-data.js',
@@ -99,8 +112,8 @@ function definition() {
   assert.equal(source.revision, LAUNCH_INTEGRATION_REVIEWED_REVISION);
   assert.equal(sha(JSON.stringify(source)), LAUNCH_INTEGRATION_SOURCE_SHA256);
   assert(Object.isFrozen(source) && Object.isFrozen(source.files) && Object.isFrozen(source.additions));
-  assert.deepEqual(Object.keys(source.files).sort(), projectedPaths, 'Exactly twenty reviewed predecessor projection domains');
-  assert.deepEqual(Object.keys(source.additions).sort(), addedPaths, 'Exactly four new qualification helper/test domains');
+  assert.deepEqual(Object.keys(source.files).sort(), projectedPaths, 'Exactly thirty-one reviewed predecessor projection domains');
+  assert.deepEqual(Object.keys(source.additions).sort(), addedPaths, 'Exactly six new qualification helper/test domains');
   const rendered = launchIntegrationSourceDataBytes(source);
   genuine(metadata, { mode: '100644', blob: blob(rendered), sha256: sha(rendered), bytes: Buffer.byteLength(rendered) });
 }
@@ -167,7 +180,13 @@ export function assertLaunchIntegrationCurrentSource() {
   assert.deepEqual(source.reviewedProductChanges, LAUNCH_INTEGRATION_REVIEWED_PRODUCT_PATHS);
   for (const file of LAUNCH_INTEGRATION_REVIEWED_PRODUCT_PATHS) {
     assert(modified(file), 'Reviewed product source must have an exact inverse');
-    assert.equal(entry(file, source.files[file].current, 'tree'), git('ls-tree', source.revision, '--', file).trim(), 'Product source is bound to the reviewed anchor');
+    const anchor = git('ls-tree', source.revision, '--', file).trim();
+    assert.equal(entry(file, source.candidateEntries[file], 'tree'), anchor, 'Reviewed product anchor entry is fixed');
+    if (file === 'test/phase2-postgres.js') {
+      assert(LAUNCH_INTEGRATION_AUTHORED_PATHS.includes(file), 'Only the explicitly authored Phase2 successor');
+      const actual = genuine(file, source.files[file].current);
+      baseline(file, actual.committed);
+    } else assert.equal(entry(file, source.files[file].current, 'tree'), anchor, 'Product source is bound to the reviewed anchor');
   }
   for (const file of changedProtected) {
     assert(modified(file), 'Protected integration change must have an exact inverse');

@@ -113,11 +113,18 @@ export function assertQuestingNativeDefinition(value) {
   assert.deepEqual(value.additions, additions);
   return value;
 }
-export function assertQuestingEnterpriseTrackedInput(file, current, authored, bytes, actualDeclaration = declaration) {
+const questingSourceReceipts = new WeakMap();
+export function assertQuestingEnterpriseTrackedInput(file, current, authored, bytes, actualDeclaration = declaration, sourceCapture) {
   assert.strictEqual(actualDeclaration, declaration, 'Caller cannot substitute an actual-current native declaration');
   assertQuestingNativeDefinition(declaration);
   assert.equal(sha(JSON.stringify(declaration)), declarationHash, 'Exact sealed actual-current declaration');
-  return assertQuestingTrackedPin(file, current, authored, bytes, declaration.files.find(row => row.file === file));
+  let launchReceipt;
+  if (sourceCapture !== undefined) {
+    launchReceipt = questingSourceReceipts.get(sourceCapture);
+    assert.ok(launchReceipt, 'Genuine current questing source capture required');
+    assert.equal(cleanRevision(), sourceCapture.revision, 'Questing source capture revision changed');
+  }
+  return assertQuestingTrackedPin(file, current, authored, bytes, declaration.files.find(row => row.file === file), launchReceipt);
 }
 // The capture validates the complete immutable declaration before checking any of its pins.
 // Public callers still validate that declaration independently on every invocation.
@@ -225,12 +232,17 @@ export function captureQuestingEnterpriseSource() {
   assert.ok(originalMetadata && originalMetadata.type === 'blob'); assert.equal(metadata.pin.mode, originalMetadata.mode);
   assert.ok(metadata.canonical.equals(questingNativeMetadataBytes(declaration)), 'The only self-reference is exact generated data, never executable additions');
   files[QUESTING_NATIVE_METADATA] = { sha256: sha(metadata.raw), gitSha256: metadata.pin.sha256, blob: current.get(QUESTING_NATIVE_METADATA).blob, binary: false, bytes: metadata.raw.length };
-  const source = { revision, authoredRevision: declaration.authoredRevision, predecessorRevision: predecessor.authoredRevision,
+  const source = freeze({ revision, authoredRevision: declaration.authoredRevision, predecessorRevision: predecessor.authoredRevision,
     declarationSha256: declarationHash, fullGitTreeSha256: sha(JSON.stringify(records.map(row => row.line).sort())),
-    priorNativeResultsTransferred: false, directoryMemberships: directories(), files };
-  assertQuestingEnterpriseStable(source); return source;
+    priorNativeResultsTransferred: false, directoryMemberships: directories(), files });
+  assertQuestingSourceStable(source);
+  questingSourceReceipts.set(source, launchReceipt); return source;
 }
 export function assertQuestingEnterpriseStable(source) {
+  assert.ok(questingSourceReceipts.has(source), 'Genuine current questing source capture required');
+  assertQuestingSourceStable(source);
+}
+function assertQuestingSourceStable(source) {
   assert.equal(cleanRevision(), source.revision);
   for (const [file, expected] of Object.entries(source.files)) {
     const stat = fs.lstatSync(path.join(ROOT, file)); assert.ok(stat.isFile() && !stat.isSymbolicLink());

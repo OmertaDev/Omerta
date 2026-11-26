@@ -1,10 +1,12 @@
 // Independent pure fixtures. These prove validators, not PostgreSQL execution.
+import './deed-primary-native-catalog-guard.js';
 import assert from 'node:assert/strict';
 import { isDeepStrictEqual } from 'node:util';
 import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { questingCatalogSource } from '../tools/questing-enterprise-catalog.js';
-const current = fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8');
+const physical587 = fs.readFileSync(new URL('../schema.sql', import.meta.url), 'utf8');
+const current = execFileSync('git', ['--no-replace-objects','cat-file','blob','511950e2a68d50cebebe6139098a5dbb609117c9'], { encoding:'utf8', maxBuffer:4e6 }); // Explicit immutable586 comparison fixture.
 assert.throws(() => questingCatalogSource(current), /Exact complete actual quest585/);
 const module = await import('../tools/task-puzzle-native-catalog.js').catch(error => {
   if (error.code === 'ERR_MODULE_NOT_FOUND' && error.url?.endsWith('/tools/task-puzzle-native-catalog.js')) return {};
@@ -12,6 +14,7 @@ const module = await import('../tools/task-puzzle-native-catalog.js').catch(erro
 });
 assert.equal(typeof module.taskPuzzleCatalogSource, 'function', 'Current586 needs a distinct exact source qualifier');
 const { taskPuzzleCatalogSource, taskPuzzleCatalogProjection, verifyTaskPuzzleCatalogDelta, verifyTaskPuzzleSequenceMetadata, taskPuzzleComparisonConstraints } = module;
+assert.throws(() => taskPuzzleCatalogSource(physical587), /Exact complete current task-puzzle586/);
 const source = taskPuzzleCatalogSource(current);
 const old = execFileSync('git', ['cat-file', 'blob', '86b671c5d6f6928ff3e66f1ad0fca5f46a7364e3'], { encoding:'utf8', maxBuffer:32e6 });
 assert.equal(source.current, current.replaceAll('\r\n','\n')); assert.equal(source.predecessor, old);

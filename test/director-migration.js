@@ -7,8 +7,9 @@ import { migrateDeedBenefitStorage } from '../src/deedbenefits.js';
 import { execFileSync } from 'node:child_process';
 import pg from 'pg';
 import { equipmentEconomyMigrationProjection, EQUIPMENT_ECONOMY_MIGRATION_TABLES } from './lib/equipment-economy-migration-catalog.js';
-import { createTaskPuzzleReleasePhase2MigrationCatalog as createCommerceReleasePhase2MigrationCatalog, readTaskPuzzleReleasePhase2Metadata as readCommerceReleasePhase2Metadata,
-  verifyTaskPuzzleReleasePhase2CausalNegatives as verifyCommerceReleasePhase2CausalNegatives, COMMERCE_NATIVE_TABLES, assertTaskPuzzlePhase2SourceInputs as assertQuestingPhase2SourceInputs } from '../tools/questing-ux-release-phase2-native-catalog.js';
+import { createDeedPrimaryReleasePhase2MigrationCatalog as createCommerceReleasePhase2MigrationCatalog, readDeedPrimaryReleasePhase2Metadata as readCommerceReleasePhase2Metadata,
+  verifyDeedPrimaryReleasePhase2CausalNegatives as verifyCommerceReleasePhase2CausalNegatives, assertDeedPrimaryPhase2SourceInputs as assertQuestingPhase2SourceInputs } from '../tools/deed-primary-native-catalog.js';
+import { COMMERCE_NATIVE_TABLES } from '../tools/questing-ux-release-phase2-native-catalog.js';
 import { readCommerceReleasePhase2Metadata as readHistoricalCommerceReleasePhase2Metadata } from '../tools/commerce-deed-release-phase2-native-catalog.js';
 import { dbCaps, migrateSchemaUnderLock } from '../src/db.js';
 import { withCharacter, travel } from '../src/game.js';

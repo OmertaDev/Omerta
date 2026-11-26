@@ -29,12 +29,15 @@ const declared = new Map(declaration.files.map(row => [row.file, row]));
 const changedPaths = Object.freeze(['.github/workflows/forge.yml', 'package.json', 'public/index.html',
   'public/ux-navigation.css', 'schema.sql', 'src/chain.js', 'src/data/market-v2-eth-abis.json', 'src/db.js',
   'src/deedbuildings.js', 'src/deeds.js', 'src/marketv2abi.js', 'src/preflight.js', 'src/routes/deeds.js',
-  'src/watcher.js', 'test/grand-strategy-source-transfer.js', 'test/phase2-postgres.js',
-  'tools/crime-minigame-source-compatibility.js', 'tools/market-v2-deployment-plan.js',
-  'tools/native-garage-source-transfer.js', 'tools/pgquery.js', 'tools/rc1-qualification.mjs']);
+  'src/watcher.js', 'test/director-migration.js', 'test/enterprise-release-phase2-migration-catalog.js',
+  'test/grand-strategy-source-transfer.js', 'test/phase2-postgres.js',
+  'test/task-puzzle-native-catalog-guard.js', 'test/task-puzzle-native-integration-guard.js',
+  'tools/crime-minigame-source-compatibility.js', 'tools/deed-quest-source-transfer.js', 'tools/market-v2-deployment-plan.js',
+  'tools/native-garage-source-transfer.js', 'tools/pgquery.js', 'tools/questing-enterprise-catalog.js',
+  'tools/questing-ux-release-phase2-native-catalog.js', 'tools/rc1-qualification.mjs']);
 const authoredPaths = Object.freeze(['tools/enterprise-native-questing.js', 'tools/native-garage-enterprise-source.js']);
-const addedPaths = Object.freeze(['test/launch-integration-source-transfer.js', 'test/lib/phase2-error.js',
-  'tools/launch-integration-source-transfer.js']);
+const addedPaths = Object.freeze(['test/deed-primary-native-catalog-guard.js', 'test/launch-integration-source-transfer.js', 'test/lib/phase2-error.js',
+  'tools/deed-primary-native-catalog.js', 'tools/launch-integration-source-transfer.js']);
 const generatedPaths = Object.freeze(['tools/launch-enterprise-source-data.js', 'tools/launch-integration-source-data.js']);
 const supportPaths = Object.freeze(['test/launch-enterprise-source-transfer.js']);
 let declaredBytes;

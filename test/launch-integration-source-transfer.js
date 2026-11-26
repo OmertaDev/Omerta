@@ -1,12 +1,13 @@
 // The real current Git/index/physical source qualifies before any historical projection.
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
+import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { LAUNCH_INTEGRATION_SOURCE as source, LAUNCH_INTEGRATION_PREDECESSOR,
   LAUNCH_INTEGRATION_REVIEWED_REVISION, LAUNCH_INTEGRATION_REVIEWED_PRODUCT_PATHS,
   LAUNCH_INTEGRATION_AUTHORED_PATHS, assertLaunchIntegrationCurrentSource,
   assertLaunchIntegrationPostCandidatePaths, launchIntegrationActual, qualifyLaunchIntegrationSource,
-  launchIntegrationHistoricalInput, launchIntegrationHistoricalEntry,
+  launchIntegrationSourceDataBytes, launchIntegrationHistoricalInput, launchIntegrationHistoricalEntry,
   launchIntegrationHistoricalRecord } from '../tools/launch-integration-source-transfer.js';
 
 const git = (...args) => execFileSync('git', ['--no-replace-objects', ...args], { windowsHide: true, maxBuffer: 64 * 1024 * 1024 });
@@ -14,10 +15,15 @@ const entry = (file, pin, kind) => kind === 'tree' ? pin.mode + ' blob ' + pin.b
 const admitted = assertLaunchIntegrationCurrentSource();
 assert.equal(source.predecessor, LAUNCH_INTEGRATION_PREDECESSOR);assert.equal(source.revision, LAUNCH_INTEGRATION_REVIEWED_REVISION);
 assert.deepEqual(source.reviewedProductChanges, LAUNCH_INTEGRATION_REVIEWED_PRODUCT_PATHS);
-assert.equal(LAUNCH_INTEGRATION_AUTHORED_PATHS.length, 18);assert.equal(Object.keys(source.files).length, 20);
-for (const file of ['schema.sql', 'test/phase2-postgres.js', '.github/workflows/forge.yml', '.github/workflows/ui-trim-source.yml', 'tools/pgquery.js', 'test/deeddiscovery-postgres.js', 'test/deeds-supply-postgres.js', 'test/ux-tactics-browser.js', 'test/native-garage-enterprise-source.js']) assert(Object.hasOwn(source.files, file));
+assert.equal(LAUNCH_INTEGRATION_AUTHORED_PATHS.length, 31);assert.equal(Object.keys(source.files).length, 31);
+assert.equal(Object.keys(source.additions).length, 6);
+for (const file of ['tools/deed-primary-native-catalog.js', 'test/deed-primary-native-catalog-guard.js']) assert(Object.hasOwn(source.additions, file));
+for (const file of ['test/audit/deed-reimport-order.js', 'tools/deed-quest-source-transfer.js', 'test/enterprise-release-phase2-migration-catalog.js', 'test/task-puzzle-native-catalog-guard.js', 'test/task-puzzle-native-integration-guard.js', 'test/director-migration.js', 'tools/market-v2-deployment-plan.js', 'tools/questing-ux-release-phase2-native-catalog.js', 'tools/questing-enterprise-catalog.js', 'omerta-contracts/test/audit/ComprehensiveCoreAudit.t.sol', 'test/city-home-interiors-api.js', 'schema.sql', 'test/phase2-postgres.js', '.github/workflows/forge.yml', '.github/workflows/ui-trim-source.yml', 'tools/pgquery.js', 'test/deeddiscovery-postgres.js', 'test/deeds-supply-postgres.js', 'test/ux-tactics-browser.js', 'test/native-garage-enterprise-source.js']) assert(Object.hasOwn(source.files, file));
 assert.equal(source.protectedFiles.length, 121);assert.deepEqual(source.reviewedProtectedChanges, ['package.json', 'public/index.html']);
 assert(!source.protectedFiles.includes('public/ux-navigation.css'), 'CSS is separately reviewed; do not invent protected-union membership');
+assert(LAUNCH_INTEGRATION_AUTHORED_PATHS.includes('test/phase2-postgres.js'));
+assert(!source.protectedFiles.includes('test/phase2-postgres.js'));
+assert.notEqual(source.files['test/phase2-postgres.js'].current.blob, source.candidateEntries['test/phase2-postgres.js'].blob, 'Only the named authored Phase2 current source advances beyond its fixed anchor');
 assert.deepEqual([admitted.sourceOnly, admitted.runtime, admitted.native, admitted.financial, admitted.migration,
   admitted.activation, admitted.deployment, admitted.priorResultsTransferred, admitted.treePinsAreSecurityReview],
   [true, false, false, false, false, false, false, false, false]);
@@ -44,11 +50,11 @@ for (const [file, row] of Object.entries(source.files)) {
   const unknown = { ...actual, head: { ...actual.head, blob: '0'.repeat(40) } };assert.strictEqual(launchIntegrationHistoricalRecord(file, unknown), unknown);refusals++;
 }
 for (const file of Object.keys(source.additions)) {const actual = launchIntegrationActual(file);assert.strictEqual(launchIntegrationHistoricalRecord(file, actual), actual);assert.throws(() => qualifyLaunchIntegrationSource(file, actual.committed));positives++;refusals++;}
-for (const file of ['public/index.html', 'public/ux-navigation.css', 'schema.sql', 'test/phase2-postgres.js', 'src/server.js', 'src/unreviewed-launch.js', '.github/workflows/forge.yml', '.github/workflows/ui-trim-source-unreviewed.yml', 'tools/pgquery-unreviewed.js', 'test/deeddiscovery-postgres-unreviewed.js', 'test/deeds-supply-postgres-unreviewed.js', 'test/ux-tactics-browser-unreviewed.js', 'test/native-garage-enterprise-source-unreviewed.js', './tools/launch-integration-source-transfer.js', 'tools/age-removal-source-data.js']) {
+for (const file of ['test/audit/deed-reimport-order-unreviewed.js', 'tools/deed-quest-source-transfer-unreviewed.js', 'tools/deed-primary-unreviewed-catalog.js', 'test/deed-primary-unreviewed-catalog-guard.js', 'test/enterprise-release-phase2-unreviewed-catalog.js', 'test/task-puzzle-unreviewed-catalog-guard.js', 'test/task-puzzle-unreviewed-integration-guard.js', 'test/phase2-postgres-unreviewed.js', 'test/director-migration-unreviewed.js', 'public/index.html', 'public/ux-navigation.css', 'schema.sql', 'tools/market-v2-deployment-plan.js', 'tools/questing-ux-release-phase2-unreviewed.js', 'tools/questing-enterprise-unreviewed.js', 'src/server.js', 'src/unreviewed-launch.js', 'omerta-contracts/test/audit/ComprehensiveCoreAudit-unreviewed.t.sol', 'test/city-home-interiors-unreviewed.js', '.github/workflows/forge.yml', '.github/workflows/ui-trim-source-unreviewed.yml', 'tools/pgquery-unreviewed.js', 'test/deeddiscovery-postgres-unreviewed.js', 'test/deeds-supply-postgres-unreviewed.js', 'test/ux-tactics-browser-unreviewed.js', 'test/native-garage-enterprise-source-unreviewed.js', './tools/launch-integration-source-transfer.js', 'tools/age-removal-source-data.js']) {
   assert.throws(() => assertLaunchIntegrationPostCandidatePaths([file]));refusals++;
 }
 assertLaunchIntegrationPostCandidatePaths([...LAUNCH_INTEGRATION_AUTHORED_PATHS]);positives++;
-for (const file of ['.github/workflows/ui-trim-source.yml', 'tools/pgquery.js', 'test/deeddiscovery-postgres.js', 'test/deeds-supply-postgres.js', 'test/ux-tactics-browser.js', 'test/native-garage-enterprise-source.js']) {assertLaunchIntegrationPostCandidatePaths([file]);positives++;}
+for (const file of ['test/audit/deed-reimport-order.js', 'tools/deed-quest-source-transfer.js', 'tools/deed-primary-native-catalog.js', 'test/deed-primary-native-catalog-guard.js', 'test/enterprise-release-phase2-migration-catalog.js', 'test/task-puzzle-native-catalog-guard.js', 'test/task-puzzle-native-integration-guard.js', 'test/phase2-postgres.js', 'test/director-migration.js', 'tools/questing-ux-release-phase2-native-catalog.js', 'tools/questing-enterprise-catalog.js', 'omerta-contracts/test/audit/ComprehensiveCoreAudit.t.sol', 'test/city-home-interiors-api.js', '.github/workflows/ui-trim-source.yml', 'tools/pgquery.js', 'test/deeddiscovery-postgres.js', 'test/deeds-supply-postgres.js', 'test/ux-tactics-browser.js', 'test/native-garage-enterprise-source.js']) {assertLaunchIntegrationPostCandidatePaths([file]);positives++;}
 assert.throws(() => assertLaunchIntegrationPostCandidatePaths([LAUNCH_INTEGRATION_AUTHORED_PATHS[0], LAUNCH_INTEGRATION_AUTHORED_PATHS[0]]));refusals++;
 assert.throws(() => assertLaunchIntegrationPostCandidatePaths('arbitrary'));refusals++;
 assert.throws(() => launchIntegrationActual('src/unreviewed-launch.js'));refusals++;
@@ -57,6 +63,44 @@ assert.strictEqual(launchIntegrationHistoricalInput('src/unreviewed-launch.js', 
 // Exercise the real dirty-path predicate together with exact-current LF/CRLF admission.
 // Only the genuine() seam is finite here; real HEAD/index/FD admission was required above.
 const helperText = launchIntegrationActual('tools/launch-integration-source-transfer.js').committed.toString('utf8');
+
+// Cross-check the actual definition against the complete descriptor and wrong keysets.
+// The only admission dependency here is a counted synthetic metadata seam.
+const definitionStart = helperText.indexOf('function definition()'), definitionEnd = helperText.indexOf('function predecessorBytes(', definitionStart);
+assert(definitionStart >= 0 && definitionEnd > definitionStart);
+const definitionCode = [
+  helperText.match(/export const LAUNCH_INTEGRATION_REVIEWED_PRODUCT_PATHS = Object\.freeze\(\[[\s\S]*?\]\);/)[0],
+  helperText.match(/const projectedPaths = Object\.freeze\(\[\.\.\.LAUNCH_INTEGRATION_REVIEWED_PRODUCT_PATHS,[\s\S]*?\]\.sort\(\)\);/)[0],
+  helperText.match(/const addedPaths = Object\.freeze\(\[[\s\S]*?\]\);/)[0],
+  helperText.slice(helperText.indexOf('export function launchIntegrationSourceDataBytes('), definitionStart),
+  helperText.slice(definitionStart, definitionEnd), 'definition();',
+].join('\n').replaceAll('export ', '');
+const definitionSha = bytes => createHash('sha256').update(bytes).digest('hex');
+const definitionBlob = bytes => createHash('sha1').update('blob ' + Buffer.byteLength(bytes) + '\0').update(bytes).digest('hex');
+function checkDefinitionModel(value, accepted) {
+  const freeze = item => { if (item && typeof item === 'object') { Object.values(item).forEach(freeze); Object.freeze(item); } return item; };
+  freeze(value); let calls = 0;
+  const rendered = launchIntegrationSourceDataBytes(value);
+  const run = () => vm.runInNewContext(definitionCode, {
+    assert, Buffer, source: value, LAUNCH_INTEGRATION_PREDECESSOR, LAUNCH_INTEGRATION_REVIEWED_REVISION,
+    LAUNCH_INTEGRATION_SOURCE_SHA256: definitionSha(JSON.stringify(value)), metadata: 'tools/launch-integration-source-data.js',
+    sha: definitionSha, blob: definitionBlob,
+    genuine: (file, pin) => { calls++; assert.equal(file, 'tools/launch-integration-source-data.js');
+      assert.deepEqual({ ...pin }, { mode: '100644', blob: definitionBlob(rendered), sha256: definitionSha(rendered), bytes: Buffer.byteLength(rendered) }); },
+  }, { timeout: 1000 });
+  if (accepted) { run(); assert.equal(calls, 1); positives++; }
+  else { assert.throws(run); assert.equal(calls, 0); refusals++; }
+}
+checkDefinitionModel(structuredClone(source), true);
+for (const edit of [
+  value => { delete value.additions['test/deed-primary-native-catalog-guard.js']; },
+  value => { value.additions['tools/deed-primary-unreviewed-catalog.js'] = {}; },
+  value => { delete value.files['test/director-migration.js']; },
+  value => { delete value.files['test/audit/deed-reimport-order.js']; },
+  value => { delete value.files['tools/deed-quest-source-transfer.js']; },
+  value => { value.files['src/server.js'] = {}; },
+]) { const value = structuredClone(source); edit(value); checkDefinitionModel(value, false); }
+
 const dirtyStart = helperText.indexOf('function checkDirtySourcePaths('), dirtyEnd = helperText.indexOf('function context()', dirtyStart);
 assert(dirtyStart >= 0 && dirtyEnd > dirtyStart);
 const ownedPin = Object.freeze({ mode: '100644', blob: 'owned-blob', sha256: 'owned-sha', bytes: 11 });
