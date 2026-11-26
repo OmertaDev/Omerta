@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { decodeFunctionData, encodeAbiParameters, getAddress, getContractAddress, keccak256, toHex, zeroAddress } from 'viem';
-import { buildPlayerGenesisDeploymentPlan, loadPlayerGenesisArtifact,
+import { buildPlayerGenesisDeploymentPlan as buildPlan, loadPlayerGenesisArtifact as loadArtifact,
   PLAYER_GENESIS_ROLES, predictPlayerGenesisAddresses, minimumGenesisTokenReserve,
   GENESIS_INITIAL_LP_BPS, GENESIS_LIQUIDITY_LOCK_SECONDS } from '../tools/player-genesis-deployment-plan.js';
 import { preflightPlayerGenesis as preflightWithClock } from '../tools/player-genesis-preflight.js';
@@ -13,16 +13,22 @@ const A = n => getAddress(`0x${BigInt(n).toString(16).padStart(40, '0')}`);
 const CODE = '0x6001600055', H = keccak256(CODE), E = 10n ** 18n;
 const clone = x => JSON.parse(JSON.stringify(x));
 const json = x => JSON.stringify(x, (_, v) => typeof v === 'bigint' ? v.toString() : v, 2);
+// Read retained isolated artifacts without replacing the canonical out/ directory.
+const contractsRoot = process.argv.find(arg => arg.startsWith('--contracts-root='))?.slice(17);
+const artifactOptions = contractsRoot ? { contractsRoot } : {};
+const loadPlayerGenesisArtifact = (name, options = {}) => loadArtifact(name, { ...artifactOptions, ...options });
+const buildPlayerGenesisDeploymentPlan = (input, options = {}) => buildPlan(input, { ...artifactOptions, ...options });
 // The fixture has an explicit synthetic 2033 clock. Production/CLI callers default to actual Date.now.
 const preflightPlayerGenesis = (input, client, options = {}) => preflightWithClock(input, client,
-  { now: () => Number(BigInt(input.snapshot.timestamp) + 5n) * 1000, ...options });
+  { now: () => Number(BigInt(input.snapshot.timestamp) + 5n) * 1000, ...artifactOptions, ...options });
 const POOL_ABI = { type: 'tuple', components: [
   { name: 'currency0', type: 'address' }, { name: 'currency1', type: 'address' }, { name: 'fee', type: 'uint24' },
   { name: 'tickSpacing', type: 'int24' }, { name: 'hooks', type: 'address' },
 ] };
 const poolOnly = key => Object.fromEntries(POOL_ABI.components.map(({ name }) => [name, key[name]]));
 export function playerGenesisDeploymentExample() {
-  const baseResult = spawnSync(process.execPath, ['test/market-v2-deployment-plan.js', '--example'], {
+  const baseResult = spawnSync(process.execPath, ['test/market-v2-deployment-plan.js', '--example',
+    ...(contractsRoot ? [`--contracts-root=${contractsRoot}`] : [])], {
     cwd: fileURLToPath(new URL('../', import.meta.url)), encoding: 'utf8', maxBuffer: 8 * 1024 * 1024,
   });
   if (baseResult.status !== 0) throw Error(baseResult.stderr);
@@ -105,7 +111,7 @@ function preparedClient(input) {
       totalSupply: 100_000_000n * E, decimals: 18, operatorCount: registry.operatorCount, contractHolderCount: registry.contractHolderCount },
     poolManager: { owner: input.roles.safe, omr: a.omr, TRADE_FEE_BPS: 400, MAX_HOOK_FEE_BPS: 50, revenuePolicyId: plan.restrictedMarket.policyId,
       developerRecipient: input.roles.dev, rwaRecipient: input.roles.rwa, communityRecipient: input.roles.community, polRecipient: a.polFunding, rewardsRecipient: a.ethRewards,
-      extsload: `0x${'00'.repeat(32)}` },
+      settlementPoolConfigured: true, settlementPoolId: plan.canonicalPool.poolId, extsload: `0x${'00'.repeat(32)}` },
     ethStaking: { owner: input.roles.safe, governanceSafe: input.roles.safe, omr: a.omr,
       distributor: a.ethRewards, distributorRuntimeHash: H, active: false, paused: false, epochOrigin: 0n, EPOCH_DURATION: 30 * 86400, LOCK_DURATION: 30 * 86400 },
     ethRewards: { omr: a.omr, rewardVault: a.ethStaking, safe: input.roles.safe,
@@ -447,6 +453,25 @@ if (process.argv.includes('--example')) {
         && request.args?.[0] === target ? value : client.readContract(request) }, { phase: 'prepared' }), expected);
 
   });
-  if (preflightOnly) assert.equal(count, 4, 'The focused run must execute all four existing preflight checks');
+  await test('prepared preflight requires the configured exact canonical settlement pool', async () => {
+    const { client } = preparedClient(fixture);
+    const requests = [];
+    const result = await preflightPlayerGenesis(fixture, { ...client,
+      readContract: request => { requests.push(request); return client.readContract(request); } }, { phase: 'prepared' });
+    assert.equal(result.ok, true);
+    for (const name of ['settlementPoolConfigured', 'settlementPoolId']) {
+      const request = requests.find(x => x.functionName === name);
+      assert.ok(request, `${name} must be read from live state`);
+      assert.equal(request.address, plan.addresses.poolManager);
+      assert.equal(request.blockNumber, BigInt(fixture.snapshot.blockNumber));
+    }
+    for (const [name, value] of [
+      ['settlementPoolConfigured', undefined], ['settlementPoolConfigured', false], ['settlementPoolConfigured', 'true'],
+      ['settlementPoolId', undefined], ['settlementPoolId', `0x${'00'.repeat(32)}`], ['settlementPoolId', H],
+    ]) await assert.rejects(() => preflightPlayerGenesis(fixture, { ...client,
+      readContract: request => request.address === plan.addresses.poolManager && request.functionName === name
+        ? value : client.readContract(request) }, { phase: 'prepared' }), new RegExp(name));
+  });
+  if (preflightOnly) assert.equal(count, 5, 'The focused run must execute all five preflight checks');
   console.log(`player-genesis-deployment: ${count} focused checks passed`);
 }
