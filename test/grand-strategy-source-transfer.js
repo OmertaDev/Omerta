@@ -1,4 +1,5 @@
 // Actual successor source qualifies first; all earlier comparisons remain historical only.
+import './launch-integration-source-transfer.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';

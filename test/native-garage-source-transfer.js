@@ -1,5 +1,6 @@
 // Source-only qualification of the actual native garage successor; no execution results transfer.
 import assert from 'node:assert/strict';
+import { launchIntegrationActual } from '../tools/launch-integration-source-transfer.js';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -67,8 +68,9 @@ for (const file of Object.keys(source.additions)) {
 assert.strictEqual(nativeGarageHistoricalInput('src/unreviewed.js', 'arbitrary'), 'arbitrary');
 
 const observedFile = 'public/index.html', observed = nativeGarageActual(observedFile);
-const currentObserved = crimeMinigameActual(observedFile);
+const currentObserved = launchIntegrationActual(observedFile);
 const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'omerta-native-source-'));
+const temporaryIndex = fs.mkdtempSync(path.join(os.tmpdir(), 'omerta-native-source-index-'));
 const moduleUrl = new URL('../tools/native-garage-source-transfer.js', import.meta.url).href;
 const wrappedRead = spawnSync(process.execPath, ['--input-type=module', '-e',
   'import assert from "node:assert/strict"; import fs from "node:fs"; import {execFileSync} from "node:child_process";'
@@ -87,9 +89,10 @@ const wrappedRead = spawnSync(process.execPath, ['--input-type=module', '-e',
 assert.equal(wrappedRead.status, 0, wrappedRead.stderr); positives++;
 try {
   const environment = { ...process.env, GIT_DIR: git('rev-parse', '--absolute-git-dir').trim(),
-    GIT_WORK_TREE: temporary, GIT_INDEX_FILE: path.join(temporary, 'reviewed-index') };
+    GIT_WORK_TREE: temporary, GIT_INDEX_FILE: path.join(temporaryIndex, 'reviewed-index') };
   execFileSync('git', ['read-tree', 'HEAD'], { cwd: temporary, env: environment, windowsHide: true });
-  fs.mkdirSync(path.join(temporary, 'public'));
+  execFileSync('git', ['checkout-index', '--all', '--force'], { cwd: temporary, env: environment, windowsHide: true });
+  fs.mkdirSync(path.join(temporary, 'public'), { recursive: true });
   const target = path.join(temporary, observedFile);
   fs.writeFileSync(target, currentObserved.physical);
   const script = 'import { nativeGarageActual } from ' + JSON.stringify(moduleUrl) + '; nativeGarageActual("public/index.html");';
@@ -104,7 +107,7 @@ try {
   fs.appendFileSync(target, 'x');
   const changed = child(environment); assert.notEqual(changed.status, 0); assert.match(changed.stderr, /Physical source/); refusals++;
   fs.writeFileSync(target, currentObserved.physical);
-  const changedIndex = child({ ...environment, GIT_INDEX_FILE: path.join(temporary, 'empty-index') });
+  const changedIndex = child({ ...environment, GIT_INDEX_FILE: path.join(temporaryIndex, 'empty-index') });
   assert.notEqual(changedIndex.status, 0); assert.match(changedIndex.stderr, /stage-zero index/); refusals++;
 
   // A separate local Git repository shares only read-only predecessor objects, never root refs/index.
@@ -131,6 +134,8 @@ try {
     assert.notEqual(check.status, 0); assert.match(check.stderr, /Only fixed independently generated domains/); refusals++;
   }
 } finally {
+  assert(path.resolve(temporaryIndex).startsWith(path.resolve(os.tmpdir()) + path.sep) && path.basename(temporaryIndex).startsWith('omerta-native-source-index-'));
+  fs.rmSync(temporaryIndex, { recursive: true, force: true });
   assert(path.resolve(temporary).startsWith(path.resolve(os.tmpdir()) + path.sep)
     && path.basename(temporary).startsWith('omerta-native-source-'));
   fs.rmSync(temporary, { recursive: true, force: true });

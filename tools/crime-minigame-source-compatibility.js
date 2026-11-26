@@ -4,6 +4,9 @@ import fs from 'node:fs';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { CRIME_MINIGAME_SOURCE as source, CRIME_MINIGAME_SOURCE_SHA256 } from './crime-minigame-source-data.js';
+import { LAUNCH_INTEGRATION_PREDECESSOR, assertLaunchIntegrationCurrentSource,
+  launchIntegrationHistoricalInput, launchIntegrationHistoricalEntry,
+  launchIntegrationHistoricalRecord } from './launch-integration-source-transfer.js';
 
 // Historical fixtures project later reads. Actual-current admission must keep
 // reading the real file, with all HEAD/index/hash checks applied independently.
@@ -67,8 +70,9 @@ export function qualifyCrimeMinigameRelease() {
   assert.deepEqual(Object.keys(source.files), changed('M'), 'Every modified successor domain has an exact inverse');
   assert.deepEqual(Object.keys(source.additions), changed('A'), 'Every successor addition has an exact full-source pin');
   assert.deepEqual(changed('DRTCUXB'), [], 'No unreviewed deletion, rename, type change or conflict');
-  assert(git('diff', '--no-renames', '--name-only', '-z', source.revision, 'HEAD').split('\0')
+  assert(git('diff', '--no-renames', '--name-only', '-z', source.revision, LAUNCH_INTEGRATION_PREDECESSOR).split('\0')
     .filter(Boolean).every((file) => excluded.has(file)), 'No authored changes may follow the fixed successor candidate');
+  assertLaunchIntegrationCurrentSource();
   assert.equal(fs.readFileSync('tools/crime-minigame-source-data.js', 'utf8').replaceAll('\r\n', '\n'),
     crimeMinigameSourceDataBytes(source), 'The generated self-reference is exact data only');
   return Object.freeze({ files: Object.freeze([...Object.keys(source.files), ...Object.keys(source.additions)]), ...flags });
@@ -76,12 +80,18 @@ export function qualifyCrimeMinigameRelease() {
 export function crimeMinigameActual(file) {
   definition(); assert(owned(file), 'Only explicitly pinned crime-minigame source domains');
   const pin = source.files[file]?.current || source.additions[file];
-  const head = git('ls-tree', 'HEAD', '--', file).trim(), index = git('ls-files', '--stage', '--', file).trim();
-  assert.equal(head, entry(file, pin, 'tree'), 'Genuine current HEAD must equal the reviewed minigame successor');
-  assert.equal(index, entry(file, pin, 'index'), 'Genuine stage-zero index must equal the reviewed minigame successor');
-  const stat = fs.lstatSync(file), physical = readActualPhysical(file);
+  const head = git('ls-tree', 'HEAD', '--', file).trim(), rawIndex = git('ls-files', '--stage', '--', file).trim();
+  const match = head.match(/^(100644|100755) blob ([a-f0-9]{40})\t/);assert(match, 'Regular genuine current source required');
+  const stat = fs.lstatSync(file);assert(stat.isFile() && !stat.isSymbolicLink(), 'Regular physical reviewed source required');
+  const descriptor = fs.openSync(file, 'r');let rawPhysical;
+  try { rawPhysical = readActualPhysical(descriptor); } finally { fs.closeSync(descriptor); }
   assert(stat.isFile() && !stat.isSymbolicLink(), 'Regular physical reviewed source required');
-  const committed = execFileSync('git', ['--no-replace-objects', 'show', 'HEAD:' + file], { windowsHide: true, maxBuffer: 64 * 1024 * 1024 });
+  const rawCommitted = execFileSync('git', ['--no-replace-objects', 'show', 'HEAD:' + file], { windowsHide: true, maxBuffer: 64 * 1024 * 1024 });
+  const actual = launchIntegrationHistoricalRecord(file, { head: { mode: match[1], blob: match[2] }, index: rawIndex,
+    committed: rawCommitted, physical: rawPhysical, regular: true, symbolic: false });
+  const { index, committed, physical } = actual;
+  assert.equal(entry(file, actual.head, 'tree'), entry(file, pin, 'tree'), 'Genuine current HEAD must equal the reviewed minigame successor');
+  assert.equal(index, entry(file, pin, 'index'), 'Genuine stage-zero index must equal the reviewed minigame successor');
   fingerprint(committed, pin);
   const current = canonical(committed);
   assert(current && !committed.includes(13), 'Canonical committed LF UTF-8 source');
@@ -108,6 +118,7 @@ export function qualifyCrimeMinigameSource(file, input) {
 }
 // Unknown, older and malformed inputs remain raw for the original strict readers.
 export function crimeMinigameHistoricalInput(file, input) {
+  input = launchIntegrationHistoricalInput(file, input);
   if (!known(file)) return input;
   const current = canonical(input);
   if (!current || sha(current.lf) !== source.files[file].current.sha256) return input;
@@ -116,6 +127,7 @@ export function crimeMinigameHistoricalInput(file, input) {
 }
 export function crimeMinigameHistoricalEntry(file, input, kind) {
   assert(kind === 'tree' || kind === 'index');
+  input = launchIntegrationHistoricalEntry(file, input, kind);
   if (!known(file)) return input;
   const expected = entry(file, source.files[file].current, kind);
   if (input !== expected && input !== expected + '\n') return input;
@@ -124,6 +136,7 @@ export function crimeMinigameHistoricalEntry(file, input, kind) {
 }
 export function crimeMinigameHistoricalRecord(file, actual) {
   assert.equal(arguments.length, 2);
+  actual = launchIntegrationHistoricalRecord(file, actual);
   if (!known(file)) return actual;
   definition();
   const row = source.files[file], genuine = crimeMinigameActual(file);

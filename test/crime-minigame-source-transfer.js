@@ -1,5 +1,6 @@
 // Whole actual source qualifies before any earlier historical-only comparison.
 import assert from 'node:assert/strict';
+import { launchIntegrationActual } from '../tools/launch-integration-source-transfer.js';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -125,12 +126,14 @@ try {
 } finally { fs.readFileSync = originalRead; }
 // Refusal controls use an isolated real index/worktree, leaving the caller untouched.
 const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'omerta-crime-source-'));
+const temporaryIndex = fs.mkdtempSync(path.join(os.tmpdir(), 'omerta-crime-source-index-'));
 try {
-  const file = 'public/index.html', actual = crimeMinigameActual(file);
+  const file = 'public/index.html', actual = launchIntegrationActual(file);
   const environment = { ...process.env, GIT_DIR: git('rev-parse', '--absolute-git-dir').trim(),
-    GIT_WORK_TREE: temporary, GIT_INDEX_FILE: path.join(temporary, 'reviewed-index') };
+    GIT_WORK_TREE: temporary, GIT_INDEX_FILE: path.join(temporaryIndex, 'reviewed-index') };
   execFileSync('git', ['--no-replace-objects', 'read-tree', 'HEAD'], { cwd: temporary, env: environment, windowsHide: true });
-  fs.mkdirSync(path.join(temporary, 'public')); fs.writeFileSync(path.join(temporary, file), actual.physical);
+  execFileSync('git', ['--no-replace-objects', 'checkout-index', '--all', '--force'], { cwd: temporary, env: environment, windowsHide: true });
+  fs.mkdirSync(path.join(temporary, 'public'), { recursive: true }); fs.writeFileSync(path.join(temporary, file), actual.physical);
   const script = 'import { crimeMinigameActual } from ' + JSON.stringify(new URL('../tools/crime-minigame-source-compatibility.js', import.meta.url).href)
     + '; crimeMinigameActual("public/index.html");';
   const child = (env) => spawnSync(process.execPath, ['--input-type=module', '-e', script], { cwd: temporary, env, windowsHide: true, encoding: 'utf8' });
@@ -138,9 +141,11 @@ try {
   fs.appendFileSync(path.join(temporary, file), 'x');
   const changed = child(environment); assert.notEqual(changed.status, 0); assert.match(changed.stderr, /Physical source/); refusals++;
   fs.writeFileSync(path.join(temporary, file), actual.physical);
-  const index = child({ ...environment, GIT_INDEX_FILE: path.join(temporary, 'empty-index') });
+  const index = child({ ...environment, GIT_INDEX_FILE: path.join(temporaryIndex, 'empty-index') });
   assert.notEqual(index.status, 0); assert.match(index.stderr, /stage-zero index/); refusals++;
 } finally {
+  assert(path.resolve(temporaryIndex).startsWith(path.resolve(os.tmpdir()) + path.sep) && path.basename(temporaryIndex).startsWith('omerta-crime-source-index-'));
+  fs.rmSync(temporaryIndex, { recursive: true, force: true });
   assert(path.resolve(temporary).startsWith(path.resolve(os.tmpdir()) + path.sep) && path.basename(temporary).startsWith('omerta-crime-source-'));
   fs.rmSync(temporary, { recursive: true, force: true });
 }

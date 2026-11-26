@@ -6,6 +6,7 @@ import { execFileSync } from 'node:child_process';
 import { NATIVE_GARAGE_SOURCE, NATIVE_GARAGE_SOURCE_SHA256 } from './native-garage-source-data.js';
 import { CRIME_MINIGAME_SOURCE, CRIME_MINIGAME_GENERATED_FILES, qualifyCrimeMinigameRelease,
   crimeMinigameHistoricalInput, crimeMinigameHistoricalEntry, crimeMinigameHistoricalRecord } from './crime-minigame-source-compatibility.js';
+import { LAUNCH_INTEGRATION_PREDECESSOR } from './launch-integration-source-transfer.js';
 
 // Keep genuine physical admission independent of later historical read projections.
 const readActualPhysical = fs.readFileSync.bind(fs);
@@ -212,7 +213,7 @@ export function assertNativeGarageCurrentSource() {
   assert.deepEqual(changes('DRTCUXB'), [], 'No deletion, replacement, rename or unknown type change');
   assert.deepEqual([...Object.keys(source.files), ...Object.keys(source.additions)].sort(), NATIVE_GARAGE_SCOPE,
     'Exactly the finite reviewed native release and proof domains');
-  const after = git('diff', '--name-only', '--no-renames', '-z', source.revision, 'HEAD').split('\0').filter(Boolean);
+  const after = git('diff', '--name-only', '--no-renames', '-z', source.revision, LAUNCH_INTEGRATION_PREDECESSOR).split('\0').filter(Boolean);
   const successor = new Set([...Object.keys(CRIME_MINIGAME_SOURCE.files), ...Object.keys(CRIME_MINIGAME_SOURCE.additions),
     ...CRIME_MINIGAME_GENERATED_FILES]);
   assert(after.every(file => excluded.has(file) || successor.has(file)), 'Only fixed independently generated domains or the exact sealed crime successor may follow the native source candidate');
