@@ -1,5 +1,6 @@
 // The real current Git/index/physical source qualifies before any historical projection.
 import assert from 'node:assert/strict';
+import vm from 'node:vm';
 import { execFileSync } from 'node:child_process';
 import { LAUNCH_INTEGRATION_SOURCE as source, LAUNCH_INTEGRATION_PREDECESSOR,
   LAUNCH_INTEGRATION_REVIEWED_REVISION, LAUNCH_INTEGRATION_REVIEWED_PRODUCT_PATHS,
@@ -48,4 +49,48 @@ assert.throws(() => assertLaunchIntegrationPostCandidatePaths([LAUNCH_INTEGRATIO
 assert.throws(() => assertLaunchIntegrationPostCandidatePaths('arbitrary'));refusals++;
 assert.throws(() => launchIntegrationActual('src/unreviewed-launch.js'));refusals++;
 assert.strictEqual(launchIntegrationHistoricalInput('src/unreviewed-launch.js', 'unreviewed'), 'unreviewed');
+
+// Exercise the real dirty-path predicate together with exact-current LF/CRLF admission.
+// Only the genuine() seam is finite here; real HEAD/index/FD admission was required above.
+const helperText = launchIntegrationActual('tools/launch-integration-source-transfer.js').committed.toString('utf8');
+const dirtyStart = helperText.indexOf('function checkDirtySourcePaths('), dirtyEnd = helperText.indexOf('function context()', dirtyStart);
+assert(dirtyStart >= 0 && dirtyEnd > dirtyStart);
+const ownedPin = Object.freeze({ mode: '100644', blob: 'owned-blob', sha256: 'owned-sha', bytes: 11 });
+const renderedMetadata = 'sealed metadata\n', metadataName = 'tools/launch-integration-source-data.js';
+let dirtyModel, genuineCalls;
+const dirtyPredicate = vm.runInNewContext('(' + helperText.slice(dirtyStart, dirtyEnd) + ')', {
+  assert, Buffer, generated: ['knowledge/generated/graph.json'], metadata: metadataName, source: {},
+  pinFor: file => file === 'public/index.html' ? ownedPin : null,
+  launchIntegrationSourceDataBytes: () => renderedMetadata,
+  blob: text => 'blob:' + text, sha: text => 'sha:' + text,
+  genuine: (file, pin) => {
+    genuineCalls++;
+    assert(dirtyModel.head && dirtyModel.index && dirtyModel.mode === '100644'
+      && dirtyModel.regular && !dirtyModel.symbolic && dirtyModel.lossless);
+    if (file === metadataName) assert.deepEqual({ ...pin }, { mode: '100644', blob: 'blob:' + renderedMetadata,
+      sha256: 'sha:' + renderedMetadata, bytes: Buffer.byteLength(renderedMetadata) });
+    else assert.strictEqual(pin, ownedPin);
+    assert(dirtyModel.physical === dirtyModel.committed
+      || dirtyModel.physical === dirtyModel.committed.replaceAll('\n', '\r\n'));
+  },
+}, { timeout: 1000 });
+const dirtyCases = [
+  [[], {}, true, 0], [['knowledge/generated/graph.json'], {}, true, 0],
+  [['public/index.html'], {}, true, 1],
+  [['public/index.html'], { physical: 'alpha\r\nbeta\r\n' }, true, 1],
+  [[metadataName], { committed: renderedMetadata, physical: renderedMetadata.replaceAll('\n', '\r\n') }, true, 1],
+  [['public/index.html'], { physical: 'alpha\nchanged\n' }, false, 1],
+  [['public/index.html'], { physical: 'alpha\r\nbeta\n' }, false, 1],
+  [['public/index.html'], { index: false }, false, 1], [['public/index.html'], { head: false }, false, 1],
+  [['public/index.html'], { mode: '120000' }, false, 1], [['public/index.html'], { regular: false }, false, 1],
+  [['public/index.html'], { symbolic: true }, false, 1], [['public/index.html'], { lossless: false }, false, 1],
+  [['src/server.js'], {}, false, 0], [['src/unreviewed-launch.js'], {}, false, 0],
+  [['./public/index.html'], {}, false, 0], [['public/index.html', 'src/unreviewed-launch.js'], {}, false, 1],
+];
+for (const [paths, changes, accepted, calls] of dirtyCases) {
+  dirtyModel = { head: true, index: true, mode: '100644', regular: true, symbolic: false, lossless: true,
+    committed: 'alpha\nbeta\n', physical: 'alpha\nbeta\n', ...changes }; genuineCalls = 0;
+  if (accepted) { dirtyPredicate(paths); positives++; } else { assert.throws(() => dirtyPredicate(paths)); refusals++; }
+  assert.equal(genuineCalls, calls, 'Dirty paths never skip or cache current source admission');
+}
 console.log(`launch integration source: ${positives} exact positives, ${refusals} refusals; source binding only, no execution/result transfer`);

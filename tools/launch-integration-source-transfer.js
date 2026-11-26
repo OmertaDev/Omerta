@@ -11,11 +11,13 @@ export { source as LAUNCH_INTEGRATION_SOURCE };
 export const LAUNCH_INTEGRATION_PREDECESSOR = '83baa47c51c00ec16ac982aa751ee0c1cb6e00c7';
 export const LAUNCH_INTEGRATION_REVIEWED_REVISION = '5c662b9c1f42785af9765fb81be3aff4803fbcd6';
 export const LAUNCH_INTEGRATION_REVIEWED_PRODUCT_PATHS = Object.freeze([
-  'package.json', 'public/index.html', 'public/ux-navigation.css',
+  'package.json', 'public/index.html', 'public/ux-navigation.css', 'src/preflight.js',
 ]);
 export const LAUNCH_INTEGRATION_AUTHORED_PATHS = Object.freeze([
   'test/grand-strategy-source-transfer.js', 'test/launch-integration-source-transfer.js',
   'test/crime-minigame-source-transfer.js', 'test/native-garage-source-transfer.js',
+  'test/launch-enterprise-source-transfer.js', 'tools/enterprise-native-questing.js',
+  'tools/launch-enterprise-source-data.js', 'tools/native-garage-enterprise-source.js',
   'tools/crime-minigame-source-compatibility.js', 'tools/launch-integration-source-data.js',
   'tools/launch-integration-source-transfer.js', 'tools/native-garage-source-transfer.js',
 ]);
@@ -29,8 +31,10 @@ const metadata = 'tools/launch-integration-source-data.js';
 const projectedPaths = Object.freeze([...LAUNCH_INTEGRATION_REVIEWED_PRODUCT_PATHS,
   'test/grand-strategy-source-transfer.js', 'test/crime-minigame-source-transfer.js',
   'test/native-garage-source-transfer.js', 'tools/crime-minigame-source-compatibility.js',
-  'tools/native-garage-source-transfer.js'].sort());
-const addedPaths = Object.freeze(['test/launch-integration-source-transfer.js', 'tools/launch-integration-source-transfer.js']);
+  'tools/native-garage-source-transfer.js', 'tools/enterprise-native-questing.js',
+  'tools/native-garage-enterprise-source.js'].sort());
+const addedPaths = Object.freeze(['test/launch-enterprise-source-transfer.js', 'test/launch-integration-source-transfer.js',
+  'tools/launch-enterprise-source-data.js', 'tools/launch-integration-source-transfer.js']);
 const predecessorCache = new Map();
 const oldSeals = Object.freeze(['tools/age-removal-source-data.js', 'tools/ui-trim-source-data.js',
   'tools/grand-strategy-source-data.js', 'tools/native-garage-source-data.js', 'tools/crime-minigame-source-data.js']);
@@ -83,8 +87,8 @@ function definition() {
   assert.equal(source.revision, LAUNCH_INTEGRATION_REVIEWED_REVISION);
   assert.equal(sha(JSON.stringify(source)), LAUNCH_INTEGRATION_SOURCE_SHA256);
   assert(Object.isFrozen(source) && Object.isFrozen(source.files) && Object.isFrozen(source.additions));
-  assert.deepEqual(Object.keys(source.files).sort(), projectedPaths, 'Exactly eight reviewed predecessor projection domains');
-  assert.deepEqual(Object.keys(source.additions).sort(), addedPaths, 'Exactly two new qualification helper/test domains');
+  assert.deepEqual(Object.keys(source.files).sort(), projectedPaths, 'Exactly eleven reviewed predecessor projection domains');
+  assert.deepEqual(Object.keys(source.additions).sort(), addedPaths, 'Exactly four new qualification helper/test domains');
   const rendered = launchIntegrationSourceDataBytes(source);
   genuine(metadata, { mode: '100644', blob: blob(rendered), sha256: sha(rendered), bytes: Buffer.byteLength(rendered) });
 }
@@ -109,6 +113,19 @@ export function assertLaunchIntegrationPostCandidatePaths(paths) {
   assert.equal(new Set(paths).size, paths.length, 'Duplicate postcandidate path');
   assert(paths.every(file => postPaths.has(file)), 'Only fixed independently generated domains or the exact sealed integration helper/test paths may follow the reviewed anchor');
 }
+function checkDirtySourcePaths(dirty) {
+  for (const file of dirty) {
+    if (generated.includes(file)) continue;
+    const pin = pinFor(file);
+    if (pin) { genuine(file, pin); continue; }
+    if (file === metadata) {
+      const rendered = launchIntegrationSourceDataBytes(source);
+      genuine(file, { mode: '100644', blob: blob(rendered), sha256: sha(rendered), bytes: Buffer.byteLength(rendered) });
+      continue;
+    }
+    assert(false, 'Physical source/index contains unreviewed integration or disjoint changes');
+  }
+}
 function context() {
   // Reject unknown descendants before touching physical metadata in Git-only rejection fixtures.
   // Passing this literal-path fence grants nothing; all real source admission follows below.
@@ -119,7 +136,7 @@ function context() {
   git('merge-base', '--is-ancestor', source.predecessor, source.revision);git('merge-base', '--is-ancestor', source.revision, 'HEAD');
   assertLaunchIntegrationPostCandidatePaths(git('diff', '--name-only', '--no-renames', '-z', source.revision, 'HEAD').split('\0').filter(Boolean));
   const dirty = [...git('diff', '--name-only', '-z').split('\0'), ...git('diff', '--cached', '--name-only', '-z').split('\0'), ...git('ls-files', '--others', '--exclude-standard', '-z').split('\0')].filter(Boolean);
-  assert(dirty.every(file => generated.includes(file)), 'Physical source/index contains unreviewed integration or disjoint changes');
+  checkDirtySourcePaths(dirty);
 }
 export function assertLaunchIntegrationCurrentSource() {
   assert.equal(arguments.length, 0); context();

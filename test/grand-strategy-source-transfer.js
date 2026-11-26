@@ -1,5 +1,6 @@
 // Actual successor source qualifies first; all earlier comparisons remain historical only.
 import './launch-integration-source-transfer.js';
+import { launchIntegrationActual } from '../tools/launch-integration-source-transfer.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -107,7 +108,7 @@ for (const [file, row] of Object.entries(source.files)) {
   assert.throws(() => grandStrategyHistoricalInput(file, invalid), /Lossless UTF-8/); refusals += 2;
 }
 const observedFile = 'public/index.html', observed = grandStrategyActual(observedFile);
-const currentObserved = crimeMinigameActual(observedFile);
+const currentObserved = launchIntegrationActual(observedFile);
 const priorObserved = grandStrategyHistoricalRecord(observedFile, observed);
 for (const file of ['public/index.html', 'public/sw.js', 'src/server.js']) {
   const actual = grandStrategyActual(file), pin = AGE_REMOVAL_SOURCE.files[file].baseline;
@@ -147,11 +148,13 @@ for (const file of ['__proto__', 'constructor', 'src/unreviewed-successor.js']) 
 }
 // Genuine index/physical refusal controls use an isolated alternate index/work tree, never the caller's checkout.
 const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'omerta-grand-source-'));
+const temporaryIndex = fs.mkdtempSync(path.join(os.tmpdir(), 'omerta-grand-source-index-'));
 try {
   const environment = { ...process.env, GIT_DIR: git('rev-parse', '--absolute-git-dir').trim(),
-    GIT_WORK_TREE: temporary, GIT_INDEX_FILE: path.join(temporary, 'reviewed-index') };
+    GIT_WORK_TREE: temporary, GIT_INDEX_FILE: path.join(temporaryIndex, 'reviewed-index') };
   execFileSync('git', ['--no-replace-objects', 'read-tree', 'HEAD'], { cwd: temporary, env: environment, windowsHide: true });
-  fs.mkdirSync(path.join(temporary, 'public')); fs.writeFileSync(path.join(temporary, observedFile), currentObserved.physical);
+  execFileSync('git', ['--no-replace-objects', 'checkout-index', '--all', '--force'], { cwd: temporary, env: environment, windowsHide: true });
+  fs.mkdirSync(path.join(temporary, 'public'), { recursive: true }); fs.writeFileSync(path.join(temporary, observedFile), currentObserved.physical);
   const script = 'import { grandStrategyActual } from ' + JSON.stringify(new URL('../tools/grand-strategy-source-transfer.js', import.meta.url).href)
     + '; grandStrategyActual(' + JSON.stringify(observedFile) + ');';
   const child = (env, code = script) => spawnSync(process.execPath, ['--input-type=module', '-e', code], {
@@ -187,13 +190,15 @@ try {
   const forgedCurrent = child(environment, currentRecordScript('LF')); assert.notEqual(forgedCurrent.status, 0);
   assert.match(forgedCurrent.stderr, /Physical source/); refusals++;
   fs.writeFileSync(path.join(temporary, observedFile), currentObserved.physical);
-  const changedIndex = child({ ...environment, GIT_INDEX_FILE: path.join(temporary, 'empty-index') });
+  const changedIndex = child({ ...environment, GIT_INDEX_FILE: path.join(temporaryIndex, 'empty-index') });
   assert.notEqual(changedIndex.status, 0); assert.match(changedIndex.stderr, /stage-zero index/); refusals++;
-  const forgedIndex = child({ ...environment, GIT_INDEX_FILE: path.join(temporary, 'empty-index') }, historicalScript);
+  const forgedIndex = child({ ...environment, GIT_INDEX_FILE: path.join(temporaryIndex, 'empty-index') }, historicalScript);
   assert.notEqual(forgedIndex.status, 0); assert.match(forgedIndex.stderr, /stage-zero index/); refusals++;
-  const forgedCurrentIndex = child({ ...environment, GIT_INDEX_FILE: path.join(temporary, 'empty-index') }, currentRecordScript('LF'));
+  const forgedCurrentIndex = child({ ...environment, GIT_INDEX_FILE: path.join(temporaryIndex, 'empty-index') }, currentRecordScript('LF'));
   assert.notEqual(forgedCurrentIndex.status, 0); assert.match(forgedCurrentIndex.stderr, /stage-zero index/); refusals++;
 } finally {
+  assert(path.resolve(temporaryIndex).startsWith(path.resolve(os.tmpdir()) + path.sep) && path.basename(temporaryIndex).startsWith('omerta-grand-source-index-'));
+  fs.rmSync(temporaryIndex, { recursive: true, force: true });
   assert(path.resolve(temporary).startsWith(path.resolve(os.tmpdir()) + path.sep) && path.basename(temporary).startsWith('omerta-grand-source-'));
   fs.rmSync(temporary, { recursive: true, force: true });
 }

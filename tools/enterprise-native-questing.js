@@ -17,6 +17,7 @@ import { QUESTING_ENTERPRISE_NATIVE_INPUTS as declaration, QUESTING_ENTERPRISE_N
 import {
   nativeGarageEnterprisePredecessor, assertNativeGarageEnterpriseClosure,
   nativeGarageEnterpriseScope, nativeGarageEnterpriseHistoricalInput, nativeGarageEnterpriseBinary,
+  captureLaunchEnterpriseSource, launchEnterpriseDeclaredInput,
 } from './native-garage-enterprise-source.js';
 
 export const QUESTING_NATIVE_METADATA = 'tools/enterprise-native-questing-inputs.js';
@@ -120,10 +121,10 @@ export function assertQuestingEnterpriseTrackedInput(file, current, authored, by
 }
 // The capture validates the complete immutable declaration before checking any of its pins.
 // Public callers still validate that declaration independently on every invocation.
-function assertQuestingTrackedPin(file, current, authored, bytes, expected) {
+function assertQuestingTrackedPin(file, current, authored, bytes, expected, launchReceipt) {
   assert.ok(expected, `No undeclared actual-current native input: ${file}`);
   assert.ok(Buffer.isBuffer(bytes) && current && authored);
-  ({ current, bytes } = nativeGarageEnterprisePredecessor(file, current, bytes, expected));
+  ({ current, bytes } = nativeGarageEnterprisePredecessor(file, current, bytes, expected, launchReceipt));
   assert.equal(current.type, 'blob'); assert.equal(authored.type, 'blob');
   assert.equal(current.mode, expected.mode); assert.equal(authored.mode, expected.mode);
   assert.equal(current.blob, expected.blob, 'Actual HEAD input differs from its new native pin');
@@ -201,22 +202,20 @@ export function captureQuestingEnterpriseSource() {
   const records = tree(revision), current = new Map(records.map(row => [row.file, row]));
   const authored = new Map(tree(declaration.authoredRevision).map(row => [row.file, row]));
   const read = actualReader(records), files = {};
+  const launchReceipt = captureLaunchEnterpriseSource();
   const actualClosure = questingNativeClosure(file => read(file).canonical);
   const declaredClosure = declaration.files.map(row => row.file);
-  const exactCurrentClosure = actualClosure.length === declaredClosure.length
-    && actualClosure.every((file, index) => file === declaredClosure[index]);
-  const historicalClosure = exactCurrentClosure ? actualClosure
-    : questingNativeClosure(file => nativeGarageEnterpriseHistoricalInput(file, read(file).canonical));
-  assertNativeGarageEnterpriseClosure(actualClosure, historicalClosure, declaredClosure);
+  const historicalClosure = questingNativeClosure(file => launchEnterpriseDeclaredInput(file, launchReceipt));
+  assertNativeGarageEnterpriseClosure(actualClosure, historicalClosure, declaredClosure, launchReceipt);
   for (const expected of declaration.files) {
     const actual = read(expected.file);
     const original = authored.get(expected.file);
-    assertQuestingTrackedPin(expected.file, current.get(expected.file), original, actual.canonical, expected);
+    assertQuestingTrackedPin(expected.file, current.get(expected.file), original, actual.canonical, expected, launchReceipt);
     files[expected.file] = { sha256: sha(actual.raw), gitSha256: actual.pin.sha256, blob: actual.pin.blob, binary: nativeGarageEnterpriseBinary(expected.file, binary.has(expected.file)), bytes: actual.raw.length };
   }
   // Fresh native proofs exercise the real successor. Keep every scoped byte in
   // their stability receipt, including browser assets outside the JS traversal.
-  for (const file of new Set([...actualClosure, ...nativeGarageEnterpriseScope()])) {
+  for (const file of new Set([...actualClosure, ...nativeGarageEnterpriseScope(launchReceipt)])) {
     if (Object.hasOwn(files, file)) continue;
     const actual = read(file);
     files[file] = { sha256: sha(actual.raw), gitSha256: actual.pin.sha256, blob: actual.pin.blob,
