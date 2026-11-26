@@ -21,6 +21,8 @@ export function register(app, { pool, auth }) {
   app.post('/v1/deeds/claim', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) =>
       Deeds.claimDeed(ch, { name: req.body?.name, district: req.body?.district, buildingId: req.body?.buildingId }, client, h)));
+  app.post('/v1/deeds/paid/reserve', { preHandler: auth }, async (req) =>
+    G.withCharacter(pool, req.user.sub, (ch, client) => Deeds.reservePaidDeed(ch, req.body, client)));
   // Phase 2 — CONTROL: collect the corner take off every deed you control; muscle in on a rival's corner.
   app.post('/v1/deeds/corner', { preHandler: auth }, async (req) =>
     G.withCharacter(pool, req.user.sub, (ch, client, h) => Deeds.collectCorner(ch, client, h)));

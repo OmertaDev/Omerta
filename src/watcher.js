@@ -15,7 +15,7 @@ import { recordStorePurchase, skuFromChainId } from './store.js';
 import { recordBond } from './bonds.js';
 import { recordHarvestFee } from './treasury.js';
 import { confirmStockDelivered } from './stockdeliver.js';
-import { markClaimed, reimportItem, markDeedExtracted, reimportDeed, recordDeedTransfer, recordDynastyMint, recordDynastyTransfer } from './chain.js';
+import { markClaimed, reimportItem, markDeedExtracted, reimportDeed, recordDeedTransfer, recordDynastyMint, recordDynastyTransfer, deedAdmissionConfig } from './chain.js';
 
 export const DEFAULT_CONFIRMATIONS = Number(process.env.CHAIN_CONFIRMATIONS || 5);
 
@@ -168,7 +168,7 @@ export async function syncDeedExtractedEvents(pool, source, opts = {}) {
   const logs = await source.deedExtractedLogs(w.from, w.to);
   let processed = 0;
   for (const l of logs) {
-    if (await isolate('deed_extracted', () => markDeedExtracted(pool, { nonce: l.nonce, tokenId: l.tokenId }))) processed++;
+    if (await isolate('deed_extracted', () => markDeedExtracted(pool, l))) processed++;
   }
   await setCursor(pool, 'deed_extracted', w.to);
   return { processed, from: w.from, to: w.to };
@@ -186,7 +186,7 @@ export async function syncDeedRedeemedEvents(pool, source, opts = {}) {
   const logs = await source.deedRedeemedLogs(w.from, w.to);
   let processed = 0;
   for (const l of logs) {
-    if (await isolate('deed_redeemed', () => reimportDeed(pool, { ref: l.ref, from: l.from, tokenId: l.tokenId }))) processed++;
+    if (await isolate('deed_redeemed', () => reimportDeed(pool, l))) processed++;
   }
   await setCursor(pool, 'deed_redeemed', w.to);
   return { processed, from: w.from, to: w.to };
@@ -205,7 +205,7 @@ export async function syncDeedTransferEvents(pool, source, opts = {}) {
   const logs = await source.deedTransferLogs(w.from, w.to);
   let processed = 0;
   for (const l of logs) {
-    if (await isolate('deed_transfer', () => recordDeedTransfer(pool, { tokenId: l.tokenId, to: l.to, from: l.from }))) processed++;
+    if (await isolate('deed_transfer', () => recordDeedTransfer(pool, l))) processed++;
   }
   await setCursor(pool, 'deed_transfer', w.to);
   return { processed, from: w.from, to: w.to };
@@ -379,10 +379,30 @@ export async function makeViemSource({ publicClient } = {}) {
   const redeemedEv = parseAbiItem('event Redeemed(address indexed from, uint256 indexed tokenId, uint256 amount)');
   const deedExtractedEv = parseAbiItem('event Extracted(uint256 indexed nonce, address indexed to, uint256 indexed tokenId, string name, string district)');
   const deedRedeemedEv = parseAbiItem('event Redeemed(address indexed from, uint256 indexed tokenId)');
+  const deedPaidEv = parseAbiItem('event PublicSalePaid(address indexed payer, address indexed to, uint256 indexed tokenId, uint256 publicCount, uint256 amount)');
+  const deedGameplayEv = parseAbiItem('event GameplayIdentityIssued(address indexed to, uint256 indexed tokenId, uint256 gameplayCount)');
   const erc721TransferEv = parseAbiItem('event Transfer(address indexed from, address indexed to, uint256 indexed tokenId)');
   const dynastyMintedEv = parseAbiItem('event Minted(uint256 indexed nonce, address indexed minter, uint256 indexed tokenId)');
   const deliveredEv = parseAbiItem('event Delivered(uint256 indexed deliveryId, address indexed token, address indexed to, uint256 units)');
   const range = (from, to) => ({ fromBlock: BigInt(from), toBlock: BigInt(to) });
+  const deedMetadata = async (log) => {
+    const domain = deedAdmissionConfig();
+    const blockNumber = log.blockNumber;
+    const block = await client.getBlock({ blockNumber });
+    const code = await client.getCode({ address: domain.verifyingContract, blockNumber });
+    const { keccak256 } = await import('viem');
+    const depth = Number(process.env.CHAIN_CONFIRMATIONS ?? 5);
+    if (!Number.isSafeInteger(depth) || depth < 0 || Number(await client.getChainId()) !== domain.chainId
+        || await client.getBlockNumber() < blockNumber + BigInt(depth) || log.removed
+        || !block.hash || block.hash !== log.blockHash || !code || code === '0x'
+        || keccak256(code).toLowerCase() !== domain.runtimeHash
+        || log.address?.toLowerCase() !== domain.verifyingContract.toLowerCase()
+        || (await client.getBlock({ blockNumber })).hash !== log.blockHash)
+      throw new Error('Street Deed canonical event verification failed');
+    return { confirmed: true, chainId: domain.chainId, contract: domain.verifyingContract,
+      runtimeHash: domain.runtimeHash, blockNumber: blockNumber.toString(), blockHash: log.blockHash,
+      transactionHash: log.transactionHash, logIndex: log.logIndex, tokenId: log.args.tokenId.toString() };
+  };
   // wei / 1e18-decimal-OMR → ETH / in-game $OMR units, via viem's decimal-exact formatter (Number() alone
   // on a >2^53 wei bigint loses low-order digits; formatUnits keeps full precision, then recordBond round6's).
   const w18 = (v) => Number(formatUnits(v, 18));
@@ -505,20 +525,30 @@ export async function makeViemSource({ publicClient } = {}) {
     },
     deedExtractedLogs: async (from, to) => {
       if (!streetDeedAddr) return [];
-      const logs = await client.getLogs({ address: streetDeedAddr, event: deedExtractedEv, ...range(from, to) });
-      // nonce fits in 2^53 (a monotonic counter); tokenId is keccak(name) > 2^53 → keep it a string.
-      return logs.map((l) => ({ nonce: Number(l.args.nonce), tokenId: l.args.tokenId?.toString() }));
+      const [logs, paid, gameplay] = await Promise.all([deedExtractedEv, deedPaidEv, deedGameplayEv]
+        .map(event => client.getLogs({ address: streetDeedAddr, event, ...range(from, to) })));
+      return Promise.all(logs.map(async l => {
+        const matches = [...paid.map(p => ({ log: p, kind: 'paid' })), ...gameplay.map(p => ({ log: p, kind: 'gameplay' }))]
+          .filter(({ log: p }) => p.transactionHash === l.transactionHash && p.args.tokenId === l.args.tokenId
+            && p.args.to?.toLowerCase() === l.args.to?.toLowerCase());
+        if (matches.length > 1) throw new Error('Conflicting Street Deed first issuance events');
+        const first = matches[0];
+        return { ...await deedMetadata(l), nonce: Number(l.args.nonce), to: l.args.to, name: l.args.name, district: l.args.district,
+          issue: first ? { ...await deedMetadata(first.log), kind: first.kind, to: first.log.args.to,
+            count: (first.kind === 'paid' ? first.log.args.publicCount : first.log.args.gameplayCount).toString(),
+            ...(first.kind === 'paid' ? { payer: first.log.args.payer, amount: first.log.args.amount.toString() } : {}) } : null };
+      }));
     },
     deedRedeemedLogs: async (from, to) => {
       if (!streetDeedAddr) return [];
       const logs = await client.getLogs({ address: streetDeedAddr, event: deedRedeemedEv, ...range(from, to) });
-      return logs.map((l) => ({ ref: `${l.transactionHash}:${l.logIndex}`, from: l.args.from,
-        tokenId: l.args.tokenId?.toString(), txHash: l.transactionHash }));
+      return Promise.all(logs.map(async l => ({ ...await deedMetadata(l),
+        ref: `${l.transactionHash}:${l.logIndex}`, from: l.args.from })));
     },
     deedTransferLogs: async (from, to) => {
       if (!streetDeedAddr) return [];
       const logs = await client.getLogs({ address: streetDeedAddr, event: erc721TransferEv, ...range(from, to) });
-      return logs.map((l) => ({ from: l.args.from, to: l.args.to, tokenId: l.args.tokenId?.toString() }));
+      return Promise.all(logs.map(async l => ({ ...await deedMetadata(l), from: l.args.from, to: l.args.to })));
     },
     dynastyMintedLogs: async (from, to) => {
       if (!dynastyAddr) return [];

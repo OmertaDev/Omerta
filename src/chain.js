@@ -16,6 +16,7 @@ import { reconcileStore } from './store.js';
 import { reconcileBonds, bondQuoteBudgetUsage, bondQuoteBudgetAmount } from './bonds.js';
 import { portraitRow } from './portrait.js'; // the freeze snapshot (portrait.js is a leaf — no cycle)
 import { assertGenesisBondsOpen } from './genesislaunch.js';
+import { classifyDeedIssuance, deedBuildingById } from './deedbuildings.js';
 import {
   V4_ORACLE_LATE_MULT,
   classifyV4OracleHealth,
@@ -798,13 +799,98 @@ export const DEED_VOUCHER_TYPES = {
     { name: 'deadline', type: 'uint256' },
   ],
 };
+export const GAMEPLAY_DEED_VOUCHER_TYPES = { GameplayDeedVoucher: DEED_VOUCHER_TYPES.DeedVoucher };
+export const DEED_CLAIM_ABI = ['claim', 'claimGameplay'].map(name => ({ type: 'function', name,
+  stateMutability: 'payable', inputs: [
+    { name: 'v', type: 'tuple', components: DEED_VOUCHER_TYPES.DeedVoucher }, { name: 'sig', type: 'bytes' }], outputs: [] }));
+
+export function deedAdmissionConfig() {
+  const domain = deedChainConfig();
+  const runtimeHash = process.env.STREET_DEED_RUNTIME_HASH;
+  if (!/^0x[0-9a-fA-F]{64}$/.test(runtimeHash || '') || /^0x0{64}$/i.test(runtimeHash))
+    throw new GameError('chain_unconfigured', 'The reviewed Street Deed runtime is not configured.');
+  return { ...domain, runtimeHash: runtimeHash.toLowerCase() };
+}
+
+// All reads are pinned to one confirmed canonical block. A code hash selects this exact runtime;
+// it does not establish proxy implementation/upgrade equivalence or approve a deployment.
+export async function readDeedClaimQuote(name, district, { publicClient, mode = 'paid', nonce } = {}) {
+  const domain = deedAdmissionConfig();
+  if (!publicClient && !process.env.CHAIN_RPC_URL) throw new GameError('chain_unavailable', 'Street Deed chain reads are unavailable.');
+  const { createPublicClient, http } = await import('viem');
+  const chain = publicClient || createPublicClient({ transport: http(process.env.CHAIN_RPC_URL) });
+  const depth = Number(process.env.CHAIN_CONFIRMATIONS ?? 5);
+  if (!Number.isSafeInteger(depth) || depth < 0 || Number(await chain.getChainId()) !== domain.chainId)
+    throw new GameError('chain_unavailable', 'Street Deed chain verification failed.');
+  const head = await chain.getBlockNumber();
+  if (head < BigInt(depth)) throw new GameError('chain_unavailable', 'Street Deed confirmations are unavailable.');
+  const blockNumber = head - BigInt(depth), block = await chain.getBlock({ blockNumber });
+  const code = await chain.getCode({ address: domain.verifyingContract, blockNumber });
+  if (!code || code === '0x' || keccak256(code).toLowerCase() !== domain.runtimeHash)
+    throw new GameError('chain_unavailable', 'Street Deed runtime verification failed.');
+  const tokenId = deedTokenId(name);
+  const read = (functionName, outputs, args = []) => chain.readContract({ address: domain.verifyingContract, blockNumber,
+    abi: [{ type: 'function', name: functionName, stateMutability: 'view', inputs: args.map(value => ({ type: typeof value === 'bigint' ? 'uint256' : 'string' })), outputs: [{ type: outputs }] }], functionName, args });
+  const configured = await read('primarySaleConfigured', 'bool');
+  if (configured !== true) throw new GameError('chain_unavailable', 'Street Deed issuance is not configured.');
+  const nativeName = await read('deedName', 'string', [BigInt(tokenId)]);
+  const nativeDistrict = await read('deedDistrict', 'string', [BigInt(tokenId)]);
+  const gameplayIdentity = await read('gameplayIdentity', 'bool', [BigInt(tokenId)]);
+  let liveOwner = null;
+  if (nativeName) {
+    try {
+      liveOwner = await chain.readContract({ address: domain.verifyingContract, blockNumber,
+        abi: [{ type: 'error', name: 'ERC721NonexistentToken', inputs: [{ name: 'tokenId', type: 'uint256' }] },
+          { type: 'function', name: 'ownerOf', stateMutability: 'view', inputs: [{ type: 'uint256' }], outputs: [{ type: 'address' }] }],
+        functionName: 'ownerOf', args: [BigInt(tokenId)] });
+      if (!isAddress(liveOwner) || /^0x0{40}$/i.test(liveOwner)) throw new Error('invalid owner result');
+    } catch (error) {
+      const reverted = typeof error?.walk === 'function' ? error.walk(cause => cause.name === 'ContractFunctionRevertedError') : null;
+      if (reverted?.data?.errorName !== 'ERC721NonexistentToken' || reverted.data.args?.[0] !== BigInt(tokenId))
+        throw new GameError('chain_unavailable', 'Street Deed owner verification failed.');
+      liveOwner = null;
+    }
+  }
+  const value = nativeName || mode !== 'paid' ? 0n : await read('quoteClaim', 'uint256', [name]);
+  const usedNonce = nonce == null ? false : await read('usedNonce', 'bool', [BigInt(nonce)]);
+  const canonical = await chain.getBlock({ blockNumber });
+  if (!block.hash || canonical.hash !== block.hash) throw new GameError('chain_unavailable', 'Street Deed quote changed during verification.');
+  return { name, district, tokenId, chainId: domain.chainId, contract: domain.verifyingContract,
+    runtimeHash: domain.runtimeHash, blockNumber: blockNumber.toString(), blockHash: block.hash,
+    timestamp: block.timestamp.toString(), identityIssued: nativeName !== '', nativeName, nativeDistrict,
+    gameplayIdentity, liveOwner, valueWei: value.toString(), usedNonce };
+}
+
+export function deedClaimTransaction(domain, claimMethod, voucher, signature, valueWei) {
+  if (!['claim', 'claimGameplay'].includes(claimMethod) || !/^\d+$/.test(valueWei)
+      || claimMethod === 'claimGameplay' && valueWei !== '0')
+    throw new GameError('migration_required', 'The deed claim needs provenance review.');
+  return { to: domain.verifyingContract, data: encodeFunctionData({ abi: DEED_CLAIM_ABI, functionName: claimMethod,
+    args: [{ ...voucher, nonce: BigInt(voucher.nonce), deadline: BigInt(voucher.deadline) }, signature] }), value: valueWei };
+}
+
+// Event metadata is supplied only by the confirmed canonical source adapter, never an HTTP body.
+export function validateDeedEvent(event, domain = deedAdmissionConfig()) {
+  const hash = value => /^0x[0-9a-fA-F]{64}$/.test(value || '');
+  if (event?.confirmed !== true || event.chainId !== domain.chainId
+      || event.contract?.toLowerCase() !== domain.verifyingContract.toLowerCase()
+      || event.runtimeHash?.toLowerCase() !== domain.runtimeHash.toLowerCase()
+      || !hash(event.transactionHash) || !hash(event.blockHash)
+      || !/^(0|[1-9]\d*)$/.test(event.blockNumber || '')
+      || !Number.isSafeInteger(event.logIndex) || event.logIndex < 0
+      || !/^(0|[1-9]\d*)$/.test(event.tokenId || ''))
+    throw new GameError('migration_required', 'The deed event needs provenance review.');
+  return { chainId: domain.chainId, contract: domain.verifyingContract, runtimeHash: domain.runtimeHash,
+    tokenId: event.tokenId, transactionHash: event.transactionHash, blockHash: event.blockHash,
+    blockNumber: event.blockNumber, logIndex: event.logIndex };
+}
 // The StreetDeed EIP-712 domain (its own contract → its own verifyingContract). No defaults (the
 // chainConfig fail-closed discipline): a wrong/zero chainId or verifyingContract signs a voucher under
 // the WRONG domain → every on-chain claim() reverts BadSignature while the deed is flagged inert.
 export function deedChainConfig() {
   const chainId = Number(process.env.CHAIN_ID);
   const verifyingContract = process.env.STREET_DEED_ADDRESS;
-  if (!chainId || !verifyingContract || !isAddress(verifyingContract))
+  if (!Number.isSafeInteger(chainId) || chainId <= 0 || !verifyingContract || !isAddress(verifyingContract) || /^0x0{40}$/i.test(verifyingContract))
     throw new GameError('chain_unconfigured', 'Taking a Street Deed on-chain is not enabled on this server yet (chain config missing).');
   return { name: 'OmertaStreetDeed', version: '1', chainId, verifyingContract: getAddress(verifyingContract) };
 }
@@ -817,17 +903,30 @@ export function deedTokenId(name) {
 // A StreetDeed `usedNonce(nonce)` reader (the makeChainReader twin, for sweepDeedVouchers). Returns null
 // when the deed chain is unconfigured/unreachable/wrong-chain → the sweep FAILS CLOSED (never clears an
 // inert deed blind, which could strand a genuinely-extracted street back into the game).
-export async function makeDeedReader() {
-  if (!process.env.CHAIN_RPC_URL || !process.env.STREET_DEED_ADDRESS || !isAddress(process.env.STREET_DEED_ADDRESS)) return null;
+export async function makeDeedReader({ publicClient } = {}) {
+  if (!publicClient && !process.env.CHAIN_RPC_URL) return null;
+  let domain;
+  try { domain = deedAdmissionConfig(); } catch { return null; }
   const { createPublicClient, http } = await import('viem');
-  const client = createPublicClient({ transport: http(process.env.CHAIN_RPC_URL) });
-  if (process.env.CHAIN_ID) {  // the wrong-chain guard (makeChainReader posture)
-    try { if (Number(process.env.CHAIN_ID) !== Number(await client.getChainId())) return null; } catch { return null; }
-  }
-  const address = getAddress(process.env.STREET_DEED_ADDRESS);
+  const client = publicClient || createPublicClient({ transport: http(process.env.CHAIN_RPC_URL) });
+  try { if (Number(await client.getChainId()) !== domain.chainId) return null; } catch { return null; }
+  const address = domain.verifyingContract;
   const abi = [{ type: 'function', name: 'usedNonce', stateMutability: 'view',
     inputs: [{ name: '', type: 'uint256' }], outputs: [{ name: '', type: 'bool' }] }];
-  return { usedNonce: (nonce) => client.readContract({ address, abi, functionName: 'usedNonce', args: [BigInt(nonce)] }) };
+  return { nonceState: async (nonce, deadline) => {
+    const depth = Number(process.env.CHAIN_CONFIRMATIONS ?? 5);
+    if (!Number.isSafeInteger(depth) || depth < 0) throw new GameError('chain_unavailable', 'Street Deed confirmations are unavailable.');
+    const head = await client.getBlockNumber();
+    if (head < BigInt(depth)) throw new GameError('chain_unavailable', 'Street Deed confirmations are unavailable.');
+    const blockNumber = head - BigInt(depth), block = await client.getBlock({ blockNumber });
+    const code = await client.getCode({ address, blockNumber });
+    if (!code || code === '0x' || keccak256(code).toLowerCase() !== domain.runtimeHash)
+      throw new GameError('chain_unavailable', 'Street Deed runtime verification failed.');
+    const used = await client.readContract({ address, abi, blockNumber, functionName: 'usedNonce', args: [BigInt(nonce)] });
+    if (!block.hash || (await client.getBlock({ blockNumber })).hash !== block.hash)
+      throw new GameError('chain_unavailable', 'Street Deed nonce verification changed.');
+    return { used, expired: block.timestamp > BigInt(deadline) + BigInt(RECLAIM_GRACE_SEC), domain };
+  } };
 }
 
 // EXTRACT a named street on-chain: sign a DeedVoucher, and flag the deed EXTRACTION-PENDING (state 1→2).
@@ -968,8 +1067,17 @@ export async function requestDynastyMint(pool, accountId, toAddress, reader = un
   finally { client.release(); }
 }
 
-export async function requestDeedWithdraw(pool, accountId, toAddress, { attest } = {}) {
-  const domain = deedChainConfig();  // throws chain_unconfigured if not configured
+export async function requestDeedWithdraw(pool, accountId, toAddress, { attest, reader = readDeedClaimQuote } = {}) {
+  const domain = deedAdmissionConfig();
+  // No RPC while database locks are held. Recheck the exact identity/nonce under those locks.
+  const before = (await pool.query('SELECT * FROM street_deeds WHERE account_id=$1', [accountId])).rows[0]
+    || (await pool.query('SELECT * FROM street_deed_paid_intents WHERE account_id=$1', [accountId])).rows[0];
+  if (!before) throw new GameError('no_deed', "You don't hold a street or a paid property intent.");
+  const token = deedTokenId(before.name);
+  const pendingBefore = (await pool.query("SELECT * FROM vouchers WHERE account_id=$1 AND kind='deed' AND status='signed' AND gear_id=$2 ORDER BY created_at DESC", [accountId, token])).rows[0];
+  const districtDisp = (DISTRICTS.find((d) => d.id === before.district) || {}).name;
+  if (!districtDisp) throw new GameError('migration_required', 'The deed district needs provenance review.');
+  const quote = await reader(before.name, districtDisp, { mode: deedBuildingById(before.building_id)?.issuanceKind, nonce: pendingBefore?.nonce });
   const signer = signerAccount();    // throws chain_unconfigured if the signer PK is missing
   const client = await pool.connect();
   try {
@@ -979,9 +1087,12 @@ export async function requestDeedWithdraw(pool, accountId, toAddress, { attest }
     const to = toAddress || acct?.wallet_address;
     if (!to || !isAddress(to)) throw new GameError('wallet', 'Link a wallet (SIWE) or pass a valid address first.');
     const deed = (await client.query('SELECT * FROM street_deeds WHERE account_id=$1 FOR UPDATE', [accountId])).rows[0];
-    if (!deed) throw new GameError('no_deed', "You don't hold a street to take on-chain.");
-    if (deed.onchain_token_id) throw new GameError('already', "It's already on-chain (or an extraction is pending).");
-    if (deed.sale_price != null) throw new GameError('listed', 'Pull the street off the in-game market before extracting it.');
+    const intent = (await client.query('SELECT * FROM street_deed_paid_intents WHERE account_id=$1 FOR UPDATE', [accountId])).rows[0];
+    const row = deed || intent;
+    if (deed && intent) throw new GameError('migration_required', 'Conflicting deed and purchase intent need review.');
+    if (!row || row.name !== before.name || row.building_id !== before.building_id || row.district !== before.district)
+      throw new GameError('migration_required', 'The deed identity changed; refresh before extracting.');
+    if (deed?.sale_price != null) throw new GameError('listed', 'Pull the street off the in-game market before extracting it.');
     // THE ELIGIBILITY SELF-ATTESTATION (founder sign-off 2026-08-16 — the stock-delivery
     // verification depth: wallet + paid mint + self-attestation). The deed's ERC-6551 vault is
     // where treasury stock lands with no claim gate, so the extractor must attest — explicitly,
@@ -989,34 +1100,64 @@ export async function requestDeedWithdraw(pool, accountId, toAddress, { attest }
     // instruments it can receive. Recorded on the row (it survives the on-chain re-key).
     if (attest !== true) throw new GameError('attestation',
       'Confirm the eligibility attestation first — by extracting you attest you may lawfully hold the instruments this deed’s vault can receive.');
-    const districtDisp = (DISTRICTS.find((d) => d.id === deed.district) || {}).name || deed.district;
-    const token = deedTokenId(deed.name);
+    const assignment = deed ? (await client.query('SELECT * FROM street_deed_building_assignments WHERE building_id=$1', [row.building_id])).rows[0] : null;
+    const claims = deed ? (await client.query('SELECT * FROM street_deed_primary_claims WHERE street_name=$1 AND building_id=$2', [row.name, row.building_id])).rows : [];
+    if (pendingBefore && quote.usedNonce) throw new GameError('claim_pending', 'Wait for the confirmed deed receipt before retrying.');
+    const classification = classifyDeedIssuance({ deed, intent, assignment, primaryClaim: claims.find(c => ['exploration','quest'].includes(c.source)), quote, domain });
+    if (!classification.ok || quote.tokenId !== token) throw new GameError('migration_required', 'The deed needs issuance provenance review before signing.');
+    const pending = (await client.query("SELECT * FROM vouchers WHERE account_id=$1 AND kind='deed' AND status='signed' AND gear_id=$2 FOR UPDATE", [accountId, token])).rows[0];
+    const response = (id, nonce, payload) => ({ id, nonce, status: 'signed', street: row.name, district: row.district, tokenId: token,
+      contract: domain.verifyingContract, chainId: domain.chainId, primaryType: payload.primaryType, claimMethod: payload.claimMethod,
+      issuanceRoute: payload.route, voucher: payload.voucher, signature: payload.signature, quote: { ...quote, valueWei: classification.valueWei },
+      transaction: deedClaimTransaction(domain, payload.claimMethod, payload.voucher, payload.signature, classification.valueWei),
+      benefitEligible: false });
+    if (pending) {
+      if (!pendingBefore || String(pending.nonce) !== String(pendingBefore.nonce) || quote.usedNonce)
+        throw new GameError('claim_pending', 'Wait for the confirmed deed receipt before retrying.');
+      let payload;
+      try { payload = JSON.parse(pending.signed_payload); } catch { /* fail closed below */ }
+      if (!payload || payload.domain?.chainId !== domain.chainId || payload.domain?.verifyingContract?.toLowerCase() !== domain.verifyingContract.toLowerCase()
+          || payload.domain?.runtimeHash !== domain.runtimeHash || payload.route !== classification.route
+          || payload.primaryType !== classification.primaryType || payload.claimMethod !== classification.claimMethod
+          || payload.voucher?.name !== row.name || payload.voucher?.district !== districtDisp
+          || String(payload.voucher?.nonce) !== String(pending.nonce) || String(payload.voucher?.deadline) !== String(pending.deadline)
+          || !/^0x[0-9a-fA-F]{130}$/.test(payload.signature || '')
+          || payload.voucher?.to?.toLowerCase() !== getAddress(to).toLowerCase())
+        throw new GameError('migration_required', 'The pending deed voucher needs provenance review.');
+      await client.query('COMMIT');
+      return response(pending.id, pending.nonce, payload);
+    }
+    if (deed?.onchain_token_id) throw new GameError('already', "It's already on-chain (or an extraction is pending).");
 
     // nonce from the shared chain_reserve counter (unique across ALL vouchers; the deed contract's own
     // usedNonce only ever sees this subset, all distinct). NOT reserve-bounded — no $OMR moves.
     const res = (await client.query('SELECT * FROM chain_reserve WHERE id=1 FOR UPDATE')).rows[0];
     const nonce = Number(res.next_nonce);
+    if (!Number.isSafeInteger(nonce) || nonce < 0) throw new GameError('migration_required', 'The deed nonce needs review.');
     await client.query('UPDATE chain_reserve SET next_nonce = next_nonce + 1 WHERE id=1');
     const deadline = Math.floor(Date.now() / 1000) + WITHDRAW_TTL_SEC;
 
-    const message = { to: getAddress(to), name: deed.name, district: districtDisp, nonce: BigInt(nonce), deadline: BigInt(deadline) };
-    const signature = await signer.signTypedData({ domain, types: DEED_VOUCHER_TYPES, primaryType: 'DeedVoucher', message });
+    const message = { to: getAddress(to), name: row.name, district: districtDisp, nonce: BigInt(nonce), deadline: BigInt(deadline) };
+    const signature = await signer.signTypedData({ domain, types: classification.route === 'gameplay' ? GAMEPLAY_DEED_VOUCHER_TYPES : DEED_VOUCHER_TYPES,
+      primaryType: classification.primaryType, message });
     const voucher = Object.fromEntries(Object.entries(message).map(([k, v]) => [k, typeof v === 'bigint' ? v.toString() : v]));
+    const payload = { voucher, signature, domain, primaryType: classification.primaryType,
+      claimMethod: classification.claimMethod, route: classification.route, quote };
 
     // state 1 → 2: INERT (onchain_token_id set), account_id unchanged so the account can't claim a new
     // street until this resolves; control cleared (a rival's grip lapses — the deed is leaving the game).
-    await client.query(`UPDATE city_home_activities SET status='closed',close_reason='ownership_changed',closed_at=now()
-      WHERE home_key=$1 AND authority_token=$2 AND status='open'`, [deed.name_lc, deed.home_authority_token]);
-    await client.query(
-      'UPDATE street_deeds SET onchain_token_id=$2, controller_account=NULL, control_until=NULL, attested_at=now(), home_authority_token=$3 WHERE account_id=$1', [accountId, token, uid()]);
+    if (deed) {
+      await client.query(`UPDATE city_home_activities SET status='closed',close_reason='ownership_changed',closed_at=now()
+        WHERE home_key=$1 AND authority_token=$2 AND status='open'`, [deed.name_lc, deed.home_authority_token]);
+      await client.query(
+        'UPDATE street_deeds SET onchain_token_id=$2, controller_account=NULL, control_until=NULL, attested_at=now(), home_authority_token=$3 WHERE account_id=$1', [accountId, token, uid()]);
+    }
     const id = uid();
     await client.query(
       'INSERT INTO vouchers (id, account_id, kind, amount, gear_id, nonce, to_address, deadline, status, signed_payload) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)',
-      [id, accountId, 'deed', 1, token, nonce, getAddress(to), deadline, 'signed', JSON.stringify({ voucher, signature })]);
+      [id, accountId, 'deed', 1, token, nonce, getAddress(to), deadline, 'signed', JSON.stringify(payload)]);
     await client.query('COMMIT');
-    return { id, nonce, status: 'signed', street: deed.name, district: deed.district, tokenId: token,
-      contract: domain.verifyingContract, chainId: domain.chainId, voucher, signature,
-      note: 'Submit claim(voucher, signature) to the StreetDeed contract to mint your deed NFT. It is INERT in-game until you re-import it.' };
+    return response(id, nonce, payload);
   } catch (e) { await client.query('ROLLBACK'); throw e; }
   finally { client.release(); }
 }
@@ -1025,14 +1166,81 @@ export async function requestDeedWithdraw(pool, accountId, toAddress, { attest }
 // Transition EXTRACTION-PENDING → ON-CHAIN (state 2→3): re-key the deed (and its legend) to a synthetic
 // `onchain:<tokenId>` owner (freeing the extractor to claim a new street; the name + story persist), and
 // mark the voucher claimed. Idempotent: a re-delivered event finds the deed already re-keyed (no-op).
-export async function markDeedExtracted(pool, { nonce, tokenId }) {
+export async function markDeedExtracted(pool, event) {
+  const { nonce, tokenId } = event;
+  const domain = deedAdmissionConfig();
+  const metadata = validateDeedEvent(event, domain);
+  if (!Number.isSafeInteger(nonce) || nonce < 0) throw new GameError('migration_required', 'The deed nonce needs provenance review.');
+  const before = (await pool.query("SELECT * FROM vouchers WHERE nonce=$1 AND kind='deed'", [nonce])).rows[0];
+  if (!before) return { extracted: false };
   const owner = 'onchain:' + String(tokenId);
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
-    const deed = (await client.query(
-      "SELECT account_id,name_lc,home_authority_token FROM street_deeds WHERE onchain_token_id=$1 AND account_id NOT LIKE 'onchain:%' FOR UPDATE", [String(tokenId)])).rows[0];
-    if (deed) {
+    await client.query('SELECT account_id FROM account_persistent WHERE account_id=$1 FOR UPDATE', [before.account_id]);
+    const supply = (await client.query('SELECT issued FROM street_deed_supply WHERE id=1 FOR UPDATE')).rows[0];
+    const deed = (await client.query('SELECT * FROM street_deeds WHERE name=$1 FOR UPDATE', [event.name])).rows[0];
+    const intent = (await client.query('SELECT * FROM street_deed_paid_intents WHERE account_id=$1 FOR UPDATE', [before.account_id])).rows[0];
+    const v = (await client.query('SELECT * FROM vouchers WHERE id=$1 FOR UPDATE', [before.id])).rows[0];
+    let payload;
+    try { payload = JSON.parse(v?.signed_payload); } catch { /* fail closed below */ }
+    if (!v || !['signed','claimed'].includes(v.status) || v.gear_id !== tokenId || !payload || !isAddress(event.to)
+        || payload.domain?.chainId !== domain.chainId || payload.domain?.verifyingContract?.toLowerCase() !== domain.verifyingContract.toLowerCase()
+        || payload.domain?.runtimeHash !== domain.runtimeHash || payload.voucher?.name !== event.name
+        || payload.voucher?.district !== event.district || payload.voucher?.to?.toLowerCase() !== event.to?.toLowerCase()
+        || deedTokenId(event.name) !== tokenId || String(payload.voucher.nonce) !== String(nonce))
+      throw new GameError('migration_required', 'The extraction receipt does not match the signed identity.');
+    let receipt = null;
+    if (payload.route === 'remint') {
+      if (event.issue || !deed?.last_burn_receipt) throw new GameError('migration_required', 'The remint needs burn provenance review.');
+    } else {
+      const issue = event.issue;
+      const first = validateDeedEvent(issue, domain);
+      if (!['paid','gameplay'].includes(payload.route) || issue.kind !== payload.route
+          || first.transactionHash !== metadata.transactionHash || first.blockHash !== metadata.blockHash
+          || first.blockNumber !== metadata.blockNumber || first.tokenId !== tokenId
+          || issue.to?.toLowerCase() !== event.to.toLowerCase() || first.logIndex <= metadata.logIndex)
+        throw new GameError('migration_required', 'The first issuance receipt is missing or conflicts.');
+      if (!/^[1-9]\d*$/.test(issue.count || '') || BigInt(issue.count) > 1000n)
+        throw new GameError('migration_required', 'The first issuance counter is invalid.');
+      if (issue.kind === 'paid' && (!isAddress(issue.payer)
+          || issue.amount !== (10_000_000_000_000_000n * ((BigInt(issue.count) - 1n) / 100n + 1n)).toString()))
+        throw new GameError('migration_required', 'The first payment receipt is invalid.');
+      receipt = { ...first, kind: issue.kind, pairedExtractLogIndex: metadata.logIndex,
+        to: getAddress(event.to), count: issue.count,
+        ...(issue.kind === 'paid' ? { payer: getAddress(issue.payer), amountWei: issue.amount } : {}) };
+    }
+    if (v.status === 'claimed') {
+      if (!deed || receipt && (!deed.primary_issuance_receipt
+          || Object.keys(deed.primary_issuance_receipt).length !== Object.keys(receipt).length
+          || Object.keys(receipt).some(key => deed.primary_issuance_receipt[key] !== receipt[key])))
+        throw new GameError('migration_required', 'The immutable issuance receipt conflicts.');
+      await client.query('COMMIT'); return { extracted: false, duplicate: true };
+    }
+    if (payload.route === 'paid') {
+      const lot = deedBuildingById(intent?.building_id);
+      const existingCount = Number((await client.query('SELECT COUNT(*) n FROM street_deeds')).rows[0].n);
+      const assignedCount = Number((await client.query('SELECT COUNT(*) n FROM street_deed_building_assignments')).rows[0].n);
+      if (deed || !intent || intent.name !== event.name || lot?.issuanceKind !== 'paid'
+          || !supply || Math.max(Number(supply.issued), existingCount, assignedCount) >= 2500
+          || intent.district !== lot.district || event.district !== DISTRICTS.find(d => d.id === lot.district)?.name)
+        throw new GameError('migration_required', 'The paid intent needs provenance review.');
+      await client.query('INSERT INTO street_deed_building_assignments (building_id,street_name) VALUES ($1,$2)', [lot.id, intent.name]);
+      await client.query(`INSERT INTO street_deeds
+        (account_id,name,name_lc,district,building_id,issuance_kind,primary_issuance_receipt,onchain_token_id,onchain_owner,extracted_by_account,extracted_at,attested_at,home_authority_token,last_extraction_receipt)
+        VALUES ($1,$2,$3,$4,$5,'paid',$6,$7,$8,$9,now(),now(),$10,$11)`,
+      [owner,intent.name,intent.name_lc,intent.district,lot.id,JSON.stringify(receipt),tokenId,getAddress(event.to).toLowerCase(),before.account_id,uid(),JSON.stringify(metadata)]);
+      await client.query('UPDATE street_deed_supply SET issued=$1 WHERE id=1', [Math.max(Number(supply.issued), existingCount, assignedCount) + 1]);
+      await client.query('DELETE FROM street_deed_paid_intents WHERE account_id=$1', [before.account_id]);
+    } else if (!deed || deed.name !== event.name || deed.primary_issuance_receipt && receipt
+        || payload.route === 'gameplay' && deedBuildingById(deed.building_id)?.issuanceKind !== 'gameplay') {
+      throw new GameError('migration_required', 'The deed issuance provenance conflicts.');
+    } else if (receipt) {
+      await client.query('UPDATE street_deeds SET primary_issuance_receipt=$2,issuance_kind=$3 WHERE account_id=$1 AND primary_issuance_receipt IS NULL',
+        [deed.account_id,JSON.stringify(receipt),receipt.kind]);
+    }
+    if (deed) await client.query('UPDATE street_deeds SET last_extraction_receipt=$2 WHERE onchain_token_id=$1', [tokenId,JSON.stringify(metadata)]);
+    if (deed && deed.account_id !== owner) {
       await client.query(`UPDATE city_home_activities SET status='closed',close_reason='ownership_changed',closed_at=now()
         WHERE home_key=$1 AND authority_token=$2 AND status='open'`, [deed.name_lc,deed.home_authority_token]);
       await client.query('UPDATE street_deed_history SET account_id=$2 WHERE account_id=$1', [deed.account_id, owner]);
@@ -1046,7 +1254,7 @@ export async function markDeedExtracted(pool, { nonce, tokenId }) {
     if (nonce != null)
       await client.query("UPDATE vouchers SET status='claimed', claimed_onchain=true WHERE nonce=$1 AND kind='deed' AND status='signed'", [Number(nonce)]);
     await client.query('COMMIT');
-    return { extracted: !!deed };
+    return { extracted: true };
   } catch (e) { await client.query('ROLLBACK'); throw e; }
   finally { client.release(); }
 }
@@ -1060,7 +1268,9 @@ export async function markDeedExtracted(pool, { nonce, tokenId }) {
 // never duplicate the legend line or re-notify. Mint transfers (from 0x0) record the FIRST owner —
 // useful, and harmless to the exclusion since that owner IS the extractor's wallet. Burns are skipped
 // here (`to` = 0x0 is the Redeemed stream's business, which re-imports the deed whole).
-export async function recordDeedTransfer(pool, { tokenId, to, from }) {
+export async function recordDeedTransfer(pool, event) {
+  const { tokenId, to, from } = event;
+  const metadata = validateDeedEvent(event);
   if (!tokenId || !to) return { changed: false };
   const owner = String(to).toLowerCase();
   if (owner === '0x0000000000000000000000000000000000000000') return { changed: false }; // a burn — the Redeemed stream's business
@@ -1071,8 +1281,12 @@ export async function recordDeedTransfer(pool, { tokenId, to, from }) {
     // the JS comparison give the same replay-safety: a re-delivered event finds the owner already
     // recorded and changes nothing.
     const cur = (await client.query(
-      'SELECT account_id, extracted_by_account, name, name_lc, home_authority_token, onchain_owner FROM street_deeds WHERE onchain_token_id=$1 FOR UPDATE',
+      'SELECT account_id, extracted_by_account, name, name_lc, home_authority_token, onchain_owner, primary_issuance_receipt, last_burn_receipt FROM street_deeds WHERE onchain_token_id=$1 FOR UPDATE',
       [String(tokenId)])).rows[0];
+    const identity = cur?.primary_issuance_receipt || cur?.last_burn_receipt;
+    if (cur && (!identity || identity.chainId !== metadata.chainId || identity.contract?.toLowerCase() !== metadata.contract.toLowerCase()
+        || identity.runtimeHash !== metadata.runtimeHash || identity.tokenId !== tokenId))
+      throw new GameError('migration_required', 'The transfer needs same-domain identity provenance.');
     const row = (cur && String(cur.onchain_owner || '').toLowerCase() !== owner) ? cur : null;
     if (row) {
       await client.query(`UPDATE city_home_activities SET status='closed',close_reason='ownership_changed',closed_at=now()
@@ -1222,19 +1436,60 @@ export async function recordDynastyTransfer(pool, { tokenId, from, to, blockNumb
 // account), and re-keys the on-chain deed (+ its legend) to them with control RESET (the buyer earns the
 // corner — the identity-NFT lesson). No living account / already holds a deed → returns null (stays
 // pending; the sweep retries). §10.4-NEUTRAL — ownership, never a currency; zero ledger rows.
-async function applyDeedReimport(client, ref, wallet, tokenId) {
-  const r = (await client.query("SELECT status FROM deed_reimports WHERE ref=$1 FOR UPDATE", [ref])).rows[0];
+async function prepareDeedReimport(pool, tokenId, receipt, reader) {
+  const before = (await pool.query('SELECT * FROM street_deeds WHERE onchain_token_id=$1', [String(tokenId)])).rows[0];
+  if (!before) return { before: null, receipt };
+  const quote = await reader(before.name, DISTRICTS.find(d => d.id === before.district)?.name, { mode: 'remint' });
+  const assignment = (await pool.query('SELECT * FROM street_deed_building_assignments WHERE building_id=$1', [before.building_id])).rows[0];
+  const route = classifyDeedIssuance({ deed: { ...before, last_burn_receipt: receipt }, assignment, quote, domain: deedAdmissionConfig() });
+  if (!route.ok || route.route !== 'remint') throw new GameError('migration_required', 'The burned identity needs provenance review.');
+  const identity = { name: quote.nativeName, district: quote.nativeDistrict,
+    gameplayIdentity: quote.gameplayIdentity, buildingId: before.building_id };
+  if (Object.keys(identity).some(key => Object.hasOwn(receipt, key) && receipt[key] !== identity[key]))
+    throw new GameError('migration_required', 'The retained burn identity conflicts with native provenance.');
+  return { before, assignment, quote, receipt: { ...receipt, ...identity } };
+}
+
+async function applyDeedReimport(client, ref, wallet, tokenId, prepared) {
+  const r = (await client.query("SELECT status,burn_receipt,wallet_address,token_id FROM deed_reimports WHERE ref=$1 FOR UPDATE", [ref])).rows[0];
   if (!r || r.status !== 'pending') return null; // already applied / gone
+  const domain = deedAdmissionConfig();
+  if (!r.burn_receipt || r.wallet_address?.toLowerCase() !== wallet.toLowerCase() || r.token_id !== String(tokenId)
+      || r.burn_receipt.chainId !== domain.chainId
+      || r.burn_receipt.contract?.toLowerCase() !== domain.verifyingContract.toLowerCase()
+      || r.burn_receipt.runtimeHash !== domain.runtimeHash || r.burn_receipt.tokenId !== String(tokenId))
+    throw new GameError('migration_required', 'The burn needs same-domain provenance review.');
   const onchainOwner = 'onchain:' + String(tokenId);
   const deed = (await client.query(
-    'SELECT account_id, name, name_lc, home_authority_token FROM street_deeds WHERE onchain_token_id=$1 FOR UPDATE', [String(tokenId)])).rows[0];
-  if (!deed) { // no outstanding extraction (already re-imported, or never extracted) — settle
-    await client.query("UPDATE deed_reimports SET status='applied', applied_at=now() WHERE ref=$1", [ref]);
-    return null;
-  }
+    'SELECT * FROM street_deeds WHERE onchain_token_id=$1 FOR UPDATE', [String(tokenId)])).rows[0];
+  // A paid street does not exist until its first Extracted/payment receipt is indexed.
+  // Absence cannot settle its burn: keep the original evidence pending for replay/sweep.
+  if (!deed) return null;
   // Redeemed may precede Extracted in a mint callback, and the two watcher streams
   // retry independently. Keep this burn recoverable until extraction is indexed.
   if (deed.account_id !== onchainOwner) return null;
+  if (!prepared?.before) return null; // Materialized after the unlocked read: retry with native proof.
+  if (['chainId','contract','runtimeHash','tokenId','transactionHash','blockHash','blockNumber','logIndex','kind','from']
+      .some(key => r.burn_receipt[key] !== prepared.receipt[key])
+      || prepared.before.name !== deed.name || prepared.before.district !== deed.district || prepared.before.building_id !== deed.building_id)
+    throw new GameError('migration_required', 'The pending burn changed during validation.');
+  const route = classifyDeedIssuance({ deed: { ...deed, last_burn_receipt: prepared.receipt },
+    assignment: prepared.assignment, quote: prepared.quote, domain });
+  if (!route.ok || route.route !== 'remint') throw new GameError('migration_required', 'The pending burn needs current identity provenance.');
+  r.burn_receipt = prepared.receipt;
+  const extraction = deed.last_extraction_receipt;
+  if (!extraction || extraction.chainId !== domain.chainId || extraction.contract?.toLowerCase() !== domain.verifyingContract.toLowerCase()
+      || extraction.runtimeHash !== domain.runtimeHash || extraction.tokenId !== String(tokenId)
+      || r.burn_receipt.transactionHash !== extraction.transactionHash
+        && (BigInt(r.burn_receipt.blockNumber) < BigInt(extraction.blockNumber)
+          || r.burn_receipt.blockNumber === extraction.blockNumber && r.burn_receipt.logIndex <= extraction.logIndex))
+    throw new GameError('migration_required', 'The burn predates the authenticated extraction.');
+  if (r.burn_receipt.name !== deed.name || r.burn_receipt.district !== DISTRICTS.find(d => d.id === deed.district)?.name
+      || r.burn_receipt.buildingId !== deed.building_id
+      || r.burn_receipt.gameplayIdentity !== (deedBuildingById(deed.building_id)?.issuanceKind === 'gameplay'))
+    throw new GameError('migration_required', 'The burned identity conflicts with the permanent street.');
+  await client.query('UPDATE deed_reimports SET burn_receipt=$2 WHERE ref=$1 AND status=\'pending\'', [ref, JSON.stringify(r.burn_receipt)]);
+  await client.query('UPDATE street_deeds SET last_burn_receipt=$2 WHERE onchain_token_id=$1', [String(tokenId), JSON.stringify(r.burn_receipt)]);
   const acct = (await client.query(
     'SELECT account_id FROM account_persistent WHERE lower(wallet_address)=lower($1)', [wallet])).rows[0];
   if (!acct) return null; // burner's wallet not linked to any account yet — wait
@@ -1263,21 +1518,32 @@ async function applyDeedReimport(client, ref, wallet, tokenId) {
 
 // StreetDeed Redeemed(from, tokenId) → record + apply the re-import (state 3→1). Idempotent on the log
 // ref (txHash:logIndex — the harvest-fee discipline); the burn is the ownership proof (no server signature).
-export async function reimportDeed(pool, { ref, from, tokenId }) {
+export async function reimportDeed(pool, event, { reader = readDeedClaimQuote } = {}) {
+  const { ref, from, tokenId } = event;
+  const receipt = { ...validateDeedEvent(event), kind: 'burn', from };
   if (!ref || !from || !isAddress(from) || tokenId == null) {
-    console.error('deed reimport: malformed Redeemed event', ref, from, tokenId); return { skipped: true };
+    throw new GameError('migration_required', 'The burn receipt is invalid.');
   }
+  if (ref !== `${receipt.transactionHash}:${receipt.logIndex}`) throw new GameError('migration_required', 'The burn reference conflicts.');
+  const recorded = (await pool.query('SELECT * FROM deed_reimports WHERE ref=$1', [ref])).rows[0];
+  if (recorded && recorded.status !== 'pending') return { duplicate: true };
+  if (recorded && (recorded.wallet_address?.toLowerCase() !== from.toLowerCase() || recorded.token_id !== String(tokenId)
+      || ['chainId','contract','runtimeHash','tokenId','transactionHash','blockHash','blockNumber','logIndex','kind','from']
+        .some(key => recorded.burn_receipt?.[key] !== receipt[key])))
+    throw new GameError('migration_required', 'The replayed burn conflicts with the retained receipt.');
+  const prepared = await prepareDeedReimport(pool, tokenId, recorded?.burn_receipt || receipt, reader);
   const wallet = getAddress(from);
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
     // SELECT-then-INSERT (pg-mem doesn't report a suppressed conflict's rowCount; the single worker
     // serialises delivery). Real Postgres: the ref PK backstops a lost race (23505 → re-scan → duplicate).
-    if ((await client.query('SELECT 1 FROM deed_reimports WHERE ref=$1', [ref])).rows[0]) {
+    const current = (await client.query('SELECT * FROM deed_reimports WHERE ref=$1 FOR UPDATE', [ref])).rows[0];
+    if (current && current.status !== 'pending') {
       await client.query('ROLLBACK'); return { duplicate: true };
     }
-    await client.query('INSERT INTO deed_reimports (ref, wallet_address, token_id) VALUES ($1,$2,$3)', [ref, wallet, String(tokenId)]);
-    const account = await applyDeedReimport(client, ref, wallet, String(tokenId));
+    if (!current) await client.query('INSERT INTO deed_reimports (ref, wallet_address, token_id, burn_receipt) VALUES ($1,$2,$3,$4)', [ref, wallet, String(tokenId), JSON.stringify(prepared.receipt)]);
+    const account = await applyDeedReimport(client, ref, wallet, String(tokenId), prepared);
     await client.query('COMMIT');
     return account ? { applied: true, account } : { pending: true };
   } catch (e) { await client.query('ROLLBACK'); throw e; }
@@ -1285,19 +1551,22 @@ export async function reimportDeed(pool, { ref, from, tokenId }) {
 }
 
 // Worker sweep: apply deed re-imports still WAITING for a linked, deedless burner account. Per-row txn.
-export async function sweepDeedReimports(pool) {
+export async function sweepDeedReimports(pool, { reader = readDeedClaimQuote } = {}) {
   const pend = (await pool.query(
-    "SELECT ref, wallet_address, token_id FROM deed_reimports WHERE status='pending' ORDER BY created_at LIMIT 200")).rows;
+    "SELECT ref, wallet_address, token_id, burn_receipt FROM deed_reimports WHERE status='pending' ORDER BY created_at LIMIT 200")).rows;
   let applied = 0;
   for (const p of pend) {
-    const client = await pool.connect();
+    let client;
     try {
+      const prepared = await prepareDeedReimport(pool, p.token_id, p.burn_receipt, reader);
+      client = await pool.connect();
       await client.query('BEGIN');
-      const a = await applyDeedReimport(client, p.ref, p.wallet_address, p.token_id);
+      const a = await applyDeedReimport(client, p.ref, p.wallet_address, p.token_id, prepared);
       await client.query('COMMIT');
       if (a) applied++;
-    } catch (e) { await client.query('ROLLBACK'); console.error('deed reimport sweep failed', p.ref, e?.code || e?.message || e); }
-    finally { client.release(); }
+    } catch (e) { if (client) await client.query('ROLLBACK'); console.error('deed reimport sweep failed',
+      ['migration_required','chain_unavailable'].includes(e?.code) ? e.code : 'retry_pending'); }
+    finally { if (client) client.release(); }
   }
   return { applied, pending: pend.length };
 }
@@ -1337,11 +1606,17 @@ export async function sweepDeedReimports(pool) {
 // an ownership move, zero `transactions` rows.
 export const DEED_RECOVER_AFTER_MS = Number(process.env.DEED_RECOVER_AFTER_MS || 30 * 24 * 3600 * 1000);
 
-export async function recoverStrandedDeed(pool, { street, tokenId } = {}) {
+export async function recoverStrandedDeed(pool, { street, tokenId, reader = readDeedClaimQuote } = {}) {
   const to = process.env.DEED_RECOVERY_ADDRESS;
   if (!to || !isAddress(to))
     throw new GameError('no_recovery_address', 'Set DEED_RECOVERY_ADDRESS (the treasury holding address) before recovering a deed.');
-  const domain = deedChainConfig();                       // throws chain_unconfigured if not configured
+  const domain = deedAdmissionConfig();
+  const requestedToken = tokenId != null ? String(tokenId) : (street ? deedTokenId(String(street)) : null);
+  const before = requestedToken && (await pool.query('SELECT * FROM street_deeds WHERE onchain_token_id=$1 AND account_id=$2',
+    [requestedToken, 'onchain:' + requestedToken])).rows[0];
+  if (!before) throw new GameError('not_stranded', 'That street is not in the on-chain state.');
+  const districtWire = DISTRICTS.find(d => d.id === before.district)?.name;
+  const quote = await reader(before.name, districtWire, { mode: 'remint' });
   const signer = signerAccount();
   const client = await pool.connect();
   try {
@@ -1356,9 +1631,15 @@ export async function recoverStrandedDeed(pool, { street, tokenId } = {}) {
     if (!deed) throw new GameError('not_stranded', 'That street is not sitting in the on-chain state — nothing to recover.');
     // WALL 2 + 3 — a pending re-import old enough to be genuinely stuck rather than in flight
     const pend = (await client.query(
-      "SELECT ref, created_at FROM deed_reimports WHERE token_id=$1 AND status='pending' ORDER BY created_at LIMIT 1", [token])).rows[0];
+      "SELECT ref, created_at, burn_receipt FROM deed_reimports WHERE token_id=$1 AND status='pending' ORDER BY created_at LIMIT 1", [token])).rows[0];
     if (!pend) throw new GameError('not_burned',
       'No burn was ever recorded for that street — it may still be owned on-chain, and a voucher for a live deed cannot be claimed.');
+    const assignment = (await client.query('SELECT * FROM street_deed_building_assignments WHERE building_id=$1', [deed.building_id])).rows[0];
+    const route = classifyDeedIssuance({ deed, assignment, quote, domain });
+    if (!route.ok || route.route !== 'remint' || deed.name !== before.name || !pend.burn_receipt
+        || pend.burn_receipt.transactionHash !== deed.last_burn_receipt?.transactionHash
+        || pend.burn_receipt.logIndex !== deed.last_burn_receipt?.logIndex)
+      throw new GameError('migration_required', 'The recovery needs same-domain identity and burn provenance.');
     const waited = Date.now() - new Date(pend.created_at).getTime();
     if (waited < DEED_RECOVER_AFTER_MS) throw new GameError('too_soon',
       `That burn is ${Math.floor(waited / 3600000)}h old — the re-import may still land. Recovery opens at ${Math.round(DEED_RECOVER_AFTER_MS / 3600000)}h.`);
@@ -1366,6 +1647,7 @@ export async function recoverStrandedDeed(pool, { street, tokenId } = {}) {
     const districtDisp = (DISTRICTS.find((d) => d.id === deed.district) || {}).name || deed.district;
     const res = (await client.query('SELECT * FROM chain_reserve WHERE id=1 FOR UPDATE')).rows[0];
     const nonce = Number(res.next_nonce);
+    if (!Number.isSafeInteger(nonce) || nonce < 0) throw new GameError('migration_required', 'The recovery nonce needs review.');
     await client.query('UPDATE chain_reserve SET next_nonce = next_nonce + 1 WHERE id=1');
     const deadline = Math.floor(Date.now() / 1000) + WITHDRAW_TTL_SEC;
     const message = { to: getAddress(to), name: deed.name, district: districtDisp, nonce: BigInt(nonce), deadline: BigInt(deadline) };
@@ -1377,7 +1659,8 @@ export async function recoverStrandedDeed(pool, { street, tokenId } = {}) {
     await client.query('UPDATE street_deeds SET home_authority_token=$3 WHERE account_id=$1 AND onchain_token_id=$2', [onchainOwner,token,uid()]);
     await client.query(
       'INSERT INTO vouchers (id, account_id, kind, amount, gear_id, nonce, to_address, deadline, status, signed_payload) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)',
-      [id, onchainOwner, 'deed', 1, token, nonce, getAddress(to), deadline, 'signed', JSON.stringify({ voucher, signature })]);
+      [id, onchainOwner, 'deed', 1, token, nonce, getAddress(to), deadline, 'signed', JSON.stringify({ voucher, signature, domain,
+        route: 'remint', primaryType: 'DeedVoucher', claimMethod: 'claim', quote })]);
     // WALL 4 — the pending re-import is SUPERSEDED, so the sweep can never later hand this street to
     // the burner while the treasury holds the NFT. Every pending row for the token, not just the one
     // we read: a re-scan can record several refs for the same burn.
@@ -1425,16 +1708,23 @@ export async function sweepDeedVouchers(pool, reader = undefined) {
   const chain = reader !== undefined ? reader : await makeDeedReader();
   const cutoff = Math.floor(Date.now() / 1000) - RECLAIM_GRACE_SEC;
   const stale = (await pool.query(
-    "SELECT id, nonce, gear_id FROM vouchers WHERE kind='deed' AND status='signed' AND NOT claimed_onchain AND deadline < $1", [cutoff])).rows;
+    "SELECT id, nonce, gear_id, deadline, signed_payload FROM vouchers WHERE kind='deed' AND status='signed' AND NOT claimed_onchain AND deadline < $1", [cutoff])).rows;
   if (!chain && stale.length)
     console.error(`deed voucher sweep: ${stale.length} stale deed voucher(s) but no on-chain reader — skipping (never clear an inert deed blind)`);
   let cleared = 0, extracted = 0, skipped = 0;
   for (const v of stale) {
     if (!chain) { skipped++; continue; }
-    let used;
-    try { used = await chain.usedNonce(v.nonce); }
+    let observed, payload;
+    try { observed = await chain.nonceState(v.nonce, v.deadline); payload = JSON.parse(v.signed_payload); }
     catch { continue; } // RPC hiccup — retry next tick
-    if (used) { await markDeedExtracted(pool, { nonce: Number(v.nonce), tokenId: v.gear_id }); extracted++; continue; }
+    if (!observed?.domain || payload?.domain?.chainId !== observed.domain.chainId
+        || payload.domain.verifyingContract?.toLowerCase() !== observed.domain.verifyingContract.toLowerCase()
+        || payload.domain.runtimeHash !== observed.domain.runtimeHash
+        || String(payload.voucher?.deadline) !== String(v.deadline)
+        || typeof observed.used !== 'boolean' || typeof observed.expired !== 'boolean') { skipped++; continue; }
+    // A used nonce alone proves neither first payment nor the exact event/domain. The canonical
+    // Extracted stream owns finalization; keep the pending identity inert until it is retained.
+    if (observed.used || !observed.expired) { skipped++; continue; }
     // never claimed on-chain → the deed never left the game. Clear the inert flag (state 2→1) and expire
     // the voucher. Guard the deed is still pending under the extractor (account_id NOT onchain).
     const client = await pool.connect();

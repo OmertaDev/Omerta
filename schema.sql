@@ -1670,6 +1670,21 @@ CREATE UNIQUE INDEX IF NOT EXISTS ix_street_deeds_name ON street_deeds (name_lc)
 CREATE INDEX IF NOT EXISTS ix_street_deeds_district ON street_deeds (district);
 ALTER TABLE street_deeds ADD COLUMN IF NOT EXISTS building_id TEXT;
 CREATE UNIQUE INDEX IF NOT EXISTS ix_street_deeds_building ON street_deeds (building_id);
+-- Prospective provenance only. Legacy allocation/backfill is not evidence of payment or eligibility.
+ALTER TABLE street_deeds ADD COLUMN IF NOT EXISTS issuance_kind TEXT CHECK (issuance_kind IN ('gameplay','paid','partnership'));
+ALTER TABLE street_deeds ADD COLUMN IF NOT EXISTS primary_issuance_receipt JSONB;
+ALTER TABLE street_deeds ADD COLUMN IF NOT EXISTS last_burn_receipt JSONB;
+ALTER TABLE street_deeds ADD COLUMN IF NOT EXISTS last_extraction_receipt JSONB;
+-- An unpaid intent grants no street, home, rent, stock target or permanent supply assignment.
+-- Never copy these rows into street_deeds until the confirmed first-payment receipt is verified.
+CREATE TABLE IF NOT EXISTS street_deed_paid_intents (
+  account_id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  name_lc TEXT NOT NULL UNIQUE,
+  district TEXT NOT NULL,
+  building_id TEXT NOT NULL UNIQUE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
 CREATE TABLE IF NOT EXISTS street_deed_building_assignments (
   building_id TEXT PRIMARY KEY,
   street_name TEXT NOT NULL UNIQUE,
@@ -1803,6 +1818,7 @@ CREATE TABLE IF NOT EXISTS deed_reimports (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   applied_at TIMESTAMPTZ
 );
+ALTER TABLE deed_reimports ADD COLUMN IF NOT EXISTS burn_receipt JSONB;
 
 -- ── THE AUCTION HOUSE ("the sit-down"): the competitive, recurring $OMR sink ──
 -- A live auction row exists once a lot gets its first bid. `current_bid` on status='live' rows IS the

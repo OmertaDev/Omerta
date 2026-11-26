@@ -37,8 +37,56 @@ export function buildingForDeed(row) {
   return building && (!row.district || building.district === row.district) ? { ...building } : null;
 }
 
-function assignExisting(rows, ledger) {
-  const used = new Set(), byName = new Map();
+// A lot is a capacity assignment, not proof that a legacy owner paid or earned it.
+// Native identity and burn evidence must come from the admitted, confirmed chain reader/watcher.
+export function classifyDeedIssuance({ deed, assignment, primaryClaim, intent, quote, domain }) {
+  const refuse = () => ({ ok: false, code: 'migration_required' });
+  const row = deed || intent;
+  const lot = buildingForDeed(row);
+  if (!row || !lot || typeof row.name !== 'string' || !/^[\w .,'&-]+$/.test(row.name)
+      || row.name_lc !== row.name.toLowerCase() || row.issuance_kind && row.issuance_kind !== lot.issuanceKind)
+    return refuse();
+  if (deed && (!assignment || assignment.building_id !== lot.id || assignment.street_name !== row.name)) return refuse();
+  if (!quote || quote.name !== row.name || quote.chainId !== domain.chainId
+      || quote.contract.toLowerCase() !== domain.verifyingContract.toLowerCase()
+      || quote.runtimeHash.toLowerCase() !== domain.runtimeHash.toLowerCase()) return refuse();
+  const sameDomain = (receipt) => receipt && receipt.chainId === quote.chainId
+    && receipt.contract?.toLowerCase() === quote.contract.toLowerCase()
+    && receipt.runtimeHash?.toLowerCase() === quote.runtimeHash.toLowerCase()
+    && receipt.tokenId === quote.tokenId;
+  const position = receipt => receipt && typeof receipt.blockNumber === 'string' && /^(0|[1-9]\d*)$/.test(receipt.blockNumber)
+    && /^0x[0-9a-fA-F]{64}$/.test(receipt.blockHash || '') && /^0x[0-9a-fA-F]{64}$/.test(receipt.transactionHash || '')
+    && Number.isSafeInteger(receipt.logIndex) && receipt.logIndex >= 0;
+  if (deed?.primary_issuance_receipt && (!sameDomain(deed.primary_issuance_receipt)
+      || deed.primary_issuance_receipt.kind !== lot.issuanceKind)) return refuse();
+  if (quote.identityIssued) {
+    if (!deed || quote.nativeName !== row.name || quote.nativeDistrict !== quote.district
+        || quote.liveOwner !== null || !sameDomain(deed.last_extraction_receipt) || !position(deed.last_extraction_receipt)
+        || !sameDomain(deed.last_burn_receipt) || deed.last_burn_receipt.kind !== 'burn'
+        || !position(deed.last_burn_receipt) || typeof quote.blockNumber !== 'string' || !/^(0|[1-9]\d*)$/.test(quote.blockNumber)
+        || BigInt(deed.last_burn_receipt.blockNumber) > BigInt(quote.blockNumber)
+        || BigInt(deed.last_extraction_receipt.blockNumber) > BigInt(quote.blockNumber)
+        || deed.last_burn_receipt.transactionHash === deed.last_extraction_receipt.transactionHash
+          && (deed.last_burn_receipt.blockNumber !== deed.last_extraction_receipt.blockNumber
+            || deed.last_burn_receipt.blockHash !== deed.last_extraction_receipt.blockHash)
+        || (deed.last_burn_receipt.transactionHash !== deed.last_extraction_receipt.transactionHash
+          && (BigInt(deed.last_burn_receipt.blockNumber) < BigInt(deed.last_extraction_receipt.blockNumber)
+            || deed.last_burn_receipt.blockNumber === deed.last_extraction_receipt.blockNumber
+              && deed.last_burn_receipt.logIndex <= deed.last_extraction_receipt.logIndex))
+        || quote.gameplayIdentity !== (lot.issuanceKind === 'gameplay')) return refuse();
+    return { ok: true, route: 'remint', primaryType: 'DeedVoucher', claimMethod: 'claim', valueWei: '0' };
+  }
+  if (deed?.primary_issuance_receipt || deed?.last_burn_receipt) return refuse();
+  if (lot.issuanceKind === 'gameplay' && deed && primaryClaim?.street_name === row.name
+      && primaryClaim.building_id === lot.id && ['exploration', 'quest'].includes(primaryClaim.source))
+    return { ok: true, route: 'gameplay', primaryType: 'GameplayDeedVoucher', claimMethod: 'claimGameplay', valueWei: '0' };
+  if (lot.issuanceKind === 'paid' && !deed && intent && /^[1-9]\d*$/.test(quote.valueWei))
+    return { ok: true, route: 'paid', primaryType: 'DeedVoucher', claimMethod: 'claim', valueWei: quote.valueWei };
+  return refuse(); // Partnership issuance stays in the owner/approved-manifest lane.
+}
+
+function assignExisting(rows, ledger, reserved = []) {
+  const used = new Set(reserved), byName = new Map();
   for (const assignment of ledger) {
     if (!BY_ID.has(assignment.building_id) || used.has(assignment.building_id) || byName.has(assignment.street_name))
       throw new Error('Invalid permanent deed building assignment');
@@ -74,7 +122,8 @@ export async function ensureDeedBuildings(client) {
   const rows = (await client.query(
     'SELECT name, district, building_id FROM street_deeds ORDER BY claimed_at, name')).rows;
   const ledger = (await client.query('SELECT building_id, street_name FROM street_deed_building_assignments')).rows;
-  const { assignments } = assignExisting(rows, ledger);
+  const reserved = (await client.query('SELECT building_id FROM street_deed_paid_intents')).rows.map(row => row.building_id);
+  const { assignments } = assignExisting(rows, ledger, reserved);
   for (const assignment of assignments) {
     if (assignment.record) await client.query(
       'INSERT INTO street_deed_building_assignments (building_id,street_name) VALUES ($1,$2)', [assignment.id, assignment.name]);
@@ -89,6 +138,7 @@ export async function nextDeedBuilding(client, district) {
   await ensureDeedBuildings(client);
   const used = new Set((await client.query('SELECT building_id FROM street_deed_building_assignments')).rows
     .map((row) => row.building_id));
+  for (const row of (await client.query('SELECT building_id FROM street_deed_paid_intents')).rows) used.add(row.building_id);
   const building = DEED_BUILDINGS.find((lot) => lot.district === district && !used.has(lot.id));
   return building ? { ...building } : null;
 }
@@ -100,6 +150,8 @@ export async function reserveDeedBuilding(client, district, name, buildingId = n
     building = deedBuildingById(buildingId);
     if (!building || building.district !== district) return null;
     if ((await client.query('SELECT 1 FROM street_deed_building_assignments WHERE building_id=$1', [building.id])).rowCount)
+      return null;
+    if ((await client.query('SELECT 1 FROM street_deed_paid_intents WHERE building_id=$1 OR name_lc=$2', [building.id, name.toLowerCase()])).rowCount)
       return null;
   } else building = await nextDeedBuilding(client, district);
   if (building) await client.query(
@@ -114,6 +166,7 @@ export async function buildingAtlas(client, { district } = {}) {
   const claimed = new Map(rows.filter((row) => buildingForDeed(row)).map((row) => [row.building_id, row]));
   const ledger = new Map((await client.query('SELECT building_id, street_name FROM street_deed_building_assignments')).rows
     .map((row) => [row.building_id, row.street_name]));
+  const reserved = new Set((await client.query('SELECT building_id FROM street_deed_paid_intents')).rows.map(row => row.building_id));
   const districts = DISTRICT_LOTS.filter((item) => !district || item.id === district);
   return {
     width: TILE * 3, height: TILE * 2, total: DEED_BUILDING_TOTAL,
@@ -121,7 +174,7 @@ export async function buildingAtlas(client, { district } = {}) {
       x: item.column * TILE, y: item.row * TILE, width: TILE, height: TILE })),
     buildings: DEED_BUILDINGS.filter((building) => !district || building.district === district).map((building) => {
       const deed = claimed.get(building.id);
-      return { ...building, claimed: ledger.has(building.id), street: deed?.name || ledger.get(building.id) || null,
+      return { ...building, claimed: ledger.has(building.id), reserved: reserved.has(building.id), street: deed?.name || ledger.get(building.id) || null,
         tokenId: deed?.onchain_token_id || null };
     }),
   };

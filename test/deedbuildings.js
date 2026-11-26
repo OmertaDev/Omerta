@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { newDb } from 'pg-mem';
 import { DEED_BUILDINGS, buildingAtlas, buildingForDeed, ensureDeedBuildings,
   nextDeedBuilding, reserveDeedBuilding } from '../src/deedbuildings.js';
@@ -21,6 +22,12 @@ mem.public.none(`
     ('second','Beta','cathedral',NULL,'2026-01-01',NULL),
     ('third','Dock Road','docks',NULL,'2026-01-02','123');
 `);
+// This allocator-only pg-mem fixture needs the exact current reservation relation. It does not
+// qualify production migrations, PostgreSQL locking, purchase eligibility or canonical receipts.
+const paidIntentDDL = /^CREATE TABLE IF NOT EXISTS street_deed_paid_intents \([\s\S]*?^\);/m.exec(
+  readFileSync(new URL('../schema.sql', import.meta.url), 'utf8'))?.[0];
+assert(paidIntentDDL, 'the canonical paid-intent table must exist in the production schema');
+mem.public.none(paidIntentDDL);
 const { Pool } = mem.adapters.createPg();
 const pool = new Pool();
 try {
@@ -47,6 +54,21 @@ try {
     'an assigned physical building cannot be issued under another street name');
   assert.equal(await reserveDeedBuilding(pool, 'neon', 'Wrong District', 'brick-0012'), null,
     'an explicit building cannot be moved to another district');
+  const paidLot = DEED_BUILDINGS.find(lot => lot.district === 'brick' && lot.issuanceKind === 'paid');
+  const beforeIntent = (await pool.query('SELECT issued FROM street_deed_supply WHERE id=1')).rows[0].issued;
+  const assignmentsBefore = Number((await pool.query('SELECT COUNT(*) n FROM street_deed_building_assignments')).rows[0].n);
+  const deedsBefore = Number((await pool.query('SELECT COUNT(*) n FROM street_deeds')).rows[0].n);
+  await pool.query(`INSERT INTO street_deed_paid_intents (account_id,name,name_lc,district,building_id)
+    VALUES ($1,$2,$3,$4,$5)`, ['buyer', 'Pending Paid House', 'pending paid house', paidLot.district, paidLot.id]);
+  const reservedLot = (await buildingAtlas(pool, { district: 'brick' })).buildings.find(lot => lot.id === paidLot.id);
+  assert.equal(reservedLot.reserved, true, 'the atlas exposes a live paid reservation');
+  assert.equal(reservedLot.claimed, false, 'an unpaid intent is not a permanently assigned street');
+  assert.equal(await reserveDeedBuilding(pool, 'brick', 'Conflicting House', paidLot.id), null,
+    'the allocator refuses the exact paid-intent lot before assigning it to another street');
+  assert.equal(Number((await pool.query('SELECT COUNT(*) n FROM street_deed_building_assignments')).rows[0].n), assignmentsBefore);
+  assert.equal(Number((await pool.query('SELECT COUNT(*) n FROM street_deeds')).rows[0].n), deedsBefore);
+  assert.equal((await pool.query('SELECT issued FROM street_deed_supply WHERE id=1')).rows[0].issued, beforeIntent,
+    'a pending paid intent and the refused conflicting allocation consume no lifetime issuance');
   const remainingNeon = DEED_BUILDINGS.filter((item) => item.district === 'neon');
   for (const lot of remainingNeon) await pool.query(
     'INSERT INTO street_deed_building_assignments VALUES ($1,$2)', [lot.id, `Neon ${lot.number}`]);

@@ -56,6 +56,16 @@ export function registerPgMemCompatibility(mem, DataType) {
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const SCHEMA = fs.readFileSync(path.join(here, '..', 'schema.sql'), 'utf8');
+
+// pg-mem caches indexed aliases and treats NULL IN (...) as false in CHECK.
+// Move this constraint before indexes and preserve SQL's nullable check; production SQL stays unchanged.
+export function pgMemSchema(schemaText = SCHEMA) {
+  const table = /^CREATE TABLE IF NOT EXISTS street_deeds \([\s\S]*?^\);/m.exec(schemaText)?.[0];
+  const issuance = /^ALTER TABLE street_deeds ADD COLUMN IF NOT EXISTS issuance_kind TEXT CHECK \(issuance_kind IN \([^\n]+\)\);\r?$/m.exec(schemaText)?.[0];
+  if (!table || !issuance) throw new Error('Missing canonical deed issuance schema');
+  const nullableIssuance = issuance.replace('CHECK (issuance_kind IN', 'CHECK (issuance_kind IS NULL OR issuance_kind IN');
+  return schemaText.replace(issuance, '').replace(table, `${table}\n${nullableIssuance}`);
+}
 // A fixed key for the boot-time schema advisory lock (any constant bigint — must match across processes).
 const SCHEMA_LOCK_KEY = 918273645;
 
@@ -1527,7 +1537,7 @@ export async function makeDb() {
   registerPgMemCompatibility(mem, DataType);
   const { Pool } = mem.adapters.createPg();
   const pool = new Pool();
-  await pool.query(SCHEMA);
+  await pool.query(pgMemSchema());
   await migrateEconomyDailyClaims(pool);
   const socialReceiptMigration = await migrateSocialProofReceipts(pool);
   if (!socialReceiptMigration.complete) {
