@@ -14,6 +14,9 @@ export const LAUNCH_INTEGRATION_REVIEWED_PRODUCT_PATHS = Object.freeze([
   'package.json', 'public/index.html', 'public/ux-navigation.css', 'src/preflight.js',
 ]);
 export const LAUNCH_INTEGRATION_AUTHORED_PATHS = Object.freeze([
+  '.github/workflows/ui-trim-source.yml',
+  'test/deeds-supply-postgres.js',
+  'test/ux-tactics-browser.js', 'test/native-garage-enterprise-source.js',
   'test/grand-strategy-source-transfer.js', 'test/launch-integration-source-transfer.js',
   'test/crime-minigame-source-transfer.js', 'test/native-garage-source-transfer.js',
   'test/launch-enterprise-source-transfer.js', 'tools/enterprise-native-questing.js',
@@ -29,6 +32,9 @@ const generated = Object.freeze([
 ]);
 const metadata = 'tools/launch-integration-source-data.js';
 const projectedPaths = Object.freeze([...LAUNCH_INTEGRATION_REVIEWED_PRODUCT_PATHS,
+  '.github/workflows/ui-trim-source.yml',
+  'test/deeds-supply-postgres.js',
+  'test/ux-tactics-browser.js', 'test/native-garage-enterprise-source.js',
   'test/grand-strategy-source-transfer.js', 'test/crime-minigame-source-transfer.js',
   'test/native-garage-source-transfer.js', 'tools/crime-minigame-source-compatibility.js',
   'tools/native-garage-source-transfer.js', 'tools/enterprise-native-questing.js',
@@ -50,7 +56,7 @@ const modified = file => typeof file === 'string' && Object.hasOwn(source.files 
 const pinFor = file => source.files?.[file]?.current || source.additions?.[file];
 function canonical(input) {
   const buffer = Buffer.isBuffer(input), text = buffer ? Buffer.prototype.toString.call(input, 'utf8') : input;
-  if (buffer) assert(Buffer.from(text).equals(input), 'Lossless UTF-8 source required');
+  if (buffer) assert(Buffer.from(text).equals(input), 'Lossless UTF-8 source required; lossless UTF-8 required');
   if (typeof text !== 'string' || /[\0\ufeff]/.test(text)) return null;
   const lf = text.replaceAll('\r\n', '\n');
   if (lf.includes('\r') || (text !== lf && text !== lf.replaceAll('\n', '\r\n'))) return null;
@@ -87,7 +93,7 @@ function definition() {
   assert.equal(source.revision, LAUNCH_INTEGRATION_REVIEWED_REVISION);
   assert.equal(sha(JSON.stringify(source)), LAUNCH_INTEGRATION_SOURCE_SHA256);
   assert(Object.isFrozen(source) && Object.isFrozen(source.files) && Object.isFrozen(source.additions));
-  assert.deepEqual(Object.keys(source.files).sort(), projectedPaths, 'Exactly eleven reviewed predecessor projection domains');
+  assert.deepEqual(Object.keys(source.files).sort(), projectedPaths, 'Exactly fifteen reviewed predecessor projection domains');
   assert.deepEqual(Object.keys(source.additions).sort(), addedPaths, 'Exactly four new qualification helper/test domains');
   const rendered = launchIntegrationSourceDataBytes(source);
   genuine(metadata, { mode: '100644', blob: blob(rendered), sha256: sha(rendered), bytes: Buffer.byteLength(rendered) });

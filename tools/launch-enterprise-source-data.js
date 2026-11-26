@@ -77,7 +77,7 @@ export const LAUNCH_ENTERPRISE_SOURCE = freeze({
         "bytes": 627053
       },
       "current": {
-        "mode": "100644",
+        "mode": "100755",
         "blob": "538b702ca8c5cd39534c69835d62ecd07bc10d2e",
         "sha256": "fcd12b36f4c322ecbd5d6573f8ae780ce80a793b4911ea07d3268d4ab9861c90",
         "bytes": 628039
@@ -346,9 +346,9 @@ export const LAUNCH_ENTERPRISE_SOURCE = freeze({
       "file": "test/launch-integration-source-transfer.js",
       "current": {
         "mode": "100644",
-        "blob": "876f3cc2bbbd72b1bc4c644317e2e7eb51994b2d",
-        "sha256": "d53befbb29c864f5a29c6a4dc26234707ec48f7ffd9c64580eb332161619bee0",
-        "bytes": 8371
+        "blob": "a661956d1716704afdd0cc4478d1ea316be66c04",
+        "sha256": "87ee17995ccca6b1ca4ca482034d11d20ca3bc2acdbe4e3a0fef2fe694eef5bb",
+        "bytes": 9221
       }
     },
     {
@@ -364,9 +364,9 @@ export const LAUNCH_ENTERPRISE_SOURCE = freeze({
       "file": "tools/launch-integration-source-transfer.js",
       "current": {
         "mode": "100644",
-        "blob": "ca1c48974e418637513e932d809bad01bed0a13b",
-        "sha256": "e5d2d55bae2a6b8b93918e341a157e19b9d2501111a1153634b41f144595b78b",
-        "bytes": 16840
+        "blob": "532fbc290b86542a853b3fccaa796e60854e5fc8",
+        "sha256": "fb11fccba76e7383296da354b06e674462da2d72ebea8f72d2dcc3099f27d34a",
+        "bytes": 17170
       }
     }
   ],
@@ -2310,4 +2310,4 @@ export const LAUNCH_ENTERPRISE_SOURCE = freeze({
     "tools/ui-trim-source-transfer.js"
   ]
 });
-export const LAUNCH_ENTERPRISE_SOURCE_SHA256 = 'f009a3279d8cb3d178767c23f2b9bb61f48e603e60906a8abb7afd5b36721629';
+export const LAUNCH_ENTERPRISE_SOURCE_SHA256 = '1628ef04e7ca3d37f0eb8f9806be414a524551af1b52875785d7a5bfda9309dd';

@@ -33,8 +33,12 @@ for (const expected of changed) {
   checks += 8;
 }
 
-const unchanged = declaration.files.find(row => !Object.hasOwn(NATIVE_GARAGE_SOURCE.files, row.file));
+const unchanged = declaration.files.find(row => row.file === 'package-lock.json');
+assert(unchanged, 'Fixed unchanged declaration fixture');
 const bytes = git('show', 'HEAD:' + unchanged.file), current = { type: 'blob', mode: unchanged.mode, blob: unchanged.blob };
+assert.equal(git('ls-tree', 'HEAD', '--', unchanged.file).toString('utf8').trim(),
+  `${unchanged.mode} blob ${unchanged.blob}\t${unchanged.file}`, 'Unchanged fixture is actual current HEAD');
+assert.equal(sha(bytes), unchanged.sha256, 'Unchanged fixture retains its exact declared bytes');
 const retained = nativeGarageEnterprisePredecessor(unchanged.file, current, bytes, unchanged);
 assert.strictEqual(retained.bytes, bytes); assert.strictEqual(retained.current, current);
 
